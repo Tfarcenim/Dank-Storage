@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "i1i",
+    "1i1",
+    "i1i"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:redstone"
+    },
+    "1": {
+      "item": "dankstorage:dank_1"
+    }
+  },
+  "result": {
+    "item": "dankstorage:dank_2"
+  }
+}

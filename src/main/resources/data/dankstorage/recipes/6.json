@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "i1i",
+    "1i1",
+    "i1i"
+  ],
+  "key": {
+    "i": {
+      "tag": "forge:storage_blocks/emerald"
+    },
+    "1": {
+      "item": "dankstorage:dank_5"
+    }
+  },
+  "result": {
+    "item": "dankstorage:dank_6"
+  }
+}

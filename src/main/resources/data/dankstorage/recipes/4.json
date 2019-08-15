@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "i3i",
+    "3i3",
+    "i3i"
+  ],
+  "key": {
+    "i": {
+      "tag": "forge:storage_blocks/lapis"
+    },
+    "3": {
+      "item": "dankstorage:dank_3"
+    }
+  },
+  "result": {
+    "item": "dankstorage:dank_4"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "i2i",
+    "2i2",
+    "i2i"
+  ],
+  "key": {
+    "i": {
+      "tag": "forge:storage_blocks/iron"
+    },
+    "2": {
+      "item": "dankstorage:dank_2"
+    }
+  },
+  "result": {
+    "item": "dankstorage:dank_3"
+  }
+}
