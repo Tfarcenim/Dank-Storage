@@ -1,6 +1,8 @@
 package com.tfar.dankstorage.block;
 
+import com.tfar.dankstorage.container.AbstractDankContainer;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
+import com.tfar.dankstorage.network.NetworkUtils;
 import com.tfar.dankstorage.tile.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -10,14 +12,17 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
@@ -27,11 +32,11 @@ import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod.EventBusSubscriber
 public class DankStorageBlock extends Block {
   public DankStorageBlock(Properties p_i48440_1_) {
     super(p_i48440_1_);
@@ -83,84 +88,112 @@ public class DankStorageBlock extends Block {
     switch (type) {
       case 1:
       default:
-        return new DankStorageTile1();
+        return new DankTiles.DankStorageTile1();
       case 2:
-        return new DankStorageTile2();
+        return new DankTiles.DankStorageTile2();
       case 3:
-        return new DankStorageTile3();
+        return new DankTiles.DankStorageTile3();
       case 4:
-        return new DankStorageTile4();
+        return new DankTiles.DankStorageTile4();
       case 5:
-        return new DankStorageTile5();
+        return new DankTiles.DankStorageTile5();
       case 6:
-        return new DankStorageTile6();
+        return new DankTiles.DankStorageTile6();
       case 7:
-        return new DankStorageTile7();
+        return new DankTiles.DankStorageTile7();
     }
   }
 
   @Override
   @OnlyIn(Dist.CLIENT)
-  public void addInformation(ItemStack p_190948_1_, @Nullable IBlockReader p_190948_2_, List<ITextComponent> p_190948_3_, ITooltipFlag p_190948_4_) {
-   // if (p_190948_1_.hasTag())p_190948_3_.add(new StringTextComponent(p_190948_1_.getTag().toString()));
-    if (p_190948_1_.getOrCreateTag().getBoolean("pickup"))p_190948_3_.add(
-            new TranslationTextComponent("dankstorage.autopickup_enabled"));
+  public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+   // if (stack.hasTag())tooltip.add(new StringTextComponent(stack.getTag().toString()));
+    if (NetworkUtils.autoPickup(stack))tooltip.add(
+            new TranslationTextComponent("dankstorage.pickup.enabled"));
+    if (NetworkUtils.autoVoid(stack))tooltip.add(
+            new TranslationTextComponent("dankstorage.void.enabled"));
   }
 
-  @SubscribeEvent
-  public static void pickup(EntityItemPickupEvent e){
-    PlayerEntity player = e.getPlayer();
-    if (player.world.isRemote)return;
-    ItemStack dank = findDank(player);
-    if (dank.isEmpty())return;
-    if (!dank.getOrCreateTag().getBoolean("pickup"))return;
-    ItemStack stack = e.getItem().getItem();
-    ItemStack remainder = add(dank,stack);
-    if (remainder.isEmpty())e.getItem().getItem().setCount(0);
-    e.setCanceled(true);
+  public static boolean onItemPickup(EntityItemPickupEvent event, ItemStack bag) {
+
+    if (!bag.getOrCreateTag().getBoolean("pickup")) {
+      return false;
+    }
+    ItemStack toPickup = event.getItem().getItem();
+    final boolean Void = NetworkUtils.autoVoid(bag);
+
+    if (true) {
+      if (false) {
+     //   toPickup.setCount(0);
+     //   bag.setAnimationsToGo(5);
+    //    PlayerEntity player = event.getEntityPlayer();
+      //  player.world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, (MathHelper.RANDOM.nextFloat() - MathHelper.RANDOM.nextFloat()) * 0.7F + 1.0F);
+        return true;
+        //todo watch for dupes
+      } else if (true) {
+        int count = toPickup.getCount();
+        PortableDankHandler inv = getHandler(bag);
+        for (int i = 0; i < inv.getSlots(); i++) {
+          ItemStack slot = inv.getStackInSlot(i);
+          if (slot.isEmpty()  && !Void) {
+            inv.setStackInSlot(i, toPickup.copy());
+            toPickup.setCount(0);
+          } else if (canAddItemToSlot(inv,slot, toPickup,true)) {
+            int fill = inv.stacklimit - slot.getCount();
+            if (fill > toPickup.getCount()) {
+              slot.setCount(slot.getCount() + toPickup.getCount());
+            } else {
+              slot.setCount(inv.stacklimit);
+            }
+            if (!Void)
+            toPickup.split(fill);
+            else if (toPickup.getItem() == slot.getItem())toPickup.setCount(0);
+          }
+          if (toPickup.isEmpty()) {
+            break;
+          }
+        }
+        if (toPickup.getCount() != count) {
+          bag.setAnimationsToGo(5);
+          PlayerEntity player = event.getPlayer();
+          player.world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((player.getRNG().nextFloat() - player.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
+          inv.writeItemStack();
+        }
+      }
+    }
+    return toPickup.isEmpty();
   }
 
-  public static ItemStack findDank(PlayerEntity player){
-    return player.inventory.mainInventory.stream().filter(stack -> stack.getItem() instanceof DankItemBlock).findFirst().orElse(ItemStack.EMPTY);
-  }
+//} else if (ItemHandlerHelper.canItemStacksStack(eventItem, slot)) {
 
-  public static ItemStack add(ItemStack bag, ItemStack pickup){
-    ItemStack remainder = ItemStack.EMPTY;
-    PortableDankHandler handler;
+
+public static PortableDankHandler getHandler(ItemStack bag){
     int type = Integer.parseInt(bag.getItem().getRegistryName().getPath().substring(5));
     switch (type){
-      case 1:default:{handler = new PortableDankHandler(9,256,bag);
-        break;
-      }
-      case 2:{handler = new PortableDankHandler(18,1024,bag);
-        break;
-      }
-      case 3:{handler = new PortableDankHandler(27,4096,bag);
-        break;
-      }
-      case 4:{handler = new PortableDankHandler(36,16384,bag);
-        break;
-      }
-      case 5:{handler = new PortableDankHandler(45,65536,bag);
-        break;
-      }
-      case 6: {
-        handler = new PortableDankHandler(54, 262144, bag);
-        break;
-      }
-      case 7:{handler = new PortableDankHandler(81,Integer.MAX_VALUE,bag);
-        break;
-      }
+      case 1:default:
+        return new PortableDankHandler(9,256,bag);
+      case 2:
+        return new PortableDankHandler(18,1024,bag);
+      case 3:
+        return new PortableDankHandler(27,4096,bag);
+      case 4:
+        return new PortableDankHandler(36,16384,bag);
+      case 5:
+        return new PortableDankHandler(45,65536,bag);
+      case 6:
+        return new PortableDankHandler(54, 262144, bag);
+      case 7:
+        return new PortableDankHandler(81,Integer.MAX_VALUE,bag);
     }
-    for (int i = 0; i < handler.getSlots(); i++){
-      ItemStack remainder1 = handler.insertItem(i,pickup,false);
-      if (remainder1.isEmpty()){
-        handler.writeItemStack();
-        return ItemStack.EMPTY;
-      }
-      remainder = remainder1;
+  }
+
+  public static boolean canAddItemToSlot(PortableDankHandler handler, ItemStack oldStack, ItemStack pickup, boolean stackSizeMatters) {
+    boolean flag = !oldStack.isEmpty();
+
+    if (!flag && pickup.isItemEqual(oldStack) && ItemStack.areItemStackTagsEqual(oldStack, pickup)) {
+      return oldStack.getCount() + (stackSizeMatters ? 0 : pickup.getCount()) <= handler.stacklimit;
     }
-    handler.writeItemStack();
-  return remainder;
+
+    return flag;
   }
 }

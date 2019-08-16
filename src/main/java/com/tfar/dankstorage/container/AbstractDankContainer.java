@@ -500,12 +500,12 @@ public abstract class AbstractDankContainer extends Container {
     this.dragSlots.clear();
   }
 
-  public static boolean canAddItemToSlot(@Nullable Slot slotIn, ItemStack stack, boolean stackSizeMatters) {
-    boolean flag = slotIn == null || !slotIn.getHasStack();
-    ItemStack slotStack = slotIn.getStack();
+  public static boolean canAddItemToSlot(@Nullable Slot slot, ItemStack stack, boolean stackSizeMatters) {
+    boolean flag = slot == null || !slot.getHasStack();
+    ItemStack slotStack = slot.getStack();
 
     if (!flag && stack.isItemEqual(slotStack) && ItemStack.areItemStackTagsEqual(slotStack, stack)) {
-      return slotStack.getCount() + (stackSizeMatters ? 0 : stack.getCount()) <= slotIn.getItemStackLimit(slotStack);
+      return slotStack.getCount() + (stackSizeMatters ? 0 : stack.getCount()) <= slot.getItemStackLimit(slotStack);
     }
 
     return flag;

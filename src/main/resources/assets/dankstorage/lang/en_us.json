@@ -15,7 +15,11 @@
   "container.dankstorage.dank_6": "Dank 6",
   "container.dankstorage.dank_7": "Dank 7",
 
-  "dankstorage.autopickup_enabled": "AutoPickup Enabled",
-  "key.dankstorage.autopickup": "Auto Pickup",
+  "dankstorage.pickup.enabled": "AutoPickup Enabled",
+  "dankstorage.pickup.disabled": "AutoPickup Disabled",
+  "dankstorage.void.enabled": "AutoVoid Enabled",
+  "dankstorage.void.disabled": "AutoVoid Disabled",
+  "key.dankstorage.pickup": "Auto Pickup",
+  "key.dankstorage.void": "Auto Void",
   "key.categories.dankstorage": "Dank Storage Keybinds"
 }

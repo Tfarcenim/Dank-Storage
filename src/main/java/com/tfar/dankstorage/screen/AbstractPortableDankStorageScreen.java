@@ -2,10 +2,10 @@ package com.tfar.dankstorage.screen;
 
 import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.tfar.dankstorage.RenderItemExtended;
+import com.tfar.dankstorage.client.RenderItemExtended;
 import com.tfar.dankstorage.container.AbstractDankContainer;
 import com.tfar.dankstorage.container.AbstractPortableDankContainer;
-import com.tfar.dankstorage.container.PortableDankContainer7;
+import com.tfar.dankstorage.container.DankContainers;
 import com.tfar.dankstorage.inventory.DankSlot;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.Screen;
@@ -22,8 +22,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
-
-import javax.annotation.Resource;
 
 public class AbstractPortableDankStorageScreen<T extends AbstractPortableDankContainer> extends ContainerScreen<T> {
   public static final int WIDTH = 176;
@@ -78,7 +76,7 @@ public class AbstractPortableDankStorageScreen<T extends AbstractPortableDankCon
   @Override
   protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
     minecraft.getTextureManager().bindTexture(background);
-    if (!(this.container instanceof PortableDankContainer7))
+    if (!(this.container instanceof DankContainers.PortableDankContainer7))
       blit(guiLeft, guiTop, 0, 0, xSize, ySize);
     else     blit(guiLeft, guiTop, 0, 0, xSize, ySize,256,512);  }
 

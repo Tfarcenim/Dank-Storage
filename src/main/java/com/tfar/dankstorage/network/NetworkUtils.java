@@ -1,5 +1,6 @@
 package com.tfar.dankstorage.network;
 
+import com.tfar.dankstorage.block.DankItemBlock;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.handler.codec.EncoderException;
@@ -72,4 +73,10 @@ public class NetworkUtils {
     }
   }
 
+  public static boolean autoPickup(ItemStack bag){
+   return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTag().getBoolean("pickup");
+  }
+  public static boolean autoVoid(ItemStack bag) {
+    return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTag().getBoolean("void");
+  }
 }

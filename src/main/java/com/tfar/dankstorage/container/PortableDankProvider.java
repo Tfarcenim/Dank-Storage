@@ -27,19 +27,19 @@ public class PortableDankProvider implements INamedContainerProvider {
     switch (tier) {
       case 1:
       default:
-        return new PortableDankContainer1(i, playerEntity.world, playerInventory, playerEntity);
+        return new DankContainers.PortableDankContainer1(i, playerEntity.world, playerInventory, playerEntity);
       case 2:
-        return new PortableDankContainer2(i, playerEntity.world, playerInventory, playerEntity);
+        return new DankContainers.PortableDankContainer2(i, playerEntity.world, playerInventory, playerEntity);
       case 3:
-        return new PortableDankContainer3(i, playerEntity.world, playerInventory, playerEntity);
+        return new DankContainers.PortableDankContainer3(i, playerEntity.world, playerInventory, playerEntity);
       case 4:
-        return new PortableDankContainer4(i, playerEntity.world, playerInventory, playerEntity);
+        return new DankContainers.PortableDankContainer4(i, playerEntity.world, playerInventory, playerEntity);
       case 5:
-        return new PortableDankContainer5(i, playerEntity.world, playerInventory, playerEntity);
+        return new DankContainers.PortableDankContainer5(i, playerEntity.world, playerInventory, playerEntity);
       case 6:
-        return new PortableDankContainer6(i, playerEntity.world, playerInventory, playerEntity);
+        return new DankContainers.PortableDankContainer6(i, playerEntity.world, playerInventory, playerEntity);
       case 7:
-        return new PortableDankContainer7(i, playerEntity.world, playerInventory, playerEntity);
+        return new DankContainers.PortableDankContainer7(i, playerEntity.world, playerInventory, playerEntity);
     }
   }
 }

@@ -1,4 +1,4 @@
-package com.tfar.dankstorage;
+package com.tfar.dankstorage.client;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;

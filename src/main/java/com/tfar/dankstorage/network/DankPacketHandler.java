@@ -19,5 +19,10 @@ public class DankPacketHandler {
             MessageToggleAutoPickup::encode,
             MessageToggleAutoPickup::decode,
             MessageToggleAutoPickup::handle);
+
+    INSTANCE.registerMessage(2, MessageToggleAutoVoid.class,
+            MessageToggleAutoVoid::encode,
+            MessageToggleAutoVoid::decode,
+            MessageToggleAutoVoid::handle);
   }
 }
