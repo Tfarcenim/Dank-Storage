@@ -69,8 +69,8 @@ public class AbstractPortableDankStorageScreen<T extends AbstractPortableDankCon
 
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-    this.font.drawString(this.te.getDisplayName().getUnformattedComponentText(), 8, 6, 4210752);
-    this.font.drawString(this.playerinventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 96 + 4, 4210752);
+    this.font.drawString(this.te.getDisplayName().getUnformattedComponentText(), 8, 6, 0x404040);
+    this.font.drawString(this.playerinventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 110, 0x404040);
   }
 
   @Override

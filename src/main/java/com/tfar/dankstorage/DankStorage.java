@@ -55,7 +55,7 @@ public class DankStorage {
     @SubscribeEvent
     public static void onBlocksRegistry(final RegistryEvent.Register<Block> event) {
       // register a new block here
-      Block.Properties properties = Block.Properties.create(Material.IRON);
+      Block.Properties properties = Block.Properties.create(Material.IRON).hardnessAndResistance(1,30);
       for (int i = 1; i < 8; i++) {
         register(new DankStorageBlock(properties), "dank_" + i, event.getRegistry());
       }

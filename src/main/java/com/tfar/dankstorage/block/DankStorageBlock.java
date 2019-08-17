@@ -23,6 +23,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
@@ -107,7 +108,8 @@ public class DankStorageBlock extends Block {
   @Override
   @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-   // if (stack.hasTag())tooltip.add(new StringTextComponent(stack.getTag().toString()));
+    //if (stack.hasTag())tooltip.add(new StringTextComponent(stack.getTag().toString()));
+    if (stack.hasTag())System.out.println(stack.getTag().toString());
     if (NetworkUtils.autoPickup(stack))tooltip.add(
             new TranslationTextComponent("dankstorage.pickup.enabled"));
     if (NetworkUtils.autoVoid(stack))tooltip.add(
@@ -134,20 +136,20 @@ public class DankStorageBlock extends Block {
         int count = toPickup.getCount();
         PortableDankHandler inv = getHandler(bag);
         for (int i = 0; i < inv.getSlots(); i++) {
-          ItemStack slot = inv.getStackInSlot(i);
-          if (slot.isEmpty()  && !Void) {
+          ItemStack stackInSlot = inv.getStackInSlot(i);
+          if (stackInSlot.isEmpty()  && !Void) {
             inv.setStackInSlot(i, toPickup.copy());
             toPickup.setCount(0);
-          } else if (canAddItemToSlot(inv,slot, toPickup,true)) {
-            int fill = inv.stacklimit - slot.getCount();
+          } else if (canAddItemToSlot(inv,stackInSlot, toPickup,true)) {
+            int fill = inv.stacklimit - stackInSlot.getCount();
             if (fill > toPickup.getCount()) {
-              slot.setCount(slot.getCount() + toPickup.getCount());
+              stackInSlot.setCount(stackInSlot.getCount() + toPickup.getCount());
             } else {
-              slot.setCount(inv.stacklimit);
+              stackInSlot.setCount(inv.stacklimit);
             }
             if (!Void)
             toPickup.split(fill);
-            else if (toPickup.getItem() == slot.getItem())toPickup.setCount(0);
+            else if (toPickup.isItemEqual(stackInSlot) && ItemStack.areItemStackTagsEqual(stackInSlot, toPickup))toPickup.setCount(0);
           }
           if (toPickup.isEmpty()) {
             break;
@@ -187,13 +189,13 @@ public static PortableDankHandler getHandler(ItemStack bag){
     }
   }
 
-  public static boolean canAddItemToSlot(PortableDankHandler handler, ItemStack oldStack, ItemStack pickup, boolean stackSizeMatters) {
-    boolean flag = !oldStack.isEmpty();
+  public static boolean canAddItemToSlot(PortableDankHandler handler, ItemStack stackInSlot, ItemStack pickup, boolean stackSizeMatters) {
+    boolean isEmpty = stackInSlot.isEmpty();
 
-    if (!flag && pickup.isItemEqual(oldStack) && ItemStack.areItemStackTagsEqual(oldStack, pickup)) {
-      return oldStack.getCount() + (stackSizeMatters ? 0 : pickup.getCount()) <= handler.stacklimit;
+    if (!isEmpty && pickup.isItemEqual(stackInSlot) && ItemStack.areItemStackTagsEqual(stackInSlot, pickup)) {
+      return stackInSlot.getCount() + (stackSizeMatters ? 0 : pickup.getCount()) <= handler.stacklimit;
     }
 
-    return flag;
+    return isEmpty;
   }
 }
