@@ -1,15 +1,15 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "dankstorage:upgrade2",
   "pattern": [
-    "i2i",
-    "2i2",
-    "i2i"
+    "iii",
+    "i1i",
+    "iii"
   ],
   "key": {
     "i": {
-      "tag": "forge:ingots/gold"
+      "tag": "forge:storage_blocks/gold"
     },
-    "2": {
+    "1": {
       "item": "dankstorage:dank_2"
     }
   },

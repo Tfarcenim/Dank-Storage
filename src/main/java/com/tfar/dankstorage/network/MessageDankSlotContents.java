@@ -3,8 +3,10 @@ package com.tfar.dankstorage.network;
 import java.util.function.Supplier;
 
 import com.tfar.dankstorage.container.AbstractDankContainer;
+import net.minecraft.block.AnvilBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.RepairContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -46,7 +48,7 @@ public class MessageDankSlotContents {
       if (player == null) return;
 
       ctx.get().enqueueWork(  ()->  {
-        if (player.openContainer instanceof AbstractDankContainer && this.windowId == player.openContainer.windowId) {
+        if (player.openContainer instanceof RepairContainer && this.windowId == player.openContainer.windowId) {
           player.openContainer.inventorySlots.get(this.slot).putStack(this.stack);
         }
       });

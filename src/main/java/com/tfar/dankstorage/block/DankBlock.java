@@ -1,18 +1,20 @@
 package com.tfar.dankstorage.block;
 
-import com.tfar.dankstorage.container.AbstractDankContainer;
+import com.tfar.dankstorage.client.Client;
+import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.NetworkUtils;
-import com.tfar.dankstorage.tile.*;
+import com.tfar.dankstorage.tile.AbstractDankStorageTile;
+import com.tfar.dankstorage.tile.DankTiles;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -21,31 +23,20 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.NetworkHooks;
-import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class DankStorageBlock extends Block {
-  public DankStorageBlock(Properties p_i48440_1_) {
+public class DankBlock extends Block {
+  public DankBlock(Properties p_i48440_1_) {
     super(p_i48440_1_);
-  }
-
-  @Override
-  public boolean hasTileEntity(BlockState state) {
-    return true;
   }
 
   @Override
@@ -66,6 +57,8 @@ public class DankStorageBlock extends Block {
     if (tile instanceof AbstractDankStorageTile && !world.isRemote){
       ItemStack dank = new ItemStack(((AbstractDankStorageTile) tile).getDank());
       CompoundNBT nbt = ((AbstractDankStorageTile) tile).itemHandler.serializeNBT();
+      nbt.putBoolean("pickup",((AbstractDankStorageTile) tile).pickup);
+      nbt.putBoolean("void",((AbstractDankStorageTile) tile).isVoid);
       dank.setTag(nbt);
       ItemEntity itemEntity = new ItemEntity(world,pos.getX()+ .5,pos.getY() + .5,pos.getZ()+.5,dank);
       world.addEntity(itemEntity);
@@ -78,8 +71,15 @@ public class DankStorageBlock extends Block {
     if (te instanceof AbstractDankStorageTile && !world.isRemote && entity != null) {
       if (stack.hasTag()){
         ((AbstractDankStorageTile) te).setContents(stack.getTag());
+        ((AbstractDankStorageTile) te).pickup = stack.getTag().getBoolean("pickup");
+        ((AbstractDankStorageTile) te).isVoid = stack.getTag().getBoolean("void");
       }
     }
+  }
+
+  @Override
+  public boolean hasTileEntity(BlockState state) {
+    return true;
   }
 
   @Nullable
@@ -107,13 +107,55 @@ public class DankStorageBlock extends Block {
 
   @Override
   @OnlyIn(Dist.CLIENT)
-  public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-    //if (stack.hasTag())tooltip.add(new StringTextComponent(stack.getTag().toString()));
-    if (stack.hasTag())System.out.println(stack.getTag().toString());
-    if (NetworkUtils.autoPickup(stack))tooltip.add(
-            new TranslationTextComponent("dankstorage.pickup.enabled"));
-    if (NetworkUtils.autoVoid(stack))tooltip.add(
-            new TranslationTextComponent("dankstorage.void.enabled"));
+  public void addInformation(ItemStack bag, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    //if (bag.hasTag())tooltip.add(new StringTextComponent(bag.getTag().toString()));
+
+    if (!Screen.hasShiftDown()){
+      tooltip.add(new TranslationTextComponent("text.dankstorage.shift",
+              new StringTextComponent("Shift").applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
+    }
+
+    if (Screen.hasShiftDown()) {
+      if (NetworkUtils.autoVoid(bag)) tooltip.add(
+              new TranslationTextComponent("text.dankstorage.disablevoid",new StringTextComponent(Client.AUTO_VOID.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
+      else tooltip.add(
+              new TranslationTextComponent("text.dankstorage.enablevoid",new StringTextComponent(Client.AUTO_VOID.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
+      if (NetworkUtils.autoPickup(bag)) tooltip.add(
+              new TranslationTextComponent("text.dankstorage.disablepickup",new StringTextComponent(Client.AUTO_PICKUP.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
+      else tooltip.add(
+              new TranslationTextComponent("text.dankstorage.enablepickup",new StringTextComponent(Client.AUTO_PICKUP.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
+      DankHandler handler = getHandler(bag);
+
+      if (handler.isEmpty()){
+        tooltip.add(
+                new TranslationTextComponent("text.dankstorage.empty").applyTextStyle(TextFormatting.ITALIC));
+        return;
+      }
+
+      for (int i = 0; i < handler.getSlots(); i++) {
+        ItemStack item = handler.getStackInSlot(i);
+        if (item.isEmpty())continue;
+          ITextComponent count = new StringTextComponent(Integer.toString(item.getCount())).applyTextStyle(TextFormatting.AQUA);
+        tooltip.add(new TranslationTextComponent("text.dankstorage.formatcontaineditems", count, item.getDisplayName().applyTextStyle(item.getRarity().color)));
+
+
+      }
+    }
+  }
+
+  @Override
+  public ITextComponent getNameTextComponent() {
+    int tier = Integer.parseInt(this.getRegistryName().getPath().substring(5));
+    switch (tier){
+      case 1:return super.getNameTextComponent().applyTextStyle(TextFormatting.DARK_GRAY);
+      case 2:return super.getNameTextComponent().applyTextStyle(TextFormatting.RED);
+      case 3:return super.getNameTextComponent().applyTextStyle(TextFormatting.GOLD);
+      case 4:return super.getNameTextComponent().applyTextStyle(TextFormatting.GREEN);
+      case 5:return super.getNameTextComponent().applyTextStyle(TextFormatting.AQUA);
+      case 6:return super.getNameTextComponent().applyTextStyle(TextFormatting.DARK_PURPLE);
+      case 7:return super.getNameTextComponent().applyTextStyle(TextFormatting.WHITE);
+    }
+    return super.getNameTextComponent();
   }
 
   public static boolean onItemPickup(EntityItemPickupEvent event, ItemStack bag) {
@@ -122,7 +164,7 @@ public class DankStorageBlock extends Block {
       return false;
     }
     ItemStack toPickup = event.getItem().getItem();
-    final boolean Void = NetworkUtils.autoVoid(bag);
+    final boolean isVoid = NetworkUtils.autoVoid(bag);
 
     if (true) {
       if (false) {
@@ -137,7 +179,7 @@ public class DankStorageBlock extends Block {
         PortableDankHandler inv = getHandler(bag);
         for (int i = 0; i < inv.getSlots(); i++) {
           ItemStack stackInSlot = inv.getStackInSlot(i);
-          if (stackInSlot.isEmpty()  && !Void) {
+          if (stackInSlot.isEmpty()  && !isVoid) {
             inv.setStackInSlot(i, toPickup.copy());
             toPickup.setCount(0);
           } else if (canAddItemToSlot(inv,stackInSlot, toPickup,true)) {
@@ -147,7 +189,7 @@ public class DankStorageBlock extends Block {
             } else {
               stackInSlot.setCount(inv.stacklimit);
             }
-            if (!Void)
+            if (!isVoid)
             toPickup.split(fill);
             else if (toPickup.isItemEqual(stackInSlot) && ItemStack.areItemStackTagsEqual(stackInSlot, toPickup))toPickup.setCount(0);
           }

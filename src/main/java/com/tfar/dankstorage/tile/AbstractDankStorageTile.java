@@ -1,6 +1,6 @@
 package com.tfar.dankstorage.tile;
 
-import com.tfar.dankstorage.block.DankStorageBlock;
+import com.tfar.dankstorage.block.DankBlock;
 import com.tfar.dankstorage.inventory.DankHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
@@ -25,6 +25,8 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
   public int numPlayersUsing = 0;
   protected String customName;
   public int renderTick = 0;
+  public boolean pickup;
+  public boolean isVoid;
 
   public DankHandler itemHandler;
 
@@ -78,7 +80,7 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
   }
 
   public void closeInventory(PlayerEntity player) {
-    if (!player.isSpectator() && this.getBlockState().getBlock() instanceof DankStorageBlock) {
+    if (!player.isSpectator() && this.getBlockState().getBlock() instanceof DankBlock) {
       --this.numPlayersUsing;
       this.world.addBlockEvent(this.pos, this.getBlockState().getBlock(), 1, this.numPlayersUsing);
       this.world.notifyNeighborsOfStateChange(this.pos, this.getBlockState().getBlock());
@@ -89,6 +91,8 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
   @Override
   public void read(CompoundNBT compound) {
     super.read(compound);
+    this.isVoid = compound.getBoolean("void");
+    this.pickup = compound.getBoolean("pickup");
     if (compound.contains("Items")) {
       itemHandler.deserializeNBT(compound.getCompound("Items"));
     }
@@ -100,6 +104,8 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
   @Override
   public CompoundNBT write(CompoundNBT compound) {
     super.write(compound);
+    compound.putBoolean("void", isVoid);
+    compound.putBoolean("pickup",pickup);
     compound.put("Items", itemHandler.serializeNBT());
     if (this.hasCustomName()) {
       compound.putString("CustomName", this.customName);

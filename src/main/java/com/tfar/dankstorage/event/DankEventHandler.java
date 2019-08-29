@@ -2,10 +2,8 @@ package com.tfar.dankstorage.event;
 
 import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.block.DankItemBlock;
-import com.tfar.dankstorage.block.DankStorageBlock;
-import com.tfar.dankstorage.container.AbstractDankContainer;
+import com.tfar.dankstorage.block.DankBlock;
 import com.tfar.dankstorage.container.AbstractPortableDankContainer;
-import com.tfar.dankstorage.screen.AbstractPortableDankStorageScreen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -25,7 +23,7 @@ public class DankEventHandler {
     PlayerInventory inventory = player.inventory;
     for (int i = 0; i < inventory.getSizeInventory(); i++) {
       ItemStack stack = inventory.getStackInSlot(i);
-      if (stack.getItem() instanceof DankItemBlock && DankStorageBlock.onItemPickup(event, stack)) {
+      if (stack.getItem() instanceof DankItemBlock && DankBlock.onItemPickup(event, stack)) {
         event.setCanceled(true);
         return;
       }

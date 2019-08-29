@@ -1,15 +1,15 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "dankstorage:upgrade3",
   "pattern": [
-    "i3i",
-    "3i3",
-    "i3i"
+    "iii",
+    "i1i",
+    "iii"
   ],
   "key": {
     "i": {
-      "tag": "forge:gems/emerald"
+      "tag": "forge:storage_blocks/emerald"
     },
-    "3": {
+    "1": {
       "item": "dankstorage:dank_3"
     }
   },

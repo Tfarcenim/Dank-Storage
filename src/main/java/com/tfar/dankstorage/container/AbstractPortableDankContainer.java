@@ -40,7 +40,7 @@ public class AbstractPortableDankContainer extends Container {
 
   public final int rows;
 
-  public AbstractPortableDankContainer(ContainerType<?> type, int p_i50105_2_, World world, PlayerInventory playerInventory, PlayerEntity player, int rows, int stacklimit) {
+  public AbstractPortableDankContainer(ContainerType<?> type, int p_i50105_2_, PlayerInventory playerInventory, PlayerEntity player, int rows, int stacklimit) {
     super(type, p_i50105_2_);
     this.rows = rows;
     this.bag = player.getHeldItemMainhand();
@@ -549,14 +549,14 @@ public class AbstractPortableDankContainer extends Container {
   public void syncInventory(ServerPlayerEntity player) {
     for (int i = 0; i < this.inventorySlots.size(); i++) {
       ItemStack stack = this.inventorySlots.get(i).getStack();
-      DankPacketHandler.INSTANCE.sendTo(new MessageDankSlotContents(this.windowId, i, stack), player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+//      DankPacketHandler.INSTANCE.sendTo(new MessageDankSlotContents(this.windowId, i, stack), player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
     }
 
     player.connection.sendPacket(new SSetSlotPacket(-1, -1, player.inventory.getItemStack()));
   }
 
   public void syncSlot(ServerPlayerEntity player, int slot, ItemStack stack) {
-    DankPacketHandler.INSTANCE.sendTo(new MessageDankSlotContents(this.windowId, slot, stack), player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+   // DankPacketHandler.INSTANCE.sendTo(new MessageDankSlotContents(this.windowId, slot, stack), player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
   }
 
   @Override

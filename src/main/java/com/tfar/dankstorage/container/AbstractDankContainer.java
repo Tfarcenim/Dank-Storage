@@ -558,7 +558,7 @@ public abstract class AbstractDankContainer extends Container {
   }
 
   public void syncSlot(ServerPlayerEntity player, int slot, ItemStack stack) {
-    DankPacketHandler.INSTANCE.sendTo(new MessageDankSlotContents(this.windowId, slot, stack), player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+//    DankPacketHandler.INSTANCE.sendTo(new MessageDankSlotContents(this.windowId, slot, stack), player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
   }
 
   @Override

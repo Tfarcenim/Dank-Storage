@@ -1,13 +1,13 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "dankstorage:upgrade1",
   "pattern": [
+    "iii",
     "i1i",
-    "1i1",
-    "i1i"
+    "iii"
   ],
   "key": {
     "i": {
-      "item": "minecraft:redstone"
+      "tag": "forge:storage_blocks/redstone"
     },
     "1": {
       "item": "dankstorage:dank_1"

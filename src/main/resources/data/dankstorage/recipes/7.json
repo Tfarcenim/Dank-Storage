@@ -1,9 +1,9 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "dankstorage:upgrade6",
   "pattern": [
+    "iii",
     "i1i",
-    "1i1",
-    "i1i"
+    "iii"
   ],
   "key": {
     "i": {

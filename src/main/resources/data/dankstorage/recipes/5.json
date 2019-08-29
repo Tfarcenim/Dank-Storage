@@ -1,13 +1,13 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "dankstorage:upgrade4",
   "pattern": [
+    "iii",
     "i1i",
-    "1i1",
-    "i1i"
+    "iii"
   ],
   "key": {
     "i": {
-      "tag": "forge:gems/diamond"
+      "tag": "forge:storage_blocks/diamond"
     },
     "1": {
       "item": "dankstorage:dank_4"

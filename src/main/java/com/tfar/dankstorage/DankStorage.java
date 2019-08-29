@@ -1,15 +1,19 @@
 package com.tfar.dankstorage;
 
 import com.tfar.dankstorage.block.DankItemBlock;
-import com.tfar.dankstorage.block.DankStorageBlock;
+import com.tfar.dankstorage.block.DankBlock;
 import com.tfar.dankstorage.container.*;
 import com.tfar.dankstorage.network.DankPacketHandler;
+import com.tfar.dankstorage.recipe.AbstractDankUpgradeRecipe;
+import com.tfar.dankstorage.recipe.DankUpgradeRecipes;
 import com.tfar.dankstorage.tile.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -22,8 +26,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.ObjectHolder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,11 +33,8 @@ import java.util.Set;
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(DankStorage.MODID)
 public class DankStorage {
-  // Directly reference a log4j logger.
 
   public static final String MODID = "dankstorage";
-
-  private static final Logger LOGGER = LogManager.getLogger();
 
   public DankStorage() {
     // Register the setup method for modloading
@@ -53,23 +52,33 @@ public class DankStorage {
     private static final Set<Block> MOD_BLOCKS = new HashSet<>();
 
     @SubscribeEvent
-    public static void onBlocksRegistry(final RegistryEvent.Register<Block> event) {
+    public static void blocks(final RegistryEvent.Register<Block> event) {
       // register a new block here
       Block.Properties properties = Block.Properties.create(Material.IRON).hardnessAndResistance(1,30);
       for (int i = 1; i < 8; i++) {
-        register(new DankStorageBlock(properties), "dank_" + i, event.getRegistry());
+        register(new DankBlock(properties), "dank_" + i, event.getRegistry());
       }
     }
 
     @SubscribeEvent
-    public static void item(final RegistryEvent.Register<Item> event) {
+    public static void items(final RegistryEvent.Register<Item> event) {
       Item.Properties properties = new Item.Properties().group(ItemGroup.DECORATIONS).maxStackSize(1);
       for (Block block : MOD_BLOCKS)
         register(new DankItemBlock(block, properties), block.getRegistryName().getPath(), event.getRegistry());
     }
 
     @SubscribeEvent
-    public static void container(final RegistryEvent.Register<ContainerType<?>> event) {
+    public static void recipes(final RegistryEvent.Register<IRecipeSerializer<?>> event) {
+      register(new SpecialRecipeSerializer<>(DankUpgradeRecipes.DankUpgradeRecipe1::new),"upgrade1",event.getRegistry());
+      register(new SpecialRecipeSerializer<>(DankUpgradeRecipes.DankUpgradeRecipe2::new),"upgrade2",event.getRegistry());
+      register(new SpecialRecipeSerializer<>(DankUpgradeRecipes.DankUpgradeRecipe3::new),"upgrade3",event.getRegistry());
+      register(new SpecialRecipeSerializer<>(DankUpgradeRecipes.DankUpgradeRecipe4::new),"upgrade4",event.getRegistry());
+      register(new SpecialRecipeSerializer<>(DankUpgradeRecipes.DankUpgradeRecipe5::new),"upgrade5",event.getRegistry());
+      register(new SpecialRecipeSerializer<>(DankUpgradeRecipes.DankUpgradeRecipe6::new),"upgrade6",event.getRegistry());
+    }
+
+    @SubscribeEvent
+    public static void containers(final RegistryEvent.Register<ContainerType<?>> event) {
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
@@ -130,7 +139,7 @@ public class DankStorage {
 
 
     @SubscribeEvent
-    public static void tile(final RegistryEvent.Register<TileEntityType<?>> event) {
+    public static void tiles(final RegistryEvent.Register<TileEntityType<?>> event) {
       register(TileEntityType.Builder.create(DankTiles.DankStorageTile1::new, Objects.dank_1).build(null), "dank_1_tile", event.getRegistry());
       register(TileEntityType.Builder.create(DankTiles.DankStorageTile2::new, Objects.dank_2).build(null), "dank_2_tile", event.getRegistry());
       register(TileEntityType.Builder.create(DankTiles.DankStorageTile3::new, Objects.dank_3).build(null), "dank_3_tile", event.getRegistry());
@@ -184,5 +193,11 @@ public class DankStorage {
     public static final TileEntityType<DankTiles.DankStorageTile6> dank_6_tile = null;
     public static final TileEntityType<DankTiles.DankStorageTile7> dank_7_tile = null;
 
+    public static final IRecipeSerializer<?> upgrade1 = null;
+    public static final IRecipeSerializer<?> upgrade2 = null;
+    public static final IRecipeSerializer<?> upgrade3 = null;
+    public static final IRecipeSerializer<?> upgrade4 = null;
+    public static final IRecipeSerializer<?> upgrade5 = null;
+    public static final IRecipeSerializer<?> upgrade6 = null;
   }
 }
