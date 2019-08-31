@@ -37,15 +37,8 @@ public abstract class AbstractAbstractDankContainer extends Container {
     super(type, p_i50105_2_);
     this.rows = rows;
     this.handler = handler;
-    //te.openInventory(player);
     addOwnSlots(rows);
     addPlayerSlots(playerInventory);
-  }
-
-  @Override
-  public void onContainerClosed(PlayerEntity playerIn) {
-    super.onContainerClosed(playerIn);
-    //this.te.closeInventory(playerIn);
   }
 
   public void addOwnSlots(int rows) {
@@ -95,8 +88,6 @@ public abstract class AbstractAbstractDankContainer extends Container {
       });
     }
   }
-
-
 
   @Override
   public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
@@ -520,7 +511,6 @@ public abstract class AbstractAbstractDankContainer extends Container {
       this.listeners.add(listener);
       if (listener instanceof ServerPlayerEntity) {
         ServerPlayerEntity player = (ServerPlayerEntity) listener;
-
         player.connection.sendPacket(new SSetSlotPacket(-1, -1, player.inventory.getItemStack()));
       }
       this.detectAndSendChanges();

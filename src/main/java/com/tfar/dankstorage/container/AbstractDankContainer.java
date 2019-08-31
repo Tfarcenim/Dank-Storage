@@ -17,7 +17,6 @@ public abstract class AbstractDankContainer extends AbstractAbstractDankContaine
     super(type, p_i50105_2_, playerInventory,player,handler,rows);
     this.te = (AbstractDankStorageTile) world.getTileEntity(pos);
     te.openInventory(player);
-    addPlayerSlots(playerInventory);
   }
 
   @Override

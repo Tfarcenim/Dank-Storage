@@ -24,9 +24,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
-public class AbstractAbstractDankStorageScreen<T extends AbstractAbstractDankContainer> extends ContainerScreen<T> {
-  public static final int WIDTH = 176;
-  public static final int HEIGHT = 166;
+public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstractDankContainer> extends ContainerScreen<T> {
 
    final ResourceLocation background;//= new ResourceLocation("textures/gui/container/shulker_box.png");
 
@@ -55,12 +53,9 @@ public class AbstractAbstractDankStorageScreen<T extends AbstractAbstractDankCon
    boolean doubleClick;
    ItemStack shiftClickedSlot = ItemStack.EMPTY;
 
-  protected PlayerInventory playerinventory;
-
   public AbstractAbstractDankStorageScreen(T container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background, int rows) {
     super(container,playerinventory, component);
     this.background = background;
-    this.playerinventory = playerinventory;
     ySize += ((rows-2) * 18);
 
     this.ignoreMouseUp = true;
@@ -68,8 +63,7 @@ public class AbstractAbstractDankStorageScreen<T extends AbstractAbstractDankCon
 
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-    //this.font.drawString(this.te.getDisplayName().getUnformattedComponentText(), 8, 6, 4210752);
-    this.font.drawString(this.playerinventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 110, 0x404040);
+    this.font.drawString(this.playerInventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 110, 0x404040);
   }
 
   @Override

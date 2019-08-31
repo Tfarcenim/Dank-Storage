@@ -86,8 +86,9 @@ public class RenderItemExtended {
     }
   }
 
+  private static final DecimalFormat decimalFormat = new DecimalFormat("0.#");
+
   public String getStringFromInt(int number){
-    DecimalFormat decimalFormat = new DecimalFormat("0.#");
 
     if (number >= 1000000000) return decimalFormat.format(number / 1000000000f) + "b";
     if (number >= 1000000) return decimalFormat.format(number / 1000000f) + "m";
