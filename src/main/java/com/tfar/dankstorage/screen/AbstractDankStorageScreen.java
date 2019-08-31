@@ -23,24 +23,17 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
-public class AbstractDankStorageScreen<T extends AbstractDankContainer> extends ContainerScreen<T> {
-  public static final int WIDTH = 176;
-  public static final int HEIGHT = 166;
+public class AbstractDankStorageScreen<T extends AbstractDankContainer> extends AbstractAbstractDankStorageScreen<T> {
 
-  private final ResourceLocation background;//= new ResourceLocation("textures/gui/container/shulker_box.png");
-
-  private Slot hoveredSlot;
-  /** Used when touchscreen is enabled. */
+  /**private Slot hoveredSlot;
+   Used when touchscreen is enabled.
   private Slot clickedSlot;
-  /** Used when touchscreen is enabled. */
   private boolean isRightMouseClick;
-  /** Used when touchscreen is enabled */
   private ItemStack draggedStack = ItemStack.EMPTY;
   private double touchUpX;
   private double touchUpY;
   private Slot returningStackDestSlot;
   private long returningStackTime;
-  /** Used when touchscreen is enabled */
   private ItemStack returningStack = ItemStack.EMPTY;
   private Slot currentDragTargetSlot;
   private long dragItemDropDelay;
@@ -52,16 +45,13 @@ public class AbstractDankStorageScreen<T extends AbstractDankContainer> extends 
   private Slot lastClickSlot;
   private int lastClickButton;
   private boolean doubleClick;
-  private ItemStack shiftClickedSlot = ItemStack.EMPTY;
+  private ItemStack shiftClickedSlot = ItemStack.EMPTY;*/
 
   protected AbstractDankStorageTile te;
-  protected PlayerInventory playerinventory;
 
   public AbstractDankStorageScreen(T container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background, int rows) {
-    super(container,playerinventory, component);
-    this.background = background;
-    this.playerinventory = playerinventory;
-    this.te = container.getTile();
+    super(container,playerinventory, component,background,rows);
+    this.te = container.te;
     ySize += ((rows-2) * 18);
 
     this.ignoreMouseUp = true;
@@ -588,7 +578,6 @@ public class AbstractDankStorageScreen<T extends AbstractDankContainer> extends 
         }
       }
     }
-
     return false;
   }
 }

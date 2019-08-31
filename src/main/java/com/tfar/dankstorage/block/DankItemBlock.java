@@ -18,7 +18,7 @@ public class DankItemBlock extends BlockItem {
     super(p_i48527_1_, p_i48527_2_);
   }
 
-  public static final Rarity DARK_GRAY = Rarity.create("dark_gray", TextFormatting.DARK_GRAY);
+  public static final Rarity GRAY = Rarity.create("dark_gray", TextFormatting.GRAY);
   public static final Rarity RED = Rarity.create("red", TextFormatting.RED);
   public static final Rarity GOLD = Rarity.create("gold", TextFormatting.GOLD);
   public static final Rarity GREEN = Rarity.create("green", TextFormatting.GREEN);
@@ -30,7 +30,7 @@ public class DankItemBlock extends BlockItem {
   public Rarity getRarity(ItemStack stack) {
     int type = Integer.parseInt(this.getRegistryName().getPath().substring(5));
     switch (type){
-      case 1: return DARK_GRAY;
+      case 1: return GRAY;
       case 2:return RED;
       case 3:return GOLD;
       case 4:return GREEN;
@@ -45,7 +45,7 @@ public class DankItemBlock extends BlockItem {
   public ActionResult<ItemStack> onItemRightClick(World p_77659_1_, PlayerEntity player, Hand hand) {
     if (!p_77659_1_.isRemote) {
       int type = Integer.parseInt(player.getHeldItem(hand).getItem().getRegistryName().getPath().substring(5));
-      NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(type));
+      NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(type), data -> data.writeItemStack(player.getHeldItem(hand)));
     }
     return super.onItemRightClick(p_77659_1_, player, hand);
   }

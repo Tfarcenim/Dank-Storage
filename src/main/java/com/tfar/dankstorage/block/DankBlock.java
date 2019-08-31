@@ -3,7 +3,7 @@ package com.tfar.dankstorage.block;
 import com.tfar.dankstorage.client.Client;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
-import com.tfar.dankstorage.network.NetworkUtils;
+import com.tfar.dankstorage.network.Utils;
 import com.tfar.dankstorage.tile.AbstractDankStorageTile;
 import com.tfar.dankstorage.tile.DankTiles;
 import net.minecraft.block.Block;
@@ -116,11 +116,11 @@ public class DankBlock extends Block {
     }
 
     if (Screen.hasShiftDown()) {
-      if (NetworkUtils.autoVoid(bag)) tooltip.add(
+      if (Utils.autoVoid(bag)) tooltip.add(
               new TranslationTextComponent("text.dankstorage.disablevoid",new StringTextComponent(Client.AUTO_VOID.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
       else tooltip.add(
               new TranslationTextComponent("text.dankstorage.enablevoid",new StringTextComponent(Client.AUTO_VOID.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
-      if (NetworkUtils.autoPickup(bag)) tooltip.add(
+      if (Utils.autoPickup(bag)) tooltip.add(
               new TranslationTextComponent("text.dankstorage.disablepickup",new StringTextComponent(Client.AUTO_PICKUP.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
       else tooltip.add(
               new TranslationTextComponent("text.dankstorage.enablepickup",new StringTextComponent(Client.AUTO_PICKUP.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
@@ -164,7 +164,7 @@ public class DankBlock extends Block {
       return false;
     }
     ItemStack toPickup = event.getItem().getItem();
-    final boolean isVoid = NetworkUtils.autoVoid(bag);
+    final boolean isVoid = Utils.autoVoid(bag);
 
     if (true) {
       if (false) {

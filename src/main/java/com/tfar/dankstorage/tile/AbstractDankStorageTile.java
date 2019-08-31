@@ -144,10 +144,6 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
     return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? LazyOptional.of(() -> itemHandler).cast() : super.getCapability(capability, facing);
   }
 
-  public DankHandler getHandler() {
-    return itemHandler;
-  }
-
   @Override
   public boolean hasCustomName() {
     return this.customName != null && !this.customName.isEmpty();

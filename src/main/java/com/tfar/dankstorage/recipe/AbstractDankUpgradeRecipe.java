@@ -2,8 +2,6 @@ package com.tfar.dankstorage.recipe;
 
 import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.block.DankBlock;
-import com.tfar.dankstorage.event.DankEventHandler;
-import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;

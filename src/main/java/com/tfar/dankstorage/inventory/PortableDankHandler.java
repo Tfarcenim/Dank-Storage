@@ -1,16 +1,7 @@
 package com.tfar.dankstorage.inventory;
 
-import com.tfar.dankstorage.network.NetworkUtils;
+import com.tfar.dankstorage.network.Utils;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.ItemStackHandler;
-
-import javax.annotation.Nonnull;
-import java.lang.reflect.Constructor;
 
 public class PortableDankHandler extends DankHandler {
 
@@ -34,8 +25,8 @@ public class PortableDankHandler extends DankHandler {
         }
       }
     } else {
-      boolean pickup = NetworkUtils.autoPickup(bag);
-      boolean Void = NetworkUtils.autoVoid(bag);
+      boolean pickup = Utils.autoPickup(bag);
+      boolean Void = Utils.autoVoid(bag);
       bag.setTag(serializeNBT());
       bag.getOrCreateTag().putBoolean("pickup",pickup);
       bag.getOrCreateTag().putBoolean("void",Void);

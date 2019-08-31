@@ -3,10 +3,11 @@ package com.tfar.dankstorage.screen;
 import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.tfar.dankstorage.client.RenderItemExtended;
+import com.tfar.dankstorage.container.AbstractAbstractDankContainer;
 import com.tfar.dankstorage.container.AbstractDankContainer;
-import com.tfar.dankstorage.container.AbstractPortableDankContainer;
 import com.tfar.dankstorage.container.DankContainers;
 import com.tfar.dankstorage.inventory.DankSlot;
+import com.tfar.dankstorage.tile.AbstractDankStorageTile;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -23,17 +24,19 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
-public class AbstractPortableDankStorageScreen<T extends AbstractPortableDankContainer> extends ContainerScreen<T> {
+public class AbstractAbstractDankStorageScreen<T extends AbstractAbstractDankContainer> extends ContainerScreen<T> {
+  public static final int WIDTH = 176;
+  public static final int HEIGHT = 166;
 
-  protected final ResourceLocation background; //= new ResourceLocation("textures/gui/container/shulker_box.png");
+   final ResourceLocation background;//= new ResourceLocation("textures/gui/container/shulker_box.png");
 
-  protected Slot hoveredSlot;
+   Slot hoveredSlot;
   /** Used when touchscreen is enabled. */
-  Slot clickedSlot;
+   Slot clickedSlot;
   /** Used when touchscreen is enabled. */
-  boolean isRightMouseClick;
+   boolean isRightMouseClick;
   /** Used when touchscreen is enabled */
-  ItemStack draggedStack = ItemStack.EMPTY;
+   ItemStack draggedStack = ItemStack.EMPTY;
    double touchUpX;
    double touchUpY;
    Slot returningStackDestSlot;
@@ -52,31 +55,30 @@ public class AbstractPortableDankStorageScreen<T extends AbstractPortableDankCon
    boolean doubleClick;
    ItemStack shiftClickedSlot = ItemStack.EMPTY;
 
-  protected ItemStack te;
   protected PlayerInventory playerinventory;
 
-  public AbstractPortableDankStorageScreen(T container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background) {
+  public AbstractAbstractDankStorageScreen(T container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background, int rows) {
     super(container,playerinventory, component);
     this.background = background;
     this.playerinventory = playerinventory;
-    this.te = playerinventory.player.getHeldItemMainhand();
-    ySize += ((this.container.rows-2) * 18);
+    ySize += ((rows-2) * 18);
 
     this.ignoreMouseUp = true;
   }
 
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-    this.font.drawString(this.te.getDisplayName().getUnformattedComponentText(), 8, 6, 0x404040);
+    //this.font.drawString(this.te.getDisplayName().getUnformattedComponentText(), 8, 6, 4210752);
     this.font.drawString(this.playerinventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 110, 0x404040);
   }
 
   @Override
   protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
     minecraft.getTextureManager().bindTexture(background);
-    if (!(this.container instanceof DankContainers.PortableDankContainer7))
-      blit(guiLeft, guiTop, 0, 0, xSize, ySize);
-    else     blit(guiLeft, guiTop, 0, 0, xSize, ySize,256,512);  }
+    if (!(this.container instanceof DankContainers.DankContainer7))
+    blit(guiLeft, guiTop, 0, 0, xSize, ySize);
+    else     blit(guiLeft, guiTop, 0, 0, xSize, ySize,256,512);
+  }
 
   @Override
   public void render(int mouseX, int mouseY, float partialTicks) {
@@ -585,7 +587,6 @@ public class AbstractPortableDankStorageScreen<T extends AbstractPortableDankCon
         }
       }
     }
-
     return false;
   }
 }

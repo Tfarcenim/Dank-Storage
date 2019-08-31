@@ -23,14 +23,6 @@ public class RenderItemExtended {
     itemRender.zLevel = z;
   }
 
-  public float getZLevel() {
-    return itemRender.zLevel;
-  }
-
-  public void modifyZLevel(float amount) {
-    itemRender.zLevel += amount;
-  }
-
   public void renderItemOverlayIntoGUI(FontRenderer fr, ItemStack stack, int xPosition, int yPosition,
                                        @Nullable String text) {
     if (!stack.isEmpty()) {

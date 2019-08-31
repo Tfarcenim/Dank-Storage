@@ -9,7 +9,6 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Constructor;
 import java.util.stream.IntStream;
 
 public class DankHandler extends ItemStackHandler {
