@@ -2,6 +2,8 @@ package com.tfar.dankstorage;
 
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.block.DankBlock;
+import com.tfar.dankstorage.capability.CapabilityDankStorage;
+import com.tfar.dankstorage.capability.CapabilityDankStorageProvider;
 import com.tfar.dankstorage.container.*;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
@@ -20,6 +22,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.extensions.IForgeContainerType;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -41,6 +44,7 @@ public class DankStorage {
   public DankStorage() {
     // Register the setup method for modloading
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+    CapabilityDankStorage.register();
   }
 
   private void setup(final FMLCommonSetupEvent event) {

@@ -32,6 +32,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -86,9 +87,7 @@ public class DankBlock extends Block {
     ItemStack bag = ctx.item;
 
     Block block = Block.getBlockFromItem(bag.getItem());
-
     if (block instanceof DankBlock)return block.getDefaultState();
-
     return block.isAir(block.getDefaultState()) ? null : block.getStateForPlacement(ctx);
   }
 
@@ -100,7 +99,7 @@ public class DankBlock extends Block {
   @Nullable
   @Override
   public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-    int type = Integer.parseInt(state.getBlock().getRegistryName().getPath().substring(5));
+    int type = Utils.getTier(this.getRegistryName());
     switch (type) {
       case 1:
       default:
@@ -158,9 +157,10 @@ public class DankBlock extends Block {
     }
   }
 
+  @Nonnull
   @Override
   public ITextComponent getNameTextComponent() {
-    int tier = Integer.parseInt(this.getRegistryName().getPath().substring(5));
+    int tier = Utils.getTier(this.getRegistryName());
     switch (tier){
       case 1:return super.getNameTextComponent().applyTextStyle(TextFormatting.DARK_GRAY);
       case 2:return super.getNameTextComponent().applyTextStyle(TextFormatting.RED);
@@ -224,23 +224,8 @@ public class DankBlock extends Block {
   }
 
 public static PortableDankHandler getHandler(ItemStack bag){
-    int type = Integer.parseInt(bag.getItem().getRegistryName().getPath().substring(5));
-    switch (type){
-      case 1:default:
-        return new PortableDankHandler(9,256,bag);
-      case 2:
-        return new PortableDankHandler(18,1024,bag);
-      case 3:
-        return new PortableDankHandler(27,4096,bag);
-      case 4:
-        return new PortableDankHandler(36,16384,bag);
-      case 5:
-        return new PortableDankHandler(45,65536,bag);
-      case 6:
-        return new PortableDankHandler(54, 262144, bag);
-      case 7:
-        return new PortableDankHandler(81,Integer.MAX_VALUE,bag);
-    }
+    int type = Utils.getTier(bag);
+    return new PortableDankHandler(type,Utils.getStackLimit(bag), bag);
   }
 
   public static boolean canAddItemToSlot(PortableDankHandler handler, ItemStack stackInSlot, ItemStack pickup, boolean stackSizeMatters) {

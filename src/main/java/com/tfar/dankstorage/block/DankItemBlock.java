@@ -1,5 +1,6 @@
 package com.tfar.dankstorage.block;
 
+import com.tfar.dankstorage.capability.CapabilityDankStorageProvider;
 import com.tfar.dankstorage.container.PortableDankProvider;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.Utils;
@@ -9,11 +10,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
@@ -32,8 +35,14 @@ public class DankItemBlock extends BlockItem {
   public static final Rarity WHITE = Rarity.create("white", TextFormatting.WHITE);
 
   @Override
+  public ICapabilityProvider initCapabilities(final ItemStack stack, final CompoundNBT nbt) {
+    return new CapabilityDankStorageProvider(stack);
+  }
+
+  @Nonnull
+  @Override
   public Rarity getRarity(ItemStack stack) {
-    int type = Integer.parseInt(this.getRegistryName().getPath().substring(5));
+    int type = Utils.getTier(this.getRegistryName());
     switch (type) {
       case 1:
         return GRAY;

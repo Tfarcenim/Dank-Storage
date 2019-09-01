@@ -3,15 +3,18 @@ package com.tfar.dankstorage.network;
 import com.tfar.dankstorage.block.DankBlock;
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.inventory.DankHandler;
+import com.tfar.dankstorage.inventory.PortableDankHandler;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class Utils {
 
-  public static boolean autoPickup(ItemStack bag){
-   return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTag().getBoolean("pickup");
+  public static boolean autoPickup(ItemStack bag) {
+    return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTag().getBoolean("pickup");
   }
 
-  public static boolean construction(ItemStack bag){
+  public static boolean construction(ItemStack bag) {
     return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTag().getBoolean("construction");
   }
 
@@ -19,24 +22,53 @@ public class Utils {
     return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTag().getBoolean("void");
   }
 
-  public static int getSelectedSlot(ItemStack bag){
+  public static int getSelectedSlot(ItemStack bag) {
     return bag.getOrCreateTag().getInt("selectedSlot");
   }
 
-  public static void setSelectedSlot(ItemStack bag, int slot){
-    bag.getOrCreateTag().putInt("selectedSlot",slot);
+  public static void setSelectedSlot(ItemStack bag, int slot) {
+    bag.getOrCreateTag().putInt("selectedSlot", slot);
   }
 
-  public static void changeSlot(ItemStack bag, boolean right){
+  public static int getStackLimit(ItemStack bag) {
+
+    switch (getTier(bag)) {
+      case 1:
+      default:
+        return 256;
+      case 2:
+        return 1024;
+      case 3:
+        return 4096;
+      case 4:
+        return 16384;
+      case 5:
+        return 65536;
+      case 6:
+        return 262144;
+      case 7:
+        return Integer.MAX_VALUE;
+    }
+  }
+
+  public static int getTier(ItemStack bag) {
+    return getTier(bag.getItem().getRegistryName());
+  }
+
+  public static int getTier(ResourceLocation registryname){
+    return Integer.parseInt(registryname.getPath().substring(5));
+  }
+
+  public static void changeSlot(ItemStack bag, boolean right) {
     int selectedSlot = getSelectedSlot(bag);
     DankHandler handler = DankBlock.getHandler(bag);
-    if (right){
+    if (right) {
       selectedSlot++;
       if (selectedSlot >= handler.getSlots()) selectedSlot = 0;
     } else {
       selectedSlot--;
-      if (selectedSlot < 0)selectedSlot = handler.getSlots() - 1;
+      if (selectedSlot < 0) selectedSlot = handler.getSlots() - 1;
     }
-    setSelectedSlot(bag,selectedSlot);
+    setSelectedSlot(bag, selectedSlot);
   }
 }
