@@ -17,6 +17,7 @@ public class CapabilityDankStorageProvider implements ICapabilityProvider {
 
   private PortableDankHandler handler;
 
+  LazyOptional<CapabilityItemHandler> itemHandlerLazyOptional;
 
   public CapabilityDankStorageProvider(ItemStack stack) {
 
@@ -27,6 +28,7 @@ public class CapabilityDankStorageProvider implements ICapabilityProvider {
         stack.setTag((CompoundNBT) CapabilityDankStorage.DANK_STORAGE_CAPABILITY.writeNBT(this, null));
       }
     };
+    this.itemHandlerLazyOptional = LazyOptional.of(() -> handler).cast();
     if (stack.hasTag())
       CapabilityDankStorage.DANK_STORAGE_CAPABILITY.readNBT(this.handler, null, stack.getTag());
   }

@@ -18,6 +18,7 @@ public class MessageChangeSlot {
 
   public MessageChangeSlot(boolean right){ this.right = right;}
 
+  //decode
   public MessageChangeSlot(PacketBuffer buf) {
     this.right = buf.readBoolean();
   }

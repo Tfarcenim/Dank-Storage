@@ -65,7 +65,7 @@ public class Client {
   public static class KeyHandler {
     @SubscribeEvent
     public static void onKeyInput(InputEvent.KeyInputEvent event) {
-      if (!(mc.player.getHeldItemMainhand().getItem() instanceof DankItemBlock))return;
+      if (mc.player == null || !(mc.player.getHeldItemMainhand().getItem() instanceof DankItemBlock))return;
       if (AUTO_PICKUP.isPressed()) {
         DankPacketHandler.INSTANCE.sendToServer(new MessageToggleAutoPickup());
       }

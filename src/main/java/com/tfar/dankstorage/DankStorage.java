@@ -44,11 +44,11 @@ public class DankStorage {
   public DankStorage() {
     // Register the setup method for modloading
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-    CapabilityDankStorage.register();
   }
 
   private void setup(final FMLCommonSetupEvent event) {
     DankPacketHandler.registerMessages(MODID);
+    CapabilityDankStorage.register();
   }
 
   // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
