@@ -30,5 +30,10 @@ public class DankPacketHandler {
             MessageChangeSlot::encode,
             MessageChangeSlot::new,
             MessageChangeSlot::handle);
+
+    INSTANCE.registerMessage(5, MessagePickBlock.class,
+            MessagePickBlock::encode,
+            MessagePickBlock::decode,
+            MessagePickBlock::handle);
   }
 }

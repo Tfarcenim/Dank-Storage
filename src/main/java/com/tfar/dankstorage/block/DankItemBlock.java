@@ -1,12 +1,13 @@
 package com.tfar.dankstorage.block;
 
 import com.tfar.dankstorage.container.PortableDankProvider;
-import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.Utils;
 import net.minecraft.block.Block;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -14,6 +15,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
+
+import javax.annotation.Nonnull;
 
 public class DankItemBlock extends BlockItem {
   public DankItemBlock(Block p_i48527_1_, Properties p_i48527_2_) {
@@ -31,25 +34,54 @@ public class DankItemBlock extends BlockItem {
   @Override
   public Rarity getRarity(ItemStack stack) {
     int type = Integer.parseInt(this.getRegistryName().getPath().substring(5));
-    switch (type){
-      case 1: return GRAY;
-      case 2:return RED;
-      case 3:return GOLD;
-      case 4:return GREEN;
-      case 5:return BLUE;
-      case 6:return PURPLE;
-      case 7:return WHITE;
+    switch (type) {
+      case 1:
+        return GRAY;
+      case 2:
+        return RED;
+      case 3:
+        return GOLD;
+      case 4:
+        return GREEN;
+      case 5:
+        return BLUE;
+      case 6:
+        return PURPLE;
+      case 7:
+        return WHITE;
     }
     return super.getRarity(stack);
   }
 
+  @Nonnull
   @Override
-  public ActionResult<ItemStack> onItemRightClick(World p_77659_1_, PlayerEntity player, Hand hand) {
-    if (!p_77659_1_.isRemote && player.isSneaking()) {
-      int type = Integer.parseInt(player.getHeldItem(hand).getItem().getRegistryName().getPath().substring(5));
-      NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(type), data -> data.writeItemStack(player.getHeldItem(hand)));
-    }
-    return super.onItemRightClick(p_77659_1_, player, hand);
+  public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+    if (!world.isRemote)
+      if (player.isSneaking()) {
+        int type = Integer.parseInt(player.getHeldItem(hand).getItem().getRegistryName().getPath().substring(5));
+        NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(type), data -> data.writeItemStack(player.getHeldItem(hand)));
+      } else {
+        ItemStack bag = player.getHeldItem(hand);
+        PortableDankHandler handler = DankBlock.getHandler(bag);
+        ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
+        player.setItemStackToSlot(EquipmentSlotType.MAINHAND, toPlace);
+        ActionResult<ItemStack> actionResultType = toPlace.getItem().onItemRightClick(world, player, hand);
+        handler.setStackInSlot(Utils.getSelectedSlot(bag), actionResultType.getResult());
+        player.setItemStackToSlot(EquipmentSlotType.MAINHAND, bag);
+      }
+    return super.onItemRightClick(world, player, hand);
+  }
+
+  @Override
+  public boolean itemInteractionForEntity(ItemStack bag, PlayerEntity player, LivingEntity entity, Hand hand) {
+    if (!Utils.construction(bag))return false;
+    PortableDankHandler handler = DankBlock.getHandler(bag);
+    ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
+    player.setItemStackToSlot(EquipmentSlotType.MAINHAND, toPlace);
+    boolean result = toPlace.getItem().itemInteractionForEntity(toPlace, player, entity, hand);
+    handler.setStackInSlot(Utils.getSelectedSlot(bag),toPlace);
+    player.setItemStackToSlot(EquipmentSlotType.MAINHAND, bag);
+    return result;
   }
 
   @Override
@@ -60,15 +92,15 @@ public class DankItemBlock extends BlockItem {
   @Override
   public ActionResultType onItemUse(ItemUseContext ctx) {
     if (!Utils.construction(ctx.getItem()))
-    return super.onItemUse(ctx);
+      return super.onItemUse(ctx);
+
 
     ItemStack bag = ctx.item;
     PortableDankHandler handler = DankBlock.getHandler(bag);
     int selectedSlot = Utils.getSelectedSlot(bag);
     ctx.item = handler.getStackInSlot(selectedSlot);
-
-    ActionResultType actionResultType = this.tryPlace(new BlockItemUseContext(ctx));
-      handler.setStackInSlot(selectedSlot,ctx.item);
+    ActionResultType actionResultType = ctx.item.onItemUse(ctx);
+    handler.setStackInSlot(selectedSlot, ctx.item);
     return actionResultType;
   }
 }
