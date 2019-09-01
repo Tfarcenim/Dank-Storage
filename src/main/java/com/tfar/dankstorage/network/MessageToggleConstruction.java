@@ -1,6 +1,6 @@
 package com.tfar.dankstorage.network;
 
-/*import com.tfar.dankstorage.block.DankItemBlock;
+import com.tfar.dankstorage.block.DankItemBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -28,13 +28,11 @@ public class MessageToggleConstruction {
       ctx.get().enqueueWork(  ()->  {
         if (player.getHeldItemMainhand().getItem() instanceof DankItemBlock) {
           boolean toggle = Utils.construction(player.getHeldItemMainhand());
-          player.sendStatusMessage(new TranslationTextComponent("dankstorage.construction." + (toggle ? "disabled" : "enabled")),false);
+          player.sendStatusMessage(new TranslationTextComponent("dankstorage.construction." + (toggle ? "disabled" : "enabled")),true);
           player.getHeldItemMainhand().getOrCreateTag().putBoolean("construction",!toggle);
         }
       });
       ctx.get().setPacketHandled(true);
     }
-
-
-}*/
+}
 

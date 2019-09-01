@@ -27,6 +27,7 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
   public int renderTick = 0;
   public boolean pickup;
   public boolean isVoid;
+  public int selectedSlot;
 
   public DankHandler itemHandler;
 
@@ -93,6 +94,7 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
     super.read(compound);
     this.isVoid = compound.getBoolean("void");
     this.pickup = compound.getBoolean("pickup");
+    this.selectedSlot = compound.getInt("selectedSlot");
     if (compound.contains("Items")) {
       itemHandler.deserializeNBT(compound.getCompound("Items"));
     }
@@ -106,6 +108,7 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
     super.write(compound);
     compound.putBoolean("void", isVoid);
     compound.putBoolean("pickup",pickup);
+    compound.putInt("selectedSlot",selectedSlot);
     compound.put("Items", itemHandler.serializeNBT());
     if (this.hasCustomName()) {
       compound.putString("CustomName", this.customName);

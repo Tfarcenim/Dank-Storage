@@ -28,7 +28,7 @@ public class MessageToggleAutoVoid {
       ctx.get().enqueueWork(  ()->  {
         if (player.getHeldItemMainhand().getItem() instanceof DankItemBlock) {
           boolean toggle = Utils.autoVoid(player.getHeldItemMainhand());
-          player.sendStatusMessage(new TranslationTextComponent("dankstorage.void." + (toggle ? "disabled" : "enabled")),false);
+          player.sendStatusMessage(new TranslationTextComponent("dankstorage.void." + (toggle ? "disabled" : "enabled")),true);
           player.getHeldItemMainhand().getOrCreateTag().putBoolean("void",!toggle);
         }
       });

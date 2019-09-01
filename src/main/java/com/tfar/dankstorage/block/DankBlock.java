@@ -15,6 +15,7 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -59,6 +60,7 @@ public class DankBlock extends Block {
       CompoundNBT nbt = ((AbstractDankStorageTile) tile).itemHandler.serializeNBT();
       nbt.putBoolean("pickup",((AbstractDankStorageTile) tile).pickup);
       nbt.putBoolean("void",((AbstractDankStorageTile) tile).isVoid);
+      nbt.putInt("selectedSlot",((AbstractDankStorageTile) tile).selectedSlot);
       dank.setTag(nbt);
       ItemEntity itemEntity = new ItemEntity(world,pos.getX()+ .5,pos.getY() + .5,pos.getZ()+.5,dank);
       world.addEntity(itemEntity);
@@ -73,8 +75,21 @@ public class DankBlock extends Block {
         ((AbstractDankStorageTile) te).setContents(stack.getTag());
         ((AbstractDankStorageTile) te).pickup = stack.getTag().getBoolean("pickup");
         ((AbstractDankStorageTile) te).isVoid = stack.getTag().getBoolean("void");
+        ((AbstractDankStorageTile) te).selectedSlot = stack.getTag().getInt("selectedSlot");
       }
     }
+  }
+
+  @Nullable
+  @Override
+  public BlockState getStateForPlacement(BlockItemUseContext ctx) {
+    ItemStack bag = ctx.item;
+
+    Block block = Block.getBlockFromItem(bag.getItem());
+
+    if (block instanceof DankBlock)return block.getDefaultState();
+
+    return block.isAir(block.getDefaultState()) ? null : block.getStateForPlacement(ctx);
   }
 
   @Override
@@ -207,9 +222,6 @@ public class DankBlock extends Block {
     }
     return toPickup.isEmpty();
   }
-
-//} else if (ItemHandlerHelper.canItemStacksStack(eventItem, slot)) {
-
 
 public static PortableDankHandler getHandler(ItemStack bag){
     int type = Integer.parseInt(bag.getItem().getRegistryName().getPath().substring(5));

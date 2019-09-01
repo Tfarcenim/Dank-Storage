@@ -28,7 +28,7 @@ public class MessageToggleAutoPickup {
       ctx.get().enqueueWork(  ()->  {
         if (player.getHeldItemMainhand().getItem() instanceof DankItemBlock) {
           boolean toggle = Utils.autoPickup(player.getHeldItemMainhand());
-          player.sendStatusMessage(new TranslationTextComponent("dankstorage.pickup." + (toggle ? "disabled" : "enabled")),false);
+          player.sendStatusMessage(new TranslationTextComponent("dankstorage.pickup." + (toggle ? "disabled" : "enabled")),true);
           player.getHeldItemMainhand().getOrCreateTag().putBoolean("pickup",!toggle);
         }
       });

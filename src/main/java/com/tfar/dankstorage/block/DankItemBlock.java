@@ -1,13 +1,15 @@
 package com.tfar.dankstorage.block;
 
 import com.tfar.dankstorage.container.PortableDankProvider;
+import com.tfar.dankstorage.inventory.DankHandler;
+import com.tfar.dankstorage.inventory.PortableDankHandler;
+import com.tfar.dankstorage.network.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Rarity;
+import net.minecraft.item.*;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -43,10 +45,30 @@ public class DankItemBlock extends BlockItem {
 
   @Override
   public ActionResult<ItemStack> onItemRightClick(World p_77659_1_, PlayerEntity player, Hand hand) {
-    if (!p_77659_1_.isRemote) {
+    if (!p_77659_1_.isRemote && player.isSneaking()) {
       int type = Integer.parseInt(player.getHeldItem(hand).getItem().getRegistryName().getPath().substring(5));
       NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(type), data -> data.writeItemStack(player.getHeldItem(hand)));
     }
     return super.onItemRightClick(p_77659_1_, player, hand);
+  }
+
+  @Override
+  public boolean hasEffect(ItemStack stack) {
+    return stack.hasTag() && Utils.construction(stack);
+  }
+
+  @Override
+  public ActionResultType onItemUse(ItemUseContext ctx) {
+    if (!Utils.construction(ctx.getItem()))
+    return super.onItemUse(ctx);
+
+    ItemStack bag = ctx.item;
+    PortableDankHandler handler = DankBlock.getHandler(bag);
+    int selectedSlot = Utils.getSelectedSlot(bag);
+    ctx.item = handler.getStackInSlot(selectedSlot);
+
+    ActionResultType actionResultType = this.tryPlace(new BlockItemUseContext(ctx));
+      handler.setStackInSlot(selectedSlot,ctx.item);
+    return actionResultType;
   }
 }

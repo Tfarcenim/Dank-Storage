@@ -20,5 +20,15 @@ public class DankPacketHandler {
             MessageToggleAutoVoid::encode,
             MessageToggleAutoVoid::decode,
             MessageToggleAutoVoid::handle);
+
+    INSTANCE.registerMessage(3, MessageToggleConstruction.class,
+            MessageToggleConstruction::encode,
+            MessageToggleConstruction::decode,
+            MessageToggleConstruction::handle);
+
+    INSTANCE.registerMessage(4, MessageChangeSlot.class,
+            MessageChangeSlot::encode,
+            MessageChangeSlot::new,
+            MessageChangeSlot::handle);
   }
 }
