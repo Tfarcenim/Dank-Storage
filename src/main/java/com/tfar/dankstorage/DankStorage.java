@@ -3,11 +3,11 @@ package com.tfar.dankstorage;
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.block.DankBlock;
 import com.tfar.dankstorage.capability.CapabilityDankStorage;
-import com.tfar.dankstorage.capability.CapabilityDankStorageProvider;
 import com.tfar.dankstorage.container.*;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.DankPacketHandler;
+import com.tfar.dankstorage.network.Utils;
 import com.tfar.dankstorage.recipe.DankUpgradeRecipes;
 import com.tfar.dankstorage.tile.*;
 import net.minecraft.block.Block;
@@ -22,7 +22,6 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.extensions.IForgeContainerType;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -95,7 +94,7 @@ public class DankStorage {
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         ItemStack bag = data.readItemStack();
-        PortableDankHandler handler = DankBlock.getHandler(bag);
+        PortableDankHandler handler = Utils.getHandler(bag);
         return new DankContainers.PortableDankContainer1(windowId, inv, inv.player,handler);
       }), "portable_dank_1_container", event.getRegistry());
 
@@ -109,7 +108,7 @@ public class DankStorage {
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         ItemStack bag = data.readItemStack();
-        PortableDankHandler handler = DankBlock.getHandler(bag);
+        PortableDankHandler handler = Utils.getHandler(bag);
         return new DankContainers.PortableDankContainer2(windowId, inv, inv.player,handler);
       }), "portable_dank_2_container", event.getRegistry());
 
@@ -123,7 +122,7 @@ public class DankStorage {
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         ItemStack bag = data.readItemStack();
-        PortableDankHandler handler = DankBlock.getHandler(bag);
+        PortableDankHandler handler = Utils.getHandler(bag);
         return new DankContainers.PortableDankContainer3(windowId, inv, inv.player,handler);
       }), "portable_dank_3_container", event.getRegistry());
 
@@ -137,7 +136,7 @@ public class DankStorage {
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         ItemStack bag = data.readItemStack();
-        PortableDankHandler handler = DankBlock.getHandler(bag);
+        PortableDankHandler handler = Utils.getHandler(bag);
         return new DankContainers.PortableDankContainer4(windowId, inv, inv.player,handler);
       }), "portable_dank_4_container", event.getRegistry());
 
@@ -151,7 +150,7 @@ public class DankStorage {
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         ItemStack bag = data.readItemStack();
-        PortableDankHandler handler = DankBlock.getHandler(bag);
+        PortableDankHandler handler = Utils.getHandler(bag);
         return new DankContainers.PortableDankContainer5(windowId, inv, inv.player,handler);
       }), "portable_dank_5_container", event.getRegistry());
 
@@ -165,7 +164,7 @@ public class DankStorage {
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         ItemStack bag = data.readItemStack();
-        PortableDankHandler handler = DankBlock.getHandler(bag);
+        PortableDankHandler handler = Utils.getHandler(bag);
         return new DankContainers.PortableDankContainer6(windowId, inv, inv.player,handler);
       }), "portable_dank_6_container", event.getRegistry());
 
@@ -179,7 +178,7 @@ public class DankStorage {
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         ItemStack bag = data.readItemStack();
-        PortableDankHandler handler = DankBlock.getHandler(bag);
+        PortableDankHandler handler = Utils.getHandler(bag);
         return new DankContainers.PortableDankContainer7(windowId, inv, inv.player,handler);
       }), "portable_dank_7_container", event.getRegistry());
     }

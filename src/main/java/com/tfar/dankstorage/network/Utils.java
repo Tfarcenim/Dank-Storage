@@ -1,12 +1,10 @@
 package com.tfar.dankstorage.network;
 
-import com.tfar.dankstorage.block.DankBlock;
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class Utils {
 
@@ -28,6 +26,20 @@ public class Utils {
 
   public static void setSelectedSlot(ItemStack bag, int slot) {
     bag.getOrCreateTag().putInt("selectedSlot", slot);
+  }
+
+  public static int getSlotCount(ItemStack bag) {
+    switch (getTier(bag)) {
+      case 1:
+      default:
+      case 2:
+      case 3:
+      case 4:
+      case 5:
+      case 6:return 9 * getTier(bag);
+      case 7:
+        return 81;
+    }
   }
 
   public static int getStackLimit(ItemStack bag) {
@@ -55,13 +67,13 @@ public class Utils {
     return getTier(bag.getItem().getRegistryName());
   }
 
-  public static int getTier(ResourceLocation registryname){
+  public static int getTier(ResourceLocation registryname) {
     return Integer.parseInt(registryname.getPath().substring(5));
   }
 
   public static void changeSlot(ItemStack bag, boolean right) {
     int selectedSlot = getSelectedSlot(bag);
-    DankHandler handler = DankBlock.getHandler(bag);
+    DankHandler handler = getHandler(bag);
     if (right) {
       selectedSlot++;
       if (selectedSlot >= handler.getSlots()) selectedSlot = 0;
@@ -70,5 +82,9 @@ public class Utils {
       if (selectedSlot < 0) selectedSlot = handler.getSlots() - 1;
     }
     setSelectedSlot(bag, selectedSlot);
+  }
+
+  public static PortableDankHandler getHandler(ItemStack bag) {
+    return new PortableDankHandler(bag);
   }
 }

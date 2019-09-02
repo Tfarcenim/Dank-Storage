@@ -1,7 +1,7 @@
 package com.tfar.dankstorage.container;
 
-import com.tfar.dankstorage.block.DankBlock;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
+import com.tfar.dankstorage.network.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -28,7 +28,7 @@ public class PortableDankProvider implements INamedContainerProvider {
   @Override
   public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity player) {
     ItemStack bag = playerInventory.getStackInSlot(playerInventory.currentItem);
-    PortableDankHandler handler = DankBlock.getHandler(bag);
+    PortableDankHandler handler = Utils.getHandler(bag);
     switch (tier) {
       case 1:
       default:

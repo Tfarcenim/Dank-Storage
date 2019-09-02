@@ -1,20 +1,15 @@
 package com.tfar.dankstorage.network;
 
-import com.tfar.dankstorage.block.DankBlock;
 import com.tfar.dankstorage.block.DankItemBlock;
-import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.apache.logging.log4j.LogManager;
@@ -45,7 +40,7 @@ public class MessagePickBlock {
     ctx.get().enqueueWork(() -> {
       ItemStack bag = player.getHeldItemMainhand();
       if (bag.getItem() instanceof DankItemBlock) {
-        PortableDankHandler handler = DankBlock.getHandler(bag);
+        PortableDankHandler handler = Utils.getHandler(bag);
         ItemStack pickblock = onPickBlock(Minecraft.getInstance().objectMouseOver,player,player.world);
         int slot = -1;
         if (!pickblock.isEmpty())

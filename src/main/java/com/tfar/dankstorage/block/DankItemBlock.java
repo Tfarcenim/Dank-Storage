@@ -67,11 +67,11 @@ public class DankItemBlock extends BlockItem {
   public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
     if (!world.isRemote)
       if (player.isSneaking()) {
-        int type = Integer.parseInt(player.getHeldItem(hand).getItem().getRegistryName().getPath().substring(5));
+        int type = Utils.getTier(player.getHeldItem(hand));
         NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(type), data -> data.writeItemStack(player.getHeldItem(hand)));
       } else {
         ItemStack bag = player.getHeldItem(hand);
-        PortableDankHandler handler = DankBlock.getHandler(bag);
+        PortableDankHandler handler = Utils.getHandler(bag);
         ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
         player.setItemStackToSlot(EquipmentSlotType.MAINHAND, toPlace);
         ActionResult<ItemStack> actionResultType = toPlace.getItem().onItemRightClick(world, player, hand);
@@ -84,7 +84,7 @@ public class DankItemBlock extends BlockItem {
   @Override
   public boolean itemInteractionForEntity(ItemStack bag, PlayerEntity player, LivingEntity entity, Hand hand) {
     if (!Utils.construction(bag))return false;
-    PortableDankHandler handler = DankBlock.getHandler(bag);
+    PortableDankHandler handler = Utils.getHandler(bag);
     ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
     player.setItemStackToSlot(EquipmentSlotType.MAINHAND, toPlace);
     boolean result = toPlace.getItem().itemInteractionForEntity(toPlace, player, entity, hand);
@@ -105,7 +105,7 @@ public class DankItemBlock extends BlockItem {
 
 
     ItemStack bag = ctx.item;
-    PortableDankHandler handler = DankBlock.getHandler(bag);
+    PortableDankHandler handler = Utils.getHandler(bag);
     int selectedSlot = Utils.getSelectedSlot(bag);
     ctx.item = handler.getStackInSlot(selectedSlot);
     ActionResultType actionResultType = ctx.item.onItemUse(ctx);

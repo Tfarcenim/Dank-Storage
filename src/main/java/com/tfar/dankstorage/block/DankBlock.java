@@ -138,7 +138,7 @@ public class DankBlock extends Block {
               new TranslationTextComponent("text.dankstorage.disablepickup",new StringTextComponent(Client.AUTO_PICKUP.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
       else tooltip.add(
               new TranslationTextComponent("text.dankstorage.enablepickup",new StringTextComponent(Client.AUTO_PICKUP.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
-      DankHandler handler = getHandler(bag);
+      DankHandler handler = Utils.getHandler(bag);
 
       if (handler.isEmpty()){
         tooltip.add(
@@ -191,7 +191,7 @@ public class DankBlock extends Block {
         //todo watch for dupes
       } else if (true) {
         int count = toPickup.getCount();
-        PortableDankHandler inv = getHandler(bag);
+        PortableDankHandler inv = Utils.getHandler(bag);
         for (int i = 0; i < inv.getSlots(); i++) {
           ItemStack stackInSlot = inv.getStackInSlot(i);
           if (stackInSlot.isEmpty()  && !isVoid) {
@@ -221,11 +221,6 @@ public class DankBlock extends Block {
       }
     }
     return toPickup.isEmpty();
-  }
-
-public static PortableDankHandler getHandler(ItemStack bag){
-    int type = Utils.getTier(bag);
-    return new PortableDankHandler(type,Utils.getStackLimit(bag), bag);
   }
 
   public static boolean canAddItemToSlot(PortableDankHandler handler, ItemStack stackInSlot, ItemStack pickup, boolean stackSizeMatters) {

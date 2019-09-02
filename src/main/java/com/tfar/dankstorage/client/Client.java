@@ -2,9 +2,7 @@ package com.tfar.dankstorage.client;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.tfar.dankstorage.DankStorage;
-import com.tfar.dankstorage.block.DankBlock;
 import com.tfar.dankstorage.block.DankItemBlock;
-import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.*;
 import com.tfar.dankstorage.screen.*;
@@ -18,7 +16,6 @@ import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -97,7 +94,7 @@ public class Client {
       if (!(player.openContainer instanceof PlayerContainer)) return;
       ItemStack bag = player.getHeldItemMainhand();
       if (!(bag.getItem()instanceof DankItemBlock))return;
-      PortableDankHandler handler = DankBlock.getHandler(bag);
+      PortableDankHandler handler = Utils.getHandler(bag);
       ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
       ITextComponent s = toPlace.getDisplayName();
      // String s1 = s.getUnformattedComponentText();

@@ -32,8 +32,8 @@
   "text.dankstorage.enablepickup": "Press %s to enable pickup",
   "text.dankstorage.disablepickup": "Press %s to disable pickup",
 
-  "dankstorage.construction.enabled": "Blockplacing Enabled",
-  "dankstorage.construction.disabled": "Blockplacing Disabled",
+  "dankstorage.construction.enabled": "Construction mode Enabled",
+  "dankstorage.construction.disabled": "Construction mode Disabled",
 
   "text.dankstorage.formatcontaineditems" : "%s %s"
 }
