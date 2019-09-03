@@ -188,7 +188,7 @@ public class DankBlock extends Block {
           ItemStack stackInSlot = inv.getStackInSlot(i);
           if (stackInSlot.isEmpty()  && !isVoid) {
             inv.setStackInSlot(i, toPickup.copy());
-            toPickup.setCount(0);
+            toPickup.setCount(toPickup.getCount() - inv.stacklimit);
           } else if (canAddItemToSlot(inv,stackInSlot, toPickup,true)) {
             int fill = inv.stacklimit - stackInSlot.getCount();
             if (fill > toPickup.getCount()) {
