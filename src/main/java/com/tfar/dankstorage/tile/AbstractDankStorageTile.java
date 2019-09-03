@@ -2,25 +2,20 @@ package com.tfar.dankstorage.tile;
 
 import com.tfar.dankstorage.block.DankBlock;
 import com.tfar.dankstorage.inventory.DankHandler;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.INameable;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class AbstractDankStorageTile extends TileEntity implements INameable, INamedContainerProvider {
+public abstract class AbstractDankStorageTile extends TileEntity {
 
   public int numPlayersUsing = 0;
   protected String customName;
@@ -31,13 +26,12 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
 
   public DankHandler itemHandler;
 
-  public AbstractDankStorageTile(TileEntityType<?> tile, int rows, int stacksize) {
-    super(tile);
+  public AbstractDankStorageTile(int rows, int stacksize) {
     this.itemHandler = new DankHandler(rows * 9,stacksize) {
       @Override
       public void onContentsChanged(int slot) {
         super.onContentsChanged(slot);
-        AbstractDankStorageTile.this.world.addBlockEvent(AbstractDankStorageTile.this.pos, AbstractDankStorageTile.this.getBlockState().getBlock(), 1, AbstractDankStorageTile.this.numPlayersUsing);
+        AbstractDankStorageTile.this.world.addBlockEvent(AbstractDankStorageTile.this.pos, AbstractDankStorageTile.this.blockType, 1, AbstractDankStorageTile.this.numPlayersUsing);
         AbstractDankStorageTile.this.markDirty();
       }
     };
@@ -67,69 +61,69 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
     }
   }
 
-  public void openInventory(PlayerEntity player) {
+  public void openInventory(EntityPlayer player) {
     if (!player.isSpectator()) {
       if (this.numPlayersUsing < 0) {
         this.numPlayersUsing = 0;
       }
 
       ++this.numPlayersUsing;
-      this.world.addBlockEvent(this.pos, this.getBlockState().getBlock(), 1, this.numPlayersUsing);
-      this.world.notifyNeighborsOfStateChange(this.pos, this.getBlockState().getBlock());
+      this.world.addBlockEvent(this.pos, this.blockType, 1, this.numPlayersUsing);
+      this.world.notifyNeighborsOfStateChange(this.pos, blockType,false);
       markDirty();
     }
   }
 
-  public void closeInventory(PlayerEntity player) {
-    if (!player.isSpectator() && this.getBlockState().getBlock() instanceof DankBlock) {
+  public void closeInventory(EntityPlayer player) {
+    if (!player.isSpectator() && this.blockType instanceof DankBlock) {
       --this.numPlayersUsing;
-      this.world.addBlockEvent(this.pos, this.getBlockState().getBlock(), 1, this.numPlayersUsing);
-      this.world.notifyNeighborsOfStateChange(this.pos, this.getBlockState().getBlock());
+      this.world.addBlockEvent(this.pos, blockType, 1, this.numPlayersUsing);
+      this.world.notifyNeighborsOfStateChange(this.pos, this.blockType,false);
       markDirty();
     }
   }
 
   @Override
-  public void read(CompoundNBT compound) {
-    super.read(compound);
+  public void readFromNBT(NBTTagCompound compound) {
+    super.readFromNBT(compound);
     this.isVoid = compound.getBoolean("void");
     this.pickup = compound.getBoolean("pickup");
-    this.selectedSlot = compound.getInt("selectedSlot");
-    if (compound.contains("Items")) {
-      itemHandler.deserializeNBT(compound.getCompound("Items"));
+    this.selectedSlot = compound.getInteger("selectedSlot");
+    if (compound.hasKey("Items")) {
+      itemHandler.deserializeNBT(compound.getCompoundTag("Items"));
     }
-    if (compound.contains("CustomName", 8)) {
-      this.setCustomName(compound.getString("CustomName"));
-    }
+ //   if (compound.hasKey("CustomName", 8)) {
+  //    this.setCustomName(compound.getString("CustomName"));
+  //  }
   }
 
   @Override
-  public CompoundNBT write(CompoundNBT compound) {
-    super.write(compound);
-    compound.putBoolean("void", isVoid);
-    compound.putBoolean("pickup",pickup);
-    compound.putInt("selectedSlot",selectedSlot);
-    compound.put("Items", itemHandler.serializeNBT());
-    if (this.hasCustomName()) {
-      compound.putString("CustomName", this.customName);
-    }
+  public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+    super.writeToNBT(compound);
+    compound.setBoolean("void", isVoid);
+    compound.setBoolean("pickup",pickup);
+    compound.setInteger("selectedSlot",selectedSlot);
+    compound.setTag("Items", itemHandler.serializeNBT());
+ //   if (this.hasCustomName()) {
+ //     compound.putString("CustomName", this.customName);
+ //   }
     return compound;
   }
 
   @Override
-  public CompoundNBT getUpdateTag() {
-    return write(new CompoundNBT());
+  public NBTTagCompound getUpdateTag() {
+    return writeToNBT(new NBTTagCompound());
   }
 
   @Nullable
   @Override
-  public SUpdateTileEntityPacket getUpdatePacket() {
-    return new SUpdateTileEntityPacket(getPos(), 1, getUpdateTag());
+  public SPacketUpdateTileEntity getUpdatePacket() {
+    return new SPacketUpdateTileEntity(getPos(), 1, getUpdateTag());
   }
 
   @Override
-  public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-    read(pkt.getNbtCompound());
+  public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+    readFromNBT(pkt.getNbtCompound());
   }
 
   @Override
@@ -137,33 +131,21 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
     super.markDirty();
     if (getWorld() != null) {
       getWorld().notifyBlockUpdate(pos, getWorld().getBlockState(pos), getWorld().getBlockState(pos), 3);
-      this.world.notifyNeighborsOfStateChange(this.pos, this.getBlockState().getBlock());
+      this.world.notifyNeighborsOfStateChange(this.pos, blockType,false);
     }
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  public <T> LazyOptional getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
-    return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? LazyOptional.of(() -> itemHandler).cast() : super.getCapability(capability, facing);
+  public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ?  (T)itemHandler: super.getCapability(capability, facing);
   }
 
-  @Override
-  public boolean hasCustomName() {
-    return this.customName != null && !this.customName.isEmpty();
-  }
 
-  public void setCustomName(String p_190575_1_) {
-    this.customName = p_190575_1_;
-  }
-
-  @Override
-  public ITextComponent getDisplayName() {
-    return (this.hasCustomName() ? this.getName() : this.getName());
-  }
 
   public abstract Item getDank();
 
-  public void setContents(CompoundNBT nbt){
+  public void setContents(NBTTagCompound nbt){
     itemHandler.deserializeNBT(nbt);
   }
 }

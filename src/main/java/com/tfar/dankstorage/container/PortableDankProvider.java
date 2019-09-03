@@ -2,17 +2,17 @@ package com.tfar.dankstorage.container;
 
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.Utils;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.world.INamedMenuProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import javax.annotation.Nullable;
 
-public class PortableDankProvider implements INamedContainerProvider {
+public class PortableDankProvider implements INamedMenuProvider {
 
   public final int tier;
   public PortableDankProvider(int tier){
@@ -21,12 +21,12 @@ public class PortableDankProvider implements INamedContainerProvider {
 
   @Override
   public ITextComponent getDisplayName() {
-    return new TranslationTextComponent("test");
+    return new TextComponentTranslation("test");
   }
 
   @Nullable
   @Override
-  public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity player) {
+  public Container createMenu(int i, InventoryPlayer playerInventory, EntityPlayer player) {
     ItemStack bag = playerInventory.getStackInSlot(playerInventory.currentItem);
     PortableDankHandler handler = Utils.getHandler(bag);
     switch (tier) {

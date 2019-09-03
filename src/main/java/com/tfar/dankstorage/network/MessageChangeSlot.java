@@ -1,10 +1,9 @@
 package com.tfar.dankstorage.network;
 
 import com.tfar.dankstorage.block.DankItemBlock;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -28,7 +27,7 @@ public class MessageChangeSlot {
   }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
-      PlayerEntity player = ctx.get().getSender();
+      EntityPlayer player = ctx.get().getSender();
 
       if (player == null) return;
 

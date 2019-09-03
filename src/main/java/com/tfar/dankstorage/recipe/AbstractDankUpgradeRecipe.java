@@ -3,11 +3,11 @@ package com.tfar.dankstorage.recipe;
 import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.Utils;
-import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipe;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
@@ -21,7 +21,7 @@ public abstract class AbstractDankUpgradeRecipe extends ShapedRecipe {
 
   @Nonnull
   @Override
-  public ItemStack getCraftingResult(CraftingInventory inv) {
+  public ItemStack getCraftingResult(InventoryCrafting inv) {
     ItemStack bag = super.getCraftingResult(inv).copy();
     ItemStack oldBag = inv.getStackInSlot(4);
     PortableDankHandler oldHandler = Utils.getHandler(oldBag);
@@ -29,8 +29,8 @@ public abstract class AbstractDankUpgradeRecipe extends ShapedRecipe {
     for (int i = 0;i < oldHandler.getSlots();i++){
       newHandler.insertItem(i,oldHandler.getStackInSlot(i),false);
     }
-    CompoundNBT nbt = newHandler.serializeNBT();
-    bag.setTag(nbt);
+    NBTTagCompound nbt = newHandler.serializeNBT();
+    bag.setTagCompound(nbt);
     return bag;
   }
 }

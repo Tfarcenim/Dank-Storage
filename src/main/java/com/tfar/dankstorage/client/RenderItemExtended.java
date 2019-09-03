@@ -1,8 +1,8 @@
 package com.tfar.dankstorage.client;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.ItemRenderer;
@@ -16,11 +16,11 @@ import java.text.DecimalFormat;
 
 public class RenderItemExtended {
 
-  ItemRenderer itemRender = Minecraft.getInstance().getItemRenderer();
+  ItemRenderer itemRender = Minecraft.getMinecraft().getItemRenderer();
   public static final RenderItemExtended INSTANCE = new RenderItemExtended();
 
   public void setZLevel(float z) {
-    itemRender.zLevel = z;
+    itemRender.zle = z;
   }
 
   public void renderItemOverlayIntoGUI(FontRenderer fr, ItemStack stack, int xPosition, int yPosition,
@@ -29,9 +29,9 @@ public class RenderItemExtended {
 
       if (stack.getItem().showDurabilityBar(stack)) {
         GlStateManager.disableLighting();
-        GlStateManager.disableDepthTest();
-        GlStateManager.disableTexture();
-        GlStateManager.disableAlphaTest();
+        GlStateManager.disableDepth();
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableAlpha();
         GlStateManager.disableBlend();
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder vertexbuffer = tessellator.getBuffer();
@@ -41,47 +41,47 @@ public class RenderItemExtended {
         this.draw(vertexbuffer, xPosition + 2, yPosition + 13, 13, 2, 0, 0, 0, 255);
         this.draw(vertexbuffer, xPosition + 2, yPosition + 13, i, 1, rgbfordisplay >> 16 & 255, rgbfordisplay >> 8 & 255, rgbfordisplay & 255, 255);
         GlStateManager.enableBlend();
-        GlStateManager.enableAlphaTest();
-        GlStateManager.enableTexture();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
         GlStateManager.enableLighting();
-        GlStateManager.enableDepthTest();
+        GlStateManager.enableDepth();
       }
 
       if (stack.getCount() != 1 || text != null) {
         String s = text == null ? getStringFromInt(stack.getCount()) : text;
         GlStateManager.disableLighting();
-        GlStateManager.disableDepthTest();
+        GlStateManager.disableDepth();
         GlStateManager.disableBlend();
         GlStateManager.pushMatrix();
         float scale = .75f;
-        GlStateManager.scalef(scale, scale, 1.0F);
+        GlStateManager.scale(scale, scale, 1.0F);
         fr.drawStringWithShadow(s, (xPosition + 19 - 2 - (fr.getStringWidth(s)*scale)) /scale,
                 (yPosition + 6 + 3 + (1 / (scale * scale) - 1) ) /scale, 0xffffff);
         GlStateManager.popMatrix();
         GlStateManager.enableLighting();
-        GlStateManager.enableDepthTest();
+        GlStateManager.enableDepth();
         // Fixes opaque cooldown overlay a bit lower
         // TODO: check if enabled blending still screws things up down
         // the line.
         GlStateManager.enableBlend();
       }
 
-      ClientPlayerEntity entityplayersp = Minecraft.getInstance().player;
+      EntityPlayerSP entityplayersp = Minecraft.getMinecraft().player;
       float f3 = entityplayersp == null ? 0.0F
               : entityplayersp.getCooldownTracker().getCooldown(stack.getItem(),
-              Minecraft.getInstance().getRenderPartialTicks());
+              Minecraft.getMinecraft().getRenderPartialTicks());
 
       if (f3 > 0.0F) {
         GlStateManager.disableLighting();
-        GlStateManager.disableDepthTest();
-        GlStateManager.disableTexture();
+        GlStateManager.disableDepth();
+        GlStateManager.disableTexture2D();
         Tessellator tessellator1 = Tessellator.getInstance();
         BufferBuilder vertexbuffer1 = tessellator1.getBuffer();
         this.draw(vertexbuffer1, xPosition, yPosition + MathHelper.floor(16.0F * (1.0F - f3)), 16,
                 MathHelper.ceil(16.0F * f3), 255, 255, 255, 127);
-        GlStateManager.enableTexture();
+        GlStateManager.enableTexture2D();
         GlStateManager.enableLighting();
-        GlStateManager.enableDepthTest();
+        GlStateManager.enableDepth();
       }
     }
   }

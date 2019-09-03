@@ -1,15 +1,15 @@
 package com.tfar.dankstorage.inventory;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Slot;
+import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
 public class DankSlot extends Slot {
-  private static IInventory emptyInventory = new Inventory(0);
+  private static IInventory emptyInventory = new InventoryBasic(0);
   private final DankHandler itemHandler;
   private final int index;
 
@@ -62,7 +62,7 @@ public class DankSlot extends Slot {
   }
 
   @Override
-  public boolean canTakeStack(PlayerEntity playerIn) {
+  public boolean canTakeStack(EntityPlayer playerIn) {
     return !this.getItemHandler().extractItem(index, 1, true).isEmpty();
   }
 

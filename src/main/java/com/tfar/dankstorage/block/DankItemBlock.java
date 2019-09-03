@@ -5,101 +5,72 @@ import com.tfar.dankstorage.container.PortableDankProvider;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.Utils;
 import net.minecraft.block.Block;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 
-public class DankItemBlock extends BlockItem {
-  public DankItemBlock(Block p_i48527_1_, Properties p_i48527_2_) {
-    super(p_i48527_1_, p_i48527_2_);
+public class DankItemBlock extends ItemBlock {
+  public DankItemBlock(Block p_i48527_1_) {
+    super(p_i48527_1_);
   }
 
-  public static final Rarity GRAY = Rarity.create("dark_gray", TextFormatting.GRAY);
-  public static final Rarity RED = Rarity.create("red", TextFormatting.RED);
-  public static final Rarity GOLD = Rarity.create("gold", TextFormatting.GOLD);
-  public static final Rarity GREEN = Rarity.create("green", TextFormatting.GREEN);
-  public static final Rarity BLUE = Rarity.create("blue", TextFormatting.AQUA);
-  public static final Rarity PURPLE = Rarity.create("purple", TextFormatting.DARK_PURPLE);
-  public static final Rarity WHITE = Rarity.create("white", TextFormatting.WHITE);
-
   @Override
-  public ICapabilityProvider initCapabilities(final ItemStack stack, final CompoundNBT nbt) {
+  public ICapabilityProvider initCapabilities(final ItemStack stack, final NBTTagCompound nbt) {
     return new CapabilityDankStorageProvider(stack);
   }
 
   @Nonnull
   @Override
-  public Rarity getRarity(ItemStack stack) {
-    int type = Utils.getTier(this.getRegistryName());
-    switch (type) {
-      case 1:
-        return GRAY;
-      case 2:
-        return RED;
-      case 3:
-        return GOLD;
-      case 4:
-        return GREEN;
-      case 5:
-        return BLUE;
-      case 6:
-        return PURPLE;
-      case 7:
-        return WHITE;
-    }
-    return super.getRarity(stack);
-  }
-
-  @Nonnull
-  @Override
-  public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+  public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
     if (!world.isRemote)
       if (player.isSneaking()) {
         int type = Utils.getTier(player.getHeldItem(hand));
-        NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(type), data -> data.writeItemStack(player.getHeldItem(hand)));
+        NetworkHooks.openGui((EntityPlayerMP) player, new PortableDankProvider(type), data -> data.writeItemStack(player.getHeldItem(hand)));
       } else {
         ItemStack bag = player.getHeldItem(hand);
         PortableDankHandler handler = Utils.getHandler(bag);
         ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
-        player.setItemStackToSlot(EquipmentSlotType.MAINHAND, toPlace);
+        player.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, toPlace);
         ActionResult<ItemStack> actionResultType = toPlace.getItem().onItemRightClick(world, player, hand);
         handler.setStackInSlot(Utils.getSelectedSlot(bag), actionResultType.getResult());
-        player.setItemStackToSlot(EquipmentSlotType.MAINHAND, bag);
+        player.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, bag);
       }
     return super.onItemRightClick(world, player, hand);
   }
 
   @Override
-  public boolean itemInteractionForEntity(ItemStack bag, PlayerEntity player, LivingEntity entity, Hand hand) {
+  public boolean itemInteractionForEntity(ItemStack bag, EntityPlayer player, EntityLivingBase entity, EnumHand hand) {
     if (!Utils.construction(bag))return false;
     PortableDankHandler handler = Utils.getHandler(bag);
     ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
-    player.setItemStackToSlot(EquipmentSlotType.MAINHAND, toPlace);
+    player.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, toPlace);
     boolean result = toPlace.getItem().itemInteractionForEntity(toPlace, player, entity, hand);
     handler.setStackInSlot(Utils.getSelectedSlot(bag),toPlace);
-    player.setItemStackToSlot(EquipmentSlotType.MAINHAND, bag);
+    player.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, bag);
     return result;
   }
 
   @Override
   public boolean hasEffect(ItemStack stack) {
-    return stack.hasTag() && Utils.construction(stack);
+    return stack.hasTagCompound() && Utils.construction(stack);
   }
 
   @Override
-  public ActionResultType onItemUse(ItemUseContext ctx) {
+  public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
     if (!Utils.construction(ctx.getItem()))
       return super.onItemUse(ctx);
 
@@ -108,7 +79,7 @@ public class DankItemBlock extends BlockItem {
     PortableDankHandler handler = Utils.getHandler(bag);
     int selectedSlot = Utils.getSelectedSlot(bag);
     ctx.item = handler.getStackInSlot(selectedSlot);
-    ActionResultType actionResultType = ctx.item.onItemUse(ctx);
+    EnumActionResult actionResultType = ctx.item.onItemUse(ctx);
     handler.setStackInSlot(selectedSlot, ctx.item);
     return actionResultType;
   }

@@ -1,8 +1,8 @@
 package com.tfar.dankstorage.inventory;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
@@ -80,39 +80,39 @@ public class DankHandler extends ItemStackHandler {
   }
 
   @Override
-  public CompoundNBT serializeNBT() {
-    ListNBT nbtTagList = new ListNBT();
+  public NBTTagCompound serializeNBT() {
+    NBTTagList nbtTagList = new NBTTagList();
     for (int i = 0; i < stacks.size(); i++) {
       if (!stacks.get(i).isEmpty()) {
         int realCount = Math.min(stacklimit, stacks.get(i).getCount());
-        CompoundNBT itemTag = new CompoundNBT();
-        itemTag.putInt("Slot", i);
-        stacks.get(i).write(itemTag);
-        itemTag.putInt("ExtendedCount", realCount);
-        nbtTagList.add(itemTag);
+        NBTTagCompound itemTag = new NBTTagCompound();
+        itemTag.setInteger("Slot", i);
+        stacks.get(i).writeToNBT(itemTag);
+        itemTag.setInteger("ExtendedCount", realCount);
+        nbtTagList.appendTag(itemTag);
       }
     }
-    CompoundNBT nbt = new CompoundNBT();
-    nbt.put("Items", nbtTagList);
-    nbt.putInt("Size", stacks.size());
+    NBTTagCompound nbt = new NBTTagCompound();
+    nbt.setTag("Items", nbtTagList);
+    nbt.setInteger("Size", stacks.size());
     return nbt;
   }
 
   @Override
-  public void deserializeNBT(CompoundNBT nbt) {
-    setSize(nbt.contains("Size", Constants.NBT.TAG_INT) ? nbt.getInt("Size") : stacks.size());
-    ListNBT tagList = nbt.getList("Items", Constants.NBT.TAG_COMPOUND);
-    for (int i = 0; i < tagList.size(); i++) {
-      CompoundNBT itemTags = tagList.getCompound(i);
-      int slot = itemTags.getInt("Slot");
+  public void deserializeNBT(NBTTagCompound nbt) {
+    setSize(nbt.hasKey("Size", Constants.NBT.TAG_INT) ? nbt.getInteger("Size") : stacks.size());
+    NBTTagList tagList = nbt.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+    for (int i = 0; i < tagList.tagCount(); i++) {
+      NBTTagCompound itemTags = tagList.getCompoundTagAt(i);
+      int slot = itemTags.getInteger("Slot");
 
       if (slot >= 0 && slot < stacks.size()) {
-        if (itemTags.contains("StackList", Constants.NBT.TAG_LIST)) { // migrate from old ExtendedItemStack system
+        if (itemTags.hasKey("StackList", Constants.NBT.TAG_LIST)) { // migrate from old ExtendedItemStack system
           ItemStack stack = ItemStack.EMPTY;
-          ListNBT stackTagList = itemTags.getList("StackList", Constants.NBT.TAG_COMPOUND);
-          for (int j = 0; j < stackTagList.size(); j++) {
-            CompoundNBT itemTag = stackTagList.getCompound(j);
-            ItemStack temp = ItemStack.read(itemTag);
+          NBTTagList stackTagList = itemTags.getTagList("StackList", Constants.NBT.TAG_COMPOUND);
+          for (int j = 0; j < stackTagList.tagCount(); j++) {
+            NBTTagCompound itemTag = stackTagList.getCompoundTagAt(j);
+            ItemStack temp = new ItemStack(itemTag);
             if (!temp.isEmpty()) {
               if (stack.isEmpty()) stack = temp;
               else stack.grow(temp.getCount());
@@ -126,9 +126,9 @@ public class DankHandler extends ItemStackHandler {
             stacks.set(slot, stack);
           }
         } else {
-          ItemStack stack = ItemStack.read(itemTags);
-          if (itemTags.contains("ExtendedCount", Constants.NBT.TAG_INT)) {
-            stack.setCount(itemTags.getInt("ExtendedCount"));
+          ItemStack stack = new ItemStack(itemTags);
+          if (itemTags.hasKey("ExtendedCount", Constants.NBT.TAG_INT)) {
+            stack.setCount(itemTags.getInteger("ExtendedCount"));
           }
           stacks.set(slot, stack);
         }

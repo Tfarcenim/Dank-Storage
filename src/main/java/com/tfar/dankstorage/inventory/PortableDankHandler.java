@@ -25,9 +25,9 @@ public class PortableDankHandler extends DankHandler {
     }
     if (bag.isEmpty()) {
       if (bag.hasTag()) {
-        bag.getTag().remove("Items");
-        if (bag.getTag().isEmpty()) {
-          bag.setTag(null);
+        bag.getTagCompound().remove("Items");
+        if (bag.getTagCompound().isEmpty()) {
+          bag.setTagCompound(null);
         }
       }
     } else {
@@ -35,11 +35,11 @@ public class PortableDankHandler extends DankHandler {
       boolean isVoid = Utils.autoVoid(bag);
       boolean construction = Utils.construction(bag);
       int selectedSlot = Utils.getSelectedSlot(bag);
-      bag.setTag(serializeNBT());
+      bag.setTagCompound(serializeNBT());
       bag.getOrCreateTag().putBoolean("pickup",pickup);
       bag.getOrCreateTag().putBoolean("void",isVoid);
       bag.getOrCreateTag().putBoolean("construction",construction);
-      bag.getOrCreateTag().putInt("selectedSlot",selectedSlot);
+      bag.getOrCreateTag().setInteger("selectedSlot",selectedSlot);
     }
   }
 
@@ -51,7 +51,7 @@ public class PortableDankHandler extends DankHandler {
 
   public void readItemStack() {
     if (bag.hasTag()) {
-      deserializeNBT(bag.getTag());
+      deserializeNBT(bag.getTagCompound());
     }
   }
 }

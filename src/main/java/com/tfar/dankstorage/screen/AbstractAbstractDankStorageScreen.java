@@ -1,30 +1,29 @@
 package com.tfar.dankstorage.screen;
 
 import com.mojang.blaze3d.platform.GLX;
-import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.renderer.GlStateManager;
 import com.tfar.dankstorage.client.RenderItemExtended;
 import com.tfar.dankstorage.container.AbstractAbstractDankContainer;
 import com.tfar.dankstorage.container.AbstractDankContainer;
 import com.tfar.dankstorage.container.DankContainers;
 import com.tfar.dankstorage.inventory.DankSlot;
-import com.tfar.dankstorage.tile.AbstractDankStorageTile;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.util.InputMappings;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ClickType;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
-public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstractDankContainer> extends ContainerScreen<T> {
+public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstractDankContainer> extends GuiContainer<T> {
 
    final ResourceLocation background;//= new ResourceLocation("textures/gui/container/shulker_box.png");
 
@@ -53,7 +52,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
    boolean doubleClick;
    ItemStack shiftClickedSlot = ItemStack.EMPTY;
 
-  public AbstractAbstractDankStorageScreen(T container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background, int rows) {
+  public AbstractAbstractDankStorageScreen(T container, InventoryPlayer playerinventory, ITextComponent component, ResourceLocation background, int rows) {
     super(container,playerinventory, component);
     this.background = background;
     ySize += ((rows-2) * 18);
@@ -128,7 +127,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     this.drawGuiContainerForegroundLayer(mouseX, mouseY);
     RenderHelper.enableGUIStandardItemLighting();
     net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawForeground(this, mouseX, mouseY));
-    PlayerInventory inventoryplayer = this.minecraft.player.inventory;
+    InventoryPlayer inventoryplayer = this.minecraft.player.inventory;
     ItemStack itemstack = this.draggedStack.isEmpty() ? inventoryplayer.getItemStack() : this.draggedStack;
 
     if (!itemstack.isEmpty()) {
@@ -237,7 +236,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
       if (textureatlassprite != null) {
         GlStateManager.disableLighting();
         this.minecraft.getTextureManager().bindTexture(slotIn.getBackgroundLocation());
-        AbstractGui.blit(i, j,blitOffset, 16, 16,textureatlassprite);
+        Gui.blit(i, j,blitOffset, 16, 16,textureatlassprite);
         GlStateManager.enableLighting();
         flag1 = true;
       }
@@ -345,7 +344,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
             if (this.minecraft.gameSettings.keyBindPickBlock.isActiveAndMatches(mouseKey)) {
               this.handleMouseClick(slot, l, mouseButton, ClickType.CLONE);
             } else {
-              boolean flag2 = l != -999 && Screen.hasShiftDown();
+              boolean flag2 = l != -999 && GuiScreen.hasShiftDown();
               ClickType clicktype = ClickType.PICKUP;
 
               if (flag2) {
@@ -443,7 +442,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     }
 
     if (this.doubleClick && slot1 != null && state == 0 && this.container.canMergeSlot(ItemStack.EMPTY, slot1)) {
-      if (Screen.hasShiftDown()) {
+      if (GuiScreen.hasShiftDown()) {
         if (!this.shiftClickedSlot.isEmpty()) {
           for (Slot slot2 : this.container.inventorySlots) {
             if (slot2 != null && slot2.canTakeStack(this.minecraft.player) && slot2.getHasStack() && slot2.isSameInventory(slot1) && AbstractDankContainer.canAddItemToSlot(slot2, this.shiftClickedSlot, true)) {
@@ -515,7 +514,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
         if (this.minecraft.gameSettings.keyBindPickBlock.isActiveAndMatches(mouseKey)) {
           this.handleMouseClick(slot1, k, state, ClickType.CLONE);
         } else {
-          boolean flag1 = k != -999 && Screen.hasShiftDown();
+          boolean flag1 = k != -999 && GuiScreen.hasShiftDown();
 
           if (flag1) {
             this.shiftClickedSlot = slot1 != null && slot1.getHasStack() ? slot1.getStack().copy() : ItemStack.EMPTY;
@@ -563,7 +562,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
         this.handleMouseClick(this.hoveredSlot, this.hoveredSlot.slotNumber, 0, ClickType.CLONE);
         return true;
       } else if (this.minecraft.gameSettings.keyBindDrop.isActiveAndMatches(mouseKey)) {
-        this.handleMouseClick(this.hoveredSlot, this.hoveredSlot.slotNumber, Screen.hasControlDown() ? 1 : 0, ClickType.THROW);
+        this.handleMouseClick(this.hoveredSlot, this.hoveredSlot.slotNumber, GuiScreen.hasControlDown() ? 1 : 0, ClickType.THROW);
         return true;
       }
     }

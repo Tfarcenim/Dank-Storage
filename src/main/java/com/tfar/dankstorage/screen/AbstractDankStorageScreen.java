@@ -2,7 +2,7 @@ package com.tfar.dankstorage.screen;
 
 import com.tfar.dankstorage.container.AbstractDankContainer;
 import com.tfar.dankstorage.tile.AbstractDankStorageTile;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
@@ -10,7 +10,7 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankContainer>
 
   protected AbstractDankStorageTile te;
 
-  public AbstractDankStorageScreen(T container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background) {
+  public AbstractDankStorageScreen(T container, InventoryPlayer playerinventory, ITextComponent component, ResourceLocation background) {
     super(container,playerinventory, component,background,container.rows);
     this.te = container.te;
   }

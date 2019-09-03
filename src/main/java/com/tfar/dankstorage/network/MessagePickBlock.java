@@ -2,9 +2,9 @@ package com.tfar.dankstorage.network;
 
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
-import net.minecraft.block.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -33,7 +33,7 @@ public class MessagePickBlock {
   }
 
   public void handle(Supplier<NetworkEvent.Context> ctx) {
-    PlayerEntity player = ctx.get().getSender();
+    EntityPlayer player = ctx.get().getSender();
 
     if (player == null) return;
 
@@ -57,13 +57,13 @@ public class MessagePickBlock {
     ctx.get().setPacketHandled(true);
   }
 
-  public static ItemStack onPickBlock(RayTraceResult target, PlayerEntity player, World world) {
+  public static ItemStack onPickBlock(RayTraceResult target, EntityPlayer player, World world) {
     ItemStack result = ItemStack.EMPTY;
     boolean isCreative = player.abilities.isCreativeMode;
 
     if (target.getType() == RayTraceResult.Type.BLOCK) {
       BlockPos pos = ((BlockRayTraceResult) target).getPos();
-      BlockState state = world.getBlockState(pos);
+      IBlockState state = world.getBlockState(pos);
 
       if (state.isAir(world, pos))
         return ItemStack.EMPTY;

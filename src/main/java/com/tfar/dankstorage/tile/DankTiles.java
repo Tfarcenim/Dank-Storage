@@ -3,12 +3,12 @@ package com.tfar.dankstorage.tile;
 import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.container.DankContainers;
 import com.tfar.dankstorage.inventory.DankHandler;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import javax.annotation.Nullable;
 
@@ -16,24 +16,24 @@ public class DankTiles {
   public static class DankStorageTile1 extends AbstractDankStorageTile {
 
     public DankStorageTile1() {
-      super(DankStorage.Objects.dank_1_tile,1,256);
+      super(1,256);
     }
 
     @Nullable
     @Override
-    public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+    public Container createMenu(int i, InventoryPlayer playerInventory, EntityPlayer playerEntity) {
       AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
       DankHandler handler = tile.itemHandler;
       return new DankContainers.DankContainer1(i,world,pos,playerInventory,playerEntity,handler);
     }
-    @Override
-    public ITextComponent getName() {
-      return this.hasCustomName() ? new TranslationTextComponent(this.customName) : new TranslationTextComponent("container.dankstorage.dank_1");
-    }
+  //  @Override
+  //  public ITextComponent getName() {
+  //    return this.hasCustomName() ? new TextComponentTranslation(this.customName) : new TextComponentTranslation("container.dankstorage.dank_1");
+  //  }
 
     @Override
     public Item getDank() {
-      return DankStorage.Objects.dank_1.asItem();
+      return Item.getItemFromBlock(DankStorage.Objects.dank_1);
     }
   }
 
@@ -45,7 +45,7 @@ public class DankTiles {
 
     @Nullable
     @Override
-    public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+    public Container createMenu(int i, InventoryPlayer playerInventory, EntityPlayer playerEntity) {
       AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
       DankHandler handler = tile.itemHandler;
       return new DankContainers.DankContainer2(i,world,pos,playerInventory,playerEntity,handler);
@@ -53,7 +53,7 @@ public class DankTiles {
 
     @Override
     public ITextComponent getName() {
-      return this.hasCustomName() ? new TranslationTextComponent(this.customName) : new TranslationTextComponent("container.dankstorage.dank_2");
+      return this.hasCustomName() ? new TextComponentTranslation(this.customName) : new TextComponentTranslation("container.dankstorage.dank_2");
     }
 
     @Override
@@ -70,7 +70,7 @@ public class DankTiles {
 
     @Nullable
     @Override
-    public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+    public Container createMenu(int i, InventoryPlayer playerInventory, EntityPlayer playerEntity) {
       AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
       DankHandler handler = tile.itemHandler;
       return new DankContainers.DankContainer3(i,world,pos,playerInventory,playerEntity,handler);
@@ -78,7 +78,7 @@ public class DankTiles {
 
     @Override
     public ITextComponent getName() {
-      return this.hasCustomName() ? new TranslationTextComponent(this.customName) : new TranslationTextComponent("container.dankstorage.dank_3");
+      return this.hasCustomName() ? new TextComponentTranslation(this.customName) : new TextComponentTranslation("container.dankstorage.dank_3");
     }
 
     @Override
@@ -95,7 +95,7 @@ public class DankTiles {
 
     @Nullable
     @Override
-    public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+    public Container createMenu(int i, InventoryPlayer playerInventory, EntityPlayer playerEntity) {
       AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
       DankHandler handler = tile.itemHandler;
       return new DankContainers.DankContainer4(i,world,pos,playerInventory,playerEntity,handler);
@@ -103,7 +103,7 @@ public class DankTiles {
 
     @Override
     public ITextComponent getName() {
-      return this.hasCustomName() ? new TranslationTextComponent(this.customName) : new TranslationTextComponent("container.dankstorage.dank_4");
+      return this.hasCustomName() ? new TextComponentTranslation(this.customName) : new TextComponentTranslation("container.dankstorage.dank_4");
     }
 
     @Override
@@ -120,7 +120,7 @@ public class DankTiles {
 
     @Nullable
     @Override
-    public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+    public Container createMenu(int i, InventoryPlayer playerInventory, EntityPlayer playerEntity) {
       AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
       DankHandler handler = tile.itemHandler;
       return new DankContainers.DankContainer5(i,world,pos,playerInventory,playerEntity,handler);
@@ -128,7 +128,7 @@ public class DankTiles {
 
     @Override
     public ITextComponent getName() {
-      return this.hasCustomName() ? new TranslationTextComponent(this.customName) : new TranslationTextComponent("container.dankstorage.dank_5");
+      return this.hasCustomName() ? new TextComponentTranslation(this.customName) : new TextComponentTranslation("container.dankstorage.dank_5");
     }
 
     @Override
@@ -145,7 +145,7 @@ public class DankTiles {
 
     @Nullable
     @Override
-    public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+    public Container createMenu(int i, InventoryPlayer playerInventory, EntityPlayer playerEntity) {
       AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
       DankHandler handler = tile.itemHandler;
       return new DankContainers.DankContainer6(i,world,pos,playerInventory,playerEntity,handler);
@@ -153,7 +153,7 @@ public class DankTiles {
 
     @Override
     public ITextComponent getName() {
-      return this.hasCustomName() ? new TranslationTextComponent(this.customName) : new TranslationTextComponent("container.dankstorage.dank_6");
+      return this.hasCustomName() ? new TextComponentTranslation(this.customName) : new TextComponentTranslation("container.dankstorage.dank_6");
     }
 
     @Override
@@ -170,7 +170,7 @@ public class DankTiles {
 
     @Nullable
     @Override
-    public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+    public Container createMenu(int i, InventoryPlayer playerInventory, EntityPlayer playerEntity) {
       AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
       DankHandler handler = tile.itemHandler;
       return new DankContainers.DankContainer7(i,world,pos,playerInventory,playerEntity,handler);
@@ -178,7 +178,7 @@ public class DankTiles {
 
     @Override
     public ITextComponent getName() {
-      return this.hasCustomName() ? new TranslationTextComponent(this.customName) : new TranslationTextComponent("container.dankstorage.dank_7");
+      return this.hasCustomName() ? new TextComponentTranslation(this.customName) : new TextComponentTranslation("container.dankstorage.dank_7");
     }
 
     @Override

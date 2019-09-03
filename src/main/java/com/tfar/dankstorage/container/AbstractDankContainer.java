@@ -2,9 +2,9 @@ package com.tfar.dankstorage.container;
 
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.tile.AbstractDankStorageTile;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.MenuType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -13,14 +13,14 @@ public abstract class AbstractDankContainer extends AbstractAbstractDankContaine
   public AbstractDankStorageTile te;
 
 
-  public AbstractDankContainer(ContainerType<?> type, int p_i50105_2_, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player,DankHandler handler, int rows) {
+  public AbstractDankContainer(MenuType<?> type, int p_i50105_2_, World world, BlockPos pos, InventoryPlayer playerInventory, EntityPlayer player, DankHandler handler, int rows) {
     super(type, p_i50105_2_, playerInventory,player,handler,rows);
     this.te = (AbstractDankStorageTile) world.getTileEntity(pos);
     te.openInventory(player);
   }
 
   @Override
-  public void onContainerClosed(PlayerEntity playerIn) {
+  public void onContainerClosed(EntityPlayer playerIn) {
     super.onContainerClosed(playerIn);
     this.te.closeInventory(playerIn);
   }

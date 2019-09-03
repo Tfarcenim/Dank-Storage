@@ -1,15 +1,13 @@
 package com.tfar.dankstorage.network;
 
-import com.tfar.dankstorage.DankStorage;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 public class DankPacketHandler {
-  public static SimpleChannel INSTANCE;
+  public static SimpleNetworkWrapper INSTANCE;
 
   public static void registerMessages(String channelName) {
-    INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(DankStorage.MODID, channelName), () -> "1.0", s -> true, s -> true);
+    INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(channelName);
 
     INSTANCE.registerMessage(1, MessageToggleAutoPickup.class,
             MessageToggleAutoPickup::encode,

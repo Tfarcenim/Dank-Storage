@@ -3,13 +3,13 @@ package com.tfar.dankstorage.container;
 import com.google.common.collect.Sets;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.DankSlot;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.*;
 import net.minecraft.inventory.container.*;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.SSetSlotPacket;
+import net.minecraft.network.play.server.SPacketSetSlot;
 
 import javax.annotation.Nullable;
 import java.util.Set;
@@ -33,7 +33,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
 
   public final int rows;
 
-  public AbstractAbstractDankContainer(ContainerType<?> type, int p_i50105_2_, PlayerInventory playerInventory, PlayerEntity player, DankHandler handler, int rows) {
+  public AbstractAbstractDankContainer(MenuType<?> type, int p_i50105_2_, InventoryPlayer playerInventory, EntityPlayer player, DankHandler handler, int rows) {
     super(type, p_i50105_2_);
     this.rows = rows;
     this.handler = handler;
@@ -90,7 +90,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
   }
 
   @Override
-  public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+  public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
     ItemStack itemstack = ItemStack.EMPTY;
     Slot slot = this.inventorySlots.get(index);
 
@@ -117,9 +117,9 @@ public abstract class AbstractAbstractDankContainer extends Container {
   }
 
   @Override
-  public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+  public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
     ItemStack itemstack = ItemStack.EMPTY;
-    PlayerInventory PlayerInventory = player.inventory;
+    InventoryPlayer PlayerInventory = player.inventory;
 
     if (clickTypeIn == ClickType.QUICK_CRAFT) {
       int j1 = this.dragEvent;
@@ -399,7 +399,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
   }
 
   @Override
-  public boolean canInteractWith(PlayerEntity playerIn) {
+  public boolean canInteractWith(EntityPlayer playerIn) {
     return true;
   }
 
@@ -509,9 +509,9 @@ public abstract class AbstractAbstractDankContainer extends Container {
       throw new IllegalArgumentException("Listener already listening");
     } else {
       this.listeners.add(listener);
-      if (listener instanceof ServerPlayerEntity) {
-        ServerPlayerEntity player = (ServerPlayerEntity) listener;
-        player.connection.sendPacket(new SSetSlotPacket(-1, -1, player.inventory.getItemStack()));
+      if (listener instanceof EntityPlayerMP) {
+        EntityPlayerMP player = (EntityPlayerMP) listener;
+        player.connection.sendPacket(new SPacketSetSlot(-1, -1, player.inventory.getItemStack()));
       }
       this.detectAndSendChanges();
     }

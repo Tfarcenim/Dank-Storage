@@ -9,15 +9,15 @@ import net.minecraft.util.ResourceLocation;
 public class Utils {
 
   public static boolean autoPickup(ItemStack bag) {
-    return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTag().getBoolean("pickup");
+    return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTagCompound().getBoolean("pickup");
   }
 
   public static boolean construction(ItemStack bag) {
-    return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTag().getBoolean("construction");
+    return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTagCompound().getBoolean("construction");
   }
 
   public static boolean autoVoid(ItemStack bag) {
-    return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTag().getBoolean("void");
+    return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTagCompound().getBoolean("void");
   }
 
   public static int getSelectedSlot(ItemStack bag) {
@@ -25,7 +25,7 @@ public class Utils {
   }
 
   public static void setSelectedSlot(ItemStack bag, int slot) {
-    bag.getOrCreateTag().putInt("selectedSlot", slot);
+    bag.getOrCreateTag().setInteger("selectedSlot", slot);
   }
 
   public static int getSlotCount(ItemStack bag) {

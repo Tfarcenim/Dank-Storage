@@ -2,18 +2,18 @@ package com.tfar.dankstorage.container;
 
 import com.tfar.dankstorage.inventory.LockedSlot;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.Slot;
+import net.minecraft.inventory.MenuType;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 public abstract class AbstractPortableDankContainer extends AbstractAbstractDankContainer {
 
   protected ItemStack bag;
 
-  public AbstractPortableDankContainer(ContainerType<?> type, int p_i50105_2_, PlayerInventory playerInventory, PlayerEntity player, PortableDankHandler handler, int rows) {
+  public AbstractPortableDankContainer(MenuType<?> type, int p_i50105_2_, InventoryPlayer playerInventory, EntityPlayer player, PortableDankHandler handler, int rows) {
     super(type, p_i50105_2_, playerInventory,player,handler,rows);
     this.bag = player.getHeldItemMainhand();
     addPlayerSlots(playerInventory, playerInventory.currentItem);

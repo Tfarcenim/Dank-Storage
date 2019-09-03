@@ -1,9 +1,9 @@
 package com.tfar.dankstorage.network;
 
 import com.tfar.dankstorage.block.DankItemBlock;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -21,14 +21,14 @@ public class MessageToggleAutoVoid {
   }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
-      PlayerEntity player = ctx.get().getSender();
+      EntityPlayer player = ctx.get().getSender();
 
       if (player == null) return;
 
       ctx.get().enqueueWork(  ()->  {
         if (player.getHeldItemMainhand().getItem() instanceof DankItemBlock) {
           boolean toggle = Utils.autoVoid(player.getHeldItemMainhand());
-          player.sendStatusMessage(new TranslationTextComponent("dankstorage.void." + (toggle ? "disabled" : "enabled")),true);
+          player.sendStatusMessage(new TextComponentTranslation("dankstorage.void." + (toggle ? "disabled" : "enabled")),true);
           player.getHeldItemMainhand().getOrCreateTag().putBoolean("void",!toggle);
         }
       });

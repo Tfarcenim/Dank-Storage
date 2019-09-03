@@ -3,11 +3,10 @@ package com.tfar.dankstorage.capability;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.Utils;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
@@ -17,7 +16,7 @@ public class CapabilityDankStorageProvider implements ICapabilityProvider {
 
   private PortableDankHandler handler;
 
-  LazyOptional<CapabilityItemHandler> itemHandlerLazyOptional;
+  CapabilityItemHandler itemHandlerLazyOptional;
 
   public CapabilityDankStorageProvider(ItemStack stack) {
 
@@ -25,12 +24,17 @@ public class CapabilityDankStorageProvider implements ICapabilityProvider {
       @Override
       public void onContentsChanged(int slot) {
         super.onContentsChanged(slot);
-        stack.setTag((CompoundNBT) CapabilityDankStorage.DANK_STORAGE_CAPABILITY.writeNBT(this, null));
+        stack.setTagCompound((NBTTagCompound) CapabilityDankStorage.DANK_STORAGE_CAPABILITY.writeNBT(this, null));
       }
     };
-    this.itemHandlerLazyOptional = LazyOptional.of(() -> handler).cast();
-    if (stack.hasTag())
-      CapabilityDankStorage.DANK_STORAGE_CAPABILITY.readNBT(this.handler, null, stack.getTag());
+    this.itemHandlerLazyOptional = handler;
+    if (stack.hasTagCompound())
+      CapabilityDankStorage.DANK_STORAGE_CAPABILITY.readNBT(this.handler, null, stack.getTagCompound());
+  }
+
+  @Override
+  public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+    return false;
   }
 
   /**
@@ -45,11 +49,11 @@ public class CapabilityDankStorageProvider implements ICapabilityProvider {
    */
   @Nonnull
   @Override
-  public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+  public <T> T getCapability(@Nonnull Capability<T> cap, @Nullable EnumFacing side) {
     if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-      return LazyOptional.of(() -> handler).cast();
+      return (T) handler;
     else if (cap == CapabilityDankStorage.DANK_STORAGE_CAPABILITY)
       return LazyOptional.of(() -> CapabilityDankStorage.DANK_STORAGE_CAPABILITY).cast();
-    return LazyOptional.empty();
+    return super.getCapability;
   }
 }
