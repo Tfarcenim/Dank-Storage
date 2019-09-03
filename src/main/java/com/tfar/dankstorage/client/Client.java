@@ -1,21 +1,29 @@
 package com.tfar.dankstorage.client;
 
+import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.*;
+import com.tfar.dankstorage.util.Utils;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ContainerPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.MouseEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.input.Keyboard;
 
@@ -38,33 +46,40 @@ public class Client {
     ClientRegistry.registerKeyBinding(AUTO_PICKUP);
     ClientRegistry.registerKeyBinding(AUTO_VOID);
     ClientRegistry.registerKeyBinding(CONSTRUCTION);
+    for (Block block : DankStorage.RegistryEvents.MOD_BLOCKS)
+      registerModelLocation(Item.getItemFromBlock(block));
+  }
+
+  private static void registerModelLocation(Item item) {
+    ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
   }
 
   @Mod.EventBusSubscriber(value = Side.CLIENT)
   public static class KeyHandler {
     @SubscribeEvent
     public static void onKeyInput(InputEvent.KeyInputEvent event) {
-      if (mc.player == null || !(mc.player.getHeldItemMainhand().getItem() instanceof DankItemBlock))return;
+      if (mc.player == null || !(mc.player.getHeldItemMainhand().getItem() instanceof DankItemBlock)) return;
       if (AUTO_PICKUP.isPressed()) {
-        DankPacketHandler.INSTANCE.sendToServer(new MessageToggleAutoPickup());
+        DankPacketHandler.INSTANCE.sendToServer(new CMessageToggleAutoPickup());
       }
       if (AUTO_VOID.isPressed()) {
-        DankPacketHandler.INSTANCE.sendToServer(new MessageToggleAutoVoid());
+        DankPacketHandler.INSTANCE.sendToServer(new CMessageToggleAutoVoid());
       }
       if (CONSTRUCTION.isPressed()) {
-        DankPacketHandler.INSTANCE.sendToServer(new MessageToggleConstruction());
+        DankPacketHandler.INSTANCE.sendToServer(new CMessageToggleConstruction());
       }
       if (mc.gameSettings.keyBindPickBlock.isPressed()) {
-        DankPacketHandler.INSTANCE.sendToServer(new MessagePickBlock());
+        DankPacketHandler.INSTANCE.sendToServer(new CMessagePickBlock());
       }
     }
+  }
 
     @SubscribeEvent
-    public static void mousewheel(InputEvent.MouseInputEvent e) {
+    public static void mousewheel(MouseEvent e) {
       EntityPlayer player = mc.player;
-      if (player.getHeldItemMainhand().getItem() instanceof DankItemBlock && player.isSneaking()) {
-        boolean right = e.getScrollDelta() < 0;
-        DankPacketHandler.INSTANCE.sendToServer(new MessageChangeSlot(right));
+      if (player.getHeldItemMainhand().getItem() instanceof DankItemBlock && player.isSneaking() && e.getDwheel() != 0) {
+        boolean right = e.getDwheel() < 0;
+        DankPacketHandler.INSTANCE.sendToServer(new CMessageChangeSlot(right));
         e.setCanceled(true);
       }
     }
@@ -72,50 +87,50 @@ public class Client {
     @SubscribeEvent
     public static void onRenderTick(TickEvent.RenderTickEvent event) {
       EntityPlayer player = mc.player;
-      if (player == null)return;
+      if (player == null) return;
       if (!(player.openContainer instanceof ContainerPlayer)) return;
       ItemStack bag = player.getHeldItemMainhand();
-      if (!(bag.getItem()instanceof DankItemBlock))return;
+      if (!(bag.getItem() instanceof DankItemBlock)) return;
       PortableDankHandler handler = Utils.getHandler(bag);
       ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
       String s = toPlace.getDisplayName();
-     // String s1 = s.getUnformattedComponentText();
+      // String s1 = s.getUnformattedComponentText();
       //String slot = String.valueOf(Utils.getSelectedSlot(bag));
 
-      int c = toPlace.getItem().getRarity(toPlace).color.getColorIndex();
+      int count = toPlace.getCount();
 
       if (!toPlace.isEmpty()) {
         GlStateManager.enableRescaleNormal();
         RenderHelper.enableGUIStandardItemLighting();
-        int xStart = mc.getScaledWidth()/2;
-        int yStart = mc.mainWindow.getScaledWidth()/2;
-        final int itemX = xStart - 175;
-        final int itemY = yStart + 20;
-
-        mc.getItemRenderer().renderOverlays(toPlace, itemX, itemY);
-
-        mc.getItemRenderer().renderItemOverlays(mc.fontRenderer, toPlace, itemX, itemY);
+        int itemX = 0;
+        int itemY = 0;
+        float pickupAnimation = toPlace.getAnimationsToGo() - 1;
+        if (pickupAnimation > 0.0F) {
+          GlStateManager.pushMatrix();
+          float scale = 1 + pickupAnimation / 5;
+          GlStateManager.translate(itemX + 8, itemY + 12, 0);
+          GlStateManager.scale(1 / scale, scale + 1 / 2f, 1);
+          GlStateManager.translate(-(itemX + 8), -(itemY + 12), 0);
+        }
+        mc.getRenderItem().renderItemAndEffectIntoGUI(toPlace, itemX, itemY);
+        mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRenderer,toPlace, itemX, itemY,null);
+        if (pickupAnimation > 0.0F)
+          mc.getRenderItem().renderItemOverlays(mc.fontRenderer, toPlace, itemX, itemY);
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableRescaleNormal();
-        GlStateManager.popMatrix();
+        //GlStateManager.popMatrix();
       }
+    }
 
-      //drawLineOffsetStringOnHUD(s1,0, 0, c, 0);
-     // drawLineOffsetStringOnHUD(slot,0, 0, c, 3);
-    //  drawLineOffsetStringOnHUD(String.valueOf(Utils.construction(bag)),0, 0, c, 25);
+    private static FontRenderer fontRenderer;
+
+    public static void drawLineOffsetStringOnHUD(String string, int xOffset, int yOffset, int color, int lineOffset) {
+      drawStringOnHUD(string, xOffset, yOffset, color, lineOffset);
+    }
+
+    public static void drawStringOnHUD(String string, int xOffset, int yOffset, int color, int lineOffset) {
+      yOffset += lineOffset * 9;
+      if (fontRenderer == null) fontRenderer = mc.fontRenderer;
+      fontRenderer.drawString(string, 2 + xOffset, 2 + yOffset, color);
     }
   }
-
-  private static FontRenderer fontRenderer;
-
-  public static void drawLineOffsetStringOnHUD(String string, int xOffset, int yOffset, int color, int lineOffset) {
-    drawStringOnHUD(string, xOffset, yOffset, color, lineOffset);
-  }
-
-  public static void drawStringOnHUD(String string, int xOffset, int yOffset, int color, int lineOffset) {
-    yOffset += lineOffset * 9;
-    if (fontRenderer == null) fontRenderer = mc.fontRenderer;
-    fontRenderer.drawString(string, 2 + xOffset, 2 + yOffset, color);
-  }
-
-}

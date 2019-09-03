@@ -1,20 +1,26 @@
 package com.tfar.dankstorage.block;
 
+import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.client.Client;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
-import com.tfar.dankstorage.network.Utils;
+import com.tfar.dankstorage.util.DankConstants;
+import com.tfar.dankstorage.util.Utils;
 import com.tfar.dankstorage.tile.AbstractDankStorageTile;
 import com.tfar.dankstorage.tile.DankTiles;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -28,9 +34,9 @@ import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Random;
 
 public class DankBlock extends Block {
   public DankBlock(Material p_i48440_1_) {
@@ -42,12 +48,16 @@ public class DankBlock extends Block {
   public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
     if (!world.isRemote) {
       TileEntity tileEntity = world.getTileEntity(pos);
-      if (tileEntity instanceof INamedContainerProvider) {
-        NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tileEntity, tileEntity.getPos());
-
-      } else throw new IllegalStateException("Our named container provider is missing!");
+      if (tileEntity instanceof AbstractDankStorageTile) {
+      player.openGui(DankStorage.instance, DankConstants.TILE_GUI_ID, world, pos.getX(), pos.getY(), pos.getZ());
+      }
     }
     return true;
+  }
+
+  @Override
+  public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+    return Items.AIR;
   }
 
   @Override
@@ -81,12 +91,13 @@ public class DankBlock extends Block {
 
   @Override
   public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+    ItemStack bag = placer.getHeldItem(hand);
+    if (!Utils.construction(bag))
     return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand);
-    ItemStack bag = ctx.item;
 
     Block block = Block.getBlockFromItem(bag.getItem());
     if (block instanceof DankBlock)return block.getDefaultState();
-    return block.isAir(block.getDefaultState(),null,null) ? null : block.getStateForPlacement(ctx);
+    return block.isAir(block.getDefaultState(),null,null) ? null : block.getStateForPlacement(world,pos,facing,hitX,hitY,hitZ,meta,placer,hand);
   }
 
   @Override
@@ -125,29 +136,29 @@ public class DankBlock extends Block {
   public void addInformation(ItemStack bag, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
     //if (bag.hasTag())tooltip.add(new StringTextComponent(bag.getTagCompound().toString()));
 
-    if (!Screen.hasShiftDown()){
-      tooltip.add("text.dankstorage.shift");
+    if (!GuiScreen.isShiftKeyDown()){
+      tooltip.add(I18n.format("text.dankstorage.shift", Minecraft.getMinecraft().gameSettings.keyBindSneak.getDisplayName()));
     }
 
-    if (Screen.hasShiftDown()) {
-      if (Utils.autoVoid(bag)) tooltip.add("text.dankstorage.disablevoid");
-              else tooltip.add("text.dankstorage.enablevoid");
+    if (GuiScreen.isShiftKeyDown()) {
+      if (Utils.autoVoid(bag)) tooltip.add(I18n.format("text.dankstorage.disablevoid", Client.AUTO_VOID.getDisplayName()));
+              else tooltip.add(I18n.format("text.dankstorage.enablevoid", Client.AUTO_VOID.getDisplayName()));
       if (Utils.autoPickup(bag)) tooltip.add(
-              "text.dankstorage.disablepickup");
+              I18n.format("text.dankstorage.disablepickup", Client.AUTO_PICKUP.getDisplayName()));
       else tooltip.add(
-              "text.dankstorage.enablepickup");
+              I18n.format("text.dankstorage.enablepickup", Client.AUTO_PICKUP.getDisplayName()));
       DankHandler handler = Utils.getHandler(bag);
 
       if (handler.isEmpty()){
-        tooltip.add("text.dankstorage.empty");
+        tooltip.add(I18n.format("text.dankstorage.empty"));
         return;
       }
 
       for (int i = 0; i < handler.getSlots(); i++) {
         ItemStack item = handler.getStackInSlot(i);
         if (item.isEmpty())continue;
-          ITextComponent count = new TextComponentString(Integer.toString(item.getCount())).setStyle( new Style().setColor(TextFormatting.AQUA));
-        tooltip.add("text.dankstorage.formatcontaineditems");
+          String count = Integer.toString(item.getCount());
+        tooltip.add(I18n.format("text.dankstorage.formatcontaineditems",TextFormatting.AQUA+count,item.getItem().getForgeRarity(item).getColor()+item.getDisplayName()));
 
 
       }

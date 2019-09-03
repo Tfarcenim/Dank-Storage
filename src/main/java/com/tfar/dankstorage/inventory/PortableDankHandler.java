@@ -1,6 +1,6 @@
 package com.tfar.dankstorage.inventory;
 
-import com.tfar.dankstorage.network.Utils;
+import com.tfar.dankstorage.util.Utils;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -24,8 +24,8 @@ public class PortableDankHandler extends DankHandler {
       return;
     }
     if (bag.isEmpty()) {
-      if (bag.hasTag()) {
-        bag.getTagCompound().remove("Items");
+      if (bag.hasTagCompound()) {
+        bag.getTagCompound().removeTag("Items");
         if (bag.getTagCompound().isEmpty()) {
           bag.setTagCompound(null);
         }
@@ -36,10 +36,10 @@ public class PortableDankHandler extends DankHandler {
       boolean construction = Utils.construction(bag);
       int selectedSlot = Utils.getSelectedSlot(bag);
       bag.setTagCompound(serializeNBT());
-      bag.getOrCreateTag().putBoolean("pickup",pickup);
-      bag.getOrCreateTag().putBoolean("void",isVoid);
-      bag.getOrCreateTag().putBoolean("construction",construction);
-      bag.getOrCreateTag().setInteger("selectedSlot",selectedSlot);
+      bag.getTagCompound().setBoolean("pickup",pickup);
+      bag.getTagCompound().setBoolean("void",isVoid);
+      bag.getTagCompound().setBoolean("construction",construction);
+      bag.getTagCompound().setInteger("selectedSlot",selectedSlot);
     }
   }
 
@@ -50,7 +50,7 @@ public class PortableDankHandler extends DankHandler {
   }
 
   public void readItemStack() {
-    if (bag.hasTag()) {
+    if (bag.hasTagCompound()) {
       deserializeNBT(bag.getTagCompound());
     }
   }

@@ -1,5 +1,5 @@
 {
-  "type": "dankstorage:upgrade4",
+  "type": "dankstorage:upgrade",
   "pattern": [
     "iii",
     "i1i",
@@ -7,8 +7,8 @@
   ],
   "key": {
     "i": {
-      "tag": "forge:storage_blocks/diamond"
-    },
+      "type": "forge:ore_dict",
+      "ore": "blockDiamond"    },
     "1": {
       "item": "dankstorage:dank_4"
     }

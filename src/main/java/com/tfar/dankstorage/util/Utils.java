@@ -1,31 +1,36 @@
-package com.tfar.dankstorage.network;
+package com.tfar.dankstorage.util;
 
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
 public class Utils {
 
   public static boolean autoPickup(ItemStack bag) {
-    return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTagCompound().getBoolean("pickup");
+    return bag.getItem() instanceof DankItemBlock && bag.hasTagCompound() && bag.getTagCompound().getBoolean("pickup");
   }
 
   public static boolean construction(ItemStack bag) {
-    return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTagCompound().getBoolean("construction");
+    return bag.getItem() instanceof DankItemBlock && bag.hasTagCompound() && bag.getTagCompound().getBoolean("construction");
   }
 
   public static boolean autoVoid(ItemStack bag) {
-    return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTagCompound().getBoolean("void");
+    return bag.getItem() instanceof DankItemBlock && bag.hasTagCompound() && bag.getTagCompound().getBoolean("void");
+  }
+
+  public static NBTTagCompound getTagSafely(ItemStack stack){
+    return stack.getTagCompound() == null ? new NBTTagCompound() : stack.getTagCompound();
   }
 
   public static int getSelectedSlot(ItemStack bag) {
-    return bag.getOrCreateTag().getInt("selectedSlot");
+    return getTagSafely(bag).getInteger("selectedSlot");
   }
 
   public static void setSelectedSlot(ItemStack bag, int slot) {
-    bag.getOrCreateTag().setInteger("selectedSlot", slot);
+    getTagSafely(bag).setInteger("selectedSlot", slot);
   }
 
   public static int getSlotCount(ItemStack bag) {

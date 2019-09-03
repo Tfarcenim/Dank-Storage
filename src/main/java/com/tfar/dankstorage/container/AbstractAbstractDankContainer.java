@@ -7,7 +7,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.*;
-import net.minecraft.inventory.container.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketSetSlot;
 
@@ -33,8 +32,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
 
   public final int rows;
 
-  public AbstractAbstractDankContainer(MenuType<?> type, int p_i50105_2_, InventoryPlayer playerInventory, EntityPlayer player, DankHandler handler, int rows) {
-    super(type, p_i50105_2_);
+  public AbstractAbstractDankContainer(InventoryPlayer playerInventory, EntityPlayer player, DankHandler handler, int rows) {
     this.rows = rows;
     this.handler = handler;
     addOwnSlots(rows);
@@ -48,7 +46,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
       for (int col = 0; col < 9; ++col) {
         int x = 8 + col * 18;
         int y = row * 18 + 17 + 1;
-        this.addSlot(new DankSlot(handler, slotIndex, x, y));
+        this.addSlotToContainer(new DankSlot(handler, slotIndex, x, y));
         slotIndex++;
       }
     }
@@ -68,7 +66,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
       for (int col = 0; col < 9; ++col) {
         int x = 8 + col * 18;
         int y = row * 18 + yStart;
-        this.addSlot(new Slot(playerinventory, col + row * 9 + 9, x, y) {
+        this.addSlotToContainer(new Slot(playerinventory, col + row * 9 + 9, x, y) {
           @Override
           public int getItemStackLimit(ItemStack stack) {
             return Math.min(this.getSlotStackLimit(), stack.getMaxStackSize());
@@ -80,7 +78,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
     for (int row = 0; row < 9; ++row) {
       int x = 8 + row * 18;
       int y = yStart + 58;
-      this.addSlot(new Slot(playerinventory, row, x, y) {
+      this.addSlotToContainer(new Slot(playerinventory, row, x, y) {
         @Override
         public int getItemStackLimit(ItemStack stack) {
           return Math.min(this.getSlotStackLimit(), stack.getMaxStackSize());
@@ -187,7 +185,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
           }
 
           if (dragType == 1) {
-            player.dropItem(PlayerInventory.getItemStack().split(1), true);
+            player.dropItem(PlayerInventory.getItemStack().splitStack(1), true);
           }
         }
       } else if (clickTypeIn == ClickType.QUICK_MOVE) {
@@ -227,7 +225,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
                 i3 = slot6.getItemStackLimit(mouseStack);
               }
 
-              slot6.putStack(mouseStack.split(i3));
+              slot6.putStack(mouseStack.splitStack(i3));
             }
           } else if (slot6.canTakeStack(player)) {
             if (mouseStack.isEmpty()) {
@@ -292,7 +290,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
             int maxAmount = slotStack.getMaxStackSize();
             if (slotStack.getCount() > maxAmount) {
               ItemStack newSlotStack = slotStack.copy();
-              ItemStack takenStack = newSlotStack.split(maxAmount);
+              ItemStack takenStack = newSlotStack.splitStack(maxAmount);
               PlayerInventory.setInventorySlotContents(dragType, takenStack);
               //slot4.onSwapCraft(takenStack.getCount());
               slot4.putStack(newSlotStack);
@@ -309,7 +307,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
             int l1 = slot4.getItemStackLimit(itemstack6);
 
             if (itemstack6.getCount() > l1) {
-              slot4.putStack(itemstack6.split(l1));
+              slot4.putStack(itemstack6.splitStack(l1));
             } else {
               slot4.putStack(itemstack6);
               PlayerInventory.setInventorySlotContents(dragType, ItemStack.EMPTY);
@@ -319,7 +317,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
           int i2 = slot4.getItemStackLimit(itemstack6);
 
           if (itemstack6.getCount() > i2) {
-            slot4.putStack(itemstack6.split(i2));
+            slot4.putStack(itemstack6.splitStack(i2));
             slot4.onTake(player, slotStack);
 
             if (!PlayerInventory.addItemStackToInventory(slotStack)) {
@@ -329,7 +327,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
             slot4.putStack(itemstack6);
             if (slotStack.getCount() > slotStack.getMaxStackSize()) {
               ItemStack remainder = slotStack.copy();
-              PlayerInventory.setInventorySlotContents(dragType, remainder.split(slotStack.getMaxStackSize()));
+              PlayerInventory.setInventorySlotContents(dragType, remainder.splitStack(slotStack.getMaxStackSize()));
               if (!PlayerInventory.addItemStackToInventory(remainder)) {
                 player.dropItem(remainder, true);
               }
@@ -340,7 +338,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
           }
         }
       }
-    } else if (clickTypeIn == ClickType.CLONE && player.abilities.isCreativeMode && PlayerInventory.getItemStack().isEmpty() && slotId >= 0) {
+    } else if (clickTypeIn == ClickType.CLONE && player.capabilities.isCreativeMode && PlayerInventory.getItemStack().isEmpty() && slotId >= 0) {
       Slot slot3 = this.inventorySlots.get(slotId);
 
       if (slot3 != null && slot3.getHasStack()) {
@@ -458,9 +456,9 @@ public abstract class AbstractAbstractDankContainer extends Container {
 
         if (itemstack1.isEmpty() && slot1.isItemValid(stack)) {
           if (stack.getCount() > slot1.getItemStackLimit(stack)) {
-            slot1.putStack(stack.split(slot1.getItemStackLimit(stack)));
+            slot1.putStack(stack.splitStack(slot1.getItemStackLimit(stack)));
           } else {
-            slot1.putStack(stack.split(stack.getCount()));
+            slot1.putStack(stack.splitStack(stack.getCount()));
           }
 
           slot1.onSlotChanged();

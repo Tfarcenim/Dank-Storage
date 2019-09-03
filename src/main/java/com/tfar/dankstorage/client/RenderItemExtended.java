@@ -1,12 +1,9 @@
 package com.tfar.dankstorage.client;
 
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
@@ -16,11 +13,11 @@ import java.text.DecimalFormat;
 
 public class RenderItemExtended {
 
-  ItemRenderer itemRender = Minecraft.getMinecraft().getItemRenderer();
+  RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
   public static final RenderItemExtended INSTANCE = new RenderItemExtended();
 
   public void setZLevel(float z) {
-    itemRender.zle = z;
+    itemRender.zLevel = z;
   }
 
   public void renderItemOverlayIntoGUI(FontRenderer fr, ItemStack stack, int xPosition, int yPosition,

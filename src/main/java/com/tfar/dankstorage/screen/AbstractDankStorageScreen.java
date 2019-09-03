@@ -10,14 +10,14 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankContainer>
 
   protected AbstractDankStorageTile te;
 
-  public AbstractDankStorageScreen(T container, InventoryPlayer playerinventory, ITextComponent component, ResourceLocation background) {
-    super(container,playerinventory, component,background,container.rows);
+  public AbstractDankStorageScreen(T container, InventoryPlayer playerinventory, ResourceLocation background) {
+    super(container,playerinventory,background,container.rows);
     this.te = container.te;
   }
 
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX,mouseY);
-    this.font.drawString(this.te.getDisplayName().getUnformattedComponentText(), 8, 6, 4210752);
+    this.fontRenderer.drawString(this.te.getDisplayName().getUnformattedComponentText(), 8, 6, 4210752);
   }
 }

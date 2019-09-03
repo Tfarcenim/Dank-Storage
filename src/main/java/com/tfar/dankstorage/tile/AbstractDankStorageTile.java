@@ -9,6 +9,8 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 
@@ -49,6 +51,12 @@ public abstract class AbstractDankStorageTile extends TileEntity {
   public void tick() {
 
   }*/
+
+  @Nullable
+  @Override
+  public ITextComponent getDisplayName() {
+    return new TextComponentTranslation("container." + getDank().getRegistryName().toString());
+  }
 
   @Override
   public boolean receiveClientEvent(int id, int type) {

@@ -7,10 +7,11 @@
   ],
   "key": {
     "r": {
-      "item": "minecraft:coal"
+      "item": "minecraft:coal",
+      "data" : 0
     },
     "b": {
-      "item": "minecraft:barrel"
+      "item": "minecraft:chest"
     }
   },
   "result": {

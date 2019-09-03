@@ -5,7 +5,6 @@ import com.tfar.dankstorage.inventory.PortableDankHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.MenuType;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -13,8 +12,8 @@ public abstract class AbstractPortableDankContainer extends AbstractAbstractDank
 
   protected ItemStack bag;
 
-  public AbstractPortableDankContainer(MenuType<?> type, int p_i50105_2_, InventoryPlayer playerInventory, EntityPlayer player, PortableDankHandler handler, int rows) {
-    super(type, p_i50105_2_, playerInventory,player,handler,rows);
+  public AbstractPortableDankContainer(InventoryPlayer playerInventory, EntityPlayer player, PortableDankHandler handler, int rows) {
+    super(playerInventory,player,handler,rows);
     this.bag = player.getHeldItemMainhand();
     addPlayerSlots(playerInventory, playerInventory.currentItem);
   }
@@ -36,7 +35,7 @@ public abstract class AbstractPortableDankContainer extends AbstractAbstractDank
       for (int col = 0; col < 9; ++col) {
         int x = 8 + col * 18;
         int y = row * 18 + yStart;
-        this.addSlot(new Slot(playerinventory, col + row * 9 + 9, x, y) {
+        this.addSlotToContainer(new Slot(playerinventory, col + row * 9 + 9, x, y) {
           @Override
           public int getItemStackLimit(ItemStack stack) {
             return Math.min(this.getSlotStackLimit(), stack.getMaxStackSize());
@@ -49,14 +48,14 @@ public abstract class AbstractPortableDankContainer extends AbstractAbstractDank
       int x = 8 + row * 18;
       int y = yStart + 58;
       if (row != locked)
-      this.addSlot(new Slot(playerinventory, row, x, y) {
+      this.addSlotToContainer(new Slot(playerinventory, row, x, y) {
         @Override
         public int getItemStackLimit(ItemStack stack) {
           return Math.min(this.getSlotStackLimit(), stack.getMaxStackSize());
         }
       });
       else
-        this.addSlot(new LockedSlot(playerinventory, row, x, y) {
+        this.addSlotToContainer(new LockedSlot(playerinventory, row, x, y) {
         @Override
         public int getItemStackLimit(ItemStack stack) {
           return Math.min(this.getSlotStackLimit(), stack.getMaxStackSize());

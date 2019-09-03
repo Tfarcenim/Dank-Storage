@@ -1,22 +1,23 @@
 package com.tfar.dankstorage.block;
 
+import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.capability.CapabilityDankStorageProvider;
-import com.tfar.dankstorage.container.PortableDankProvider;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
-import com.tfar.dankstorage.network.Utils;
+import com.tfar.dankstorage.util.DankConstants;
+import com.tfar.dankstorage.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.*;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
@@ -37,8 +38,9 @@ public class DankItemBlock extends ItemBlock {
   public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
     if (!world.isRemote)
       if (player.isSneaking()) {
-        int type = Utils.getTier(player.getHeldItem(hand));
-        NetworkHooks.openGui((EntityPlayerMP) player, new PortableDankProvider(type), data -> data.writeItemStack(player.getHeldItem(hand)));
+        if (player.getHeldItem(hand).getItem() instanceof DankItemBlock) {
+          player.openGui(DankStorage.instance, DankConstants.BAG_GUI_ID, world, 0, 0, 0);
+        }
       } else {
         ItemStack bag = player.getHeldItem(hand);
         PortableDankHandler handler = Utils.getHandler(bag);
@@ -49,6 +51,11 @@ public class DankItemBlock extends ItemBlock {
         player.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, bag);
       }
     return super.onItemRightClick(world, player, hand);
+  }
+
+  @Override
+  public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player) {
+    return true;
   }
 
   @Override
@@ -69,18 +76,18 @@ public class DankItemBlock extends ItemBlock {
   }
 
   @Override
-  public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-    return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
-    if (!Utils.construction(ctx.getItem()))
-      return super.onItemUse(ctx);
+  public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    ItemStack bag = player.getHeldItem(hand);
+    if (!Utils.construction(bag))
+      return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
 
-
-    ItemStack bag = ctx.item;
     PortableDankHandler handler = Utils.getHandler(bag);
     int selectedSlot = Utils.getSelectedSlot(bag);
-    ctx.item = handler.getStackInSlot(selectedSlot);
-    EnumActionResult actionResultType = ctx.item.onItemUse(ctx);
-    handler.setStackInSlot(selectedSlot, ctx.item);
+    ItemStack stack = handler.getStackInSlot(selectedSlot);
+    player.setItemStackToSlot(EntityEquipmentSlot.MAINHAND,stack);
+    EnumActionResult actionResultType = stack.getItem().onItemUse(player,world,pos,hand,facing,hitX,hitY,hitZ);
+    handler.setStackInSlot(selectedSlot, stack);
+    player.setItemStackToSlot(EntityEquipmentSlot.MAINHAND,bag);
     return actionResultType;
   }
 }

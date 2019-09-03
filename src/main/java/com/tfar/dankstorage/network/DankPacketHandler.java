@@ -2,6 +2,7 @@ package com.tfar.dankstorage.network;
 
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class DankPacketHandler {
   public static SimpleNetworkWrapper INSTANCE;
@@ -9,29 +10,12 @@ public class DankPacketHandler {
   public static void registerMessages(String channelName) {
     INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(channelName);
 
-    INSTANCE.registerMessage(1, MessageToggleAutoPickup.class,
-            MessageToggleAutoPickup::encode,
-            MessageToggleAutoPickup::decode,
-            MessageToggleAutoPickup::handle);
+    INSTANCE.registerMessage(CMessageChangeSlot.Handler.class, CMessageChangeSlot.class, 0, Side.SERVER);
+    INSTANCE.registerMessage(CMessagePickBlock.Handler.class, CMessagePickBlock.class, 1, Side.SERVER);
+    INSTANCE.registerMessage(CMessageToggleAutoPickup.Handler.class, CMessageToggleAutoPickup.class, 2, Side.SERVER);
+    INSTANCE.registerMessage(CMessageToggleAutoVoid.Handler.class, CMessageToggleAutoVoid.class, 3, Side.SERVER);
+    INSTANCE.registerMessage(CMessageToggleConstruction.Handler.class, CMessageToggleConstruction.class, 4, Side.SERVER);
 
-    INSTANCE.registerMessage(2, MessageToggleAutoVoid.class,
-            MessageToggleAutoVoid::encode,
-            MessageToggleAutoVoid::decode,
-            MessageToggleAutoVoid::handle);
 
-    INSTANCE.registerMessage(3, MessageToggleConstruction.class,
-            MessageToggleConstruction::encode,
-            MessageToggleConstruction::decode,
-            MessageToggleConstruction::handle);
-
-    INSTANCE.registerMessage(4, MessageChangeSlot.class,
-            MessageChangeSlot::encode,
-            MessageChangeSlot::new,
-            MessageChangeSlot::handle);
-
-    INSTANCE.registerMessage(5, MessagePickBlock.class,
-            MessagePickBlock::encode,
-            MessagePickBlock::decode,
-            MessagePickBlock::handle);
   }
 }

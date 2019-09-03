@@ -1,7 +1,7 @@
 package com.tfar.dankstorage.capability;
 
 import com.tfar.dankstorage.inventory.PortableDankHandler;
-import com.tfar.dankstorage.network.Utils;
+import com.tfar.dankstorage.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -16,7 +16,6 @@ public class CapabilityDankStorageProvider implements ICapabilityProvider {
 
   private PortableDankHandler handler;
 
-  CapabilityItemHandler itemHandlerLazyOptional;
 
   public CapabilityDankStorageProvider(ItemStack stack) {
 
@@ -27,14 +26,13 @@ public class CapabilityDankStorageProvider implements ICapabilityProvider {
         stack.setTagCompound((NBTTagCompound) CapabilityDankStorage.DANK_STORAGE_CAPABILITY.writeNBT(this, null));
       }
     };
-    this.itemHandlerLazyOptional = handler;
     if (stack.hasTagCompound())
       CapabilityDankStorage.DANK_STORAGE_CAPABILITY.readNBT(this.handler, null, stack.getTagCompound());
   }
 
   @Override
-  public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-    return false;
+  public boolean hasCapability(@Nonnull Capability<?> cap, @Nullable EnumFacing facing) {
+    return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
   }
 
   /**
@@ -52,8 +50,6 @@ public class CapabilityDankStorageProvider implements ICapabilityProvider {
   public <T> T getCapability(@Nonnull Capability<T> cap, @Nullable EnumFacing side) {
     if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
       return (T) handler;
-    else if (cap == CapabilityDankStorage.DANK_STORAGE_CAPABILITY)
-      return LazyOptional.of(() -> CapabilityDankStorage.DANK_STORAGE_CAPABILITY).cast();
-    return super.getCapability;
+    else return null;
   }
 }

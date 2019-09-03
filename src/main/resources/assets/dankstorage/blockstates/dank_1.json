@@ -1,5 +1,5 @@
 {
   "variants": {
-    "": { "model": "dankstorage:block/dank_1" }
+    "normal": { "model": "dankstorage:dank_1" }
   }
 }

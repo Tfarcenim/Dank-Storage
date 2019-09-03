@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack;
 import javax.annotation.Nonnull;
 
 public class DankSlot extends Slot {
-  private static IInventory emptyInventory = new InventoryBasic(0);
+  private static IInventory emptyInventory = new InventoryBasic("empty",false,0);
   private final DankHandler itemHandler;
   private final int index;
 
