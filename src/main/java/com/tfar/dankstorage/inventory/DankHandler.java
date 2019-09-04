@@ -16,8 +16,6 @@ public class DankHandler extends ItemStackHandler {
 
   public final int stacklimit;
 
-  protected int selectedSlot;
-
   public DankHandler(int size, int stacklimit) {
     super(size);
     this.stacklimit = stacklimit;

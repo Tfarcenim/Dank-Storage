@@ -151,7 +151,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
           for (Slot dragSlot : this.dragSlots) {
             ItemStack mouseStack = PlayerInventory.getItemStack();
 
-            if (dragSlot != null && AbstractDankContainer.canAddItemToSlot(dragSlot, mouseStack, true) && dragSlot.isItemValid(mouseStack) && (this.dragMode == 2 || mouseStack.getCount() >= this.dragSlots.size()) && this.canDragIntoSlot(dragSlot)) {
+            if (dragSlot != null && AbstractAbstractDankContainer.canAddItemToSlot(dragSlot, mouseStack, true) && dragSlot.isItemValid(mouseStack) && (this.dragMode == 2 || mouseStack.getCount() >= this.dragSlots.size()) && this.canDragIntoSlot(dragSlot)) {
               ItemStack itemstack14 = mouseStackCopy.copy();
               int j3 = dragSlot.getHasStack() ? dragSlot.getStack().getCount() : 0;
               computeStackSize(this.dragSlots, this.dragMode, itemstack14, j3);
@@ -243,7 +243,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
                 slot6.onTake(player, PlayerInventory.getItemStack());
               }
             } else if (slot6.isItemValid(mouseStack)) {
-              if (slotStack.getItem() == mouseStack.getItem() && ItemStack.areItemStackTagsEqual(slotStack, mouseStack)) {
+              if (slotStack.getItem() == mouseStack.getItem() && slotStack.getMetadata() == mouseStack.getMetadata() && ItemStack.areItemStackTagsEqual(slotStack, mouseStack)) {
                 int k2 = dragType == 0 ? mouseStack.getCount() : 1;
 
                 if (k2 > slot6.getItemStackLimit(mouseStack) - slotStack.getCount()) {
@@ -260,7 +260,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
                 slot6.putStack(mouseStack);
                 PlayerInventory.setItemStack(slotStack);
               }
-            } else if (slotStack.getItem() == mouseStack.getItem() && mouseStack.getMaxStackSize() > 1 && ItemStack.areItemStackTagsEqual(slotStack, mouseStack) && !slotStack.isEmpty()) {
+            } else if (slotStack.getItem() == mouseStack.getItem() && mouseStack.getMaxStackSize() > 1 && (!slotStack.getHasSubtypes() || slotStack.getMetadata() == mouseStack.getMetadata()) && ItemStack.areItemStackTagsEqual(slotStack, mouseStack) && !slotStack.isEmpty()) {
               int j2 = slotStack.getCount();
 
               if (j2 + mouseStack.getCount() <= mouseStack.getMaxStackSize()) {
@@ -420,7 +420,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
       Slot slot = this.inventorySlots.get(i);
       ItemStack itemstack = slot.getStack();
 
-      if (!itemstack.isEmpty() && itemstack.getItem() == stack.getItem() && ItemStack.areItemStackTagsEqual(stack, itemstack)) {
+      if (!itemstack.isEmpty() && itemstack.getItem() == stack.getItem() && (stack.getMetadata() == itemstack.getMetadata()) && ItemStack.areItemStackTagsEqual(stack, itemstack)) {
         int j = itemstack.getCount() + stack.getCount();
         int maxSize = slot.getItemStackLimit(itemstack);
 
