@@ -4,10 +4,12 @@ import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.*;
+import com.tfar.dankstorage.network.CMessageToggle.KeybindToggleType;
 import com.tfar.dankstorage.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -18,12 +20,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.MouseEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.input.Keyboard;
 
@@ -58,15 +60,16 @@ public class Client {
   public static class KeyHandler {
     @SubscribeEvent
     public static void onKeyInput(InputEvent.KeyInputEvent event) {
-      if (mc.player == null || !(mc.player.getHeldItemMainhand().getItem() instanceof DankItemBlock)) return;
+      if (mc.player == null || !(mc.player.getHeldItemMainhand().getItem() instanceof DankItemBlock
+              || mc.player.getHeldItemOffhand().getItem() instanceof DankItemBlock)) return;
       if (AUTO_PICKUP.isPressed()) {
-        DankPacketHandler.INSTANCE.sendToServer(new CMessageToggleAutoPickup());
+        DankPacketHandler.INSTANCE.sendToServer(new CMessageToggle(KeybindToggleType.PICKUP));
       }
       if (AUTO_VOID.isPressed()) {
-        DankPacketHandler.INSTANCE.sendToServer(new CMessageToggleAutoVoid());
+        DankPacketHandler.INSTANCE.sendToServer(new CMessageToggle(KeybindToggleType.VOID));
       }
       if (CONSTRUCTION.isPressed()) {
-        DankPacketHandler.INSTANCE.sendToServer(new CMessageToggleConstruction());
+        DankPacketHandler.INSTANCE.sendToServer(new CMessageToggle(KeybindToggleType.CONSTRUCTION));
       }
       if (mc.gameSettings.keyBindPickBlock.isPressed()) {
         DankPacketHandler.INSTANCE.sendToServer(new CMessagePickBlock());
@@ -77,7 +80,7 @@ public class Client {
     @SubscribeEvent
     public static void mousewheel(MouseEvent e) {
       EntityPlayer player = mc.player;
-      if (player.getHeldItemMainhand().getItem() instanceof DankItemBlock && player.isSneaking() && e.getDwheel() != 0) {
+      if ((player.getHeldItemMainhand().getItem() instanceof DankItemBlock || player.getHeldItemOffhand().getItem() instanceof DankItemBlock) && player.isSneaking() && e.getDwheel() != 0) {
         boolean right = e.getDwheel() < 0;
         DankPacketHandler.INSTANCE.sendToServer(new CMessageChangeSlot(right));
         e.setCanceled(true);
@@ -85,12 +88,17 @@ public class Client {
     }
 
     @SubscribeEvent
-    public static void onRenderTick(TickEvent.RenderTickEvent event) {
+    public static void onRenderTick(RenderGameOverlayEvent.Post event) {
       EntityPlayer player = mc.player;
       if (player == null) return;
       if (!(player.openContainer instanceof ContainerPlayer)) return;
       ItemStack bag = player.getHeldItemMainhand();
-      if (!(bag.getItem() instanceof DankItemBlock)) return;
+      if (!(bag.getItem() instanceof DankItemBlock)) {
+        bag = player.getHeldItemOffhand();
+        if (!(bag.getItem() instanceof DankItemBlock))return;
+      }
+      int x = event.getResolution().getScaledWidth()/2;
+      int y = event.getResolution().getScaledHeight();
       PortableDankHandler handler = Utils.getHandler(bag);
       ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
       String s = toPlace.getDisplayName();
@@ -102,8 +110,8 @@ public class Client {
       if (!toPlace.isEmpty()) {
         GlStateManager.enableRescaleNormal();
         RenderHelper.enableGUIStandardItemLighting();
-        int itemX = 0;
-        int itemY = 0;
+        int itemX = x - 140;
+        int itemY = y - 20;
         float pickupAnimation = toPlace.getAnimationsToGo() - 1;
         if (pickupAnimation > 0.0F) {
           GlStateManager.pushMatrix();
@@ -118,6 +126,9 @@ public class Client {
           mc.getRenderItem().renderItemOverlays(mc.fontRenderer, toPlace, itemX, itemY);
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableRescaleNormal();
+
+        mc.getTextureManager().bindTexture(Gui.ICONS);
+
         //GlStateManager.popMatrix();
       }
     }

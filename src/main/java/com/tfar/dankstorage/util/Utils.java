@@ -1,11 +1,15 @@
 package com.tfar.dankstorage.util;
 
+import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
+import com.tfar.dankstorage.network.CMessageToggle;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
 
 public class Utils {
 
@@ -19,6 +23,21 @@ public class Utils {
 
   public static boolean autoVoid(ItemStack bag) {
     return bag.getItem() instanceof DankItemBlock && bag.hasTagCompound() && bag.getTagCompound().getBoolean("void");
+  }
+
+  public static void toggle(ItemStack bag, CMessageToggle.KeybindToggleType t){
+    String s;
+    switch (t){case VOID:s = "void";break;
+      case PICKUP:s = "pickup"; break;
+      case CONSTRUCTION:s = "construction"; break;
+      default:{
+        DankStorage.LOGGER.error("invalid keybind press");
+        return;
+      }
+    }
+    boolean toggle = getTagSafely(bag).getBoolean(s);
+    Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentTranslation("dankstorage."+s+"." + (toggle ? "disabled" : "enabled")), true);
+    bag.getTagCompound().setBoolean(s, !toggle);
   }
 
   public static NBTTagCompound getTagSafely(ItemStack stack){

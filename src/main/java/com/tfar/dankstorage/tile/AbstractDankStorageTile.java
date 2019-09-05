@@ -143,13 +143,16 @@ public abstract class AbstractDankStorageTile extends TileEntity {
     }
   }
 
+  @Override
+  public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+    return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
+  }
+
   @SuppressWarnings("unchecked")
   @Override
   public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-    return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ?  (T)itemHandler: super.getCapability(capability, facing);
+    return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ?  (T)itemHandler : super.getCapability(capability, facing);
   }
-
-
 
   public abstract Item getDank();
 

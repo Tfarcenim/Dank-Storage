@@ -12,10 +12,6 @@ public class DankPacketHandler {
 
     INSTANCE.registerMessage(CMessageChangeSlot.Handler.class, CMessageChangeSlot.class, 0, Side.SERVER);
     INSTANCE.registerMessage(CMessagePickBlock.Handler.class, CMessagePickBlock.class, 1, Side.SERVER);
-    INSTANCE.registerMessage(CMessageToggleAutoPickup.Handler.class, CMessageToggleAutoPickup.class, 2, Side.SERVER);
-    INSTANCE.registerMessage(CMessageToggleAutoVoid.Handler.class, CMessageToggleAutoVoid.class, 3, Side.SERVER);
-    INSTANCE.registerMessage(CMessageToggleConstruction.Handler.class, CMessageToggleConstruction.class, 4, Side.SERVER);
-
-
+    INSTANCE.registerMessage(CMessageToggle.Handler.class, CMessageToggle.class, 2, Side.SERVER);
   }
 }

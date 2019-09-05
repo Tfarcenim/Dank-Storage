@@ -53,27 +53,31 @@ public class GuiHandler implements IGuiHandler {
         case 7:
           return new DankContainers.DankContainer7(world, pos, player.inventory, player, handler);
       }
-    } else if (ID == DankConstants.BAG_GUI_ID && player.getHeldItemMainhand().getItem() instanceof DankItemBlock) {
+    } else if (ID == DankConstants.BAG_GUI_ID) {
       ItemStack bag = player.getHeldItemMainhand();
-      int tier = Utils.getTier(bag);
-      PortableDankHandler handler = Utils.getHandler(bag);
-      switch (tier) {
-        case 1:
-          return new DankContainers.PortableDankContainer1(player.inventory, player, handler);
-        case 2:
-          return new DankContainers.PortableDankContainer2(player.inventory, player, handler);
-        case 3:
-          return new DankContainers.PortableDankContainer3(player.inventory, player, handler);
-        case 4:
-          return new DankContainers.PortableDankContainer4(player.inventory, player, handler);
-        case 5:
-          return new DankContainers.PortableDankContainer5(player.inventory, player, handler);
-        case 6:
-          return new DankContainers.PortableDankContainer6(player.inventory, player, handler);
-        case 7:
-          return new DankContainers.PortableDankContainer7(player.inventory, player, handler);
+      if (!(bag.getItem() instanceof DankItemBlock)){
+        bag = player.getHeldItemOffhand();
+        if (!(bag.getItem() instanceof DankItemBlock))return null;
       }
-    }
+        int tier = Utils.getTier(bag);
+        PortableDankHandler handler = Utils.getHandler(bag);
+        switch (tier) {
+          case 1:
+            return new DankContainers.PortableDankContainer1(player.inventory, player, handler);
+          case 2:
+            return new DankContainers.PortableDankContainer2(player.inventory, player, handler);
+          case 3:
+            return new DankContainers.PortableDankContainer3(player.inventory, player, handler);
+          case 4:
+            return new DankContainers.PortableDankContainer4(player.inventory, player, handler);
+          case 5:
+            return new DankContainers.PortableDankContainer5(player.inventory, player, handler);
+          case 6:
+            return new DankContainers.PortableDankContainer6(player.inventory, player, handler);
+          case 7:
+            return new DankContainers.PortableDankContainer7(player.inventory, player, handler);
+        }
+      }
     return null;
   }
 
@@ -114,27 +118,31 @@ public class GuiHandler implements IGuiHandler {
         case 7:
           return new DankScreens.DankStorageScreen7(new DankContainers.DankContainer7(world, pos, player.inventory, player, handler), player.inventory);
       }
-    } else if (ID == DankConstants.BAG_GUI_ID && player.getHeldItemMainhand().getItem() instanceof DankItemBlock) {
+    } else if (ID == DankConstants.BAG_GUI_ID) {
       ItemStack bag = player.getHeldItemMainhand();
-      int tier = Utils.getTier(bag);
-      PortableDankHandler handler = Utils.getHandler(bag);
-      switch (tier) {
-        case 1:
-          return new DankScreens.PortableDankStorageScreen1(new DankContainers.PortableDankContainer1(player.inventory, player, handler), player.inventory);
-        case 2:
-          return new DankScreens.PortableDankStorageScreen2(new DankContainers.PortableDankContainer2(player.inventory, player, handler), player.inventory);
-        case 3:
-          return new DankScreens.PortableDankStorageScreen3(new DankContainers.PortableDankContainer3(player.inventory, player, handler), player.inventory);
-        case 4:
-          return new DankScreens.PortableDankStorageScreen4(new DankContainers.PortableDankContainer4(player.inventory, player, handler), player.inventory);
-        case 5:
-          return new DankScreens.PortableDankStorageScreen5(new DankContainers.PortableDankContainer5(player.inventory, player, handler), player.inventory);
-        case 6:
-          return new DankScreens.PortableDankStorageScreen6(new DankContainers.PortableDankContainer6(player.inventory, player, handler), player.inventory);
-        case 7:
-          return new DankScreens.PortableDankStorageScreen7(new DankContainers.PortableDankContainer7(player.inventory, player, handler), player.inventory);
+      if (!(bag.getItem() instanceof DankItemBlock)){
+        bag = player.getHeldItemOffhand();
+        if (!(bag.getItem() instanceof DankItemBlock))return null;
       }
-    }
+      int tier = Utils.getTier(bag);
+        PortableDankHandler handler = Utils.getHandler(bag);
+        switch (tier) {
+          case 1:
+            return new DankScreens.PortableDankStorageScreen1(new DankContainers.PortableDankContainer1(player.inventory, player, handler), player.inventory);
+          case 2:
+            return new DankScreens.PortableDankStorageScreen2(new DankContainers.PortableDankContainer2(player.inventory, player, handler), player.inventory);
+          case 3:
+            return new DankScreens.PortableDankStorageScreen3(new DankContainers.PortableDankContainer3(player.inventory, player, handler), player.inventory);
+          case 4:
+            return new DankScreens.PortableDankStorageScreen4(new DankContainers.PortableDankContainer4(player.inventory, player, handler), player.inventory);
+          case 5:
+            return new DankScreens.PortableDankStorageScreen5(new DankContainers.PortableDankContainer5(player.inventory, player, handler), player.inventory);
+          case 6:
+            return new DankScreens.PortableDankStorageScreen6(new DankContainers.PortableDankContainer6(player.inventory, player, handler), player.inventory);
+          case 7:
+            return new DankScreens.PortableDankStorageScreen7(new DankContainers.PortableDankContainer7(player.inventory, player, handler), player.inventory);
+        }
+      }
     return null;
   }
 }

@@ -103,5 +103,4 @@ public class RenderItemExtended {
     renderer.pos(x + width, y, 0.0D).color(red, green, blue, alpha).endVertex();
     Tessellator.getInstance().draw();
   }
-
 }

@@ -19,6 +19,8 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,6 +31,8 @@ public class DankStorage {
   public static final String MODID = "dankstorage";
   public static final String NAME = "Dank Storage";
   public static final String VERSION = "@VERSION@";
+
+  public static final Logger LOGGER = LogManager.getLogger();
 
   @Mod.Instance
   public static DankStorage instance;

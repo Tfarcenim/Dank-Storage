@@ -1,5 +1,6 @@
 package com.tfar.dankstorage.network;
 
+import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.util.Utils;
@@ -42,8 +43,6 @@ public class CMessagePickBlock implements IMessage {
   @Override
   public void toBytes(ByteBuf buf) {
   }
-
-  private static final Logger LOGGER = LogManager.getLogger();
 
   public static class Handler implements IMessageHandler<CMessagePickBlock, IMessage> {
     @Override
@@ -89,7 +88,7 @@ public class CMessagePickBlock implements IMessage {
         result = state.getBlock().getPickBlock(state, target, world, pos, player);
 
         if (result.isEmpty())
-          LOGGER.warn("Picking on: [{}] {} gave null item", target.hitInfo, state.getBlock().getRegistryName());
+          DankStorage.LOGGER.warn("Picking on: [{}] {} gave null item", target.hitInfo, state.getBlock().getRegistryName());
       }
       return result;
     }
