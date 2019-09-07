@@ -3,6 +3,7 @@ package com.tfar.dankstorage.block;
 import com.tfar.dankstorage.client.Client;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
+import com.tfar.dankstorage.network.CMessageToggle;
 import com.tfar.dankstorage.network.Utils;
 import com.tfar.dankstorage.tile.AbstractDankStorageTile;
 import com.tfar.dankstorage.tile.DankTiles;
@@ -36,6 +37,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static com.tfar.dankstorage.network.CMessageToggle.*;
+
 public class DankBlock extends Block {
   public DankBlock(Properties p_i48440_1_) {
     super(p_i48440_1_);
@@ -59,8 +62,7 @@ public class DankBlock extends Block {
     if (tile instanceof AbstractDankStorageTile && !world.isRemote){
       ItemStack dank = new ItemStack(((AbstractDankStorageTile) tile).getDank());
       CompoundNBT nbt = ((AbstractDankStorageTile) tile).itemHandler.serializeNBT();
-      nbt.putBoolean("pickup",((AbstractDankStorageTile) tile).pickup);
-      nbt.putBoolean("void",((AbstractDankStorageTile) tile).isVoid);
+      nbt.putInt("mode",((AbstractDankStorageTile) tile).mode);
       nbt.putInt("selectedSlot",((AbstractDankStorageTile) tile).selectedSlot);
       dank.setTag(nbt);
       ItemEntity itemEntity = new ItemEntity(world,pos.getX()+ .5,pos.getY() + .5,pos.getZ()+.5,dank);
@@ -74,8 +76,7 @@ public class DankBlock extends Block {
     if (te instanceof AbstractDankStorageTile && !world.isRemote && entity != null) {
       if (stack.hasTag()){
         ((AbstractDankStorageTile) te).setContents(stack.getTag());
-        ((AbstractDankStorageTile) te).pickup = stack.getTag().getBoolean("pickup");
-        ((AbstractDankStorageTile) te).isVoid = stack.getTag().getBoolean("void");
+        ((AbstractDankStorageTile) te).mode = stack.getTag().getInt("mode");
         ((AbstractDankStorageTile) te).selectedSlot = stack.getTag().getInt("selectedSlot");
       }
     }
@@ -84,7 +85,7 @@ public class DankBlock extends Block {
   @Nullable
   @Override
   public BlockState getStateForPlacement(BlockItemUseContext ctx) {
-    ItemStack bag = ctx.item;
+    ItemStack bag = ctx.getItem();
 
     Block block = Block.getBlockFromItem(bag.getItem());
     if (block instanceof DankBlock)return block.getDefaultState();
@@ -130,14 +131,10 @@ public class DankBlock extends Block {
     }
 
     if (Screen.hasShiftDown()) {
-      if (Utils.autoVoid(bag)) tooltip.add(
-              new TranslationTextComponent("text.dankstorage.disablevoid",new StringTextComponent(Client.AUTO_VOID.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
+      if (Utils.canPickup(bag)) tooltip.add(
+              new TranslationTextComponent("text.dankstorage.disablepickup",new StringTextComponent(Client.TOGGLE_MODE.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
       else tooltip.add(
-              new TranslationTextComponent("text.dankstorage.enablevoid",new StringTextComponent(Client.AUTO_VOID.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
-      if (Utils.autoPickup(bag)) tooltip.add(
-              new TranslationTextComponent("text.dankstorage.disablepickup",new StringTextComponent(Client.AUTO_PICKUP.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
-      else tooltip.add(
-              new TranslationTextComponent("text.dankstorage.enablepickup",new StringTextComponent(Client.AUTO_PICKUP.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
+              new TranslationTextComponent("text.dankstorage.enablepickup",new StringTextComponent(Client.TOGGLE_MODE.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
       DankHandler handler = Utils.getHandler(bag);
 
       if (handler.isEmpty()){
@@ -175,11 +172,13 @@ public class DankBlock extends Block {
 
   public static boolean onItemPickup(EntityItemPickupEvent event, ItemStack bag) {
 
-    if (!bag.getOrCreateTag().getBoolean("pickup")) {
+    Mode mode = Utils.getMode(bag);
+
+    if (mode == Mode.NORMAL) {
       return false;
     }
     ItemStack toPickup = event.getItem().getItem();
-    final boolean isVoid = Utils.autoVoid(bag);
+   // final boolean isVoid = Utils.autoVoid(bag);
 
     if (true) {
       if (false) {
@@ -194,7 +193,7 @@ public class DankBlock extends Block {
         PortableDankHandler inv = Utils.getHandler(bag);
         for (int i = 0; i < inv.getSlots(); i++) {
           ItemStack stackInSlot = inv.getStackInSlot(i);
-          if (stackInSlot.isEmpty()  && !isVoid) {
+          if (stackInSlot.isEmpty()  && !(mode == Mode.PICKUP_ALL)) {
             inv.setStackInSlot(i, toPickup.copy());
             toPickup.setCount(0);
           } else if (canAddItemToSlot(inv,stackInSlot, toPickup,true)) {

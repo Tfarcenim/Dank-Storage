@@ -18,9 +18,9 @@ import org.apache.logging.log4j.Logger;
 import java.util.function.Supplier;
 
 
-public class MessagePickBlock {
+public class CMessagePickBlock {
 
-  public MessagePickBlock() {
+  public CMessagePickBlock() {
   }
 
   public void encode(PacketBuffer buf) {
@@ -28,8 +28,8 @@ public class MessagePickBlock {
 
   private static final Logger LOGGER = LogManager.getLogger();
 
-  public static MessagePickBlock decode(PacketBuffer buffer) {
-    return new MessagePickBlock();
+  public static CMessagePickBlock decode(PacketBuffer buffer) {
+    return new CMessagePickBlock();
   }
 
   public void handle(Supplier<NetworkEvent.Context> ctx) {

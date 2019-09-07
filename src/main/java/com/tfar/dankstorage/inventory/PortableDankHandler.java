@@ -31,7 +31,7 @@ public class PortableDankHandler extends DankHandler {
         }
       }
     } else {
-      boolean pickup = Utils.autoPickup(bag);
+      boolean pickup = Utils.canPickup(bag);
       boolean isVoid = Utils.autoVoid(bag);
       boolean construction = Utils.construction(bag);
       int selectedSlot = Utils.getSelectedSlot(bag);

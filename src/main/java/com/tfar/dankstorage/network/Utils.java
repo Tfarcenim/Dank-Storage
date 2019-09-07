@@ -3,13 +3,33 @@ package com.tfar.dankstorage.network;
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
+
+import java.util.Locale;
+
+import static com.tfar.dankstorage.network.CMessageToggle.*;
 
 public class Utils {
 
-  public static boolean autoPickup(ItemStack bag) {
+  public static boolean canPickup(ItemStack bag) {
     return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTag().getBoolean("pickup");
+  }
+
+  public static Mode getMode(ItemStack bag) {
+    return modes[bag.getOrCreateTag().getInt("mode")];
+  }
+
+  //0,1,2,3
+  public static void cycleMode(ItemStack bag, PlayerEntity player) {
+    int ordinal = bag.getOrCreateTag().getInt("mode");
+    ordinal++;
+    if (ordinal > 3) ordinal = 0;
+    bag.getOrCreateTag().putInt("mode", ordinal);
+    player.sendStatusMessage(
+            new TranslationTextComponent("dankstorage.mode." + modes[ordinal].name().toLowerCase(Locale.ROOT)), true);
   }
 
   public static boolean construction(ItemStack bag) {
@@ -36,7 +56,8 @@ public class Utils {
       case 3:
       case 4:
       case 5:
-      case 6:return 9 * getTier(bag);
+      case 6:
+        return 9 * getTier(bag);
       case 7:
         return 81;
     }

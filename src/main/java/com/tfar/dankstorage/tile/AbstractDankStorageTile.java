@@ -25,8 +25,7 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
   public int numPlayersUsing = 0;
   protected String customName;
   public int renderTick = 0;
-  public boolean pickup;
-  public boolean isVoid;
+  public int mode = 0;
   public int selectedSlot;
 
   public DankHandler itemHandler;
@@ -92,8 +91,7 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
   @Override
   public void read(CompoundNBT compound) {
     super.read(compound);
-    this.isVoid = compound.getBoolean("void");
-    this.pickup = compound.getBoolean("pickup");
+    this.mode = compound.getInt("mode");
     this.selectedSlot = compound.getInt("selectedSlot");
     if (compound.contains("Items")) {
       itemHandler.deserializeNBT(compound.getCompound("Items"));
@@ -103,11 +101,11 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
     }
   }
 
+  @Nonnull
   @Override
   public CompoundNBT write(CompoundNBT compound) {
     super.write(compound);
-    compound.putBoolean("void", isVoid);
-    compound.putBoolean("pickup",pickup);
+    compound.putInt("mode",mode);
     compound.putInt("selectedSlot",selectedSlot);
     compound.put("Items", itemHandler.serializeNBT());
     if (this.hasCustomName()) {

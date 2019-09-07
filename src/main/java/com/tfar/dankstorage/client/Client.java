@@ -27,8 +27,7 @@ import org.lwjgl.glfw.GLFW;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD,value = Dist.CLIENT)
 public class Client {
 
-  public static KeyBinding AUTO_PICKUP;
-  public static KeyBinding AUTO_VOID;
+  public static KeyBinding TOGGLE_MODE;
   public static KeyBinding CONSTRUCTION;
   private static final Minecraft mc = Minecraft.getInstance();
 
@@ -49,12 +48,10 @@ public class Client {
     ScreenManager.registerFactory(DankStorage.Objects.dank_7_container, DankScreens.DankStorageScreen7::new);
     ScreenManager.registerFactory(DankStorage.Objects.portable_dank_7_container, DankScreens.PortableDankStorageScreen7::new);
 
-    AUTO_PICKUP = new KeyBinding("key.dankstorage.pickup", GLFW.GLFW_KEY_P, "key.categories.dankstorage");
-    AUTO_VOID = new KeyBinding("key.dankstorage.void", GLFW.GLFW_KEY_O, "key.categories.dankstorage");
+    TOGGLE_MODE = new KeyBinding("key.dankstorage.pickup", GLFW.GLFW_KEY_P, "key.categories.dankstorage");
     CONSTRUCTION = new KeyBinding("key.dankstorage.construction", GLFW.GLFW_KEY_I, "key.categories.dankstorage");
 
-    ClientRegistry.registerKeyBinding(AUTO_PICKUP);
-    ClientRegistry.registerKeyBinding(AUTO_VOID);
+    ClientRegistry.registerKeyBinding(TOGGLE_MODE);
     ClientRegistry.registerKeyBinding(CONSTRUCTION);
   }
 
@@ -63,17 +60,14 @@ public class Client {
     @SubscribeEvent
     public static void onKeyInput(InputEvent.KeyInputEvent event) {
       if (mc.player == null || !(mc.player.getHeldItemMainhand().getItem() instanceof DankItemBlock))return;
-      if (AUTO_PICKUP.isPressed()) {
-        DankPacketHandler.INSTANCE.sendToServer(new MessageToggleAutoPickup());
-      }
-      if (AUTO_VOID.isPressed()) {
-        DankPacketHandler.INSTANCE.sendToServer(new MessageToggleAutoVoid());
+      if (TOGGLE_MODE.isPressed()) {
+        DankPacketHandler.INSTANCE.sendToServer(new CMessageToggle());
       }
       if (CONSTRUCTION.isPressed()) {
-        DankPacketHandler.INSTANCE.sendToServer(new MessageToggleConstruction());
+        DankPacketHandler.INSTANCE.sendToServer(new CMessageConstructionMode());
       }
       if (mc.gameSettings.keyBindPickBlock.isPressed()) {
-        DankPacketHandler.INSTANCE.sendToServer(new MessagePickBlock());
+        DankPacketHandler.INSTANCE.sendToServer(new CMessagePickBlock());
       }
     }
 
@@ -82,7 +76,7 @@ public class Client {
       PlayerEntity player = Minecraft.getInstance().player;
       if (player.getHeldItemMainhand().getItem() instanceof DankItemBlock && player.isSneaking()) {
         boolean right = e.getScrollDelta() < 0;
-        DankPacketHandler.INSTANCE.sendToServer(new MessageChangeSlot(right));
+        DankPacketHandler.INSTANCE.sendToServer(new CMessageChangeSlot(right));
         e.setCanceled(true);
       }
     }

@@ -11,29 +11,24 @@ public class DankPacketHandler {
   public static void registerMessages(String channelName) {
     INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(DankStorage.MODID, channelName), () -> "1.0", s -> true, s -> true);
 
-    INSTANCE.registerMessage(1, MessageToggleAutoPickup.class,
-            MessageToggleAutoPickup::encode,
-            MessageToggleAutoPickup::decode,
-            MessageToggleAutoPickup::handle);
+    INSTANCE.registerMessage(1, CMessageToggle.class,
+            CMessageToggle::encode,
+            CMessageToggle::decode,
+            CMessageToggle::handle);
 
-    INSTANCE.registerMessage(2, MessageToggleAutoVoid.class,
-            MessageToggleAutoVoid::encode,
-            MessageToggleAutoVoid::decode,
-            MessageToggleAutoVoid::handle);
+    INSTANCE.registerMessage(2, CMessageConstructionMode.class,
+            CMessageConstructionMode::encode,
+            CMessageConstructionMode::decode,
+            CMessageConstructionMode::handle);
 
-    INSTANCE.registerMessage(3, MessageToggleConstruction.class,
-            MessageToggleConstruction::encode,
-            MessageToggleConstruction::decode,
-            MessageToggleConstruction::handle);
+    INSTANCE.registerMessage(3, CMessageChangeSlot.class,
+            CMessageChangeSlot::encode,
+            CMessageChangeSlot::new,
+            CMessageChangeSlot::handle);
 
-    INSTANCE.registerMessage(4, MessageChangeSlot.class,
-            MessageChangeSlot::encode,
-            MessageChangeSlot::new,
-            MessageChangeSlot::handle);
-
-    INSTANCE.registerMessage(5, MessagePickBlock.class,
-            MessagePickBlock::encode,
-            MessagePickBlock::decode,
-            MessagePickBlock::handle);
+    INSTANCE.registerMessage(4, CMessagePickBlock.class,
+            CMessagePickBlock::encode,
+            CMessagePickBlock::decode,
+            CMessagePickBlock::handle);
   }
 }

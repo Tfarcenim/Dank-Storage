@@ -10,16 +10,16 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import java.util.function.Supplier;
 
 
-public class MessageChangeSlot {
+public class CMessageChangeSlot {
 
   boolean right;
 
-  public MessageChangeSlot(){}
+  public CMessageChangeSlot(){}
 
-  public MessageChangeSlot(boolean right){ this.right = right;}
+  public CMessageChangeSlot(boolean right){ this.right = right;}
 
   //decode
-  public MessageChangeSlot(PacketBuffer buf) {
+  public CMessageChangeSlot(PacketBuffer buf) {
     this.right = buf.readBoolean();
   }
 

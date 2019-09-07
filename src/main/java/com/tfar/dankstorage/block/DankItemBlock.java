@@ -73,10 +73,11 @@ public class DankItemBlock extends BlockItem {
         ItemStack bag = player.getHeldItem(hand);
         PortableDankHandler handler = Utils.getHandler(bag);
         ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
-        player.setItemStackToSlot(EquipmentSlotType.MAINHAND, toPlace);
+        EquipmentSlotType hand1 = hand == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
+        player.setItemStackToSlot(hand1, toPlace);
         ActionResult<ItemStack> actionResultType = toPlace.getItem().onItemRightClick(world, player, hand);
         handler.setStackInSlot(Utils.getSelectedSlot(bag), actionResultType.getResult());
-        player.setItemStackToSlot(EquipmentSlotType.MAINHAND, bag);
+        player.setItemStackToSlot(hand1, bag);
       }
     return super.onItemRightClick(world, player, hand);
   }
@@ -86,10 +87,11 @@ public class DankItemBlock extends BlockItem {
     if (!Utils.construction(bag))return false;
     PortableDankHandler handler = Utils.getHandler(bag);
     ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
-    player.setItemStackToSlot(EquipmentSlotType.MAINHAND, toPlace);
+    EquipmentSlotType hand1 = hand == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
+    player.setItemStackToSlot(hand1, toPlace);
     boolean result = toPlace.getItem().itemInteractionForEntity(toPlace, player, entity, hand);
     handler.setStackInSlot(Utils.getSelectedSlot(bag),toPlace);
-    player.setItemStackToSlot(EquipmentSlotType.MAINHAND, bag);
+    player.setItemStackToSlot(hand1, bag);
     return result;
   }
 
@@ -98,18 +100,19 @@ public class DankItemBlock extends BlockItem {
     return stack.hasTag() && Utils.construction(stack);
   }
 
+  @Nonnull
   @Override
   public ActionResultType onItemUse(ItemUseContext ctx) {
     if (!Utils.construction(ctx.getItem()))
       return super.onItemUse(ctx);
 
 
-    ItemStack bag = ctx.item;
+    ItemStack bag = ctx.getItem();
     PortableDankHandler handler = Utils.getHandler(bag);
     int selectedSlot = Utils.getSelectedSlot(bag);
-    ctx.item = handler.getStackInSlot(selectedSlot);
-    ActionResultType actionResultType = ctx.item.onItemUse(ctx);
-    handler.setStackInSlot(selectedSlot, ctx.item);
+    ItemUseContext ctx2 = new ItemUseContextExt(ctx.getWorld(),ctx.getPlayer(),ctx.getHand(),handler.getStackInSlot(selectedSlot),ctx.rayTraceResult);
+    ActionResultType actionResultType = ctx2.getItem().onItemUse(ctx);
+    handler.setStackInSlot(selectedSlot, ctx2.getItem());
     return actionResultType;
   }
 }

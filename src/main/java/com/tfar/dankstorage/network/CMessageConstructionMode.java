@@ -9,15 +9,15 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import java.util.function.Supplier;
 
 
-public class MessageToggleConstruction {
+public class CMessageConstructionMode {
 
-  public MessageToggleConstruction(){}
+  public CMessageConstructionMode(){}
 
   public void encode(PacketBuffer buf) {
   }
 
-  public static MessageToggleConstruction decode(PacketBuffer buffer) {
-    return new MessageToggleConstruction();
+  public static CMessageConstructionMode decode(PacketBuffer buffer) {
+    return new CMessageConstructionMode();
   }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
@@ -27,12 +27,13 @@ public class MessageToggleConstruction {
 
       ctx.get().enqueueWork(  ()->  {
         if (player.getHeldItemMainhand().getItem() instanceof DankItemBlock) {
-          boolean toggle = Utils.construction(player.getHeldItemMainhand());
-          player.sendStatusMessage(new TranslationTextComponent("dankstorage.construction." + (toggle ? "disabled" : "enabled")),true);
-          player.getHeldItemMainhand().getOrCreateTag().putBoolean("construction",!toggle);
+          boolean toggle = Utils.canPickup(player.getHeldItemMainhand());
+          player.sendStatusMessage(new TranslationTextComponent("dankstorage.pickup." + (toggle ? "disabled" : "enabled")),true);
+          player.getHeldItemMainhand().getOrCreateTag().putBoolean("pickup",!toggle);
         }
       });
       ctx.get().setPacketHandled(true);
     }
+
 }
 

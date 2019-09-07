@@ -15,12 +15,14 @@
   "container.dankstorage.dank_6": "Dank 6",
   "container.dankstorage.dank_7": "Dank 7",
 
-  "dankstorage.pickup.enabled": "Auto-pickup Enabled",
-  "dankstorage.pickup.disabled": "Auto-pickup Disabled",
-  "dankstorage.void.enabled": "Voiding Enabled",
-  "dankstorage.void.disabled": "Voiding Disabled",
-  "key.dankstorage.pickup": "Auto Pickup",
-  "key.dankstorage.void": "Voiding",
+  "dankstorage.mode.normal": "Normal Mode",
+  "dankstorage.mode.pickup_all": "Pickup all",
+  "dankstorage.mode.filtered_pickup": "Filtered Pickup",
+  "dankstorage.mode.pickup_void": "Void Pickup",
+
+
+  "key.dankstorage.pickup": "Toggle Mode",
+
   "key.categories.dankstorage": "Dank Storage Keybinds",
 
   "text.dankstorage.shift": "Press %s for Info",
