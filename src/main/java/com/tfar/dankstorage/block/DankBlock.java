@@ -198,7 +198,8 @@ public class DankBlock extends Block {
             }
             if (!isVoid)
             toPickup.splitStack(fill);
-            else if (toPickup.isItemEqual(stackInSlot) && ItemStack.areItemStackTagsEqual(stackInSlot, toPickup))toPickup.setCount(0);
+            else if (toPickup.isItemEqual(stackInSlot) && ItemStack.areItemStackTagsEqual(stackInSlot, toPickup))
+              toPickup.setCount(0);
           }
           if (toPickup.isEmpty()) {
             break;
