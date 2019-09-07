@@ -17,6 +17,6 @@ public abstract class AbstractPortableDankStorageScreen<T extends AbstractPortab
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX,mouseY);
-    this.fontRenderer.drawString(this.bag.getDisplayName(), 8, 6, 0x404040);
+    this.fontRenderer.drawString(this.bag.getDisplayName(), 6, 11, 0x404040);
   }
 }

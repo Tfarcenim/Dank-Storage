@@ -66,7 +66,7 @@ public class DankStorage {
     @SubscribeEvent
     public static void items(final RegistryEvent.Register<Item> event) {
       for (Block block : MOD_BLOCKS)
-        register(new DankItemBlock(block).setCreativeTab(CreativeTabs.DECORATIONS), block.getRegistryName().getPath(), event.getRegistry());
+        register(new DankItemBlock(block).setCreativeTab(CreativeTabs.DECORATIONS).setMaxStackSize(1), block.getRegistryName().getPath(), event.getRegistry());
 
       GameRegistry.registerTileEntity(DankTiles.DankStorageTile1.class, new ResourceLocation(MODID,"dank_1"));
       GameRegistry.registerTileEntity(DankTiles.DankStorageTile2.class, new ResourceLocation(MODID,"dank_2"));

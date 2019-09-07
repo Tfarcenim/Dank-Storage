@@ -13,7 +13,7 @@ public class PortableDankHandler extends DankHandler {
     this(Utils.getSlotCount(bag),Utils.getStackLimit(bag),bag);
   }
 
-  protected PortableDankHandler(int size, int stacklimit, ItemStack bag) {
+  private PortableDankHandler(int size, int stacklimit, ItemStack bag) {
     super(size,stacklimit);
     this.bag = bag;
     readItemStack();

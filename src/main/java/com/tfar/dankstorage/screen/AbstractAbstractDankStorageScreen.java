@@ -68,17 +68,17 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
 
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-    this.fontRenderer.drawString(this.playerinventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 110, 0x404040);
+    this.fontRenderer.drawString(this.playerinventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 105, 0x404040);
   }
 
   @Override
   protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
     mc.getTextureManager().bindTexture(background);
-    drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
-    if (!(this.inventorySlots instanceof DankContainers.DankContainer7))
+    if (!(this.inventorySlots instanceof DankContainers.DankContainer7 || this.inventorySlots instanceof DankContainers.PortableDankContainer7))
       drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-    else     drawModalRectWithCustomSizedTexture(guiLeft, guiTop, 0, 0, xSize, ySize,256,512);
+    else
+      drawModalRectWithCustomSizedTexture(guiLeft, guiTop + 5, 0, 0, xSize, ySize,256,512);
   }
 
   @Override

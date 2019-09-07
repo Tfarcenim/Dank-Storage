@@ -53,24 +53,17 @@ public class Utils {
   }
 
   public static int getSlotCount(ItemStack bag) {
-    switch (getTier(bag)) {
-      case 1:
-      default:
-      case 2:
-      case 3:
-      case 4:
-      case 5:
-      case 6:return 9 * getTier(bag);
-      case 7:
-        return 81;
-    }
+   int tier = getTier(bag);
+   if (tier > 0 && tier < 7)return tier * 9;
+   else if (tier == 7)return 81;
+   else throw new IndexOutOfBoundsException(String.valueOf(tier));
   }
 
   public static int getStackLimit(ItemStack bag) {
+    int tier = getTier(bag);
 
-    switch (getTier(bag)) {
+    switch (tier) {
       case 1:
-      default:
         return 256;
       case 2:
         return 1024;
@@ -85,6 +78,7 @@ public class Utils {
       case 7:
         return Integer.MAX_VALUE;
     }
+    throw new IndexOutOfBoundsException(String.valueOf(tier));
   }
 
   public static int getTier(ItemStack bag) {

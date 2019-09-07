@@ -19,7 +19,7 @@ public class CapabilityDankStorageProvider implements ICapabilityProvider {
 
   public CapabilityDankStorageProvider(ItemStack stack) {
 
-    this.handler = new PortableDankHandler(Utils.getTier(stack),Utils.getStackLimit(stack),stack) {
+    this.handler = new PortableDankHandler(stack) {
       @Override
       public void onContentsChanged(int slot) {
         super.onContentsChanged(slot);
