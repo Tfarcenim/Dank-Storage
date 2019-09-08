@@ -25,11 +25,11 @@ public class CMessageConstructionMode {
 
       if (player == null) return;
 
-      ctx.get().enqueueWork(  ()->  {
+      ctx.get().enqueueWork(() ->  {
         if (player.getHeldItemMainhand().getItem() instanceof DankItemBlock) {
-          boolean toggle = Utils.canPickup(player.getHeldItemMainhand());
-          player.sendStatusMessage(new TranslationTextComponent("dankstorage.pickup." + (toggle ? "disabled" : "enabled")),true);
-          player.getHeldItemMainhand().getOrCreateTag().putBoolean("pickup",!toggle);
+          boolean toggle = Utils.construction(player.getHeldItemMainhand());
+          player.sendStatusMessage(new TranslationTextComponent("dankstorage.construction." + (toggle ? "disabled" : "enabled")),true);
+          player.getHeldItemMainhand().getOrCreateTag().putBoolean("construction",!toggle);
         }
       });
       ctx.get().setPacketHandled(true);

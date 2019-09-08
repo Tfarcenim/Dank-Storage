@@ -15,10 +15,10 @@
   "container.dankstorage.dank_6": "Dank 6",
   "container.dankstorage.dank_7": "Dank 7",
 
-  "dankstorage.mode.normal": "Normal Mode",
-  "dankstorage.mode.pickup_all": "Pickup all",
+  "dankstorage.mode.normal": "Normal",
+  "dankstorage.mode.pickup_all": "Pickup All",
   "dankstorage.mode.filtered_pickup": "Filtered Pickup",
-  "dankstorage.mode.pickup_void": "Void Pickup",
+  "dankstorage.mode.void_pickup": "Void Pickup",
 
 
   "key.dankstorage.pickup": "Toggle Mode",
@@ -28,11 +28,8 @@
   "text.dankstorage.shift": "Press %s for Info",
   "text.dankstorage.empty": "Empty",
 
-  "text.dankstorage.enablevoid": "Press %s to enable voiding",
-  "text.dankstorage.disablevoid": "Press %s to disable voiding",
-
-  "text.dankstorage.enablepickup": "Press %s to enable pickup",
-  "text.dankstorage.disablepickup": "Press %s to disable pickup",
+  "text.dankstorage.changemode": "Press %s to change mode",
+  "text.dankstorage.currentmode": "Current mode: %s",
 
   "dankstorage.construction.enabled": "Construction mode Enabled",
   "dankstorage.construction.disabled": "Construction mode Disabled",

@@ -14,10 +14,6 @@ import static com.tfar.dankstorage.network.CMessageToggle.*;
 
 public class Utils {
 
-  public static boolean canPickup(ItemStack bag) {
-    return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTag().getBoolean("pickup");
-  }
-
   public static Mode getMode(ItemStack bag) {
     return modes[bag.getOrCreateTag().getInt("mode")];
   }
@@ -36,10 +32,6 @@ public class Utils {
     return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTag().getBoolean("construction");
   }
 
-  public static boolean autoVoid(ItemStack bag) {
-    return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTag().getBoolean("void");
-  }
-
   public static int getSelectedSlot(ItemStack bag) {
     return bag.getOrCreateTag().getInt("selectedSlot");
   }
@@ -49,19 +41,13 @@ public class Utils {
   }
 
   public static int getSlotCount(ItemStack bag) {
-    switch (getTier(bag)) {
-      case 1:
-      default:
-      case 2:
-      case 3:
-      case 4:
-      case 5:
-      case 6:
-        return 9 * getTier(bag);
-      case 7:
+    int tier = getTier(bag);
+      if (tier > 0 && tier < 7)
+        return 9 * tier;
+      if (tier == 7)
         return 81;
+      throw new IndexOutOfBoundsException("tier "+ tier +" is out of bounds!");
     }
-  }
 
   public static int getStackLimit(ItemStack bag) {
 

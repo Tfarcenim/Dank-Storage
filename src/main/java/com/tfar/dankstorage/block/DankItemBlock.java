@@ -42,7 +42,7 @@ public class DankItemBlock extends BlockItem {
   @Nonnull
   @Override
   public Rarity getRarity(ItemStack stack) {
-    int type = Utils.getTier(this.getRegistryName());
+    int type = Utils.getTier(stack);
     switch (type) {
       case 1:
         return GRAY;

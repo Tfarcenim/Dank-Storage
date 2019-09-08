@@ -9,6 +9,7 @@ import com.tfar.dankstorage.tile.AbstractDankStorageTile;
 import com.tfar.dankstorage.tile.DankTiles;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
@@ -36,6 +37,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Locale;
 
 import static com.tfar.dankstorage.network.CMessageToggle.*;
 
@@ -127,14 +129,15 @@ public class DankBlock extends Block {
 
     if (!Screen.hasShiftDown()){
       tooltip.add(new TranslationTextComponent("text.dankstorage.shift",
-              new StringTextComponent("Shift").applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
+              new StringTextComponent(Minecraft.getInstance().gameSettings.keyBindSneak.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
     }
 
     if (Screen.hasShiftDown()) {
-      if (Utils.canPickup(bag)) tooltip.add(
-              new TranslationTextComponent("text.dankstorage.disablepickup",new StringTextComponent(Client.TOGGLE_MODE.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
-      else tooltip.add(
-              new TranslationTextComponent("text.dankstorage.enablepickup",new StringTextComponent(Client.TOGGLE_MODE.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
+      tooltip.add(new TranslationTextComponent("text.dankstorage.changemode",new StringTextComponent(Client.TOGGLE_MODE.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
+      CMessageToggle.Mode mode = Utils.getMode(bag);
+      tooltip.add(
+              new TranslationTextComponent("text.dankstorage.currentmode",new TranslationTextComponent(
+                      "dankstorage.mode."+mode.name().toLowerCase(Locale.ROOT)).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
       DankHandler handler = Utils.getHandler(bag);
 
       if (handler.isEmpty()){
@@ -178,57 +181,21 @@ public class DankBlock extends Block {
       return false;
     }
     ItemStack toPickup = event.getItem().getItem();
-   // final boolean isVoid = Utils.autoVoid(bag);
-
-    if (true) {
-      if (false) {
-     //   toPickup.setCount(0);
-     //   bag.setAnimationsToGo(5);
-    //    PlayerEntity player = event.getEntityPlayer();
-      //  player.world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, (MathHelper.RANDOM.nextFloat() - MathHelper.RANDOM.nextFloat()) * 0.7F + 1.0F);
-        return true;
-        //todo watch for dupes
-      } else if (true) {
-        int count = toPickup.getCount();
-        PortableDankHandler inv = Utils.getHandler(bag);
-        for (int i = 0; i < inv.getSlots(); i++) {
-          ItemStack stackInSlot = inv.getStackInSlot(i);
-          if (stackInSlot.isEmpty()  && !(mode == Mode.PICKUP_ALL)) {
-            inv.setStackInSlot(i, toPickup.copy());
-            toPickup.setCount(0);
-          } else if (canAddItemToSlot(inv,stackInSlot, toPickup,true)) {
-            int fill = inv.stacklimit - stackInSlot.getCount();
-            if (fill > toPickup.getCount()) {
-              stackInSlot.setCount(stackInSlot.getCount() + toPickup.getCount());
-            } else {
-              stackInSlot.setCount(inv.stacklimit);
-            }
-            if (!isVoid)
-            toPickup.split(fill);
-            else if (toPickup.isItemEqual(stackInSlot) && ItemStack.areItemStackTagsEqual(stackInSlot, toPickup))toPickup.setCount(0);
-          }
-          if (toPickup.isEmpty()) {
-            break;
-          }
-        }
-        if (toPickup.getCount() != count) {
-          bag.setAnimationsToGo(5);
-          PlayerEntity player = event.getPlayer();
-          player.world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((player.getRNG().nextFloat() - player.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
-          inv.writeItemStack();
-        }
-      }
+    int count = toPickup.getCount();
+    PortableDankHandler inv = Utils.getHandler(bag);
+    ItemStack rem = toPickup.copy();
+    for (int i = 0; i < inv.getSlots(); i++) {
+      rem = inv.insertItem(i,rem,false);
+      if (rem.isEmpty())break;
+    }
+    //leftovers
+    toPickup.setCount(rem.getCount());
+    if (rem.getCount() != count) {
+      bag.setAnimationsToGo(5);
+      PlayerEntity player = event.getPlayer();
+      player.world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((player.getRNG().nextFloat() - player.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
+      inv.writeItemStack();
     }
     return toPickup.isEmpty();
-  }
-
-  public static boolean canAddItemToSlot(PortableDankHandler handler, ItemStack stackInSlot, ItemStack pickup, boolean stackSizeMatters) {
-    boolean isEmpty = stackInSlot.isEmpty();
-
-    if (!isEmpty && pickup.isItemEqual(stackInSlot) && ItemStack.areItemStackTagsEqual(stackInSlot, pickup)) {
-      return stackInSlot.getCount() + (stackSizeMatters ? 0 : pickup.getCount()) <= handler.stacklimit;
-    }
-
-    return isEmpty;
   }
 }

@@ -7,6 +7,7 @@ import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.*;
 import com.tfar.dankstorage.screen.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -17,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -59,7 +61,7 @@ public class Client {
   public static class KeyHandler {
     @SubscribeEvent
     public static void onKeyInput(InputEvent.KeyInputEvent event) {
-      if (mc.player == null || !(mc.player.getHeldItemMainhand().getItem() instanceof DankItemBlock))return;
+      if (mc.player == null || !(mc.player.getHeldItemMainhand().getItem() instanceof DankItemBlock || mc.player.getHeldItemOffhand().getItem() instanceof DankItemBlock))return;
       if (TOGGLE_MODE.isPressed()) {
         DankPacketHandler.INSTANCE.sendToServer(new CMessageToggle());
       }
@@ -82,12 +84,16 @@ public class Client {
     }
 
     @SubscribeEvent
-    public static void onRenderTick(TickEvent.RenderTickEvent event) {
+    public static void onRenderTick(RenderGameOverlayEvent event) {
       PlayerEntity player = mc.player;
       if (player == null)return;
       if (!(player.openContainer instanceof PlayerContainer)) return;
       ItemStack bag = player.getHeldItemMainhand();
-      if (!(bag.getItem()instanceof DankItemBlock))return;
+      if (!(bag.getItem()instanceof DankItemBlock)){
+        bag = player.getHeldItemOffhand();
+        if (!(bag.getItem()instanceof DankItemBlock))
+        return;
+      }
       PortableDankHandler handler = Utils.getHandler(bag);
       ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
       ITextComponent s = toPlace.getDisplayName();
@@ -101,10 +107,10 @@ public class Client {
       if (!toPlace.isEmpty()) {
         GlStateManager.enableRescaleNormal();
         RenderHelper.enableGUIStandardItemLighting();
-        int xStart = mc.mainWindow.getScaledWidth()/2;
-        int yStart = mc.mainWindow.getScaledWidth()/2;
-        final int itemX = xStart - 175;
-        final int itemY = yStart + 20;
+        int xStart = event.getWindow().getScaledWidth()/2;
+        int yStart = event.getWindow().getScaledHeight();
+        final int itemX = xStart - 150;
+        final int itemY = yStart - 20;
 
         mc.getItemRenderer().renderItemAndEffectIntoGUI(toPlace, itemX, itemY);
 
@@ -113,7 +119,7 @@ public class Client {
         GlStateManager.disableRescaleNormal();
         GlStateManager.popMatrix();
       }
-
+      mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
       //drawLineOffsetStringOnHUD(s1,0, 0, c, 0);
      // drawLineOffsetStringOnHUD(slot,0, 0, c, 3);
     //  drawLineOffsetStringOnHUD(String.valueOf(Utils.construction(bag)),0, 0, c, 25);

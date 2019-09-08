@@ -56,7 +56,7 @@ public class DankHandler extends ItemStackHandler {
       return ItemStack.EMPTY;
 
     int toExtract = Math.min(amount, stacklimit);
-
+    //todo might break mods
     if (existing.getMaxStackSize() == 1)toExtract = 1;
 
     if (existing.getCount() <= toExtract) {

@@ -14,7 +14,7 @@ public abstract class AbstractPortableDankContainer extends AbstractAbstractDank
   protected ItemStack bag;
 
   public AbstractPortableDankContainer(ContainerType<?> type, int p_i50105_2_, PlayerInventory playerInventory, PlayerEntity player, PortableDankHandler handler, int rows) {
-    super(type, p_i50105_2_, playerInventory,player,handler,rows);
+    super(type, p_i50105_2_, playerInventory, handler,rows);
     this.bag = player.getHeldItemMainhand();
     addPlayerSlots(playerInventory, playerInventory.currentItem);
   }

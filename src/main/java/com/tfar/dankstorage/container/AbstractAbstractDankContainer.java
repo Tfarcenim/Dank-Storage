@@ -33,15 +33,15 @@ public abstract class AbstractAbstractDankContainer extends Container {
 
   public final int rows;
 
-  public AbstractAbstractDankContainer(ContainerType<?> type, int p_i50105_2_, PlayerInventory playerInventory, PlayerEntity player, DankHandler handler, int rows) {
+  public AbstractAbstractDankContainer(ContainerType<?> type, int p_i50105_2_, PlayerInventory playerInventory, DankHandler handler, int rows) {
     super(type, p_i50105_2_);
     this.rows = rows;
     this.handler = handler;
-    addOwnSlots(rows);
+    addOwnSlots();
     addPlayerSlots(playerInventory);
   }
 
-  public void addOwnSlots(int rows) {
+  public void addOwnSlots() {
     DankHandler handler = this.handler;
     int slotIndex = 0;
     for (int row = 0; row < rows; ++row) {
