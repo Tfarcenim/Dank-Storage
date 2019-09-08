@@ -55,7 +55,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
   private boolean doubleClick;
   private ItemStack shiftClickedSlot = ItemStack.EMPTY;
 
-  private InventoryPlayer playerinventory;
+  protected InventoryPlayer playerinventory;
 
   public AbstractAbstractDankStorageScreen(T container, InventoryPlayer playerinventory,ResourceLocation background, int rows) {
     super(container);
@@ -68,7 +68,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
 
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-    this.fontRenderer.drawString(this.playerinventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 105, 0x404040);
+    this.fontRenderer.drawString(this.playerinventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 110, 0x404040);
   }
 
   @Override

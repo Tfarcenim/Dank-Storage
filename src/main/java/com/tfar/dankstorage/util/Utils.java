@@ -37,7 +37,7 @@ public class Utils {
     }
     boolean toggle = getTagSafely(bag).getBoolean(s);
     Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentTranslation("dankstorage."+s+"." + (toggle ? "disabled" : "enabled")), true);
-    bag.getTagCompound().setBoolean(s, !toggle);
+    getTagSafely(bag).setBoolean(s, !toggle);
   }
 
   public static NBTTagCompound getTagSafely(ItemStack stack){

@@ -75,6 +75,12 @@ public class DankScreens {
     public DankStorageScreen7(DankContainers.DankContainer7 container, InventoryPlayer playerinventory) {
       super(container, playerinventory, background7);
     }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+      this.fontRenderer.drawString(this.playerinventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 105, 0x404040);
+      this.fontRenderer.drawString(this.te.getDisplayName().getUnformattedComponentText(), 8, 12, 4210752);
+    }
   }
 
   public static class PortableDankStorageScreen1 extends AbstractPortableDankStorageScreen<DankContainers.PortableDankContainer1> {
@@ -134,6 +140,12 @@ public class DankScreens {
 
     public PortableDankStorageScreen7(DankContainers.PortableDankContainer7 container, InventoryPlayer playerinventory) {
       super(container, playerinventory, background7);
+
+    }
+    @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+      this.fontRenderer.drawString(this.playerinventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 105, 0x404040);
+      this.fontRenderer.drawString(this.bag.getDisplayName(), 8, 12, 4210752);
     }
   }
 }

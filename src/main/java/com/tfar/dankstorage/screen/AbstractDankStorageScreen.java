@@ -18,6 +18,6 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankContainer>
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX,mouseY);
-    this.fontRenderer.drawString(this.te.getDisplayName().getUnformattedComponentText(), 8, 11, 4210752);
+    this.fontRenderer.drawString(this.te.getDisplayName().getUnformattedComponentText(), 8, 7, 4210752);
   }
 }
