@@ -80,7 +80,7 @@ public class Client {
     @SubscribeEvent
     public static void mousewheel(MouseEvent e) {
       EntityPlayer player = mc.player;
-      if ((player.getHeldItemMainhand().getItem() instanceof DankItemBlock || player.getHeldItemOffhand().getItem() instanceof DankItemBlock) && player.isSneaking() && e.getDwheel() != 0) {
+      if ((Utils.construction(player.getHeldItemMainhand()) || Utils.construction(player.getHeldItemMainhand())) && player.isSneaking() && e.getDwheel() != 0) {
         boolean right = e.getDwheel() < 0;
         DankPacketHandler.INSTANCE.sendToServer(new CMessageChangeSlot(right));
         e.setCanceled(true);

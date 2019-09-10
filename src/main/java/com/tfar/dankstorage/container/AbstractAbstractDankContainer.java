@@ -251,13 +251,9 @@ public abstract class AbstractAbstractDankContainer extends Container {
                   k2 = slot6.getItemStackLimit(mouseStack) - slotStack.getCount();
                 }
 
-                //if (k2 > mouseStack.getMaxStackSize() - slotStack.getCount()) {
-                //    k2 = mouseStack.getMaxStackSize() - slotStack.getCount();
-                //}
-
                 mouseStack.shrink(k2);
                 slotStack.grow(k2);
-              } else if (mouseStack.getCount() <= slot6.getItemStackLimit(mouseStack) && slotStack.getCount() <= slotStack.getMaxStackSize()) {
+              } else if (mouseStack.getCount() <= slot6.getItemStackLimit(mouseStack) /*&& slotStack.getCount() <= slotStack.getMaxStackSize()*/) {
                 slot6.putStack(mouseStack);
                 PlayerInventory.setItemStack(slotStack);
               }
