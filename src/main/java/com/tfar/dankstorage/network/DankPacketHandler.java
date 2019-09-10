@@ -17,8 +17,8 @@ public class DankPacketHandler {
             CMessageToggle::handle);
 
     INSTANCE.registerMessage(2, CMessageConstructionMode.class,
-            CMessageConstructionMode::encode,
-            CMessageConstructionMode::decode,
+            (cMessageConstructionMode, buffer) -> {},
+            buffer -> new CMessageConstructionMode(),
             CMessageConstructionMode::handle);
 
     INSTANCE.registerMessage(3, CMessageChangeSlot.class,
@@ -27,8 +27,8 @@ public class DankPacketHandler {
             CMessageChangeSlot::handle);
 
     INSTANCE.registerMessage(4, CMessagePickBlock.class,
-            CMessagePickBlock::encode,
-            CMessagePickBlock::decode,
+            (cMessagePickBlock, buffer) -> {},
+            buffer -> new CMessagePickBlock(),
             CMessagePickBlock::handle);
   }
 }

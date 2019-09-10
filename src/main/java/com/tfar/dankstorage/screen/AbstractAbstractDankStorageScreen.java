@@ -69,9 +69,9 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
   @Override
   protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
     minecraft.getTextureManager().bindTexture(background);
-    if (!(this.container instanceof DankContainers.DankContainer7))
+    if (!(this.container instanceof DankContainers.DankContainer7 || this.container instanceof DankContainers.PortableDankContainer7))
     blit(guiLeft, guiTop, 0, 0, xSize, ySize);
-    else     blit(guiLeft, guiTop, 0, 0, xSize, ySize,256,512);
+    else     blit(guiLeft, guiTop, 0, -5, xSize, ySize,256,512);
   }
 
   @Override

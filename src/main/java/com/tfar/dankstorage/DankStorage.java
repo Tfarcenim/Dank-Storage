@@ -21,15 +21,19 @@ import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.ObjectHolder;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -42,6 +46,7 @@ public class DankStorage {
 
   public DankStorage() {
     // Register the setup method for modloading
+    ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
   }
 
@@ -200,6 +205,27 @@ public class DankStorage {
     private static <T extends IForgeRegistryEntry<T>> void register(T obj, String name, IForgeRegistry<T> registry) {
       registry.register(obj.setRegistryName(new ResourceLocation(MODID, name)));
       if (obj instanceof Block) MOD_BLOCKS.add((Block) obj);
+    }
+  }
+
+  public static final ClientConfig CLIENT;
+  public static final ForgeConfigSpec CLIENT_SPEC;
+
+  static {
+    final Pair<ClientConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
+    CLIENT_SPEC = specPair.getRight();
+    CLIENT = specPair.getLeft();
+  }
+
+  public static class ClientConfig {
+    public static ForgeConfigSpec.BooleanValue preview;
+
+    public ClientConfig(ForgeConfigSpec.Builder builder) {
+      builder.push("client");
+      preview = builder
+              .comment("Whether to display the preview of the item in the dank, disable if you have optifine")
+              .define("preview",true);
+      builder.pop();
     }
   }
 

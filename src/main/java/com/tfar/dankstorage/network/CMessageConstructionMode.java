@@ -13,12 +13,7 @@ public class CMessageConstructionMode {
 
   public CMessageConstructionMode(){}
 
-  public void encode(PacketBuffer buf) {
-  }
 
-  public static CMessageConstructionMode decode(PacketBuffer buffer) {
-    return new CMessageConstructionMode();
-  }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
       PlayerEntity player = ctx.get().getSender();

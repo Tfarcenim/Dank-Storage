@@ -76,7 +76,7 @@ public class Client {
     @SubscribeEvent
     public static void mousewheel(InputEvent.MouseScrollEvent e) {
       PlayerEntity player = Minecraft.getInstance().player;
-      if (player.getHeldItemMainhand().getItem() instanceof DankItemBlock && player.isSneaking()) {
+      if (Utils.construction(player.getHeldItemMainhand()) || Utils.construction(player.getHeldItemOffhand())) {
         boolean right = e.getScrollDelta() < 0;
         DankPacketHandler.INSTANCE.sendToServer(new CMessageChangeSlot(right));
         e.setCanceled(true);
@@ -86,7 +86,7 @@ public class Client {
     @SubscribeEvent
     public static void onRenderTick(RenderGameOverlayEvent event) {
       PlayerEntity player = mc.player;
-      if (player == null)return;
+      if (!DankStorage.ClientConfig.preview.get() || player == null)return;
       if (!(player.openContainer instanceof PlayerContainer)) return;
       ItemStack bag = player.getHeldItemMainhand();
       if (!(bag.getItem()instanceof DankItemBlock)){

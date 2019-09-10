@@ -23,14 +23,7 @@ public class CMessagePickBlock {
   public CMessagePickBlock() {
   }
 
-  public void encode(PacketBuffer buf) {
-  }
-
   private static final Logger LOGGER = LogManager.getLogger();
-
-  public static CMessagePickBlock decode(PacketBuffer buffer) {
-    return new CMessagePickBlock();
-  }
 
   public void handle(Supplier<NetworkEvent.Context> ctx) {
     PlayerEntity player = ctx.get().getSender();

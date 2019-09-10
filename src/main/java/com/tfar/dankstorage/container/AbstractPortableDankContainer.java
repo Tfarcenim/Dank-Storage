@@ -25,7 +25,7 @@ public abstract class AbstractPortableDankContainer extends AbstractAbstractDank
   protected void addPlayerSlots(IInventory playerinventory, int locked) {
     int yStart = 50;
     switch (rows){
-      case 9:yStart +=54;
+      case 9:yStart +=59;
       case 6:yStart +=18;
       case 5:yStart +=18;
       case 4:yStart +=20;

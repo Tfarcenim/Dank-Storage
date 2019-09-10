@@ -48,6 +48,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
       for (int col = 0; col < 9; ++col) {
         int x = 8 + col * 18;
         int y = row * 18 + 17 + 1;
+        if (rows == 9)y+=5;
         this.addSlot(new DankSlot(handler, slotIndex, x, y));
         slotIndex++;
       }
@@ -57,7 +58,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
   protected void addPlayerSlots(IInventory playerinventory) {
     int yStart = 50;
     switch (rows){
-      case 9:yStart +=54;
+      case 9:yStart +=59;
       case 6:yStart +=18;
       case 5:yStart +=18;
       case 4:yStart +=20;
@@ -252,13 +253,9 @@ public abstract class AbstractAbstractDankContainer extends Container {
                   k2 = slot6.getItemStackLimit(mouseStack) - slotStack.getCount();
                 }
 
-                //if (k2 > mouseStack.getMaxStackSize() - slotStack.getCount()) {
-                //    k2 = mouseStack.getMaxStackSize() - slotStack.getCount();
-                //}
-
                 mouseStack.shrink(k2);
                 slotStack.grow(k2);
-              } else if (mouseStack.getCount() <= slot6.getItemStackLimit(mouseStack) && slotStack.getCount() <= slotStack.getMaxStackSize()) {
+              } else if (mouseStack.getCount() <= slot6.getItemStackLimit(mouseStack) /*&& slotStack.getCount() <= slotStack.getMaxStackSize()*/) {
                 slot6.putStack(mouseStack);
                 PlayerInventory.setItemStack(slotStack);
               }
