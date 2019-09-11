@@ -138,7 +138,7 @@ public class DankBlock extends Block {
       tooltip.add(
               new TranslationTextComponent("text.dankstorage.currentmode",new TranslationTextComponent(
                       "dankstorage.mode."+mode.name().toLowerCase(Locale.ROOT)).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
-      DankHandler handler = Utils.getHandler(bag);
+      DankHandler handler = Utils.getHandler(bag,false);
 
       if (handler.isEmpty()){
         tooltip.add(
@@ -182,7 +182,7 @@ public class DankBlock extends Block {
     }
     ItemStack toPickup = event.getItem().getItem();
     int count = toPickup.getCount();
-    PortableDankHandler inv = Utils.getHandler(bag);
+    PortableDankHandler inv = Utils.getHandler(bag,false);
     ItemStack rem = toPickup.copy();
     for (int i = 0; i < inv.getSlots(); i++) {
       rem = inv.insertItem(i,rem,false);

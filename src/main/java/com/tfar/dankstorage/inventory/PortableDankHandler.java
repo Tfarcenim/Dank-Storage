@@ -13,14 +13,16 @@ import java.util.stream.IntStream;
 public class PortableDankHandler extends DankHandler {
 
   public final ItemStack bag;
+  public final boolean manual;
 
-  public PortableDankHandler(ItemStack bag) {
-    this(Utils.getSlotCount(bag),Utils.getStackLimit(bag),bag);
+  public PortableDankHandler(ItemStack bag, boolean manual) {
+    this(Utils.getSlotCount(bag),Utils.getStackLimit(bag),bag,manual);
   }
 
-  protected PortableDankHandler(int size, int stacklimit, ItemStack bag) {
+  protected PortableDankHandler(int size, int stacklimit, ItemStack bag, boolean manual) {
     super(size,stacklimit);
     this.bag = bag;
+    this.manual = manual;
     readItemStack();
   }
 
@@ -50,7 +52,7 @@ public class PortableDankHandler extends DankHandler {
   @Override
   public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
     CMessageToggle.Mode mode = Utils.getMode(bag);
-    if (mode == CMessageToggle.Mode.NORMAL || mode == CMessageToggle.Mode.PICKUP_ALL)
+    if (mode == CMessageToggle.Mode.NORMAL || mode == CMessageToggle.Mode.PICKUP_ALL || manual)
     return super.insertItem(slot, stack, simulate);
     ItemStack existing = this.getStackInSlot(slot);
     if (ItemHandlerHelper.canItemStacksStack(stack,existing)){

@@ -80,7 +80,7 @@ public class Utils {
 
   public static void changeSlot(ItemStack bag, boolean right) {
     int selectedSlot = getSelectedSlot(bag);
-    DankHandler handler = getHandler(bag);
+    DankHandler handler = getHandler(bag,false);
     if (right) {
       selectedSlot++;
       if (selectedSlot >= handler.getSlots()) selectedSlot = 0;
@@ -91,7 +91,7 @@ public class Utils {
     setSelectedSlot(bag, selectedSlot);
   }
 
-  public static PortableDankHandler getHandler(ItemStack bag) {
-    return new PortableDankHandler(bag);
+  public static PortableDankHandler getHandler(ItemStack bag,boolean manual) {
+    return new PortableDankHandler(bag,manual);
   }
 }

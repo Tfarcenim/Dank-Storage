@@ -72,7 +72,7 @@ public class DankItemBlock extends BlockItem {
         NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(type), data -> data.writeItemStack(player.getHeldItem(hand)));
       } else {
         ItemStack bag = player.getHeldItem(hand);
-        PortableDankHandler handler = Utils.getHandler(bag);
+        PortableDankHandler handler = Utils.getHandler(bag,true);
         ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
         EquipmentSlotType hand1 = hand == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
         player.setItemStackToSlot(hand1, toPlace);
@@ -86,7 +86,7 @@ public class DankItemBlock extends BlockItem {
   @Override
   public boolean itemInteractionForEntity(ItemStack bag, PlayerEntity player, LivingEntity entity, Hand hand) {
     if (!Utils.construction(bag))return false;
-    PortableDankHandler handler = Utils.getHandler(bag);
+    PortableDankHandler handler = Utils.getHandler(bag,false);
     ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
     EquipmentSlotType hand1 = hand == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
     player.setItemStackToSlot(hand1, toPlace);
@@ -109,7 +109,7 @@ public class DankItemBlock extends BlockItem {
 
 
     ItemStack bag = ctx.getItem();
-    PortableDankHandler handler = Utils.getHandler(bag);
+    PortableDankHandler handler = Utils.getHandler(bag,false);
     int selectedSlot = Utils.getSelectedSlot(bag);
     ItemUseContext ctx2 = new ItemUseContextExt(ctx.getWorld(),ctx.getPlayer(),ctx.getHand(),handler.getStackInSlot(selectedSlot),ctx.rayTraceResult);
     ActionResultType actionResultType = ForgeHooks.onPlaceItemIntoWorld(ctx2);//ctx2.getItem().onItemUse(ctx);

@@ -31,7 +31,7 @@ public class PortableDankProvider implements INamedContainerProvider {
     ItemStack bag = player.getHeldItemMainhand();
     if (!(bag.getItem() instanceof DankItemBlock))
       bag = player.getHeldItemOffhand();
-    PortableDankHandler handler = Utils.getHandler(bag);
+    PortableDankHandler handler = Utils.getHandler(bag,false);
     switch (tier) {
       case 1:
       default:
