@@ -129,7 +129,7 @@ public class DankBlock extends Block {
 
     if (!Screen.hasShiftDown()){
       tooltip.add(new TranslationTextComponent("text.dankstorage.shift",
-              new StringTextComponent(Minecraft.getInstance().gameSettings.keyBindSneak.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
+              new StringTextComponent("Shift").applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
     }
 
     if (Screen.hasShiftDown()) {

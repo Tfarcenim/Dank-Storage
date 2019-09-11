@@ -76,7 +76,7 @@ public class Client {
     @SubscribeEvent
     public static void mousewheel(InputEvent.MouseScrollEvent e) {
       PlayerEntity player = Minecraft.getInstance().player;
-      if (Utils.construction(player.getHeldItemMainhand()) || Utils.construction(player.getHeldItemOffhand())) {
+      if (player != null && player.isSneaking() && (Utils.construction(player.getHeldItemMainhand()) || Utils.construction(player.getHeldItemOffhand()))) {
         boolean right = e.getScrollDelta() < 0;
         DankPacketHandler.INSTANCE.sendToServer(new CMessageChangeSlot(right));
         e.setCanceled(true);

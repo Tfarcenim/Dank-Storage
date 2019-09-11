@@ -16,6 +16,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.network.NetworkHooks;
 
@@ -111,7 +112,7 @@ public class DankItemBlock extends BlockItem {
     PortableDankHandler handler = Utils.getHandler(bag);
     int selectedSlot = Utils.getSelectedSlot(bag);
     ItemUseContext ctx2 = new ItemUseContextExt(ctx.getWorld(),ctx.getPlayer(),ctx.getHand(),handler.getStackInSlot(selectedSlot),ctx.rayTraceResult);
-    ActionResultType actionResultType = ctx2.getItem().onItemUse(ctx);
+    ActionResultType actionResultType = ForgeHooks.onPlaceItemIntoWorld(ctx2);//ctx2.getItem().onItemUse(ctx);
     handler.setStackInSlot(selectedSlot, ctx2.getItem());
     return actionResultType;
   }
