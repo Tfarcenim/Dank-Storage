@@ -14,8 +14,6 @@ public class CMessageToggle {
 
   public CMessageToggle(){}
 
-  public void encode(PacketBuffer buf) {
-  }
 
   public static final Mode[] modes = Mode.values();
 

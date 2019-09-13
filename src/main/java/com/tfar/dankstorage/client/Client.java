@@ -94,7 +94,7 @@ public class Client {
         if (!(bag.getItem()instanceof DankItemBlock))
         return;
       }
-      PortableDankHandler handler = Utils.getHandler(bag,false);
+      PortableDankHandler handler = Utils.getHandler(bag,true);
       ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
       ITextComponent s = toPlace.getDisplayName();
      // String s1 = s.getUnformattedComponentText();

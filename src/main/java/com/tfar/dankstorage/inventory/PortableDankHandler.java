@@ -41,10 +41,12 @@ public class PortableDankHandler extends DankHandler {
       int mode = Utils.getMode(bag).ordinal();
       boolean construction = Utils.construction(bag);
       int selectedSlot = Utils.getSelectedSlot(bag);
+      boolean tag = Utils.tag(bag);
       bag.setTag(serializeNBT());
       bag.getOrCreateTag().putInt("mode",mode);
       bag.getOrCreateTag().putBoolean("construction",construction);
       bag.getOrCreateTag().putInt("selectedSlot",selectedSlot);
+      bag.getOrCreateTag().putBoolean("tag",tag);
     }
   }
 
@@ -55,12 +57,12 @@ public class PortableDankHandler extends DankHandler {
     if (mode == CMessageToggle.Mode.NORMAL || mode == CMessageToggle.Mode.PICKUP_ALL || manual)
     return super.insertItem(slot, stack, simulate);
     ItemStack existing = this.getStackInSlot(slot);
-    if (ItemHandlerHelper.canItemStacksStack(stack,existing)){
+    if (ItemHandlerHelper.canItemStacksStack(stack,existing) || ( Utils.tag(bag) && Utils.doItemStacksShareWhitelistedTags(stack,existing))){
       int stackLimit = this.stacklimit;
       int total = stack.getCount() + existing.getCount();
       int remainder = total - stackLimit;
       if (remainder <= 0) {
-        if (!simulate)this.stacks.set(slot, ItemHandlerHelper.copyStackWithSize(stack, total));
+        if (!simulate)this.stacks.set(slot, ItemHandlerHelper.copyStackWithSize(existing, total));
         return ItemStack.EMPTY;
       }
       else {

@@ -9,6 +9,7 @@ import com.tfar.dankstorage.container.DankContainers;
 import com.tfar.dankstorage.inventory.DankSlot;
 import com.tfar.dankstorage.tile.AbstractDankStorageTile;
 import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.RenderHelper;
@@ -23,6 +24,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
+
+import java.util.Iterator;
 
 public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstractDankContainer> extends ContainerScreen<T> {
 
@@ -85,8 +88,8 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     GlStateManager.disableLighting();
     GlStateManager.disableDepthTest();
 
-    for (int k = 0; k < this.buttons.size(); ++k) {
-    //  this.buttons.get(k).drawButton(this.minecraft, mouseX, mouseY, partialTicks);
+    for(int k = 0; k < this.buttons.size(); ++k) {
+      this.buttons.get(k).render(mouseX, mouseY, partialTicks);
     }
     for (int l = 0; l < this.buttons.size(); ++l) {
      // this.buttons.get(l).drawLabel(this.minecraft, mouseX, mouseY);
@@ -100,7 +103,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     this.hoveredSlot = null;
     int k = 240;
     int l = 240;
-    GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, 240.0F, 240.0F);
+    GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, k, l);
     GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
     for (int i1 = 0; i1 < this.container.inventorySlots.size(); ++i1) {
@@ -302,85 +305,108 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     return null;
   }
 
-  @Override
-  public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-    InputMappings.Input mouseKey = InputMappings.Type.MOUSE.getOrMakeInput(mouseButton);
-    boolean flag = this.minecraft.gameSettings.keyBindPickBlock.isActiveAndMatches(mouseKey);
-    Slot slot = this.getSlotAtPosition(mouseX, mouseY);
-    long i = System.currentTimeMillis();
-    this.doubleClick = this.lastClickSlot == slot && i - this.lastClickTime < 250L && this.lastClickButton == mouseButton;
-    this.ignoreMouseUp = false;
+  public boolean mouseclicked(double mouseX, double mouseY, int mouseButton){
+    Iterator var6 = this.children().iterator();
 
-    if (mouseButton == 0 || mouseButton == 1 || flag) {
-      int j = this.guiLeft;
-      int k = this.guiTop;
-      boolean flag1 = this.hasClickedOutside(mouseX, mouseY, j, k,mouseButton);
-      if (slot != null) flag1 = false; // Forge, prevent dropping of items through slots outside of GUI boundaries
-      int l = -1;
-
-      if (slot != null) {
-        l = slot.slotNumber;
-      }
-
-      if (flag1) {
-        l = -999;
-      }
-
-      if (this.minecraft.gameSettings.touchscreen && flag1 && this.minecraft.player.inventory.getItemStack().isEmpty()) {
-        this.minecraft.displayGuiScreen(null);
+    IGuiEventListener lvt_7_1_;
+    do {
+      if (!var6.hasNext()) {
         return false;
       }
 
-      if (l != -1) {
-        if (this.minecraft.gameSettings.touchscreen) {
-          if (slot != null && slot.getHasStack()) {
-            this.clickedSlot = slot;
-            this.draggedStack = ItemStack.EMPTY;
-            this.isRightMouseClick = mouseButton == 1;
-          } else {
-            this.clickedSlot = null;
-          }
-        } else if (!this.dragSplitting) {
-          if (this.minecraft.player.inventory.getItemStack().isEmpty()) {
-            if (this.minecraft.gameSettings.keyBindPickBlock.isActiveAndMatches(mouseKey)) {
-              this.handleMouseClick(slot, l, mouseButton, ClickType.CLONE);
-            } else {
-              boolean flag2 = l != -999 && Screen.hasShiftDown();
-              ClickType clicktype = ClickType.PICKUP;
+      lvt_7_1_ = (IGuiEventListener)var6.next();
+    } while(!lvt_7_1_.mouseClicked(mouseX, mouseY, mouseButton));
 
-              if (flag2) {
-                this.shiftClickedSlot = slot.getHasStack() ? slot.getStack().copy() : ItemStack.EMPTY;
-                clicktype = ClickType.QUICK_MOVE;
-              } else if (l == -999) {
-                clicktype = ClickType.THROW;
+    this.setFocused(lvt_7_1_);
+    if (mouseButton == 0) {
+      this.setDragging(true);
+    }
+    return true;
+  }
+
+  @Override
+  public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+
+    if (mouseclicked(mouseX,mouseY,mouseButton))return true;
+
+      InputMappings.Input mouseKey = InputMappings.Type.MOUSE.getOrMakeInput(mouseButton);
+      boolean flag = this.minecraft.gameSettings.keyBindPickBlock.isActiveAndMatches(mouseKey);
+      Slot slot = this.getSlotAtPosition(mouseX, mouseY);
+      long i = System.currentTimeMillis();
+      this.doubleClick = this.lastClickSlot == slot && i - this.lastClickTime < 250L && this.lastClickButton == mouseButton;
+      this.ignoreMouseUp = false;
+
+      if (mouseButton == 0 || mouseButton == 1 || flag) {
+        int j = this.guiLeft;
+        int k = this.guiTop;
+        boolean flag1 = this.hasClickedOutside(mouseX, mouseY, j, k, mouseButton);
+        if (slot != null) flag1 = false; // Forge, prevent dropping of items through slots outside of GUI boundaries
+        int l = -1;
+
+        if (slot != null) {
+          l = slot.slotNumber;
+        }
+
+        if (flag1) {
+          l = -999;
+        }
+
+        if (this.minecraft.gameSettings.touchscreen && flag1 && this.minecraft.player.inventory.getItemStack().isEmpty()) {
+          this.minecraft.displayGuiScreen(null);
+          return false;
+        }
+
+        if (l != -1) {
+          if (this.minecraft.gameSettings.touchscreen) {
+            if (slot != null && slot.getHasStack()) {
+              this.clickedSlot = slot;
+              this.draggedStack = ItemStack.EMPTY;
+              this.isRightMouseClick = mouseButton == 1;
+            } else {
+              this.clickedSlot = null;
+            }
+          } else if (!this.dragSplitting) {
+            if (this.minecraft.player.inventory.getItemStack().isEmpty()) {
+              if (this.minecraft.gameSettings.keyBindPickBlock.isActiveAndMatches(mouseKey)) {
+                this.handleMouseClick(slot, l, mouseButton, ClickType.CLONE);
+              } else {
+                boolean flag2 = l != -999 && Screen.hasShiftDown();
+                ClickType clicktype = ClickType.PICKUP;
+
+                if (flag2) {
+                  this.shiftClickedSlot = slot.getHasStack() ? slot.getStack().copy() : ItemStack.EMPTY;
+                  clicktype = ClickType.QUICK_MOVE;
+                } else if (l == -999) {
+                  clicktype = ClickType.THROW;
+                }
+
+                this.handleMouseClick(slot, l, mouseButton, clicktype);
               }
 
-              this.handleMouseClick(slot, l, mouseButton, clicktype);
-            }
+              this.ignoreMouseUp = true;
+            } else {
+              this.dragSplitting = true;
+              this.dragSplittingButton = mouseButton;
+              this.dragSplittingSlots.clear();
 
-            this.ignoreMouseUp = true;
-          } else {
-            this.dragSplitting = true;
-            this.dragSplittingButton = mouseButton;
-            this.dragSplittingSlots.clear();
-
-            if (mouseButton == 0) {
-              this.dragSplittingLimit = 0;
-            } else if (mouseButton == 1) {
-              this.dragSplittingLimit = 1;
-            } else if (this.minecraft.gameSettings.keyBindPickBlock.isActiveAndMatches(mouseKey)) {
-              this.dragSplittingLimit = 2;
+              if (mouseButton == 0) {
+                this.dragSplittingLimit = 0;
+              } else if (mouseButton == 1) {
+                this.dragSplittingLimit = 1;
+              } else if (this.minecraft.gameSettings.keyBindPickBlock.isActiveAndMatches(mouseKey)) {
+                this.dragSplittingLimit = 2;
+              }
             }
           }
         }
       }
+
+      this.lastClickSlot = slot;
+      this.lastClickTime = i;
+      this.lastClickButton = mouseButton;
+      return true;
     }
 
-    this.lastClickSlot = slot;
-    this.lastClickTime = i;
-    this.lastClickButton = mouseButton;
-    return true;
-  }
 
   @Override
   public boolean mouseDragged(double mouseX, double mouseY, int clickedMouseButton, double timeSinceLastClick, double param1) {

@@ -1,5 +1,6 @@
 package com.tfar.dankstorage;
 
+import com.google.common.collect.Lists;
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.block.DankBlock;
 import com.tfar.dankstorage.capability.CapabilityDankStorage;
@@ -35,7 +36,9 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.ObjectHolder;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -47,6 +50,7 @@ public class DankStorage {
   public DankStorage() {
     // Register the setup method for modloading
     ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
+    ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
   }
 
@@ -211,10 +215,16 @@ public class DankStorage {
   public static final ClientConfig CLIENT;
   public static final ForgeConfigSpec CLIENT_SPEC;
 
+  public static final ServerConfig SERVER;
+  public static final ForgeConfigSpec SERVER_SPEC;
+
   static {
     final Pair<ClientConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
     CLIENT_SPEC = specPair.getRight();
     CLIENT = specPair.getLeft();
+    final Pair<ServerConfig, ForgeConfigSpec> specPair2 = new ForgeConfigSpec.Builder().configure(ServerConfig::new);
+    SERVER_SPEC = specPair2.getRight();
+    SERVER = specPair2.getLeft();
   }
 
   public static class ClientConfig {
@@ -225,6 +235,20 @@ public class DankStorage {
       preview = builder
               .comment("Whether to display the preview of the item in the dank, disable if you have optifine")
               .define("preview",true);
+      builder.pop();
+    }
+  }
+
+  public static class ServerConfig {
+    public static ForgeConfigSpec.ConfigValue<List<String>> tags;
+
+    public ServerConfig(ForgeConfigSpec.Builder builder) {
+      List<String> defaults = new ArrayList<>();
+     // defaults.add("forge:cobblestone");
+      builder.push("server");
+      tags = builder
+              .comment("Whitelist of allowed conversion tags")
+              .define("tags", defaults);
       builder.pop();
     }
   }

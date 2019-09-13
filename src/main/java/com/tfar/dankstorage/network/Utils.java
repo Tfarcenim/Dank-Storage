@@ -1,5 +1,6 @@
 package com.tfar.dankstorage.network;
 
+import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
@@ -8,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 
+import java.util.List;
 import java.util.Locale;
 
 import static com.tfar.dankstorage.network.CMessageToggle.*;
@@ -42,12 +44,12 @@ public class Utils {
 
   public static int getSlotCount(ItemStack bag) {
     int tier = getTier(bag);
-      if (tier > 0 && tier < 7)
-        return 9 * tier;
-      if (tier == 7)
-        return 81;
-      throw new IndexOutOfBoundsException("tier "+ tier +" is out of bounds!");
-    }
+    if (tier > 0 && tier < 7)
+      return 9 * tier;
+    if (tier == 7)
+      return 81;
+    throw new IndexOutOfBoundsException("tier " + tier + " is out of bounds!");
+  }
 
   public static int getStackLimit(ItemStack bag) {
 
@@ -80,7 +82,7 @@ public class Utils {
 
   public static void changeSlot(ItemStack bag, boolean right) {
     int selectedSlot = getSelectedSlot(bag);
-    DankHandler handler = getHandler(bag,false);
+    DankHandler handler = getHandler(bag, true);
     if (right) {
       selectedSlot++;
       if (selectedSlot >= handler.getSlots()) selectedSlot = 0;
@@ -91,7 +93,26 @@ public class Utils {
     setSelectedSlot(bag, selectedSlot);
   }
 
-  public static PortableDankHandler getHandler(ItemStack bag,boolean manual) {
-    return new PortableDankHandler(bag,manual);
+  public static boolean tag(ItemStack bag) {
+    return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTag().getBoolean("tag");
+  }
+
+  public static PortableDankHandler getHandler(ItemStack bag, boolean manual) {
+    return new PortableDankHandler(bag, manual);
+  }
+
+  public static PortableDankHandler getContainerHandler(ItemStack bag) {
+    return new PortableDankHandler(bag,true);
+  }
+
+  public static boolean doItemStacksShareWhitelistedTags(ItemStack stack1, ItemStack stack2) {
+    if (stack1.hasTag() || stack2.hasTag()) return false;
+
+    List<String> tagwhitelist = DankStorage.ServerConfig.tags.get();
+    for (String tag : tagwhitelist) {
+      if (stack1.getItem().getTags().contains(new ResourceLocation(tag)) &&
+              stack2.getItem().getTags().contains(new ResourceLocation(tag))) return true;
+    }
+    return false;
   }
 }

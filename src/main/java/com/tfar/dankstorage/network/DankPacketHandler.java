@@ -12,12 +12,12 @@ public class DankPacketHandler {
     INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(DankStorage.MODID, channelName), () -> "1.0", s -> true, s -> true);
 
     INSTANCE.registerMessage(1, CMessageToggle.class,
-            CMessageToggle::encode,
+            (message, buffer) -> {},
             CMessageToggle::decode,
             CMessageToggle::handle);
 
     INSTANCE.registerMessage(2, CMessageConstructionMode.class,
-            (cMessageConstructionMode, buffer) -> {},
+            (message, buffer) -> {},
             buffer -> new CMessageConstructionMode(),
             CMessageConstructionMode::handle);
 
@@ -30,5 +30,10 @@ public class DankPacketHandler {
             (cMessagePickBlock, buffer) -> {},
             buffer -> new CMessagePickBlock(),
             CMessagePickBlock::handle);
+
+    INSTANCE.registerMessage(5, CMessageTagMode.class,
+            (cMessagePickBlock, buffer) -> {},
+            buffer -> new CMessageTagMode(),
+            CMessageTagMode::handle);
   }
 }
