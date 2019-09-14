@@ -63,6 +63,13 @@ public class DankItemBlock extends BlockItem {
     return super.getRarity(stack);
   }
 
+  @Override
+  public int getUseDuration(ItemStack bag) {
+    if (!Utils.construction(bag))return 0;
+    ItemStack stack = Utils.getItemStackInSelectedSlot(bag);
+    return stack.getItem().getUseDuration(stack);
+  }
+
   @Nonnull
   @Override
   public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
@@ -72,15 +79,33 @@ public class DankItemBlock extends BlockItem {
         NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(type), data -> data.writeItemStack(player.getHeldItem(hand)));
       } else {
         ItemStack bag = player.getHeldItem(hand);
-        PortableDankHandler handler = Utils.getHandler(bag,true);
-        ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
+        ItemStack toPlace = Utils.getItemStackInSelectedSlot(bag);
         EquipmentSlotType hand1 = hand == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
-        player.setItemStackToSlot(hand1, toPlace);
-        ActionResult<ItemStack> actionResultType = toPlace.getItem().onItemRightClick(world, player, hand);
-        handler.setStackInSlot(Utils.getSelectedSlot(bag), actionResultType.getResult());
-        player.setItemStackToSlot(hand1, bag);
+        //handle food
+        if (toPlace.getItem().isFood()) {
+          if (player.canEat(false)) {
+            player.setActiveHand(hand);
+            return ActionResult.newResult(ActionResultType.PASS, bag);
+          }
+        }
+        //handle potion
+        else if (toPlace.getItem() instanceof PotionItem){
+          player.setActiveHand(hand);
+          return new ActionResult<>(ActionResultType.SUCCESS, player.getHeldItem(hand));
+        }
+        //todo support other items?
+        else {
+          ItemStack newBag = bag.copy();
+          //stack overflow issues
+          if (toPlace.getItem() instanceof DankItemBlock) return new ActionResult<>(ActionResultType.PASS, player.getHeldItem(hand));
+          player.setItemStackToSlot(hand1, toPlace);
+          ActionResult<ItemStack> actionResult = toPlace.getItem().onItemRightClick(world, player, hand);
+          PortableDankHandler handler = Utils.getHandler(newBag,true);
+          handler.setStackInSlot(Utils.getSelectedSlot(newBag), actionResult.getResult());
+          player.setItemStackToSlot(hand1, newBag);
+        }
       }
-    return super.onItemRightClick(world, player, hand);
+    return new ActionResult<>(ActionResultType.PASS, player.getHeldItem(hand));
   }
 
   @Override
@@ -103,10 +128,56 @@ public class DankItemBlock extends BlockItem {
 
   @Nonnull
   @Override
+  public UseAction getUseAction(ItemStack stack) {
+    if (!Utils.construction(stack))return UseAction.NONE;
+    ItemStack internal = Utils.getItemStackInSelectedSlot(stack);
+    return internal.getItem().getUseAction(stack);
+  }
+
+  @Override
+  public boolean canContinueUsing(ItemStack oldStack, ItemStack newStack) {
+    return true;
+  }
+
+  @Override
+  public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+    return !oldStack.equals(newStack);
+  }
+
+  //called for stuff like food and potions
+  @Nonnull
+  @Override
+  public ItemStack onItemUseFinish(ItemStack stack, World world, LivingEntity entity) {
+    if (!Utils.construction(stack))return stack;
+
+    ItemStack internal = Utils.getItemStackInSelectedSlot(stack);
+
+    if (internal.getItem().isFood()){
+     ItemStack food = entity.onFoodEaten(world, internal);
+     PortableDankHandler handler = Utils.getHandler(stack,false);
+     handler.setStackInSlot(Utils.getSelectedSlot(stack), food);
+     return stack;
+    }
+
+    if (internal.getItem() instanceof PotionItem){
+      ItemStack potion = internal.onItemUseFinish(world,entity);
+      PortableDankHandler handler = Utils.getHandler(stack,false);
+      handler.setStackInSlot(Utils.getSelectedSlot(stack), potion);
+      return stack;
+    }
+
+    return super.onItemUseFinish(stack, world, entity);
+  }
+
+  @Override
+  public void onUsingTick(ItemStack stack, LivingEntity living, int count) {
+  }
+
+  @Nonnull
+  @Override
   public ActionResultType onItemUse(ItemUseContext ctx) {
     if (!Utils.construction(ctx.getItem()))
       return super.onItemUse(ctx);
-
 
     ItemStack bag = ctx.getItem();
     PortableDankHandler handler = Utils.getHandler(bag,false);

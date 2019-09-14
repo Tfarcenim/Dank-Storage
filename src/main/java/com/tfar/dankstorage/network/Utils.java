@@ -108,8 +108,8 @@ public class Utils {
     return new PortableDankHandler(bag, manual);
   }
 
-  public static PortableDankHandler getContainerHandler(ItemStack bag) {
-    return new PortableDankHandler(bag,true);
+  public static ItemStack getItemStackInSelectedSlot(ItemStack bag){
+    return getHandler(bag,false).getStackInSlot(Utils.getSelectedSlot(bag));
   }
 
   public static boolean doItemStacksShareWhitelistedTags(final ItemStack stack1,final ItemStack stack2) {
