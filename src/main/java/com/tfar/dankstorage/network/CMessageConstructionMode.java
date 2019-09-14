@@ -13,8 +13,6 @@ public class CMessageConstructionMode {
 
   public CMessageConstructionMode(){}
 
-
-
     public void handle(Supplier<NetworkEvent.Context> ctx) {
       PlayerEntity player = ctx.get().getSender();
 

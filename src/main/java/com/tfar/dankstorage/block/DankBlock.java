@@ -36,6 +36,8 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -184,8 +186,20 @@ public class DankBlock extends Block {
     int count = toPickup.getCount();
     PortableDankHandler inv = Utils.getHandler(bag,false);
     ItemStack rem = toPickup.copy();
-    for (int i = 0; i < inv.getSlots(); i++) {
+    //stack with existing items
+    List<Integer> emptyslots = new LinkedList<>();
+    for (int i = 0; i < inv.getSlots(); i++){
+      if (inv.getStackInSlot(i).isEmpty()){
+        emptyslots.add(i);
+        continue;
+      }
       rem = inv.insertItem(i,rem,false);
+      if (rem.isEmpty())break;
+    }
+    //only iterate empty slots
+    if (!rem.isEmpty())
+    for (int slot : emptyslots) {
+      rem = inv.insertItem(slot,rem,false);
       if (rem.isEmpty())break;
     }
     //leftovers

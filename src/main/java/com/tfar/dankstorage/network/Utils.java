@@ -5,16 +5,23 @@ import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import static com.tfar.dankstorage.network.CMessageToggle.*;
 
 public class Utils {
+
+  public static final Tag<Item> WHITELISTED_TAGS = new ItemTags.Wrapper(new ResourceLocation(DankStorage.MODID,"whitelisted_tags"));
 
   public static Mode getMode(ItemStack bag) {
     return modes[bag.getOrCreateTag().getInt("mode")];
@@ -105,14 +112,13 @@ public class Utils {
     return new PortableDankHandler(bag,true);
   }
 
-  public static boolean doItemStacksShareWhitelistedTags(ItemStack stack1, ItemStack stack2) {
+  public static boolean doItemStacksShareWhitelistedTags(final ItemStack stack1,final ItemStack stack2) {
     if (stack1.hasTag() || stack2.hasTag()) return false;
 
-    List<String> tagwhitelist = DankStorage.ServerConfig.tags.get();
-    for (String tag : tagwhitelist) {
-      if (stack1.getItem().getTags().contains(new ResourceLocation(tag)) &&
-              stack2.getItem().getTags().contains(new ResourceLocation(tag))) return true;
-    }
-    return false;
+    if (!stack1.getItem().isIn(WHITELISTED_TAGS) || !stack2.getItem().isIn(WHITELISTED_TAGS))return false;
+
+    Set<ResourceLocation> taglist1 = stack1.getItem().getTags();
+    Set<ResourceLocation> taglist2 = stack2.getItem().getTags();
+    return !Collections.disjoint(taglist1,taglist2);
   }
 }

@@ -50,7 +50,7 @@ public class DankStorage {
   public DankStorage() {
     // Register the setup method for modloading
     ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
-    ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
+    //ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
   }
 
@@ -215,16 +215,16 @@ public class DankStorage {
   public static final ClientConfig CLIENT;
   public static final ForgeConfigSpec CLIENT_SPEC;
 
-  public static final ServerConfig SERVER;
-  public static final ForgeConfigSpec SERVER_SPEC;
+  //public static final ServerConfig SERVER;
+  //public static final ForgeConfigSpec SERVER_SPEC;
 
   static {
     final Pair<ClientConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
     CLIENT_SPEC = specPair.getRight();
     CLIENT = specPair.getLeft();
-    final Pair<ServerConfig, ForgeConfigSpec> specPair2 = new ForgeConfigSpec.Builder().configure(ServerConfig::new);
-    SERVER_SPEC = specPair2.getRight();
-    SERVER = specPair2.getLeft();
+   // final Pair<ServerConfig, ForgeConfigSpec> specPair2 = new ForgeConfigSpec.Builder().configure(ServerConfig::new);
+  //  SERVER_SPEC = specPair2.getRight();
+  //  SERVER = specPair2.getLeft();
   }
 
   public static class ClientConfig {
@@ -239,19 +239,16 @@ public class DankStorage {
     }
   }
 
-  public static class ServerConfig {
-    public static ForgeConfigSpec.ConfigValue<List<String>> tags;
+  /*public static class ServerConfig {
 
     public ServerConfig(ForgeConfigSpec.Builder builder) {
       List<String> defaults = new ArrayList<>();
      // defaults.add("forge:cobblestone");
       builder.push("server");
-      tags = builder
-              .comment("Whitelist of allowed conversion tags")
-              .define("tags", defaults);
+
       builder.pop();
     }
-  }
+  }*/
 
   @ObjectHolder(MODID)
   public static class Objects {

@@ -22,7 +22,6 @@ public class CMessageTagMode {
       ctx.get().enqueueWork(() ->  {
         if (player.getHeldItemMainhand().getItem() instanceof DankItemBlock) {
           boolean toggle = Utils.tag(player.getHeldItemMainhand());
-          player.sendStatusMessage(new TranslationTextComponent("dankstorage.tag." + (toggle ? "disabled" : "enabled")),true);
           player.getHeldItemMainhand().getOrCreateTag().putBoolean("tag",!toggle);
         }
       });
