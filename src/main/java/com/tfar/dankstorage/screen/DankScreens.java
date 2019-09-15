@@ -30,53 +30,55 @@ public class DankScreens {
 
   public static class DankStorageScreen1 extends AbstractDankStorageScreen<DankContainers.DankContainer1> {
 
-
-
-
     public DankStorageScreen1(DankContainers.DankContainer1 container, PlayerInventory playerinventory, ITextComponent component) {
-      super(container, playerinventory, component, background1,1);
+      super(container, playerinventory, component, background1);
     }
   }
 
   public static class DankStorageScreen2 extends AbstractDankStorageScreen<DankContainers.DankContainer2> {
 
     public DankStorageScreen2(DankContainers.DankContainer2 container, PlayerInventory playerinventory, ITextComponent component) {
-      super(container, playerinventory, component, background2,2);
+      super(container, playerinventory, component, background2);
     }
   }
 
   public static class DankStorageScreen3 extends AbstractDankStorageScreen<DankContainers.DankContainer3> {
 
     public DankStorageScreen3(DankContainers.DankContainer3 container, PlayerInventory playerinventory, ITextComponent component) {
-      super(container, playerinventory, component, background3,3);
+      super(container, playerinventory, component, background3);
     }
   }
 
   public static class DankStorageScreen4 extends AbstractDankStorageScreen<DankContainers.DankContainer4> {
 
     public DankStorageScreen4(DankContainers.DankContainer4 container, PlayerInventory playerinventory, ITextComponent component) {
-      super(container, playerinventory, component, background4,4);
+      super(container, playerinventory, component, background4);
     }
   }
 
   public static class DankStorageScreen5 extends AbstractDankStorageScreen<DankContainers.DankContainer5> {
 
     public DankStorageScreen5(DankContainers.DankContainer5 container, PlayerInventory playerinventory, ITextComponent component) {
-      super(container, playerinventory, component, background5,5);
+      super(container, playerinventory, component, background5);
     }
   }
 
   public static class DankStorageScreen6 extends AbstractDankStorageScreen<DankContainers.DankContainer6> {
 
     public DankStorageScreen6(DankContainers.DankContainer6 container, PlayerInventory playerinventory, ITextComponent component) {
-      super(container, playerinventory, component, background6,6);
+      super(container, playerinventory, component, background6);
     }
   }
 
   public static class DankStorageScreen7 extends AbstractDankStorageScreen<DankContainers.DankContainer7> {
 
     public DankStorageScreen7(DankContainers.DankContainer7 container, PlayerInventory playerinventory, ITextComponent component) {
-      super(container, playerinventory, component, background7,9);
+      super(container, playerinventory, component, background7);
+    }
+    @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+      this.font.drawString(this.playerInventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 105, 0x404040);
+      this.font.drawString(this.te.getDisplayName().getUnformattedComponentText(), 8, 12, 4210752);
     }
   }
 
@@ -137,6 +139,11 @@ public class DankScreens {
 
     public PortableDankStorageScreen7(DankContainers.PortableDankContainer7 container, PlayerInventory playerinventory, ITextComponent component) {
       super(container, playerinventory, component, background7);
+    }
+    @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+      this.font.drawString(this.playerInventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 105, 0x404040);
+      this.font.drawString(this.bag.getDisplayName().getUnformattedComponentText(), 8, 12, 4210752);
     }
   }
 }

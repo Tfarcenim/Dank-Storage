@@ -10,19 +10,30 @@ public class DankPacketHandler {
 
   public static void registerMessages(String channelName) {
     INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(DankStorage.MODID, channelName), () -> "1.0", s -> true, s -> true);
-    /*INSTANCE.registerMessage(0, MessageDankSlotContents.class,
-            MessageDankSlotContents::encode,
-            MessageDankSlotContents::decode,
-            MessageDankSlotContents::handle);*/
 
-    INSTANCE.registerMessage(1, MessageToggleAutoPickup.class,
-            MessageToggleAutoPickup::encode,
-            MessageToggleAutoPickup::decode,
-            MessageToggleAutoPickup::handle);
+    INSTANCE.registerMessage(1, CMessageToggle.class,
+            (message, buffer) -> {},
+            CMessageToggle::decode,
+            CMessageToggle::handle);
 
-    INSTANCE.registerMessage(2, MessageToggleAutoVoid.class,
-            MessageToggleAutoVoid::encode,
-            MessageToggleAutoVoid::decode,
-            MessageToggleAutoVoid::handle);
+    INSTANCE.registerMessage(2, CMessageConstructionMode.class,
+            (message, buffer) -> {},
+            buffer -> new CMessageConstructionMode(),
+            CMessageConstructionMode::handle);
+
+    INSTANCE.registerMessage(3, CMessageChangeSlot.class,
+            CMessageChangeSlot::encode,
+            CMessageChangeSlot::new,
+            CMessageChangeSlot::handle);
+
+    INSTANCE.registerMessage(4, CMessagePickBlock.class,
+            (cMessagePickBlock, buffer) -> {},
+            buffer -> new CMessagePickBlock(),
+            CMessagePickBlock::handle);
+
+    INSTANCE.registerMessage(5, CMessageTagMode.class,
+            (cMessagePickBlock, buffer) -> {},
+            buffer -> new CMessageTagMode(),
+            CMessageTagMode::handle);
   }
 }

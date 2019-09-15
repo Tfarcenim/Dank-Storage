@@ -9,32 +9,24 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import java.util.function.Supplier;
 
 
-public class MessageToggleAutoVoid {
+public class CMessageConstructionMode {
 
-  public MessageToggleAutoVoid(){}
-
-  public void encode(PacketBuffer buf) {
-  }
-
-  public static MessageToggleAutoVoid decode(PacketBuffer buffer) {
-    return new MessageToggleAutoVoid();
-  }
+  public CMessageConstructionMode(){}
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
       PlayerEntity player = ctx.get().getSender();
 
       if (player == null) return;
 
-      ctx.get().enqueueWork(  ()->  {
+      ctx.get().enqueueWork(() ->  {
         if (player.getHeldItemMainhand().getItem() instanceof DankItemBlock) {
-          boolean toggle = NetworkUtils.autoVoid(player.getHeldItemMainhand());
-          player.sendStatusMessage(new TranslationTextComponent("dankstorage.void." + (toggle ? "disabled" : "enabled")),false);
-          player.getHeldItemMainhand().getOrCreateTag().putBoolean("void",!toggle);
+          boolean toggle = Utils.construction(player.getHeldItemMainhand());
+          player.sendStatusMessage(new TranslationTextComponent("dankstorage.construction." + (toggle ? "disabled" : "enabled")),true);
+          player.getHeldItemMainhand().getOrCreateTag().putBoolean("construction",!toggle);
         }
       });
       ctx.get().setPacketHandled(true);
     }
-
 
 }
 

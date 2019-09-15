@@ -1,24 +1,28 @@
 package com.tfar.dankstorage.inventory;
 
-import com.tfar.dankstorage.network.NetworkUtils;
+import com.tfar.dankstorage.network.CMessageToggle;
+import com.tfar.dankstorage.network.Utils;
+import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Constructor;
+import java.util.stream.IntStream;
 
 public class PortableDankHandler extends DankHandler {
 
   public final ItemStack bag;
+  public final boolean manual;
 
-  public PortableDankHandler(int size, int stacklimit, ItemStack bag) {
+  public PortableDankHandler(ItemStack bag, boolean manual) {
+    this(Utils.getSlotCount(bag),Utils.getStackLimit(bag),bag,manual);
+  }
+
+  protected PortableDankHandler(int size, int stacklimit, ItemStack bag, boolean manual) {
     super(size,stacklimit);
     this.bag = bag;
+    this.manual = manual;
     readItemStack();
   }
 
@@ -34,13 +38,54 @@ public class PortableDankHandler extends DankHandler {
         }
       }
     } else {
-      boolean pickup = NetworkUtils.autoPickup(bag);
-      boolean Void = NetworkUtils.autoVoid(bag);
+      int mode = Utils.getMode(bag).ordinal();
+      boolean construction = Utils.construction(bag);
+      int selectedSlot = Utils.getSelectedSlot(bag);
+      boolean tag = Utils.tag(bag);
       bag.setTag(serializeNBT());
-      bag.getOrCreateTag().putBoolean("pickup",pickup);
-      bag.getOrCreateTag().putBoolean("void",Void);
+      bag.getOrCreateTag().putInt("mode",mode);
+      bag.getOrCreateTag().putBoolean("construction",construction);
+      bag.getOrCreateTag().putInt("selectedSlot",selectedSlot);
+      bag.getOrCreateTag().putBoolean("tag",tag);
     }
   }
+
+  @Nonnull
+  @Override
+  public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    CMessageToggle.Mode mode = Utils.getMode(bag);
+    if (mode == CMessageToggle.Mode.NORMAL || mode == CMessageToggle.Mode.PICKUP_ALL || manual)
+    return super.insertItem(slot, stack, simulate);
+    ItemStack existing = this.getStackInSlot(slot);
+    if (ItemHandlerHelper.canItemStacksStack(stack,existing) || ( Utils.tag(bag) && Utils.doItemStacksShareWhitelistedTags(stack,existing))){
+      int stackLimit = this.stacklimit;
+      int total = stack.getCount() + existing.getCount();
+      int remainder = total - stackLimit;
+      if (remainder <= 0) {
+        if (!simulate)this.stacks.set(slot, ItemHandlerHelper.copyStackWithSize(existing, total));
+        return ItemStack.EMPTY;
+      }
+      else {
+        if (!simulate) this.stacks.set(slot, ItemHandlerHelper.copyStackWithSize(stack, stackLimit));
+        if (mode == CMessageToggle.Mode.VOID_PICKUP) return ItemStack.EMPTY;
+        return ItemHandlerHelper.copyStackWithSize(stack, remainder);
+      }
+    } else if (existing.isEmpty() && mode == CMessageToggle.Mode.FILTERED_PICKUP && this.containsItem(stack.getItem())){
+      if (!simulate)this.stacks.set(slot, stack);
+      return ItemHandlerHelper.copyStackWithSize(stack,stack.getCount() - this.getStackLimit(slot,stack));
+    } else return stack;
+  }
+
+  public boolean containsItem(Item item){
+    return IntStream.range(0, this.getSlots()).anyMatch(i -> this.getStackInSlot(i).getItem() == item);
+  }
+
+  @Override
+  public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+    super.setStackInSlot(slot, stack);
+    this.writeItemStack();
+  }
+
   public void readItemStack() {
     if (bag.hasTag()) {
       deserializeNBT(bag.getTag());

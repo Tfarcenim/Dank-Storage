@@ -2,6 +2,7 @@ package com.tfar.dankstorage.tile;
 
 import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.container.DankContainers;
+import com.tfar.dankstorage.inventory.DankHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -21,7 +22,9 @@ public class DankTiles {
     @Nullable
     @Override
     public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-      return new DankContainers.DankContainer1(i,world,pos,playerInventory,playerEntity);
+      AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
+      DankHandler handler = tile.itemHandler;
+      return new DankContainers.DankContainer1(i,world,pos,playerInventory,playerEntity,handler);
     }
     @Override
     public ITextComponent getName() {
@@ -43,7 +46,9 @@ public class DankTiles {
     @Nullable
     @Override
     public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-      return new DankContainers.DankContainer2(i,world,pos,playerInventory,playerEntity);
+      AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
+      DankHandler handler = tile.itemHandler;
+      return new DankContainers.DankContainer2(i,world,pos,playerInventory,playerEntity,handler);
     }
 
     @Override
@@ -66,7 +71,9 @@ public class DankTiles {
     @Nullable
     @Override
     public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-      return new DankContainers.DankContainer3(i,world,pos,playerInventory,playerEntity);
+      AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
+      DankHandler handler = tile.itemHandler;
+      return new DankContainers.DankContainer3(i,world,pos,playerInventory,playerEntity,handler);
     }
 
     @Override
@@ -89,7 +96,9 @@ public class DankTiles {
     @Nullable
     @Override
     public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-      return new DankContainers.DankContainer4(i,world,pos,playerInventory,playerEntity);
+      AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
+      DankHandler handler = tile.itemHandler;
+      return new DankContainers.DankContainer4(i,world,pos,playerInventory,playerEntity,handler);
     }
 
     @Override
@@ -112,7 +121,9 @@ public class DankTiles {
     @Nullable
     @Override
     public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-      return new DankContainers.DankContainer5(i,world,pos,playerInventory,playerEntity);
+      AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
+      DankHandler handler = tile.itemHandler;
+      return new DankContainers.DankContainer5(i,world,pos,playerInventory,playerEntity,handler);
     }
 
     @Override
@@ -135,7 +146,9 @@ public class DankTiles {
     @Nullable
     @Override
     public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-      return new DankContainers.DankContainer6(i,world,pos,playerInventory,playerEntity);
+      AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
+      DankHandler handler = tile.itemHandler;
+      return new DankContainers.DankContainer6(i,world,pos,playerInventory,playerEntity,handler);
     }
 
     @Override
@@ -158,7 +171,9 @@ public class DankTiles {
     @Nullable
     @Override
     public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-      return new DankContainers.DankContainer7(i,world,pos,playerInventory,playerEntity);
+      AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
+      DankHandler handler = tile.itemHandler;
+      return new DankContainers.DankContainer7(i,world,pos,playerInventory,playerEntity,handler);
     }
 
     @Override

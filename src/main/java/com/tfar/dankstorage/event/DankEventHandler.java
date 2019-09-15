@@ -13,9 +13,9 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = DankStorage.MODID)
 public class DankEventHandler {
+
   @SubscribeEvent
   public static void handleEntityItemPickup(EntityItemPickupEvent event) {
-
     PlayerEntity player = event.getPlayer();
     if (player.openContainer instanceof AbstractPortableDankContainer) {
       return;

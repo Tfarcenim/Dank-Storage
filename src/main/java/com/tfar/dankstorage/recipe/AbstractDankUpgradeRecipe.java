@@ -1,10 +1,8 @@
 package com.tfar.dankstorage.recipe;
 
 import com.tfar.dankstorage.DankStorage;
-import com.tfar.dankstorage.block.DankBlock;
-import com.tfar.dankstorage.event.DankEventHandler;
-import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
+import com.tfar.dankstorage.network.Utils;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -26,8 +24,8 @@ public abstract class AbstractDankUpgradeRecipe extends ShapedRecipe {
   public ItemStack getCraftingResult(CraftingInventory inv) {
     ItemStack bag = super.getCraftingResult(inv).copy();
     ItemStack oldBag = inv.getStackInSlot(4);
-    PortableDankHandler oldHandler = DankBlock.getHandler(oldBag);
-    PortableDankHandler newHandler = DankBlock.getHandler(bag);
+    PortableDankHandler oldHandler = Utils.getHandler(oldBag,false);
+    PortableDankHandler newHandler = Utils.getHandler(bag,false);
     for (int i = 0;i < oldHandler.getSlots();i++){
       newHandler.insertItem(i,oldHandler.getStackInSlot(i),false);
     }

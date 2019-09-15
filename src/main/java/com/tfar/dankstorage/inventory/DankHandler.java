@@ -3,18 +3,20 @@ package com.tfar.dankstorage.inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Constructor;
 import java.util.stream.IntStream;
 
 public class DankHandler extends ItemStackHandler {
 
   public final int stacklimit;
+
+  protected int selectedSlot;
 
   public DankHandler(int size, int stacklimit) {
     super(size);
@@ -54,7 +56,7 @@ public class DankHandler extends ItemStackHandler {
       return ItemStack.EMPTY;
 
     int toExtract = Math.min(amount, stacklimit);
-
+    //todo might break mods
     if (existing.getMaxStackSize() == 1)toExtract = 1;
 
     if (existing.getCount() <= toExtract) {
@@ -71,6 +73,10 @@ public class DankHandler extends ItemStackHandler {
 
       return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
     }
+  }
+
+  public NonNullList<ItemStack> getContents(){
+    return stacks;
   }
 
   @Override

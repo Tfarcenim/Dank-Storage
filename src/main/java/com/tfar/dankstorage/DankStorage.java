@@ -1,10 +1,14 @@
 package com.tfar.dankstorage;
 
+import com.google.common.collect.Lists;
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.block.DankBlock;
+import com.tfar.dankstorage.capability.CapabilityDankStorage;
 import com.tfar.dankstorage.container.*;
+import com.tfar.dankstorage.inventory.DankHandler;
+import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.DankPacketHandler;
-import com.tfar.dankstorage.recipe.AbstractDankUpgradeRecipe;
+import com.tfar.dankstorage.network.Utils;
 import com.tfar.dankstorage.recipe.DankUpgradeRecipes;
 import com.tfar.dankstorage.tile.*;
 import net.minecraft.block.Block;
@@ -12,22 +16,29 @@ import net.minecraft.block.material.Material;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.ObjectHolder;
+import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -38,11 +49,14 @@ public class DankStorage {
 
   public DankStorage() {
     // Register the setup method for modloading
+    ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
+    //ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
   }
 
   private void setup(final FMLCommonSetupEvent event) {
     DankPacketHandler.registerMessages(MODID);
+    CapabilityDankStorage.register();
   }
 
   // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
@@ -82,58 +96,100 @@ public class DankStorage {
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        return new DankContainers.DankContainer1(windowId, inv.player.world, pos, inv, inv.player);
+         AbstractDankStorageTile tile = ((AbstractDankStorageTile)inv.player.world.getTileEntity(pos));
+         DankHandler handler = tile.itemHandler;
+        return new DankContainers.DankContainer1(windowId, inv.player.world, pos, inv, inv.player,handler);
       }), "dank_1_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
-              -> new DankContainers.PortableDankContainer1(windowId, inv.player.world, inv, inv.player)), "portable_dank_1_container", event.getRegistry());
+              -> {
+        ItemStack bag = data.readItemStack();
+        PortableDankHandler handler = Utils.getHandler(bag,true);
+        return new DankContainers.PortableDankContainer1(windowId, inv, inv.player,handler);
+      }), "portable_dank_1_container", event.getRegistry());
 
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        return new DankContainers.DankContainer2(windowId, inv.player.world, pos, inv, inv.player);
+        AbstractDankStorageTile tile = ((AbstractDankStorageTile)inv.player.world.getTileEntity(pos));
+        DankHandler handler = tile.itemHandler;
+        return new DankContainers.DankContainer2(windowId, inv.player.world, pos, inv, inv.player,handler);
       }), "dank_2_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
-              -> new DankContainers.PortableDankContainer2(windowId, inv.player.world, inv, inv.player)), "portable_dank_2_container", event.getRegistry());
+              -> {
+        ItemStack bag = data.readItemStack();
+        PortableDankHandler handler = Utils.getHandler(bag,true);
+        return new DankContainers.PortableDankContainer2(windowId, inv, inv.player,handler);
+      }), "portable_dank_2_container", event.getRegistry());
 
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        return new DankContainers.DankContainer3(windowId, inv.player.world, pos, inv, inv.player);
+        AbstractDankStorageTile tile = ((AbstractDankStorageTile)inv.player.world.getTileEntity(pos));
+        DankHandler handler = tile.itemHandler;
+        return new DankContainers.DankContainer3(windowId, inv.player.world, pos, inv, inv.player,handler);
       }), "dank_3_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
-              -> new DankContainers.PortableDankContainer3(windowId, inv.player.world, inv, inv.player)), "portable_dank_3_container", event.getRegistry());
+              -> {
+        ItemStack bag = data.readItemStack();
+        PortableDankHandler handler = Utils.getHandler(bag,true);
+        return new DankContainers.PortableDankContainer3(windowId, inv, inv.player,handler);
+      }), "portable_dank_3_container", event.getRegistry());
 
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        return new DankContainers.DankContainer4(windowId, inv.player.world, pos, inv, inv.player);
+        AbstractDankStorageTile tile = ((AbstractDankStorageTile)inv.player.world.getTileEntity(pos));
+        DankHandler handler = tile.itemHandler;
+        return new DankContainers.DankContainer4(windowId, inv.player.world, pos, inv, inv.player,handler);
       }), "dank_4_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
-              -> new DankContainers.PortableDankContainer4(windowId, inv.player.world, inv, inv.player)), "portable_dank_4_container", event.getRegistry());
+              -> {
+        ItemStack bag = data.readItemStack();
+        PortableDankHandler handler = Utils.getHandler(bag,true);
+        return new DankContainers.PortableDankContainer4(windowId, inv, inv.player,handler);
+      }), "portable_dank_4_container", event.getRegistry());
 
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        return new DankContainers.DankContainer5(windowId, inv.player.world, pos, inv, inv.player);
+        AbstractDankStorageTile tile = ((AbstractDankStorageTile)inv.player.world.getTileEntity(pos));
+        DankHandler handler = tile.itemHandler;
+        return new DankContainers.DankContainer5(windowId, inv.player.world, pos, inv, inv.player,handler);
       }), "dank_5_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
-              -> new DankContainers.PortableDankContainer5(windowId, inv.player.world, inv, inv.player)), "portable_dank_5_container", event.getRegistry());
+              -> {
+        ItemStack bag = data.readItemStack();
+        PortableDankHandler handler = Utils.getHandler(bag,true);
+        return new DankContainers.PortableDankContainer5(windowId, inv, inv.player,handler);
+      }), "portable_dank_5_container", event.getRegistry());
 
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        return new DankContainers.DankContainer6(windowId, inv.player.world, pos, inv, inv.player);
+        AbstractDankStorageTile tile = ((AbstractDankStorageTile)inv.player.world.getTileEntity(pos));
+        DankHandler handler = tile.itemHandler;
+        return new DankContainers.DankContainer6(windowId, inv.player.world, pos, inv, inv.player,handler);
       }), "dank_6_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
-              -> new DankContainers.PortableDankContainer6(windowId, inv.player.world, inv, inv.player)), "portable_dank_6_container", event.getRegistry());
+              -> {
+        ItemStack bag = data.readItemStack();
+        PortableDankHandler handler = Utils.getHandler(bag,true);
+        return new DankContainers.PortableDankContainer6(windowId, inv, inv.player,handler);
+      }), "portable_dank_6_container", event.getRegistry());
 
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        return new DankContainers.DankContainer7(windowId, inv.player.world, pos, inv, inv.player);
+        AbstractDankStorageTile tile = ((AbstractDankStorageTile)inv.player.world.getTileEntity(pos));
+        DankHandler handler = tile.itemHandler;
+        return new DankContainers.DankContainer7(windowId, inv.player.world, pos, inv, inv.player,handler);
       }), "dank_7_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
-              -> new DankContainers.PortableDankContainer7(windowId, inv.player.world, inv, inv.player)), "portable_dank_7_container", event.getRegistry());
+              -> {
+        ItemStack bag = data.readItemStack();
+        PortableDankHandler handler = Utils.getHandler(bag,true);
+        return new DankContainers.PortableDankContainer7(windowId, inv, inv.player,handler);
+      }), "portable_dank_7_container", event.getRegistry());
     }
 
 
@@ -155,6 +211,44 @@ public class DankStorage {
       if (obj instanceof Block) MOD_BLOCKS.add((Block) obj);
     }
   }
+
+  public static final ClientConfig CLIENT;
+  public static final ForgeConfigSpec CLIENT_SPEC;
+
+  //public static final ServerConfig SERVER;
+  //public static final ForgeConfigSpec SERVER_SPEC;
+
+  static {
+    final Pair<ClientConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
+    CLIENT_SPEC = specPair.getRight();
+    CLIENT = specPair.getLeft();
+   // final Pair<ServerConfig, ForgeConfigSpec> specPair2 = new ForgeConfigSpec.Builder().configure(ServerConfig::new);
+  //  SERVER_SPEC = specPair2.getRight();
+  //  SERVER = specPair2.getLeft();
+  }
+
+  public static class ClientConfig {
+    public static ForgeConfigSpec.BooleanValue preview;
+
+    public ClientConfig(ForgeConfigSpec.Builder builder) {
+      builder.push("client");
+      preview = builder
+              .comment("Whether to display the preview of the item in the dank, disable if you have optifine")
+              .define("preview",true);
+      builder.pop();
+    }
+  }
+
+  /*public static class ServerConfig {
+
+    public ServerConfig(ForgeConfigSpec.Builder builder) {
+      List<String> defaults = new ArrayList<>();
+     // defaults.add("forge:cobblestone");
+      builder.push("server");
+
+      builder.pop();
+    }
+  }*/
 
   @ObjectHolder(MODID)
   public static class Objects {
