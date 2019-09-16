@@ -16,6 +16,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,6 +30,7 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
   public int selectedSlot;
 
   public DankHandler itemHandler;
+  public LazyOptional<IItemHandler> optional = LazyOptional.of(() -> itemHandler).cast();
 
   public AbstractDankStorageTile(TileEntityType<?> tile, int rows, int stacksize) {
     super(tile);
@@ -142,7 +144,7 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
   @SuppressWarnings("unchecked")
   @Override
   public <T> LazyOptional getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
-    return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? LazyOptional.of(() -> itemHandler).cast() : super.getCapability(capability, facing);
+    return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? optional : super.getCapability(capability, facing);
   }
 
   @Override
