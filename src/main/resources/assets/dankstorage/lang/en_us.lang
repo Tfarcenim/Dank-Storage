@@ -31,7 +31,7 @@ text.dankstorage.disablevoid=Press %s to disable voiding
 text.dankstorage.enablepickup=Press %s to enable pickup
 text.dankstorage.disablepickup=Press %s to disable pickup
 
-dankstorage.construction.enabled=Construction mode Enabled",
-dankstorage.construction.disabled=Construction mode Disabled",
+dankstorage.construction.enabled=Construction mode Enabled
+dankstorage.construction.disabled=Construction mode Disabled
 
 text.dankstorage.formatcontaineditems=%s %s

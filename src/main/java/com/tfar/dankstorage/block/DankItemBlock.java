@@ -35,8 +35,7 @@ public class DankItemBlock extends ItemBlock {
   @Nonnull
   @Override
   public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-    if (!world.isRemote)
-      if (player.isSneaking()) {
+      if (!world.isRemote && player.isSneaking()) {
         if (player.getHeldItem(hand).getItem() instanceof DankItemBlock) {
           player.openGui(DankStorage.instance, DankConstants.BAG_GUI_ID, world, 0, 0, 0);
         }
@@ -122,7 +121,7 @@ public class DankItemBlock extends ItemBlock {
 
     player.setItemStackToSlot(hand1,usedStack);
     EnumActionResult actionResultType = usedStack.getItem().onItemUse(player,world,pos,hand,facing,hitX,hitY,hitZ);
-    handler.insertItem(selectedSlot, usedStack,false);
+    handler.setStackInSlot(selectedSlot, usedStack);
     player.setItemStackToSlot(hand1,bag);
     return actionResultType;
   }
