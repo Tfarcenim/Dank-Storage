@@ -7,7 +7,6 @@ import com.tfar.dankstorage.container.AbstractAbstractDankContainer;
 import com.tfar.dankstorage.container.AbstractDankContainer;
 import com.tfar.dankstorage.container.DankContainers;
 import com.tfar.dankstorage.inventory.DankSlot;
-import com.tfar.dankstorage.tile.AbstractDankStorageTile;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.Screen;
@@ -31,37 +30,10 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
 
    final ResourceLocation background;//= new ResourceLocation("textures/gui/container/shulker_box.png");
 
-   Slot hoveredSlot;
-  /** Used when touchscreen is enabled. */
-   Slot clickedSlot;
-  /** Used when touchscreen is enabled. */
-   boolean isRightMouseClick;
-  /** Used when touchscreen is enabled */
-   ItemStack draggedStack = ItemStack.EMPTY;
-   double touchUpX;
-   double touchUpY;
-   Slot returningStackDestSlot;
-   long returningStackTime;
-  /** Used when touchscreen is enabled */
-   ItemStack returningStack = ItemStack.EMPTY;
-   Slot currentDragTargetSlot;
-   long dragItemDropDelay;
-   int dragSplittingLimit;
-   int dragSplittingButton;
-   boolean ignoreMouseUp;
-   int dragSplittingRemnant;
-   long lastClickTime;
-   Slot lastClickSlot;
-   int lastClickButton;
-   boolean doubleClick;
-   ItemStack shiftClickedSlot = ItemStack.EMPTY;
-
   public AbstractAbstractDankStorageScreen(T container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background, int rows) {
     super(container,playerinventory, component);
     this.background = background;
     ySize += ((rows-2) * 18);
-
-    this.ignoreMouseUp = true;
   }
 
   @Override
@@ -91,9 +63,9 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     for(int k = 0; k < this.buttons.size(); ++k) {
       this.buttons.get(k).render(mouseX, mouseY, partialTicks);
     }
-    for (int l = 0; l < this.buttons.size(); ++l) {
+    /*for (int l = 0; l < this.buttons.size(); ++l) {
      // this.buttons.get(l).drawLabel(this.minecraft, mouseX, mouseY);
-    }
+    }*/
 
     RenderHelper.enableGUIStandardItemLighting();
     GlStateManager.pushMatrix();
@@ -162,10 +134,10 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
         this.returningStack = ItemStack.EMPTY;
       }
 
-      int l2 = (int) (this.returningStackDestSlot.xPos - this.touchUpX);
-      int i3 = (int) (this.returningStackDestSlot.yPos - this.touchUpY);
-      int l1 = (int) (this.touchUpX + (int)((float)l2 * f));
-      int i2 = (int) (this.touchUpY + (int)((float)i3 * f));
+      int l2 = this.returningStackDestSlot.xPos - this.touchUpX;
+      int i3 = this.returningStackDestSlot.yPos - this.touchUpY;
+      int l1 = this.touchUpX + (int)(l2 * f);
+      int i2 = this.touchUpY + (int)(i3 * f);
       this.drawItemStack(this.returningStack, l1, i2, null);
     }
 
@@ -175,13 +147,6 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     RenderHelper.enableStandardItemLighting();
 
     this.renderHoveredToolTip(mouseX, mouseY);
-  }
-
-  @Override
-  protected void renderHoveredToolTip(int p_191948_1_, int p_191948_2_) {
-    if (this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null && this.hoveredSlot.getHasStack()) {
-      this.renderTooltip(this.hoveredSlot.getStack(), p_191948_1_, p_191948_2_);
-    }
   }
 
   private void drawItemStack(ItemStack stack, int x, int y, String altText) {
@@ -512,15 +477,15 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
               this.returningStack = ItemStack.EMPTY;
             } else {
               this.handleMouseClick(this.clickedSlot, this.clickedSlot.slotNumber, state, ClickType.PICKUP);
-              this.touchUpX = mouseX - i;
-              this.touchUpY = mouseY - j;
+              this.touchUpX = (int) (mouseX - i);
+              this.touchUpY = (int) (mouseY - j);
               this.returningStackDestSlot = this.clickedSlot;
               this.returningStack = this.draggedStack;
               this.returningStackTime = System.currentTimeMillis();
             }
           } else if (!this.draggedStack.isEmpty()) {
-            this.touchUpX = mouseX - i;
-            this.touchUpY = mouseY - j;
+            this.touchUpX = (int) (mouseX - i);
+            this.touchUpY = (int) (mouseY - j);
             this.returningStackDestSlot = this.clickedSlot;
             this.returningStack = this.draggedStack;
             this.returningStackTime = System.currentTimeMillis();
@@ -573,40 +538,5 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     }
 
     return null;
-  }
-
-  @Override
-  public boolean keyPressed(int key1, int key2, int r5) {
-    InputMappings.Input mouseKey = InputMappings.getInputByCode(key1, key2);
-    if (key2 == 1 || this.minecraft.gameSettings.keyBindInventory.isActiveAndMatches(mouseKey)) {
-      this.minecraft.player.closeScreen();
-    }
-
-    this.func_195363_d(key1,key2);
-
-    if (this.hoveredSlot != null && this.hoveredSlot.getHasStack()) {
-      if (this.minecraft.gameSettings.keyBindPickBlock.isActiveAndMatches(mouseKey)) {
-        this.handleMouseClick(this.hoveredSlot, this.hoveredSlot.slotNumber, 0, ClickType.CLONE);
-        return true;
-      } else if (this.minecraft.gameSettings.keyBindDrop.isActiveAndMatches(mouseKey)) {
-        this.handleMouseClick(this.hoveredSlot, this.hoveredSlot.slotNumber, Screen.hasControlDown() ? 1 : 0, ClickType.THROW);
-        return true;
-      }
-    }
-    return true;
-  }
-
-  @Override
-  protected boolean func_195363_d(int key1, int key2) {
-    InputMappings.Input mouseKey = InputMappings.getInputByCode(key1, key2);
-    if (this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null) {
-      for (int i = 0; i < 9; ++i) {
-        if (this.minecraft.gameSettings.keyBindsHotbar[i].isActiveAndMatches(mouseKey)) {
-          this.handleMouseClick(this.hoveredSlot, this.hoveredSlot.slotNumber, i, ClickType.SWAP);
-          return true;
-        }
-      }
-    }
-    return false;
   }
 }

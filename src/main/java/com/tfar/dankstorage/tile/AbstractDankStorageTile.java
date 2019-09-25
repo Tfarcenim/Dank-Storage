@@ -116,6 +116,7 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
     return compound;
   }
 
+  @Nonnull
   @Override
   public CompoundNBT getUpdateTag() {
     return write(new CompoundNBT());
@@ -141,10 +142,10 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
     }
   }
 
-  @SuppressWarnings("unchecked")
+  @Nonnull
   @Override
-  public <T> LazyOptional getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
-    return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? optional : super.getCapability(capability, facing);
+  public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
+    return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? optional.cast() : super.getCapability(capability, facing);
   }
 
   @Override

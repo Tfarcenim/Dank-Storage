@@ -1,36 +1,21 @@
 package com.tfar.dankstorage.container;
 
-import com.google.common.collect.Sets;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.DankSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.*;
+import net.minecraft.inventory.container.ClickType;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.SSetSlotPacket;
 
 import javax.annotation.Nullable;
-import java.util.Set;
 
 public abstract class AbstractAbstractDankContainer extends Container {
 
   public DankHandler handler;
-
-  /**
-   * The current drag mode (0 : evenly split, 1 : one item by slot, 2 : not used ?)
-   */
-  protected int dragMode = -1;
-  /**
-   * The current drag event (0 : start, 1 : add slot : 2 : end)
-   */
-  protected int dragEvent;
-  /**
-   * The list of slots where the itemstack holds will be distributed
-   */
-  protected final Set<Slot> dragSlots = Sets.newHashSet();
-
   public final int rows;
 
   public AbstractAbstractDankContainer(ContainerType<?> type, int p_i50105_2_, PlayerInventory playerInventory, DankHandler handler, int rows) {
@@ -472,11 +457,6 @@ public abstract class AbstractAbstractDankContainer extends Container {
     return flag;
   }
 
-  @Override
-  protected void resetDrag() {
-    this.dragEvent = 0;
-    this.dragSlots.clear();
-  }
   public static boolean canAddItemToSlot(@Nullable Slot slot, ItemStack stack, boolean stackSizeMatters) {
     boolean flag = slot == null || !slot.getHasStack();
     ItemStack slotStack = slot.getStack();
@@ -499,19 +479,4 @@ public abstract class AbstractAbstractDankContainer extends Container {
       }
     }
   }
-
-  @Override
-  public void addListener(IContainerListener listener) {
-    if (this.listeners.contains(listener)) {
-      throw new IllegalArgumentException("Listener already listening");
-    } else {
-      this.listeners.add(listener);
-      if (listener instanceof ServerPlayerEntity) {
-        ServerPlayerEntity player = (ServerPlayerEntity) listener;
-        player.connection.sendPacket(new SSetSlotPacket(-1, -1, player.inventory.getItemStack()));
-      }
-      this.detectAndSendChanges();
-    }
-  }
 }
-
