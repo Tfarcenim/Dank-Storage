@@ -1,0 +1,38 @@
+{
+  "block.dankstorage.dank_1": "Dank 1",
+  "block.dankstorage.dank_2": "Dank 2",
+  "block.dankstorage.dank_3": "Dank 3",
+  "block.dankstorage.dank_4": "Dank 4",
+  "block.dankstorage.dank_5": "Dank 5",
+  "block.dankstorage.dank_6": "Dank 6",
+  "block.dankstorage.dank_7": "Dank 7",
+
+  "container.dankstorage.dank_1": "Dank 1",
+  "container.dankstorage.dank_2": "Dank 2",
+  "container.dankstorage.dank_3": "Dank 3",
+  "container.dankstorage.dank_4": "Dank 4",
+  "container.dankstorage.dank_5": "Dank 5",
+  "container.dankstorage.dank_6": "Dank 6",
+  "container.dankstorage.dank_7": "Dank 7",
+
+  "dankstorage.mode.normal": "Normal",
+  "dankstorage.mode.pickup_all": "Tout ramasser",
+  "dankstorage.mode.filtered_pickup": "Ramasser filtré",
+  "dankstorage.mode.void_pickup": "Ramasser et détruire",
+
+  "key.dankstorage.pickup": "Changer de mode",
+  "key.dankstorage.construction": "Mode construction",
+
+  "key.categories.dankstorage": "Raccourcis de Dank Storage",
+
+  "text.dankstorage.shift": "Appuyez sur %s pour les infos",
+  "text.dankstorage.empty": "Vide",
+
+  "text.dankstorage.changemode": "Appuyez sur %s pour changer de mode",
+  "text.dankstorage.currentmode": "Mode actuel : %s",
+
+  "dankstorage.construction.enabled": "Mode construction activé",
+  "dankstorage.construction.disabled": "Mode construction désactivé",
+
+  "text.dankstorage.formatcontaineditems" : "%s %s"
+}
