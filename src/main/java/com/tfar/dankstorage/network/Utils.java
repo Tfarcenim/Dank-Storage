@@ -13,11 +13,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
-import static com.tfar.dankstorage.network.CMessageToggle.*;
+import static com.tfar.dankstorage.network.CMessageTogglePickup.*;
+import static com.tfar.dankstorage.network.CMessageTogglePlacement.useTypes;
 
 public class Utils {
 
@@ -27,6 +26,10 @@ public class Utils {
     return modes[bag.getOrCreateTag().getInt("mode")];
   }
 
+  public static boolean isConstruction(ItemStack bag){
+    return bag.getOrCreateTag().getInt("construction") == 0;
+  }
+
   //0,1,2,3
   public static void cycleMode(ItemStack bag, PlayerEntity player) {
     int ordinal = bag.getOrCreateTag().getInt("mode");
@@ -34,11 +37,21 @@ public class Utils {
     if (ordinal > 3) ordinal = 0;
     bag.getOrCreateTag().putInt("mode", ordinal);
     player.sendStatusMessage(
-            new TranslationTextComponent("dankstorage.mode." + modes[ordinal].name().toLowerCase(Locale.ROOT)), true);
+            new TranslationTextComponent("dankstorage.mode." + modes[ordinal].name()), true);
   }
 
-  public static boolean construction(ItemStack bag) {
-    return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTag().getBoolean("construction");
+  public static CMessageTogglePlacement.UseType getUseType(ItemStack bag) {
+    return useTypes[bag.getOrCreateTag().getInt("construction")];
+  }
+
+  //0,1,2
+  public static void cyclePlacement(ItemStack bag, PlayerEntity player) {
+    int ordinal = bag.getOrCreateTag().getInt("construction");
+    ordinal++;
+    if (ordinal > 2) ordinal = 0;
+    bag.getOrCreateTag().putInt("construction", ordinal);
+    player.sendStatusMessage(
+            new TranslationTextComponent("dankstorage.construction." + useTypes[ordinal].name()), true);
   }
 
   public static int getSelectedSlot(ItemStack bag) {
@@ -59,7 +72,6 @@ public class Utils {
   }
 
   public static int getStackLimit(ItemStack bag) {
-
     switch (getTier(bag)) {
       case 1:
       default:

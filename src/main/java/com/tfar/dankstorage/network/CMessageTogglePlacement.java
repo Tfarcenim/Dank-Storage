@@ -2,16 +2,14 @@ package com.tfar.dankstorage.network;
 
 import com.tfar.dankstorage.block.DankItemBlock;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
 
-public class CMessageConstructionMode {
+public class CMessageTogglePlacement {
 
-  public CMessageConstructionMode(){}
+  public CMessageTogglePlacement(){}
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
       PlayerEntity player = ctx.get().getSender();
@@ -20,13 +18,15 @@ public class CMessageConstructionMode {
 
       ctx.get().enqueueWork(() ->  {
         if (player.getHeldItemMainhand().getItem() instanceof DankItemBlock) {
-          boolean toggle = Utils.construction(player.getHeldItemMainhand());
-          player.sendStatusMessage(new TranslationTextComponent("dankstorage.construction." + (toggle ? "disabled" : "enabled")),true);
-          player.getHeldItemMainhand().getOrCreateTag().putBoolean("construction",!toggle);
+          Utils.cyclePlacement(player.getHeldItemMainhand(),player);
         }
       });
       ctx.get().setPacketHandled(true);
     }
+  public static final UseType[] useTypes = UseType.values();
 
+    public enum UseType{
+    construction,chest,bag
+    }
 }
 

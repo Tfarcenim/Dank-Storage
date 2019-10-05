@@ -16,8 +16,6 @@ public class DankHandler extends ItemStackHandler {
 
   public final int stacklimit;
 
-  protected int selectedSlot;
-
   public DankHandler(int size, int stacklimit) {
     super(size);
     this.stacklimit = stacklimit;
@@ -25,6 +23,10 @@ public class DankHandler extends ItemStackHandler {
 
   public boolean isEmpty(){
     return IntStream.range(0, this.getSlots()).allMatch(i -> this.getStackInSlot(i).isEmpty());
+  }
+
+  public void clear(){
+    this.stacks.clear();
   }
 
   @Override
@@ -56,7 +58,7 @@ public class DankHandler extends ItemStackHandler {
       return ItemStack.EMPTY;
 
     int toExtract = Math.min(amount, stacklimit);
-    //todo might break mods
+    //todo might break mods, but removing this causes a dupe bug
     if (existing.getMaxStackSize() == 1)toExtract = 1;
 
     if (existing.getCount() <= toExtract) {

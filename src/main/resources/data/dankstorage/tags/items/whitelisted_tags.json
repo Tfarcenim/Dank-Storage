@@ -1,4 +1,33 @@
 {
   "replace": false,
-  "values": []
+  "values": [
+    "#forge:ingots/iron",
+    "#forge:ingots/gold",
+
+    "#forge:ores/coal",
+    "#forge:ores/diamond",
+    "#forge:ores/emerald",
+    "#forge:ores/gold",
+    "#forge:ores/iron",
+    "#forge:ores/lapis",
+    "#forge:ores/redstone"
+  ],
+  "optional": [
+    "#forge:gems/amethyst",
+    "#forge:gems/ruby",
+    "#forge:gems/peridot",
+    "#forge:gems/ruby",
+
+    "#forge:ingots/copper",
+    "#forge:ingots/lead",
+    "#forge:ingots/nickel",
+    "#forge:ingots/silver",
+    "#forge:ingots/tin",
+
+    "#forge:ores/copper",
+    "#forge:ores/lead",
+    "#forge:ores/ruby",
+    "#forge:ores/silver",
+    "#forge:ores/tin"
+  ]
 }

@@ -3,6 +3,8 @@ package com.tfar.dankstorage.block;
 import com.tfar.dankstorage.capability.CapabilityDankStorageProvider;
 import com.tfar.dankstorage.container.PortableDankProvider;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
+import com.tfar.dankstorage.network.CMessageTogglePickup;
+import com.tfar.dankstorage.network.CMessageTogglePlacement;
 import com.tfar.dankstorage.network.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.LivingEntity;
@@ -65,7 +67,7 @@ public class DankItemBlock extends BlockItem {
 
   @Override
   public int getUseDuration(ItemStack bag) {
-    if (!Utils.construction(bag))return 0;
+    if (!Utils.isConstruction(bag))return 0;
     ItemStack stack = Utils.getItemStackInSelectedSlot(bag);
     return stack.getItem().getUseDuration(stack);
   }
@@ -73,12 +75,13 @@ public class DankItemBlock extends BlockItem {
   @Nonnull
   @Override
   public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+    ItemStack bag = player.getHeldItem(hand);
     if (!world.isRemote)
-      if (player.isSneaking()) {
+      if (Utils.getUseType(bag) == CMessageTogglePlacement.UseType.bag) {
         int type = Utils.getTier(player.getHeldItem(hand));
         NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(type), data -> data.writeItemStack(player.getHeldItem(hand)));
+        return super.onItemRightClick(world,player,hand);
       } else {
-        ItemStack bag = player.getHeldItem(hand);
         ItemStack toPlace = Utils.getItemStackInSelectedSlot(bag);
         EquipmentSlotType hand1 = hand == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
         //handle food
@@ -110,7 +113,7 @@ public class DankItemBlock extends BlockItem {
 
   @Override
   public boolean itemInteractionForEntity(ItemStack bag, PlayerEntity player, LivingEntity entity, Hand hand) {
-    if (!Utils.construction(bag))return false;
+    if (!Utils.isConstruction(bag))return false;
     PortableDankHandler handler = Utils.getHandler(bag,false);
     ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
     EquipmentSlotType hand1 = hand == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
@@ -123,13 +126,13 @@ public class DankItemBlock extends BlockItem {
 
   @Override
   public boolean hasEffect(ItemStack stack) {
-    return stack.hasTag() && Utils.construction(stack);
+    return stack.hasTag() && Utils.getMode(stack) != CMessageTogglePickup.Mode.NORMAL;
   }
 
   @Nonnull
   @Override
   public UseAction getUseAction(ItemStack stack) {
-    if (!Utils.construction(stack))return UseAction.NONE;
+    if (!Utils.isConstruction(stack))return UseAction.NONE;
     ItemStack internal = Utils.getItemStackInSelectedSlot(stack);
     return internal.getItem().getUseAction(stack);
   }
@@ -148,7 +151,7 @@ public class DankItemBlock extends BlockItem {
   @Nonnull
   @Override
   public ItemStack onItemUseFinish(ItemStack stack, World world, LivingEntity entity) {
-    if (!Utils.construction(stack))return stack;
+    if (!Utils.isConstruction(stack))return stack;
 
     ItemStack internal = Utils.getItemStackInSelectedSlot(stack);
 
@@ -173,13 +176,29 @@ public class DankItemBlock extends BlockItem {
   public void onUsingTick(ItemStack stack, LivingEntity living, int count) {
   }
 
+  public int getGlintColor(ItemStack stack){
+    CMessageTogglePickup.Mode mode = Utils.getMode(stack);
+    switch (mode){
+      case NORMAL:default:return 0xffffffff;
+      case PICKUP_ALL:return 0xff00ff00;
+      case FILTERED_PICKUP:return 0xffffff00;
+      case VOID_PICKUP:return 0xffff0000;
+    }
+  }
+
   @Nonnull
   @Override
   public ActionResultType onItemUse(ItemUseContext ctx) {
-    if (!Utils.construction(ctx.getItem()))
+    ItemStack bag = ctx.getItem();
+    CMessageTogglePlacement.UseType useType = Utils.getUseType(bag);
+
+    if (useType == CMessageTogglePlacement.UseType.chest)
       return super.onItemUse(ctx);
 
-    ItemStack bag = ctx.getItem();
+    if(useType == CMessageTogglePlacement.UseType.bag){
+      return ActionResultType.PASS;
+    }
+
     PortableDankHandler handler = Utils.getHandler(bag,false);
     int selectedSlot = Utils.getSelectedSlot(bag);
     ItemUseContext ctx2 = new ItemUseContextExt(ctx.getWorld(),ctx.getPlayer(),ctx.getHand(),handler.getStackInSlot(selectedSlot),ctx.rayTraceResult);

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.block.DankBlock;
 import com.tfar.dankstorage.capability.CapabilityDankStorage;
+import com.tfar.dankstorage.client.RenderDankStorage;
 import com.tfar.dankstorage.container.*;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
@@ -13,6 +14,8 @@ import com.tfar.dankstorage.recipe.DankUpgradeRecipes;
 import com.tfar.dankstorage.tile.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -36,10 +39,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.ObjectHolder;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(DankStorage.MODID)
@@ -48,6 +48,7 @@ public class DankStorage {
   public static final String MODID = "dankstorage";
 
   public DankStorage() {
+
     // Register the setup method for modloading
     ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
     //ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
@@ -63,11 +64,12 @@ public class DankStorage {
   // Event bus for receiving Registry Events)
   @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
   public static class RegistryEvents {
-    private static final Set<Block> MOD_BLOCKS = new HashSet<>();
+    public static final List<Block> MOD_BLOCKS = new LinkedList<>();
 
     @SubscribeEvent
     public static void blocks(final RegistryEvent.Register<Block> event) {
       // register a new block here
+
       Block.Properties properties = Block.Properties.create(Material.IRON).hardnessAndResistance(1,30);
       for (int i = 1; i < 8; i++) {
         register(new DankBlock(properties), "dank_" + i, event.getRegistry());
@@ -76,7 +78,7 @@ public class DankStorage {
 
     @SubscribeEvent
     public static void items(final RegistryEvent.Register<Item> event) {
-      Item.Properties properties = new Item.Properties().group(ItemGroup.DECORATIONS).maxStackSize(1);
+      Item.Properties properties = new Item.Properties().group(ItemGroup.DECORATIONS).maxStackSize(1).setTEISR(() -> () -> new RenderDankStorage());
       for (Block block : MOD_BLOCKS)
         register(new DankItemBlock(block, properties), block.getRegistryName().getPath(), event.getRegistry());
     }

@@ -1,8 +1,7 @@
 package com.tfar.dankstorage.inventory;
 
-import com.tfar.dankstorage.network.CMessageToggle;
+import com.tfar.dankstorage.network.CMessageTogglePickup;
 import com.tfar.dankstorage.network.Utils;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -39,12 +38,12 @@ public class PortableDankHandler extends DankHandler {
       }
     } else {
       int mode = Utils.getMode(bag).ordinal();
-      boolean construction = Utils.construction(bag);
+      int construction = Utils.getUseType(bag).ordinal();
       int selectedSlot = Utils.getSelectedSlot(bag);
       boolean tag = Utils.tag(bag);
       bag.setTag(serializeNBT());
       bag.getOrCreateTag().putInt("mode",mode);
-      bag.getOrCreateTag().putBoolean("construction",construction);
+      bag.getOrCreateTag().putInt("construction",construction);
       bag.getOrCreateTag().putInt("selectedSlot",selectedSlot);
       bag.getOrCreateTag().putBoolean("tag",tag);
     }
@@ -53,8 +52,8 @@ public class PortableDankHandler extends DankHandler {
   @Nonnull
   @Override
   public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-    CMessageToggle.Mode mode = Utils.getMode(bag);
-    if (mode == CMessageToggle.Mode.NORMAL || mode == CMessageToggle.Mode.PICKUP_ALL || manual)
+    CMessageTogglePickup.Mode mode = Utils.getMode(bag);
+    if (mode == CMessageTogglePickup.Mode.NORMAL || mode == CMessageTogglePickup.Mode.PICKUP_ALL || manual)
     return super.insertItem(slot, stack, simulate);
     ItemStack existing = this.getStackInSlot(slot);
     if (ItemHandlerHelper.canItemStacksStack(stack,existing) || ( Utils.tag(bag) && Utils.doItemStacksShareWhitelistedTags(stack,existing))){
@@ -67,10 +66,10 @@ public class PortableDankHandler extends DankHandler {
       }
       else {
         if (!simulate) this.stacks.set(slot, ItemHandlerHelper.copyStackWithSize(stack, stackLimit));
-        if (mode == CMessageToggle.Mode.VOID_PICKUP) return ItemStack.EMPTY;
+        if (mode == CMessageTogglePickup.Mode.VOID_PICKUP) return ItemStack.EMPTY;
         return ItemHandlerHelper.copyStackWithSize(stack, remainder);
       }
-    } else if (existing.isEmpty() && mode == CMessageToggle.Mode.FILTERED_PICKUP && this.containsItem(stack.getItem())){
+    } else if (existing.isEmpty() && mode == CMessageTogglePickup.Mode.FILTERED_PICKUP && this.containsItem(stack.getItem())){
       if (!simulate)this.stacks.set(slot, stack);
       return ItemHandlerHelper.copyStackWithSize(stack,stack.getCount() - this.getStackLimit(slot,stack));
     } else return stack;

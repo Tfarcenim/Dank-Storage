@@ -10,16 +10,11 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import java.util.function.Supplier;
 
 
-public class CMessageToggle {
+public class CMessageTogglePickup {
 
-  public CMessageToggle(){}
-
+  public CMessageTogglePickup(){}
 
   public static final Mode[] modes = Mode.values();
-
-  public static CMessageToggle decode(PacketBuffer buffer) {
-    return new CMessageToggle();
-  }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
       PlayerEntity player = ctx.get().getSender();

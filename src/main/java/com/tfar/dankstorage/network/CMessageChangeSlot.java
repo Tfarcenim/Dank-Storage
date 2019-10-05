@@ -35,7 +35,7 @@ public class CMessageChangeSlot {
       ctx.get().enqueueWork(  ()->  {
         ItemStack bag = player.getHeldItemMainhand();
         if (bag.getItem() instanceof DankItemBlock) {
-          boolean construction = Utils.construction(player.getHeldItemMainhand());
+          boolean construction = Utils.isConstruction(player.getHeldItemMainhand());
           if (construction){
             Utils.changeSlot(bag,right);
           }

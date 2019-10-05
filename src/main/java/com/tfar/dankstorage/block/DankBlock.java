@@ -3,13 +3,12 @@ package com.tfar.dankstorage.block;
 import com.tfar.dankstorage.client.Client;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
-import com.tfar.dankstorage.network.CMessageToggle;
+import com.tfar.dankstorage.network.CMessageTogglePlacement;
 import com.tfar.dankstorage.network.Utils;
 import com.tfar.dankstorage.tile.AbstractDankStorageTile;
 import com.tfar.dankstorage.tile.DankTiles;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
@@ -36,12 +35,11 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import static com.tfar.dankstorage.network.CMessageToggle.*;
+import static com.tfar.dankstorage.network.CMessageTogglePickup.*;
 
 public class DankBlock extends Block {
   public DankBlock(Properties p_i48440_1_) {
@@ -135,11 +133,11 @@ public class DankBlock extends Block {
     }
 
     if (Screen.hasShiftDown()) {
-      tooltip.add(new TranslationTextComponent("text.dankstorage.changemode",new StringTextComponent(Client.TOGGLE_MODE.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
-      CMessageToggle.Mode mode = Utils.getMode(bag);
+      tooltip.add(new TranslationTextComponent("text.dankstorage.changemode",new StringTextComponent(Client.CONSTRUCTION.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
+      CMessageTogglePlacement.UseType mode = Utils.getUseType(bag);
       tooltip.add(
-              new TranslationTextComponent("text.dankstorage.currentmode",new TranslationTextComponent(
-                      "dankstorage.mode."+mode.name().toLowerCase(Locale.ROOT)).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
+              new TranslationTextComponent("text.dankstorage.currentusemode",new TranslationTextComponent(
+                      "dankstorage.usemode."+mode.name().toLowerCase(Locale.ROOT)).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
       DankHandler handler = Utils.getHandler(bag,false);
 
       if (handler.isEmpty()){

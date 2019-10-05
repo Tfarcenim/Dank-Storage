@@ -29,10 +29,15 @@
   "text.dankstorage.empty": "Empty",
 
   "text.dankstorage.changemode": "Press %s to change mode",
-  "text.dankstorage.currentmode": "Current mode: %s",
+  "text.dankstorage.currentmode": "Current Usetype: %s",
 
-  "dankstorage.construction.enabled": "Construction mode Enabled",
-  "dankstorage.construction.disabled": "Construction mode Disabled",
+  "text.dankstorage.changeusetype": "Press %s to change usetype",
+  "text.dankstorage.currentusetype": "Current Usetype: %s",
+
+  "dankstorage.usetype.bag": "Bag",
+  "dankstorage.usetype.construction": "Construction",
+  "dankstorage.usetype.chest": "Chest",
+
 
   "text.dankstorage.formatcontaineditems" : "%s %s"
 }
