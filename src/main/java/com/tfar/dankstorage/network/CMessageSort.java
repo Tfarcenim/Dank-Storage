@@ -53,7 +53,7 @@ public class CMessageSort {
             itemlist.add(new SortingData(stack.copy()));
           }
         }
-        handler.clear();
+        handler.getContents().clear();
         Collections.sort(itemlist);
         for (SortingData data : itemlist) {
           ItemStack stack = data.stack.copy();

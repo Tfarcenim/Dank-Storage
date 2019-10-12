@@ -10,6 +10,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.stream.IntStream;
 
 public class DankHandler extends ItemStackHandler {
@@ -25,8 +26,9 @@ public class DankHandler extends ItemStackHandler {
     return IntStream.range(0, this.getSlots()).allMatch(i -> this.getStackInSlot(i).isEmpty());
   }
 
-  public void clear(){
-    this.stacks.clear();
+  @Override
+  public void onContentsChanged(int slot) {
+
   }
 
   @Override
@@ -37,11 +39,6 @@ public class DankHandler extends ItemStackHandler {
   @Override
   public int getStackLimit(int slot, @Nonnull ItemStack stack) {
     return stacklimit;
-  }
-
-  @Override
-  public void onContentsChanged(int slot) {
-
   }
 
   @Override
@@ -79,6 +76,10 @@ public class DankHandler extends ItemStackHandler {
 
   public NonNullList<ItemStack> getContents(){
     return stacks;
+  }
+
+  public void setContents(List<ItemStack> contents){
+    this.stacks = (NonNullList<ItemStack>) contents;
   }
 
   @Override

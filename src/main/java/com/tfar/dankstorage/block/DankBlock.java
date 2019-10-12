@@ -136,8 +136,8 @@ public class DankBlock extends Block {
       tooltip.add(new TranslationTextComponent("text.dankstorage.changemode",new StringTextComponent(Client.CONSTRUCTION.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
       CMessageTogglePlacement.UseType mode = Utils.getUseType(bag);
       tooltip.add(
-              new TranslationTextComponent("text.dankstorage.currentusemode",new TranslationTextComponent(
-                      "dankstorage.usemode."+mode.name().toLowerCase(Locale.ROOT)).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
+              new TranslationTextComponent("text.dankstorage.currentusetype",new TranslationTextComponent(
+                      "dankstorage.usetype."+mode.name().toLowerCase(Locale.ROOT)).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
       DankHandler handler = Utils.getHandler(bag,false);
 
       if (handler.isEmpty()){
@@ -145,14 +145,14 @@ public class DankBlock extends Block {
                 new TranslationTextComponent("text.dankstorage.empty").applyTextStyle(TextFormatting.ITALIC));
         return;
       }
-
+      int count1 = 0;
       for (int i = 0; i < handler.getSlots(); i++) {
+        if (count1>10)break;
         ItemStack item = handler.getStackInSlot(i);
         if (item.isEmpty())continue;
           ITextComponent count = new StringTextComponent(Integer.toString(item.getCount())).applyTextStyle(TextFormatting.AQUA);
         tooltip.add(new TranslationTextComponent("text.dankstorage.formatcontaineditems", count, item.getDisplayName().applyTextStyle(item.getRarity().color)));
-
-
+        count1++;
       }
     }
   }

@@ -1,21 +1,20 @@
 package com.tfar.dankstorage;
 
-import com.google.common.collect.Lists;
-import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.block.DankBlock;
+import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.capability.CapabilityDankStorage;
 import com.tfar.dankstorage.client.RenderDankStorage;
-import com.tfar.dankstorage.container.*;
+import com.tfar.dankstorage.container.DankContainers;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.DankPacketHandler;
 import com.tfar.dankstorage.network.Utils;
 import com.tfar.dankstorage.recipe.DankUpgradeRecipes;
-import com.tfar.dankstorage.tile.*;
+import com.tfar.dankstorage.tile.AbstractDankStorageTile;
+import com.tfar.dankstorage.tile.DankTiles;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -39,7 +38,9 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.ObjectHolder;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(DankStorage.MODID)
@@ -78,9 +79,13 @@ public class DankStorage {
 
     @SubscribeEvent
     public static void items(final RegistryEvent.Register<Item> event) {
-      Item.Properties properties = new Item.Properties().group(ItemGroup.DECORATIONS).maxStackSize(1).setTEISR(() -> () -> new RenderDankStorage());
+      Item.Properties properties = new Item.Properties().group(ItemGroup.DECORATIONS).maxStackSize(1).setTEISR(RegistryEvents::get);
       for (Block block : MOD_BLOCKS)
         register(new DankItemBlock(block, properties), block.getRegistryName().getPath(), event.getRegistry());
+    }
+
+    private static Callable<ItemStackTileEntityRenderer> get() {
+      return RenderDankStorage::new;
     }
 
     @SubscribeEvent

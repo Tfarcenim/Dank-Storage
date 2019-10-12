@@ -27,7 +27,7 @@ public class Utils {
   }
 
   public static boolean isConstruction(ItemStack bag){
-    return bag.getOrCreateTag().getInt("construction") == 0;
+    return bag.hasTag() && bag.getTag().contains("construction") && bag.getTag().getInt("construction") == 0;
   }
 
   //0,1,2,3
@@ -63,7 +63,10 @@ public class Utils {
   }
 
   public static int getSlotCount(ItemStack bag) {
-    int tier = getTier(bag);
+    return getSlotCount(getTier(bag));
+  }
+
+  public static int getSlotCount(int tier){
     if (tier > 0 && tier < 7)
       return 9 * tier;
     if (tier == 7)

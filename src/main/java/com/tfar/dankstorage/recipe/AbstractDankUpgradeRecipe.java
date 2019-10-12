@@ -23,14 +23,10 @@ public abstract class AbstractDankUpgradeRecipe extends ShapedRecipe {
   @Override
   public ItemStack getCraftingResult(CraftingInventory inv) {
     ItemStack bag = super.getCraftingResult(inv).copy();
-    ItemStack oldBag = inv.getStackInSlot(4);
-    PortableDankHandler oldHandler = Utils.getHandler(oldBag,false);
-    PortableDankHandler newHandler = Utils.getHandler(bag,false);
-    for (int i = 0;i < oldHandler.getSlots();i++){
-      newHandler.insertItem(i,oldHandler.getStackInSlot(i),false);
-    }
-    CompoundNBT nbt = newHandler.serializeNBT();
-    bag.setTag(nbt);
+    ItemStack oldBag = inv.getStackInSlot(4).copy();
+    if (!oldBag.hasTag())return bag;
+    bag.setTag(oldBag.getTag());
+    bag.getTag().putInt("Size",Utils.getSlotCount(bag));
     return bag;
   }
 }

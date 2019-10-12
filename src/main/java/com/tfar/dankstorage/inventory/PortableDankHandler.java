@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.stream.IntStream;
 
 public class PortableDankHandler extends DankHandler {
@@ -23,6 +24,12 @@ public class PortableDankHandler extends DankHandler {
     this.bag = bag;
     this.manual = manual;
     readItemStack();
+  }
+
+  public void upgrade(){
+    int tier = Utils.getTier(bag);
+    tier++;
+    this.setSize(Utils.getSlotCount(tier));
   }
 
   public void writeItemStack() {
