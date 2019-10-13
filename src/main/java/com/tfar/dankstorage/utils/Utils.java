@@ -1,9 +1,10 @@
-package com.tfar.dankstorage.network;
+package com.tfar.dankstorage.utils;
 
 import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
+import com.tfar.dankstorage.network.CMessageToggleUseType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,7 +17,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import static com.tfar.dankstorage.network.CMessageTogglePickup.*;
-import static com.tfar.dankstorage.network.CMessageTogglePlacement.useTypes;
+import static com.tfar.dankstorage.network.CMessageToggleUseType.useTypes;
 
 public class Utils {
 
@@ -27,7 +28,7 @@ public class Utils {
   }
 
   public static boolean isConstruction(ItemStack bag){
-    return bag.hasTag() && bag.getTag().contains("construction") && bag.getTag().getInt("construction") == 0;
+    return bag.hasTag() && bag.getTag().contains("construction") && bag.getTag().getInt("construction") == 2;
   }
 
   //0,1,2,3
@@ -40,7 +41,7 @@ public class Utils {
             new TranslationTextComponent("dankstorage.mode." + modes[ordinal].name()), true);
   }
 
-  public static CMessageTogglePlacement.UseType getUseType(ItemStack bag) {
+  public static CMessageToggleUseType.UseType getUseType(ItemStack bag) {
     return useTypes[bag.getOrCreateTag().getInt("construction")];
   }
 

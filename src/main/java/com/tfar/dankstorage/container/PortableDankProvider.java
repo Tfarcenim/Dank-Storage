@@ -2,7 +2,7 @@ package com.tfar.dankstorage.container;
 
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
-import com.tfar.dankstorage.network.Utils;
+import com.tfar.dankstorage.utils.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;

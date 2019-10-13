@@ -4,7 +4,7 @@ import com.tfar.dankstorage.container.AbstractPortableDankContainer;
 import com.tfar.dankstorage.network.CMessageTagMode;
 import com.tfar.dankstorage.network.CMessageTogglePickup;
 import com.tfar.dankstorage.network.DankPacketHandler;
-import com.tfar.dankstorage.network.Utils;
+import com.tfar.dankstorage.utils.Utils;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;

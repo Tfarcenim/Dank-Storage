@@ -25,16 +25,15 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
 
   public int numPlayersUsing = 0;
   protected String customName;
-  public int renderTick = 0;
   public int mode = 0;
   public int selectedSlot;
 
-  public DankHandler itemHandler;
-  public LazyOptional<IItemHandler> optional = LazyOptional.of(() -> itemHandler).cast();
+  private DankHandler handler;
+  public LazyOptional<IItemHandler> optional = LazyOptional.of(() -> handler).cast();
 
   public AbstractDankStorageTile(TileEntityType<?> tile, int rows, int stacksize) {
     super(tile);
-    this.itemHandler = new DankHandler(rows * 9,stacksize) {
+    this.handler = new DankHandler(rows * 9,stacksize) {
       @Override
       public void onContentsChanged(int slot) {
         super.onContentsChanged(slot);
@@ -44,18 +43,13 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
     };
   }
 
-  public int getRenderTick() {
-    return renderTick;
+  public DankHandler getHandler(){
+    return handler;
   }
 
   public int getComparatorSignal() {
-    return this.itemHandler.calcRedstone();
+    return this.handler.calcRedstone();
   }
-
-  /*@Override
-  public void tick() {
-
-  }*/
 
   @Override
   public boolean receiveClientEvent(int id, int type) {
@@ -96,7 +90,7 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
     this.mode = compound.getInt("mode");
     this.selectedSlot = compound.getInt("selectedSlot");
     if (compound.contains("Items")) {
-      itemHandler.deserializeNBT(compound.getCompound("Items"));
+      handler.deserializeNBT(compound.getCompound("Items"));
     }
     if (compound.contains("CustomName", 8)) {
       this.setCustomName(compound.getString("CustomName"));
@@ -109,7 +103,7 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
     super.write(compound);
     compound.putInt("mode",mode);
     compound.putInt("selectedSlot",selectedSlot);
-    compound.put("Items", itemHandler.serializeNBT());
+    compound.put("Items", handler.serializeNBT());
     if (this.hasCustomName()) {
       compound.putString("CustomName", this.customName);
     }
@@ -165,6 +159,6 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
   public abstract Item getDank();
 
   public void setContents(CompoundNBT nbt){
-    itemHandler.deserializeNBT(nbt);
+    handler.deserializeNBT(nbt);
   }
 }

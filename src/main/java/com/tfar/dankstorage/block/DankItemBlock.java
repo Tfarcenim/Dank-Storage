@@ -4,8 +4,8 @@ import com.tfar.dankstorage.capability.CapabilityDankStorageProvider;
 import com.tfar.dankstorage.container.PortableDankProvider;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.CMessageTogglePickup;
-import com.tfar.dankstorage.network.CMessageTogglePlacement;
-import com.tfar.dankstorage.network.Utils;
+import com.tfar.dankstorage.network.CMessageToggleUseType;
+import com.tfar.dankstorage.utils.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -77,7 +77,7 @@ public class DankItemBlock extends BlockItem {
   public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
     ItemStack bag = player.getHeldItem(hand);
     if (!world.isRemote)
-      if (Utils.getUseType(bag) == CMessageTogglePlacement.UseType.bag) {
+      if (Utils.getUseType(bag) == CMessageToggleUseType.UseType.bag) {
         int type = Utils.getTier(player.getHeldItem(hand));
         NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(type), data -> data.writeItemStack(player.getHeldItem(hand)));
         return super.onItemRightClick(world,player,hand);
@@ -190,12 +190,12 @@ public class DankItemBlock extends BlockItem {
   @Override
   public ActionResultType onItemUse(ItemUseContext ctx) {
     ItemStack bag = ctx.getItem();
-    CMessageTogglePlacement.UseType useType = Utils.getUseType(bag);
+    CMessageToggleUseType.UseType useType = Utils.getUseType(bag);
 
-    if (useType == CMessageTogglePlacement.UseType.chest)
+    if (useType == CMessageToggleUseType.UseType.chest)
       return super.onItemUse(ctx);
 
-    if(useType == CMessageTogglePlacement.UseType.bag){
+    if(useType == CMessageToggleUseType.UseType.bag){
       return ActionResultType.PASS;
     }
 

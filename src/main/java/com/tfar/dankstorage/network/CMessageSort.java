@@ -4,7 +4,7 @@ import com.tfar.dankstorage.container.AbstractAbstractDankContainer;
 import com.tfar.dankstorage.container.AbstractDankContainer;
 import com.tfar.dankstorage.container.AbstractPortableDankContainer;
 import com.tfar.dankstorage.inventory.DankHandler;
-import com.tfar.dankstorage.inventory.PortableDankHandler;
+import com.tfar.dankstorage.utils.SortingData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
@@ -32,8 +32,8 @@ public class CMessageSort {
         List<SortingData> itemlist = new ArrayList<>();
         DankHandler handler;
         if (openContainer instanceof AbstractDankContainer) {
-          handler = ((AbstractDankContainer) openContainer).te.itemHandler;
-        } else handler = ((AbstractPortableDankContainer)openContainer).handler;
+          handler = ((AbstractDankContainer) openContainer).te.getHandler();
+        } else handler = ((AbstractPortableDankContainer)openContainer).getHandler();
 
         for (int i = 0; i < handler.getSlots(); i++) {
           ItemStack stack = handler.getStackInSlot(i);

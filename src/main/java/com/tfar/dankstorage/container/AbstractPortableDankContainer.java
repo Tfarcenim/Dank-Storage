@@ -4,10 +4,10 @@ import com.tfar.dankstorage.inventory.LockedSlot;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
+  import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.SlotItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 
 public abstract class AbstractPortableDankContainer extends AbstractAbstractDankContainer {
 
@@ -16,13 +16,13 @@ public abstract class AbstractPortableDankContainer extends AbstractAbstractDank
   public AbstractPortableDankContainer(ContainerType<?> type, int p_i50105_2_, PlayerInventory playerInventory, PlayerEntity player, PortableDankHandler handler, int rows) {
     super(type, p_i50105_2_, playerInventory, handler,rows);
     this.bag = player.getHeldItemMainhand();
-    addPlayerSlots(playerInventory, playerInventory.currentItem);
+    addPlayerSlots(new InvWrapper(playerInventory), playerInventory.currentItem);
   }
 
   @Override
-  protected void addPlayerSlots(IInventory playerinventory) {}
+  protected void addPlayerSlots(InvWrapper playerinventory) {}
 
-  protected void addPlayerSlots(IInventory playerinventory, int locked) {
+  protected void addPlayerSlots(InvWrapper playerinventory, int locked) {
     int yStart = 50;
     switch (rows){
       case 9:yStart +=59;
@@ -36,7 +36,7 @@ public abstract class AbstractPortableDankContainer extends AbstractAbstractDank
       for (int col = 0; col < 9; ++col) {
         int x = 8 + col * 18;
         int y = row * 18 + yStart;
-        this.addSlot(new Slot(playerinventory, col + row * 9 + 9, x, y) {
+        this.addSlot(new SlotItemHandler(playerinventory, col + row * 9 + 9, x, y) {
           @Override
           public int getItemStackLimit(ItemStack stack) {
             return Math.min(this.getSlotStackLimit(), stack.getMaxStackSize());
@@ -49,7 +49,7 @@ public abstract class AbstractPortableDankContainer extends AbstractAbstractDank
       int x = 8 + row * 18;
       int y = yStart + 58;
       if (row != locked)
-      this.addSlot(new Slot(playerinventory, row, x, y) {
+      this.addSlot(new SlotItemHandler(playerinventory, row, x, y) {
         @Override
         public int getItemStackLimit(ItemStack stack) {
           return Math.min(this.getSlotStackLimit(), stack.getMaxStackSize());
@@ -68,7 +68,7 @@ public abstract class AbstractPortableDankContainer extends AbstractAbstractDank
   @Override
   public void detectAndSendChanges() {
     super.detectAndSendChanges();
-    ((PortableDankHandler)handler).writeItemStack();
+    ((PortableDankHandler)this.handler).writeItemStack();
   }
 }
 

@@ -1,13 +1,11 @@
 package com.tfar.dankstorage.recipe;
 
 import com.tfar.dankstorage.DankStorage;
-import com.tfar.dankstorage.inventory.PortableDankHandler;
-import com.tfar.dankstorage.network.Utils;
+import com.tfar.dankstorage.utils.Utils;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipe;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 

@@ -1,10 +1,10 @@
 package com.tfar.dankstorage.network;
 
 import com.tfar.dankstorage.block.DankItemBlock;
+import com.tfar.dankstorage.utils.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;

@@ -28,7 +28,6 @@ public class DankHandler extends ItemStackHandler {
 
   @Override
   public void onContentsChanged(int slot) {
-
   }
 
   @Override
@@ -55,8 +54,6 @@ public class DankHandler extends ItemStackHandler {
       return ItemStack.EMPTY;
 
     int toExtract = Math.min(amount, stacklimit);
-    //todo might break mods, but removing this causes a dupe bug
-    if (existing.getMaxStackSize() == 1)toExtract = 1;
 
     if (existing.getCount() <= toExtract) {
       if (!simulate) {
@@ -78,39 +75,36 @@ public class DankHandler extends ItemStackHandler {
     return stacks;
   }
 
-  public void setContents(List<ItemStack> contents){
-    this.stacks = (NonNullList<ItemStack>) contents;
-  }
 
   @Override
   public CompoundNBT serializeNBT() {
     ListNBT nbtTagList = new ListNBT();
-    for (int i = 0; i < stacks.size(); i++) {
-      if (!stacks.get(i).isEmpty()) {
-        int realCount = Math.min(stacklimit, stacks.get(i).getCount());
+    for (int i = 0; i < getContents().size(); i++) {
+      if (!getContents().get(i).isEmpty()) {
+        int realCount = Math.min(stacklimit, getContents().get(i).getCount());
         CompoundNBT itemTag = new CompoundNBT();
         itemTag.putInt("Slot", i);
-        stacks.get(i).write(itemTag);
+        getContents().get(i).write(itemTag);
         itemTag.putInt("ExtendedCount", realCount);
         nbtTagList.add(itemTag);
       }
     }
     CompoundNBT nbt = new CompoundNBT();
     nbt.put("Items", nbtTagList);
-    nbt.putInt("Size", stacks.size());
+    nbt.putInt("Size", getContents().size());
     return nbt;
   }
 
   @Override
   public void deserializeNBT(CompoundNBT nbt) {
-    setSize(nbt.contains("Size", Constants.NBT.TAG_INT) ? nbt.getInt("Size") : stacks.size());
+    setSize(nbt.contains("Size", Constants.NBT.TAG_INT) ? nbt.getInt("Size") : getContents().size());
     ListNBT tagList = nbt.getList("Items", Constants.NBT.TAG_COMPOUND);
     for (int i = 0; i < tagList.size(); i++) {
       CompoundNBT itemTags = tagList.getCompound(i);
       int slot = itemTags.getInt("Slot");
 
       if (slot >= 0 && slot < stacks.size()) {
-        if (itemTags.contains("StackList", Constants.NBT.TAG_LIST)) { // migrate from old ExtendedItemStack system
+        if (itemTags.contains("StackList", Constants.NBT.TAG_LIST)) {
           ItemStack stack = ItemStack.EMPTY;
           ListNBT stackTagList = itemTags.getList("StackList", Constants.NBT.TAG_COMPOUND);
           for (int j = 0; j < stackTagList.size(); j++) {

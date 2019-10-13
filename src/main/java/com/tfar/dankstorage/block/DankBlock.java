@@ -3,8 +3,8 @@ package com.tfar.dankstorage.block;
 import com.tfar.dankstorage.client.Client;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
-import com.tfar.dankstorage.network.CMessageTogglePlacement;
-import com.tfar.dankstorage.network.Utils;
+import com.tfar.dankstorage.network.CMessageToggleUseType;
+import com.tfar.dankstorage.utils.Utils;
 import com.tfar.dankstorage.tile.AbstractDankStorageTile;
 import com.tfar.dankstorage.tile.DankTiles;
 import net.minecraft.block.Block;
@@ -63,7 +63,7 @@ public class DankBlock extends Block {
     final TileEntity tile = world.getTileEntity(pos);
     if (tile instanceof AbstractDankStorageTile && !world.isRemote){
       ItemStack dank = new ItemStack(((AbstractDankStorageTile) tile).getDank());
-      CompoundNBT nbt = ((AbstractDankStorageTile) tile).itemHandler.serializeNBT();
+      CompoundNBT nbt = ((AbstractDankStorageTile) tile).getHandler().serializeNBT();
       nbt.putInt("mode",((AbstractDankStorageTile) tile).mode);
       nbt.putInt("selectedSlot",((AbstractDankStorageTile) tile).selectedSlot);
       dank.setTag(nbt);
@@ -134,7 +134,7 @@ public class DankBlock extends Block {
 
     if (Screen.hasShiftDown()) {
       tooltip.add(new TranslationTextComponent("text.dankstorage.changemode",new StringTextComponent(Client.CONSTRUCTION.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
-      CMessageTogglePlacement.UseType mode = Utils.getUseType(bag);
+      CMessageToggleUseType.UseType mode = Utils.getUseType(bag);
       tooltip.add(
               new TranslationTextComponent("text.dankstorage.currentusetype",new TranslationTextComponent(
                       "dankstorage.usetype."+mode.name().toLowerCase(Locale.ROOT)).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));

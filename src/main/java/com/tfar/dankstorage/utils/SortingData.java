@@ -1,4 +1,4 @@
-package com.tfar.dankstorage.network;
+package com.tfar.dankstorage.utils;
 
 import net.minecraft.item.ItemStack;
 

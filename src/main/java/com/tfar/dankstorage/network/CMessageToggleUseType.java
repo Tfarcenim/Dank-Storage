@@ -1,15 +1,16 @@
 package com.tfar.dankstorage.network;
 
 import com.tfar.dankstorage.block.DankItemBlock;
+import com.tfar.dankstorage.utils.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
 
-public class CMessageTogglePlacement {
+public class CMessageToggleUseType {
 
-  public CMessageTogglePlacement(){}
+  public CMessageToggleUseType(){}
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
       PlayerEntity player = ctx.get().getSender();
@@ -26,7 +27,7 @@ public class CMessageTogglePlacement {
   public static final UseType[] useTypes = UseType.values();
 
     public enum UseType{
-    construction,chest,bag
+    bag,chest,construction
     }
 }
 

@@ -1,7 +1,7 @@
 package com.tfar.dankstorage.capability;
 
 import com.tfar.dankstorage.inventory.PortableDankHandler;
-import com.tfar.dankstorage.network.Utils;
+import com.tfar.dankstorage.utils.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;

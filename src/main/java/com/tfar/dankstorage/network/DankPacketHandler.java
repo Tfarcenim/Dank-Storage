@@ -18,10 +18,10 @@ public class DankPacketHandler {
             buffer -> new CMessageTogglePickup(),
             CMessageTogglePickup::handle);
 
-    INSTANCE.registerMessage(id++, CMessageTogglePlacement.class,
+    INSTANCE.registerMessage(id++, CMessageToggleUseType.class,
             (message, buffer) -> {},
-            buffer -> new CMessageTogglePlacement(),
-            CMessageTogglePlacement::handle);
+            buffer -> new CMessageToggleUseType(),
+            CMessageToggleUseType::handle);
 
     INSTANCE.registerMessage(id++, CMessageChangeSlot.class,
             CMessageChangeSlot::encode,

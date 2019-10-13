@@ -553,17 +553,6 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
         return slot;
       }
     }
-
     return null;
-  }
-
-  @Override
-  public boolean keyPressed(int key1, int key2, int r5) {
-    return super.keyPressed(key1, key2, r5);
-  }
-
-  @Override
-  protected boolean func_195363_d(int key1, int key2) {
-    return super.func_195363_d(key1, key2);
   }
 }

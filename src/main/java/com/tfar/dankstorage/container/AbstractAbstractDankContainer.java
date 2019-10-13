@@ -5,16 +5,18 @@ import com.tfar.dankstorage.inventory.DankSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SSetSlotPacket;
+import net.minecraftforge.items.SlotItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public abstract class AbstractAbstractDankContainer extends Container {
 
-  public DankHandler handler;
+  protected DankHandler handler;
 
   public final int rows;
 
@@ -23,7 +25,11 @@ public abstract class AbstractAbstractDankContainer extends Container {
     this.rows = rows;
     this.handler = handler;
     addOwnSlots();
-    addPlayerSlots(playerInventory);
+    addPlayerSlots(new InvWrapper(playerInventory));
+  }
+
+  public DankHandler getHandler(){
+    return handler;
   }
 
   public void addOwnSlots() {
@@ -40,7 +46,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
     }
   }
 
-  protected void addPlayerSlots(IInventory playerinventory) {
+  protected void addPlayerSlots(InvWrapper playerinventory) {
     int yStart = 50;
     switch (rows){
       case 9:yStart +=59;
@@ -54,7 +60,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
       for (int col = 0; col < 9; ++col) {
         int x = 8 + col * 18;
         int y = row * 18 + yStart;
-        this.addSlot(new Slot(playerinventory, col + row * 9 + 9, x, y) {
+        this.addSlot(new SlotItemHandler(playerinventory, col + row * 9 + 9, x, y) {
           @Override
           public int getItemStackLimit(ItemStack stack) {
             return Math.min(this.getSlotStackLimit(), stack.getMaxStackSize());
@@ -66,7 +72,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
     for (int row = 0; row < 9; ++row) {
       int x = 8 + row * 18;
       int y = yStart + 58;
-      this.addSlot(new Slot(playerinventory, row, x, y) {
+      this.addSlot(new SlotItemHandler(playerinventory, row, x, y) {
         @Override
         public int getItemStackLimit(ItemStack stack) {
           return Math.min(this.getSlotStackLimit(), stack.getMaxStackSize());
@@ -75,6 +81,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
     }
   }
 
+  @Nonnull
   @Override
   public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
     ItemStack itemstack = ItemStack.EMPTY;
@@ -221,8 +228,9 @@ public abstract class AbstractAbstractDankContainer extends Container {
                 slot6.putStack(ItemStack.EMPTY);
                 PlayerInventory.setItemStack(ItemStack.EMPTY);
               } else {
-                int l2 = dragType == 0 ? slotStack.getCount() : (slotStack.getCount() + 1) / 2;
-                PlayerInventory.setItemStack(slot6.decrStackSize(l2));
+                int count = dragType == 0 ? slotStack.getMaxStackSize() : (slotStack.getMaxStackSize() + 1) / 2;
+                //int count = dragType == 0 ? slotStack.getCount() : (slotStack.getCount() + 1) / 2;
+                PlayerInventory.setItemStack(slot6.decrStackSize(count));
 
                 if (slotStack.isEmpty()) {
                   slot6.putStack(ItemStack.EMPTY);
@@ -264,6 +272,8 @@ public abstract class AbstractAbstractDankContainer extends Container {
         }
       }
     } else if (clickTypeIn == ClickType.SWAP && dragType >= 0 && dragType < 9) {
+      //just don't do anything as swapping slots is unsupported
+      /*
       Slot slot4 = this.inventorySlots.get(slotId);
       ItemStack itemstack6 = PlayerInventory.getStackInSlot(dragType);
       ItemStack slotStack = slot4.getStack();
@@ -321,7 +331,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
             slot4.onTake(player, slotStack);
           }
         }
-      }
+      }*/
     } else if (clickTypeIn == ClickType.CLONE && player.abilities.isCreativeMode && PlayerInventory.getItemStack().isEmpty() && slotId >= 0) {
       Slot slot3 = this.inventorySlots.get(slotId);
 
@@ -381,7 +391,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
   }
 
   @Override
-  public boolean canInteractWith(PlayerEntity playerIn) {
+  public boolean canInteractWith(@Nonnull PlayerEntity playerIn) {
     return true;
   }
 
@@ -462,12 +472,14 @@ public abstract class AbstractAbstractDankContainer extends Container {
     this.dragEvent = 0;
     this.dragSlots.clear();
   }
-  public static boolean canAddItemToSlot(@Nullable Slot slot, ItemStack stack, boolean stackSizeMatters) {
+  public static boolean canAddItemToSlot(@Nullable Slot slot,@Nonnull ItemStack stack, boolean stackSizeMatters) {
     boolean flag = slot == null || !slot.getHasStack();
-    ItemStack slotStack = slot.getStack();
+    if (slot != null) {
+      ItemStack slotStack = slot.getStack();
 
-    if (!flag && stack.isItemEqual(slotStack) && ItemStack.areItemStackTagsEqual(slotStack, stack)) {
-      return slotStack.getCount() + (stackSizeMatters ? 0 : stack.getCount()) <= slot.getItemStackLimit(slotStack);
+      if (!flag && stack.isItemEqual(slotStack) && ItemStack.areItemStackTagsEqual(slotStack, stack)) {
+        return slotStack.getCount() + (stackSizeMatters ? 0 : stack.getCount()) <= slot.getItemStackLimit(slotStack);
+      }
     }
     return flag;
   }
@@ -487,7 +499,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
   }
 
   @Override
-  public void addListener(IContainerListener listener) {
+  public void addListener(@Nonnull IContainerListener listener) {
     if (this.listeners.contains(listener)) {
       throw new IllegalArgumentException("Listener already listening");
     } else {
