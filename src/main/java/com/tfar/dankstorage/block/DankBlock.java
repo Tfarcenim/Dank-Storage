@@ -91,7 +91,7 @@ public class DankBlock extends Block {
 
     Block block = Block.getBlockFromItem(bag.getItem());
     if (block instanceof DankBlock)return block.getDefaultState();
-    return block.isAir(block.getDefaultState()) ? null : block.getStateForPlacement(ctx);
+    return block.isAir(block.getDefaultState(),null,null) ? null : block.getStateForPlacement(ctx);
   }
 
   @Override

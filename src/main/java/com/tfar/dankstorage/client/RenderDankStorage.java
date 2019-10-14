@@ -34,9 +34,7 @@ public class RenderDankStorage extends ItemStackTileEntityRenderer {
     GlStateManager.pushMatrix();
     if (itemRenderer == null)itemRenderer = new DankItemRenderer(mc.textureManager,mc.getModelManager(),mc.getItemColors(),mc.getItemRenderer().getItemModelMesher());
     model.handlePerspective(transform);
-
     this.itemRenderer.renderItem(stack, model.internal);
-
     GlStateManager.popMatrix();
   }
 }

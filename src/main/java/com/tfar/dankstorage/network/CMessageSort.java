@@ -30,10 +30,7 @@ public class CMessageSort {
       Container openContainer = player.openContainer;
       if (openContainer instanceof AbstractAbstractDankContainer) {
         List<SortingData> itemlist = new ArrayList<>();
-        DankHandler handler;
-        if (openContainer instanceof AbstractDankContainer) {
-          handler = ((AbstractDankContainer) openContainer).te.getHandler();
-        } else handler = ((AbstractPortableDankContainer)openContainer).getHandler();
+        DankHandler handler = ((AbstractAbstractDankContainer) openContainer).getHandler();
 
         for (int i = 0; i < handler.getSlots(); i++) {
           ItemStack stack = handler.getStackInSlot(i);

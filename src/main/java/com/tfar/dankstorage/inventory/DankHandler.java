@@ -16,6 +16,7 @@ import java.util.stream.IntStream;
 public class DankHandler extends ItemStackHandler {
 
   public final int stacklimit;
+  public int[] lockedSlots;
 
   public DankHandler(int size, int stacklimit) {
     super(size);
@@ -46,6 +47,8 @@ public class DankHandler extends ItemStackHandler {
     if (amount == 0)
       return ItemStack.EMPTY;
 
+    boolean isLocked = isLocked(slot);
+
     validateSlotIndex(slot);
 
     ItemStack existing = this.stacks.get(slot);
@@ -54,19 +57,31 @@ public class DankHandler extends ItemStackHandler {
       return ItemStack.EMPTY;
 
     int toExtract = Math.min(amount, stacklimit);
-
+    //attempting to extract equal to or greater than what is present
     if (existing.getCount() <= toExtract) {
       if (!simulate) {
-        this.stacks.set(slot, ItemStack.EMPTY);
+        //leave one behind
+        if (isLocked)
+        this.stacks.set(slot, ItemHandlerHelper.copyStackWithSize(existing,1));
+        else//dont
+          this.stacks.set(slot, ItemStack.EMPTY);
         onContentsChanged(slot);
       }
+
+      if (isLocked){
+        //return nothing
+        if (existing.getCount() == 1)
+        return ItemStack.EMPTY;
+        else return ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - 1);
+      } else
+
       return existing;
+      //there is more than requested
     } else {
       if (!simulate) {
         this.stacks.set(slot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
         onContentsChanged(slot);
       }
-
       return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
     }
   }
@@ -75,6 +90,9 @@ public class DankHandler extends ItemStackHandler {
     return stacks;
   }
 
+  public boolean isLocked(int slot){
+    return lockedSlots[slot] == 1;
+  }
 
   @Override
   public CompoundNBT serializeNBT() {
@@ -91,6 +109,7 @@ public class DankHandler extends ItemStackHandler {
     }
     CompoundNBT nbt = new CompoundNBT();
     nbt.put("Items", nbtTagList);
+    nbt.putIntArray("LockedSlots",lockedSlots);
     nbt.putInt("Size", getContents().size());
     return nbt;
   }
@@ -131,6 +150,9 @@ public class DankHandler extends ItemStackHandler {
         }
       }
     }
+    if (nbt.contains("LockedSlots")){
+      this.lockedSlots = nbt.getIntArray("LockedSlots");
+    } else lockedSlots = new int[getSlots()];
     onLoad();
   }
 

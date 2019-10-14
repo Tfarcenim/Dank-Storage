@@ -5,13 +5,16 @@ import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.CMessageToggleUseType;
+import com.tfar.dankstorage.tile.AbstractDankStorageTile;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.Collections;
 import java.util.Set;
@@ -73,6 +76,12 @@ public class Utils {
     if (tier == 7)
       return 81;
     throw new IndexOutOfBoundsException("tier " + tier + " is out of bounds!");
+  }
+
+  public static void lockSlot(ItemStack slot){}
+
+  public static void lockSlot(DankHandler handler, int slot){
+    handler.lockedSlots[slot] = 1 - handler.lockedSlots[slot];
   }
 
   public static int getStackLimit(ItemStack bag) {

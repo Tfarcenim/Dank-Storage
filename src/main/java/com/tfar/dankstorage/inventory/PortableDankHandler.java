@@ -2,8 +2,10 @@ package com.tfar.dankstorage.inventory;
 
 import com.tfar.dankstorage.network.CMessageTogglePickup;
 import com.tfar.dankstorage.utils.Utils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.SSetSlotPacket;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
@@ -79,15 +81,14 @@ public class PortableDankHandler extends DankHandler {
     return IntStream.range(0, this.getSlots()).anyMatch(i -> this.getStackInSlot(i).getItem() == item);
   }
 
-  @Override
-  public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-    super.setStackInSlot(slot, stack);
-    this.writeItemStack();
-  }
-
   public void readItemStack() {
     if (bag.hasTag()) {
       deserializeNBT(bag.getTag());
     }
+  }
+
+  @Override
+  public void onContentsChanged(int slot) {
+    this.writeItemStack();
   }
 }

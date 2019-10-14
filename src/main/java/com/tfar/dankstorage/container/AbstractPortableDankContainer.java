@@ -68,7 +68,6 @@ public abstract class AbstractPortableDankContainer extends AbstractAbstractDank
   @Override
   public void detectAndSendChanges() {
     super.detectAndSendChanges();
-    ((PortableDankHandler)this.handler).writeItemStack();
   }
 }
 

@@ -92,22 +92,22 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
     if (compound.contains("Items")) {
       handler.deserializeNBT(compound.getCompound("Items"));
     }
-    if (compound.contains("CustomName", 8)) {
+      if (compound.contains("CustomName", 8)) {
       this.setCustomName(compound.getString("CustomName"));
     }
   }
 
   @Nonnull
   @Override
-  public CompoundNBT write(CompoundNBT compound) {
-    super.write(compound);
-    compound.putInt("mode",mode);
-    compound.putInt("selectedSlot",selectedSlot);
-    compound.put("Items", handler.serializeNBT());
+  public CompoundNBT write(CompoundNBT tag) {
+    super.write(tag);
+    tag.putInt("mode",mode);
+    tag.putInt("selectedSlot",selectedSlot);
+    tag.put("Items", handler.serializeNBT());
     if (this.hasCustomName()) {
-      compound.putString("CustomName", this.customName);
+      tag.putString("CustomName", this.customName);
     }
-    return compound;
+    return tag;
   }
 
   @Nonnull

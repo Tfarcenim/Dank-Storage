@@ -7,13 +7,13 @@ import com.tfar.dankstorage.container.AbstractAbstractDankContainer;
 import com.tfar.dankstorage.container.AbstractDankContainer;
 import com.tfar.dankstorage.container.DankContainers;
 import com.tfar.dankstorage.inventory.DankSlot;
+import com.tfar.dankstorage.network.C2SMessageLockSlot;
 import com.tfar.dankstorage.network.CMessageSort;
 import com.tfar.dankstorage.network.DankPacketHandler;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.util.InputMappings;
@@ -54,10 +54,21 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
 
   @Override
   protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+
     minecraft.getTextureManager().bindTexture(background);
     if (!(this.container instanceof DankContainers.DankContainer7 || this.container instanceof DankContainers.PortableDankContainer7))
       blit(guiLeft, guiTop, 0, 0, xSize, ySize);
     else blit(guiLeft, guiTop, 0, -5, xSize, ySize, 256, 512);
+
+    for (int i = 0; i < (container.rows * 9);i++){
+      int j = i % 9;
+      int k = i / 9;
+      int offsetx = 8;
+      int offsety = 18;
+      if (container.getHandler().lockedSlots[i] == 1)
+        fill(guiLeft + j * 18 + offsetx, guiTop + k * 18 + offsety,
+                guiLeft + j * 18 + offsetx + 16, guiTop + k * 18 + offsety+ 16, 0xFFFF0000);
+    }
   }
 
   @Override
@@ -145,10 +156,10 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
         this.returningStack = ItemStack.EMPTY;
       }
 
-      int l2 = (int) (this.returningStackDestSlot.xPos - this.touchUpX);
-      int i3 = (int) (this.returningStackDestSlot.yPos - this.touchUpY);
-      int l1 = (int) (this.touchUpX + (int) ((float) l2 * f));
-      int i2 = (int) (this.touchUpY + (int) ((float) i3 * f));
+      int l2 = this.returningStackDestSlot.xPos - this.touchUpX;
+      int i3 = this.returningStackDestSlot.yPos - this.touchUpY;
+      int l1 = this.touchUpX + (int) ((float) l2 * f);
+      int i2 = this.touchUpY + (int) ((float) i3 * f);
       this.drawItemStack(this.returningStack, l1, i2, null);
     }
 
@@ -311,29 +322,37 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
 
     if (mouseclicked(mouseX, mouseY, mouseButton)) return true;
 
+    if (Screen.hasControlDown()){
+      Slot slot = getSlotAtPosition(mouseX,mouseY);
+      if (slot instanceof DankSlot) {
+        DankPacketHandler.INSTANCE.sendToServer(new C2SMessageLockSlot(slot.slotNumber));
+        return true;
+      }
+    }
+
     InputMappings.Input mouseKey = InputMappings.Type.MOUSE.getOrMakeInput(mouseButton);
-    boolean flag = this.minecraft.gameSettings.keyBindPickBlock.isActiveAndMatches(mouseKey);
+    boolean isPickBlock = this.minecraft.gameSettings.keyBindPickBlock.isActiveAndMatches(mouseKey);
     Slot slot = this.getSlotAtPosition(mouseX, mouseY);
     long i = System.currentTimeMillis();
     this.doubleClick = this.lastClickSlot == slot && i - this.lastClickTime < 250L && this.lastClickButton == mouseButton;
     this.ignoreMouseUp = false;
 
-    if (mouseButton == 0 || mouseButton == 1 || flag) {
+    if (mouseButton == 0 || mouseButton == 1 || isPickBlock) {
       int j = this.guiLeft;
       int k = this.guiTop;
-      boolean flag1 = this.hasClickedOutside(mouseX, mouseY, j, k, mouseButton);
-      if (slot != null) flag1 = false; // Forge, prevent dropping of items through slots outside of GUI boundaries
+      boolean clickedOutsideGui = this.hasClickedOutside(mouseX, mouseY, j, k, mouseButton);
+      if (slot != null) clickedOutsideGui = false; // Forge, prevent dropping of items through slots outside of GUI boundaries
       int l = -1;
 
       if (slot != null) {
         l = slot.slotNumber;
       }
 
-      if (flag1) {
+      if (clickedOutsideGui) {
         l = -999;
       }
 
-      if (this.minecraft.gameSettings.touchscreen && flag1 && this.minecraft.player.inventory.getItemStack().isEmpty()) {
+      if (this.minecraft.gameSettings.touchscreen && clickedOutsideGui && this.minecraft.player.inventory.getItemStack().isEmpty()) {
         this.minecraft.displayGuiScreen(null);
         return false;
       }

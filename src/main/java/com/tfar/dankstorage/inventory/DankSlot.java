@@ -1,5 +1,6 @@
 package com.tfar.dankstorage.inventory;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
@@ -12,6 +13,11 @@ public class DankSlot extends SlotItemHandler {
   public DankSlot(DankHandler itemHandler, int index, int xPosition, int yPosition) {
     super(itemHandler, index, xPosition, yPosition);
     this.index = index;
+  }
+
+  @Override
+  public boolean canTakeStack(PlayerEntity playerIn) {
+    return true;
   }
 
   @Override

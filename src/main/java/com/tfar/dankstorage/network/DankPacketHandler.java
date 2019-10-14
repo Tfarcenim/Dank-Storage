@@ -18,6 +18,11 @@ public class DankPacketHandler {
             buffer -> new CMessageTogglePickup(),
             CMessageTogglePickup::handle);
 
+    INSTANCE.registerMessage(id++, C2SMessageLockSlot.class,
+            C2SMessageLockSlot::encode,
+            C2SMessageLockSlot::new,
+            C2SMessageLockSlot::handle);
+
     INSTANCE.registerMessage(id++, CMessageToggleUseType.class,
             (message, buffer) -> {},
             buffer -> new CMessageToggleUseType(),

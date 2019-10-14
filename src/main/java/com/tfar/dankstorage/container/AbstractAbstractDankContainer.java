@@ -228,9 +228,16 @@ public abstract class AbstractAbstractDankContainer extends Container {
                 slot6.putStack(ItemStack.EMPTY);
                 PlayerInventory.setItemStack(ItemStack.EMPTY);
               } else {
-                int count = dragType == 0 ? slotStack.getMaxStackSize() : (slotStack.getMaxStackSize() + 1) / 2;
-                //int count = dragType == 0 ? slotStack.getCount() : (slotStack.getCount() + 1) / 2;
-                PlayerInventory.setItemStack(slot6.decrStackSize(count));
+                int toMove;
+                if (slot6 instanceof DankSlot) {
+                  if (slotStack.getMaxStackSize() < slotStack.getCount())
+                  toMove = dragType == 0 ? slotStack.getMaxStackSize() : (slotStack.getMaxStackSize() + 1) / 2;
+                  else toMove = dragType == 0 ? slotStack.getCount() : (slotStack.getCount() + 1) / 2;
+                } else {
+                  toMove = dragType == 0 ? slotStack.getCount() : (slotStack.getCount() + 1) / 2;
+                }
+                //int toMove = dragType == 0 ? slotStack.getCount() : (slotStack.getCount() + 1) / 2;
+                PlayerInventory.setItemStack(slot6.decrStackSize(toMove));
 
                 if (slotStack.isEmpty()) {
                   slot6.putStack(ItemStack.EMPTY);
@@ -248,7 +255,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
 
                 mouseStack.shrink(k2);
                 slotStack.grow(k2);
-              } else if (mouseStack.getCount() <= slot6.getItemStackLimit(mouseStack) /*&& slotStack.getCount() <= slotStack.getMaxStackSize()*/) {
+              } else if (mouseStack.getCount() <= slot6.getItemStackLimit(mouseStack) && slotStack.getCount() <= slotStack.getMaxStackSize()) {
                 slot6.putStack(mouseStack);
                 PlayerInventory.setItemStack(slotStack);
               }
@@ -467,11 +474,6 @@ public abstract class AbstractAbstractDankContainer extends Container {
     return flag;
   }
 
-  @Override
-  protected void resetDrag() {
-    this.dragEvent = 0;
-    this.dragSlots.clear();
-  }
   public static boolean canAddItemToSlot(@Nullable Slot slot,@Nonnull ItemStack stack, boolean stackSizeMatters) {
     boolean flag = slot == null || !slot.getHasStack();
     if (slot != null) {
@@ -495,20 +497,6 @@ public abstract class AbstractAbstractDankContainer extends Container {
         itemstack1 = itemstack.isEmpty() ? ItemStack.EMPTY : itemstack.copy();
         this.inventoryItemStacks.set(i, itemstack1);
       }
-    }
-  }
-
-  @Override
-  public void addListener(@Nonnull IContainerListener listener) {
-    if (this.listeners.contains(listener)) {
-      throw new IllegalArgumentException("Listener already listening");
-    } else {
-      this.listeners.add(listener);
-      if (listener instanceof ServerPlayerEntity) {
-        ServerPlayerEntity player = (ServerPlayerEntity) listener;
-        player.connection.sendPacket(new SSetSlotPacket(-1, -1, player.inventory.getItemStack()));
-      }
-      this.detectAndSendChanges();
     }
   }
 }
