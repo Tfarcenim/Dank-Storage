@@ -123,7 +123,7 @@ public class Client {
       PlayerEntity player = Minecraft.getInstance().player;
       if (player != null && player.isSneaking() && (Utils.isConstruction(player.getHeldItemMainhand()) || Utils.isConstruction(player.getHeldItemOffhand()))) {
         boolean right = e.getScrollDelta() < 0;
-        DankPacketHandler.INSTANCE.sendToServer(new CMessageChangeSlot(right));
+        DankPacketHandler.INSTANCE.sendToServer(new C2SMessageChangeSlot(right));
         e.setCanceled(true);
       }
     }

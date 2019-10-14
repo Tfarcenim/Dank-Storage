@@ -1,13 +1,9 @@
 package com.tfar.dankstorage.network;
 
-import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.container.AbstractAbstractDankContainer;
-import com.tfar.dankstorage.container.AbstractDankContainer;
-import com.tfar.dankstorage.tile.AbstractDankStorageTile;
 import com.tfar.dankstorage.utils.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 

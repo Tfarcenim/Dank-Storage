@@ -76,7 +76,8 @@ public class DankItemBlock extends BlockItem {
   @Override
   public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
     ItemStack bag = player.getHeldItem(hand);
-    if (!world.isRemote)
+    if (!world.isRemote){
+
       if (Utils.getUseType(bag) == CMessageToggleUseType.UseType.bag) {
         int type = Utils.getTier(player.getHeldItem(hand));
         NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(type), data -> data.writeItemStack(player.getHeldItem(hand)));
@@ -84,6 +85,11 @@ public class DankItemBlock extends BlockItem {
       } else {
         ItemStack toPlace = Utils.getItemStackInSelectedSlot(bag);
         EquipmentSlotType hand1 = hand == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
+        //handle empty
+        if (toPlace.isEmpty()){
+          return ActionResult.newResult(ActionResultType.PASS, bag);
+        }
+
         //handle food
         if (toPlace.getItem().isFood()) {
           if (player.canEat(false)) {
@@ -100,12 +106,15 @@ public class DankItemBlock extends BlockItem {
         else {
           ItemStack newBag = bag.copy();
           //stack overflow issues
-          if (toPlace.getItem() instanceof DankItemBlock) return new ActionResult<>(ActionResultType.PASS, player.getHeldItem(hand));
+          if (toPlace.getItem() instanceof DankItemBlock)
+            return new ActionResult<>(ActionResultType.PASS, player.getHeldItem(hand));
+
           player.setItemStackToSlot(hand1, toPlace);
           ActionResult<ItemStack> actionResult = toPlace.getItem().onItemRightClick(world, player, hand);
-          PortableDankHandler handler = Utils.getHandler(newBag,true);
+          PortableDankHandler handler = Utils.getHandler(newBag, true);
           handler.setStackInSlot(Utils.getSelectedSlot(newBag), actionResult.getResult());
           player.setItemStackToSlot(hand1, newBag);
+        }
         }
       }
     return new ActionResult<>(ActionResultType.PASS, player.getHeldItem(hand));
@@ -201,8 +210,13 @@ public class DankItemBlock extends BlockItem {
 
     PortableDankHandler handler = Utils.getHandler(bag,false);
     int selectedSlot = Utils.getSelectedSlot(bag);
-    ItemUseContext ctx2 = new ItemUseContextExt(ctx.getWorld(),ctx.getPlayer(),ctx.getHand(),handler.getStackInSlot(selectedSlot),ctx.rayTraceResult);
-    ActionResultType actionResultType = ForgeHooks.onPlaceItemIntoWorld(ctx2);//ctx2.getItem().onItemUse(ctx);
+
+    ItemStack toPlace = handler.getStackInSlot(selectedSlot).copy();
+    if (toPlace.getCount() == 1 && handler.isLocked(selectedSlot))
+      return ActionResultType.PASS;
+
+    ItemUseContext ctx2 = new ItemUseContextExt(ctx.getWorld(),ctx.getPlayer(),ctx.getHand(),toPlace,ctx.rayTraceResult);
+    ActionResultType actionResultType = toPlace.getItem().onItemUse(ctx2);//ctx2.getItem().onItemUse(ctx);
     handler.setStackInSlot(selectedSlot, ctx2.getItem());
     return actionResultType;
   }

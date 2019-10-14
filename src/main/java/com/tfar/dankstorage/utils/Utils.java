@@ -2,11 +2,13 @@ package com.tfar.dankstorage.utils;
 
 import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.block.DankItemBlock;
+import com.tfar.dankstorage.container.AbstractAbstractDankContainer;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.CMessageToggleUseType;
 import com.tfar.dankstorage.tile.AbstractDankStorageTile;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ItemTags;
@@ -16,7 +18,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.ItemStackHandler;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import static com.tfar.dankstorage.network.CMessageTogglePickup.*;
@@ -78,12 +82,49 @@ public class Utils {
     throw new IndexOutOfBoundsException("tier " + tier + " is out of bounds!");
   }
 
-  public static void lockSlot(ItemStack slot){}
-
   public static void lockSlot(DankHandler handler, int slot){
     handler.lockedSlots[slot] = 1 - handler.lockedSlots[slot];
   }
 
+  public static void sort( PlayerEntity player){
+    if (player == null) return;
+      Container openContainer = player.openContainer;
+      if (openContainer instanceof AbstractAbstractDankContainer) {
+        List<SortingData> itemlist = new ArrayList<>();
+        DankHandler handler = ((AbstractAbstractDankContainer) openContainer).getHandler();
+
+        for (int i = 0; i < handler.getSlots(); i++) {
+          ItemStack stack = handler.getStackInSlot(i);
+          if (stack.isEmpty()) continue;
+          boolean exists = SortingData.exists(itemlist, stack.copy());
+          if (exists) {
+            int rem = SortingData.addToList(itemlist, stack.copy());
+            if (rem > 0) {
+              ItemStack bigstack = stack.copy();
+              bigstack.setCount(Integer.MAX_VALUE);
+              ItemStack smallstack = stack.copy();
+              smallstack.setCount(rem);
+              itemlist.add(new SortingData(bigstack));
+              itemlist.add(new SortingData(smallstack));
+            }
+          } else {
+            itemlist.add(new SortingData(stack.copy()));
+          }
+        }
+        handler.getContents().clear();
+        Collections.sort(itemlist);
+        for (SortingData data : itemlist) {
+          ItemStack stack = data.stack.copy();
+          ItemStack rem = stack.copy();
+          for (int i = 0; i < handler.getSlots(); i++) {
+            rem = handler.insertItem(i, rem, false);
+            if (rem.isEmpty()) break;
+          }
+        }
+      }
+  }
+
+  //todo config!
   public static int getStackLimit(ItemStack bag) {
     switch (getTier(bag)) {
       case 1:
@@ -112,15 +153,20 @@ public class Utils {
     return Integer.parseInt(registryname.getPath().substring(5));
   }
 
+  public static int getSize(ItemStack bag){
+    return bag.getOrCreateTag().getInt("Size");
+  }
+
   public static void changeSlot(ItemStack bag, boolean right) {
     int selectedSlot = getSelectedSlot(bag);
-    DankHandler handler = getHandler(bag, true);
+    int size = getSize(bag);
+
     if (right) {
       selectedSlot++;
-      if (selectedSlot >= handler.getSlots()) selectedSlot = 0;
+      if (selectedSlot >= size) selectedSlot = 0;
     } else {
       selectedSlot--;
-      if (selectedSlot < 0) selectedSlot = handler.getSlots() - 1;
+      if (selectedSlot < 0) selectedSlot = size - 1;
     }
     setSelectedSlot(bag, selectedSlot);
   }
@@ -134,7 +180,9 @@ public class Utils {
   }
 
   public static ItemStack getItemStackInSelectedSlot(ItemStack bag){
-    return getHandler(bag,false).getStackInSlot(Utils.getSelectedSlot(bag));
+    DankHandler handler = getHandler(bag,false);
+    int selectedSlot = Utils.getSelectedSlot(bag);
+    return handler.getStackInSlot(selectedSlot);
   }
 
   public static boolean doItemStacksShareWhitelistedTags(final ItemStack stack1,final ItemStack stack2) {

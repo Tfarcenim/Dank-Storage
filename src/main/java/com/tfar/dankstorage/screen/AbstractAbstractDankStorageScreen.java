@@ -10,6 +10,8 @@ import com.tfar.dankstorage.inventory.DankSlot;
 import com.tfar.dankstorage.network.C2SMessageLockSlot;
 import com.tfar.dankstorage.network.CMessageSort;
 import com.tfar.dankstorage.network.DankPacketHandler;
+import com.tfar.dankstorage.utils.Utils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.Screen;
@@ -44,7 +46,10 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
   @Override
   protected void init() {
     super.init();
-    this.addButton(new SmallButton(guiLeft + 143, guiTop + 4,26,12,"Sort", b -> DankPacketHandler.INSTANCE.sendToServer(new CMessageSort())));
+    this.addButton(new SmallButton(guiLeft + 143, guiTop + 4,26,12,"Sort", b -> {
+      DankPacketHandler.INSTANCE.sendToServer(new CMessageSort());
+      Utils.sort(Minecraft.getInstance().player);
+    }));
   }
 
   @Override
@@ -326,6 +331,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
       Slot slot = getSlotAtPosition(mouseX,mouseY);
       if (slot instanceof DankSlot) {
         DankPacketHandler.INSTANCE.sendToServer(new C2SMessageLockSlot(slot.slotNumber));
+        Utils.lockSlot(container.getHandler(),slot.slotNumber);
         return true;
       }
     }
