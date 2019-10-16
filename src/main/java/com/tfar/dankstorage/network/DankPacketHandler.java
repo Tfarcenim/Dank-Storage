@@ -48,9 +48,14 @@ public class DankPacketHandler {
             buffer -> new CMessageSort(),
             CMessageSort::handle);
 
-    INSTANCE.registerMessage(id++, S2CMessageSyncExtendedSlotContents.class,
-            S2CMessageSyncExtendedSlotContents::encode,
-            S2CMessageSyncExtendedSlotContents::new,
-            S2CMessageSyncExtendedSlotContents::handle);
+    INSTANCE.registerMessage(id++, S2CSyncExtendedSlotContents.class,
+            S2CSyncExtendedSlotContents::encode,
+            S2CSyncExtendedSlotContents::new,
+            S2CSyncExtendedSlotContents::handle);
+
+    INSTANCE.registerMessage(id++, S2CSyncNBTSize.class,
+            S2CSyncNBTSize::encode,
+            S2CSyncNBTSize::new,
+            S2CSyncNBTSize::handle);
   }
 }

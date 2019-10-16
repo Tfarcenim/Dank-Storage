@@ -139,36 +139,37 @@ public class Client {
         if (!(bag.getItem()instanceof DankItemBlock))
         return;
       }
-      PortableDankHandler handler = Utils.getHandler(bag,true);
-      ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
-      ITextComponent s = toPlace.getDisplayName();
-     // String s1 = s.getUnformattedComponentText();
-      //String slot = String.valueOf(Utils.getSelectedSlot(bag));
 
-      Integer color = toPlace.getItem().getRarity(toPlace).color.getColor();
+      if (Utils.isConstruction(bag)) {
+        PortableDankHandler handler = Utils.getHandler(bag,true);
+        ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
 
-      int c = color != null ? color : 0xFFFFFF;
+        if (!toPlace.isEmpty()) {
+          // String s1 = s.getUnformattedComponentText();
+          //String slot = String.valueOf(Utils.getSelectedSlot(bag));
 
-      if (!toPlace.isEmpty() && Utils.isConstruction(bag)) {
-        GlStateManager.enableRescaleNormal();
-        RenderHelper.enableGUIStandardItemLighting();
-        int xStart = event.getWindow().getScaledWidth()/2;
-        int yStart = event.getWindow().getScaledHeight();
-        final int itemX = xStart - 150;
-        final int itemY = yStart - 20;
+          Integer color = toPlace.getItem().getRarity(toPlace).color.getColor();
 
-        mc.getItemRenderer().renderItemAndEffectIntoGUI(toPlace, itemX, itemY);
+          int c = color != null ? color : 0xFFFFFF;
+          GlStateManager.enableRescaleNormal();
+          RenderHelper.enableGUIStandardItemLighting();
+          int xStart = event.getWindow().getScaledWidth() / 2;
+          int yStart = event.getWindow().getScaledHeight();
+          final int itemX = xStart - 150;
+          final int itemY = yStart - 20;
 
-        mc.getItemRenderer().renderItemOverlays(mc.fontRenderer, toPlace, itemX, itemY);
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.popMatrix();
+          mc.getItemRenderer().renderItemAndEffectIntoGUI(toPlace, itemX, itemY);
+
+          mc.getItemRenderer().renderItemOverlays(mc.fontRenderer, toPlace, itemX, itemY);
+          RenderHelper.disableStandardItemLighting();
+          GlStateManager.disableRescaleNormal();
+          GlStateManager.popMatrix();
+        }
       }
 
       String mode = Utils.getUseType(bag).name();
       drawLineOffsetStringOnHUD(mode, 20, 1,0xFFFFFF, 29);
       mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
-
     }
   }
 

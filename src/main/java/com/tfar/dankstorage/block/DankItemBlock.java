@@ -16,13 +16,14 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class DankItemBlock extends BlockItem {
   public DankItemBlock(Block p_i48527_1_, Properties p_i48527_2_) {
@@ -80,7 +81,7 @@ public class DankItemBlock extends BlockItem {
 
       if (Utils.getUseType(bag) == CMessageToggleUseType.UseType.bag) {
         int type = Utils.getTier(player.getHeldItem(hand));
-        NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(type), data -> data.writeItemStack(player.getHeldItem(hand)));
+        NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(type));
         return super.onItemRightClick(world,player,hand);
       } else {
         ItemStack toPlace = Utils.getItemStackInSelectedSlot(bag);
@@ -219,5 +220,11 @@ public class DankItemBlock extends BlockItem {
     ActionResultType actionResultType = toPlace.getItem().onItemUse(ctx2);//ctx2.getItem().onItemUse(ctx);
     handler.setStackInSlot(selectedSlot, ctx2.getItem());
     return actionResultType;
+  }
+
+  public static class ItemUseContextExt extends ItemUseContext {
+    protected ItemUseContextExt(World p_i50034_1_, @Nullable PlayerEntity p_i50034_2_, Hand p_i50034_3_, ItemStack p_i50034_4_, BlockRayTraceResult p_i50034_5_) {
+      super(p_i50034_1_, p_i50034_2_, p_i50034_3_, p_i50034_4_, p_i50034_5_);
+    }
   }
 }

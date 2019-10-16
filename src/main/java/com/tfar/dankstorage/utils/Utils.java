@@ -10,6 +10,7 @@ import com.tfar.dankstorage.tile.AbstractDankStorageTile;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.EncoderException;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
@@ -18,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
@@ -27,6 +29,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -192,6 +195,20 @@ public class Utils {
 
   public static PortableDankHandler getHandler(ItemStack bag, boolean manual) {
     return new PortableDankHandler(bag, manual);
+  }
+
+  public static int getNbtSize(ItemStack stack){
+    return getNbtSize(stack.getTag());
+  }
+
+  public static int getNbtSize(TileEntity te){
+    return getNbtSize(te.getUpdateTag());
+  }
+
+  public static int getNbtSize(@Nullable CompoundNBT nbt){
+    PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+    buffer.writeCompoundTag(nbt);
+    return buffer.writerIndex();
   }
 
   public static ItemStack getItemStackInSelectedSlot(ItemStack bag){

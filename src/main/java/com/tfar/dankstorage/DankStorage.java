@@ -5,12 +5,8 @@ import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.capability.CapabilityDankStorage;
 import com.tfar.dankstorage.client.RenderDankStorage;
 import com.tfar.dankstorage.container.DankContainers;
-import com.tfar.dankstorage.inventory.DankHandler;
-import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.DankPacketHandler;
-import com.tfar.dankstorage.utils.Utils;
 import com.tfar.dankstorage.recipe.DankUpgradeRecipes;
-import com.tfar.dankstorage.tile.AbstractDankStorageTile;
 import com.tfar.dankstorage.tile.DankTiles;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -18,7 +14,6 @@ import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.tileentity.TileEntityType;
@@ -103,100 +98,59 @@ public class DankStorage {
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-         AbstractDankStorageTile tile = ((AbstractDankStorageTile)inv.player.world.getTileEntity(pos));
-         DankHandler handler = tile.getHandler();
-        return new DankContainers.DankContainer1(windowId, inv.player.world, pos, inv, inv.player,handler);
+        return new DankContainers.DankContainer1(windowId, inv.player.world, pos, inv, inv.player);
       }), "dank_1_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
-              -> {
-        ItemStack bag = data.readItemStack();
-        PortableDankHandler handler = Utils.getHandler(bag,true);
-        return new DankContainers.PortableDankContainer1(windowId, inv, inv.player,handler);
-      }), "portable_dank_1_container", event.getRegistry());
+              -> new DankContainers.PortableDankContainer1(windowId, inv, inv.player)), "portable_dank_1_container", event.getRegistry());
 
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        AbstractDankStorageTile tile = ((AbstractDankStorageTile)inv.player.world.getTileEntity(pos));
-        DankHandler handler = tile.getHandler();
-        return new DankContainers.DankContainer2(windowId, inv.player.world, pos, inv, inv.player,handler);
+        return new DankContainers.DankContainer2(windowId, inv.player.world, pos, inv, inv.player);
       }), "dank_2_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
-              -> {
-        ItemStack bag = data.readItemStack();
-        PortableDankHandler handler = Utils.getHandler(bag,true);
-        return new DankContainers.PortableDankContainer2(windowId, inv, inv.player,handler);
-      }), "portable_dank_2_container", event.getRegistry());
+              -> new DankContainers.PortableDankContainer2(windowId, inv, inv.player)), "portable_dank_2_container", event.getRegistry());
 
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        AbstractDankStorageTile tile = ((AbstractDankStorageTile)inv.player.world.getTileEntity(pos));
-        DankHandler handler = tile.getHandler();
-        return new DankContainers.DankContainer3(windowId, inv.player.world, pos, inv, inv.player,handler);
+        return new DankContainers.DankContainer3(windowId, inv.player.world, pos, inv, inv.player);
       }), "dank_3_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
-              -> {
-        ItemStack bag = data.readItemStack();
-        PortableDankHandler handler = Utils.getHandler(bag,true);
-        return new DankContainers.PortableDankContainer3(windowId, inv, inv.player,handler);
-      }), "portable_dank_3_container", event.getRegistry());
+              -> new DankContainers.PortableDankContainer3(windowId, inv, inv.player)), "portable_dank_3_container", event.getRegistry());
 
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        AbstractDankStorageTile tile = ((AbstractDankStorageTile)inv.player.world.getTileEntity(pos));
-        DankHandler handler = tile.getHandler();
-        return new DankContainers.DankContainer4(windowId, inv.player.world, pos, inv, inv.player,handler);
+
+        return new DankContainers.DankContainer4(windowId, inv.player.world, pos, inv, inv.player);
       }), "dank_4_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
-              -> {
-        ItemStack bag = data.readItemStack();
-        PortableDankHandler handler = Utils.getHandler(bag,true);
-        return new DankContainers.PortableDankContainer4(windowId, inv, inv.player,handler);
-      }), "portable_dank_4_container", event.getRegistry());
+              -> new DankContainers.PortableDankContainer4(windowId, inv, inv.player)), "portable_dank_4_container", event.getRegistry());
 
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        AbstractDankStorageTile tile = ((AbstractDankStorageTile)inv.player.world.getTileEntity(pos));
-        DankHandler handler = tile.getHandler();
-        return new DankContainers.DankContainer5(windowId, inv.player.world, pos, inv, inv.player,handler);
+        return new DankContainers.DankContainer5(windowId, inv.player.world, pos, inv, inv.player);
       }), "dank_5_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
-              -> {
-        ItemStack bag = data.readItemStack();
-        PortableDankHandler handler = Utils.getHandler(bag,true);
-        return new DankContainers.PortableDankContainer5(windowId, inv, inv.player,handler);
-      }), "portable_dank_5_container", event.getRegistry());
+              -> new DankContainers.PortableDankContainer5(windowId, inv, inv.player)), "portable_dank_5_container", event.getRegistry());
 
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        AbstractDankStorageTile tile = ((AbstractDankStorageTile)inv.player.world.getTileEntity(pos));
-        DankHandler handler = tile.getHandler();
-        return new DankContainers.DankContainer6(windowId, inv.player.world, pos, inv, inv.player,handler);
+        return new DankContainers.DankContainer6(windowId, inv.player.world, pos, inv, inv.player);
       }), "dank_6_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
-              -> {
-        ItemStack bag = data.readItemStack();
-        PortableDankHandler handler = Utils.getHandler(bag,true);
-        return new DankContainers.PortableDankContainer6(windowId, inv, inv.player,handler);
-      }), "portable_dank_6_container", event.getRegistry());
+              -> new DankContainers.PortableDankContainer6(windowId, inv, inv.player)), "portable_dank_6_container", event.getRegistry());
 
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        AbstractDankStorageTile tile = ((AbstractDankStorageTile)inv.player.world.getTileEntity(pos));
-        DankHandler handler = tile.getHandler();
-        return new DankContainers.DankContainer7(windowId, inv.player.world, pos, inv, inv.player,handler);
+        return new DankContainers.DankContainer7(windowId, inv.player.world, pos, inv, inv.player);
       }), "dank_7_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
-              -> {
-        ItemStack bag = data.readItemStack();
-        PortableDankHandler handler = Utils.getHandler(bag,true);
-        return new DankContainers.PortableDankContainer7(windowId, inv, inv.player,handler);
-      }), "portable_dank_7_container", event.getRegistry());
+              -> new DankContainers.PortableDankContainer7(windowId, inv, inv.player)), "portable_dank_7_container", event.getRegistry());
     }
 
 

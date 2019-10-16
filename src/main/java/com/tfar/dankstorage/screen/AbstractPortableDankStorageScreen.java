@@ -39,5 +39,7 @@ public abstract class AbstractPortableDankStorageScreen<T extends AbstractPortab
     this.font.drawString(this.bag.getDisplayName().getUnformattedComponentText(), 8, 6, 0x404040);
     this.font.drawString("Tag", 55, 6, 0x404040);
     this.font.drawString("Pickup", 95, 6, 0x404040);
+    int color = container.nbtSize > 2000000 ? 0x800000 : 0x008000;
+    this.font.drawString("NBT: "+container.nbtSize,70,this.ySize - 110,color);
   }
 }

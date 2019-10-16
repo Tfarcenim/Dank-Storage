@@ -2,21 +2,55 @@ package com.tfar.dankstorage.container;
 
 import com.tfar.dankstorage.inventory.LockedSlot;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
+import com.tfar.dankstorage.network.DankPacketHandler;
+import com.tfar.dankstorage.network.S2CSyncNBTSize;
+import com.tfar.dankstorage.utils.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.ContainerType;
-  import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
 public abstract class AbstractPortableDankContainer extends AbstractAbstractDankContainer {
 
   protected ItemStack bag;
+  protected PortableDankHandler handler;
+  public int nbtSize;
 
-  public AbstractPortableDankContainer(ContainerType<?> type, int p_i50105_2_, PlayerInventory playerInventory, PlayerEntity player, PortableDankHandler handler, int rows) {
-    super(type, p_i50105_2_, playerInventory, handler,rows);
+  public AbstractPortableDankContainer(ContainerType<?> type, int p_i50105_2_, PlayerInventory playerInventory, PlayerEntity player, int rows) {
+    super(type, p_i50105_2_, playerInventory, rows);
     this.bag = player.getHeldItemMainhand();
+    nbtSize = getNBTSize();
+
+    handler = new PortableDankHandler(bag, true) {
+
+      @Override
+      protected void onLoad() {
+        super.onLoad();
+        if (player instanceof ServerPlayerEntity) {
+          nbtSize = getNBTSize();
+          DankPacketHandler.INSTANCE.sendTo(new S2CSyncNBTSize(AbstractPortableDankContainer.this.windowId, nbtSize), ((ServerPlayerEntity) player).connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+        }
+      }
+
+      @Override
+      public void onContentsChanged(int slot) {
+        super.onContentsChanged(slot);
+        if (player instanceof ServerPlayerEntity) {
+          DankPacketHandler.INSTANCE.sendTo(new S2CSyncNBTSize(AbstractPortableDankContainer.this.windowId, getNBTSize()), ((ServerPlayerEntity) player).connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+        }
+      }
+    };
+    addOwnSlots();
     addPlayerSlots(new InvWrapper(playerInventory), playerInventory.currentItem);
+  }
+
+  @Override
+  public PortableDankHandler getHandler() {
+    return handler;
   }
 
   @Override
@@ -65,10 +99,14 @@ public abstract class AbstractPortableDankContainer extends AbstractAbstractDank
     }
   }
 
+  int getNBTSize() {
+    return Utils.getNbtSize(bag);
+  }
+
   @Override
   public void detectAndSendChanges() {
     super.detectAndSendChanges();
-    ((PortableDankHandler)handler).writeItemStack();
+    handler.writeItemStack();
   }
 }
 

@@ -38,6 +38,7 @@ public class PortableDankHandler extends DankHandler {
       bag.getOrCreateTag().putInt("construction",construction);
       bag.getOrCreateTag().putInt("selectedSlot",selectedSlot);
       bag.getOrCreateTag().putBoolean("tag",tag);
+
   }
 
   @Nonnull

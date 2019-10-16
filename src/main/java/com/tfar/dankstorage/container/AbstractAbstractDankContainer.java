@@ -3,7 +3,7 @@ package com.tfar.dankstorage.container;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.DankSlot;
 import com.tfar.dankstorage.network.DankPacketHandler;
-import com.tfar.dankstorage.network.S2CMessageSyncExtendedSlotContents;
+import com.tfar.dankstorage.network.S2CSyncExtendedSlotContents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -13,31 +13,23 @@ import net.minecraft.network.play.server.SSetSlotPacket;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import org.lwjgl.system.CallbackI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public abstract class AbstractAbstractDankContainer extends Container {
 
-  protected DankHandler handler;
-
   public final int rows;
+  public final PlayerInventory playerInventory;
 
-  public AbstractAbstractDankContainer(ContainerType<?> type, int p_i50105_2_, PlayerInventory playerInventory, DankHandler handler, int rows) {
+  public AbstractAbstractDankContainer(ContainerType<?> type, int p_i50105_2_, PlayerInventory playerInventory, int rows) {
     super(type, p_i50105_2_);
     this.rows = rows;
-    this.handler = handler;
-    addOwnSlots();
-    addPlayerSlots(new InvWrapper(playerInventory));
-  }
-
-  public DankHandler getHandler(){
-    return handler;
+    this.playerInventory = playerInventory;
   }
 
   public void addOwnSlots() {
-    DankHandler handler = this.handler;
+    DankHandler handler = getHandler();
     int slotIndex = 0;
     for (int row = 0; row < rows; ++row) {
       for (int col = 0; col < 9; ++col) {
@@ -49,6 +41,8 @@ public abstract class AbstractAbstractDankContainer extends Container {
       }
     }
   }
+
+  public abstract DankHandler getHandler();
 
   protected void addPlayerSlots(InvWrapper playerinventory) {
     int yStart = 50;
@@ -532,13 +526,13 @@ public abstract class AbstractAbstractDankContainer extends Container {
     for (int i = 0; i < this.inventorySlots.size(); i++) {
       ItemStack stack = (this.inventorySlots.get(i)).getStack();
 
-      DankPacketHandler.INSTANCE.sendTo(new S2CMessageSyncExtendedSlotContents(this.windowId, i, stack),player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+      DankPacketHandler.INSTANCE.sendTo(new S2CSyncExtendedSlotContents(this.windowId, i, stack),player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
     }
 
     player.connection.sendPacket(new SSetSlotPacket(-1, -1, player.inventory.getItemStack()));
   }
 
   public void syncSlot(ServerPlayerEntity player, int slot, ItemStack stack) {
-    DankPacketHandler.INSTANCE.sendTo(new S2CMessageSyncExtendedSlotContents(this.windowId, slot, stack), player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+    DankPacketHandler.INSTANCE.sendTo(new S2CSyncExtendedSlotContents(this.windowId, slot, stack), player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
   }
 }

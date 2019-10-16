@@ -12,23 +12,23 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class S2CMessageSyncExtendedSlotContents {
+public class S2CSyncExtendedSlotContents {
 
   private int windowId = 0;
   private int slot = 0;
   private ItemStack stack = ItemStack.EMPTY;
 
-  public S2CMessageSyncExtendedSlotContents() {
+  public S2CSyncExtendedSlotContents() {
 
   }
 
-  public S2CMessageSyncExtendedSlotContents(int windowId, int slot, ItemStack stack) {
+  public S2CSyncExtendedSlotContents(int windowId, int slot, ItemStack stack) {
     this.windowId = windowId;
     this.slot = slot;
     this.stack = stack.copy();
   }
 
-  public S2CMessageSyncExtendedSlotContents(ByteBuf buf) {
+  public S2CSyncExtendedSlotContents(ByteBuf buf) {
     this.windowId = buf.readByte();
     this.slot = buf.readInt();
       this.stack = Utils.readExtendedItemStack(buf);

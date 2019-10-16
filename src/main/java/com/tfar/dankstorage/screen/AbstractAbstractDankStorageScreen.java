@@ -59,6 +59,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     this.font.drawString(this.playerInventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 110, 0x404040);
+
   }
 
   @Override
@@ -187,9 +188,11 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     FontRenderer font = p_renderTooltip_1_.getItem().getFontRenderer(p_renderTooltip_1_);
     net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(p_renderTooltip_1_);
     List<String> tooltip = this.getTooltipFromItem(p_renderTooltip_1_);
-    ITextComponent component = new TranslationTextComponent("text.dankstorage.lock",
-            new StringTextComponent("ctrl").applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY);
-    tooltip.add(component.getFormattedText());
+    if (hoveredSlot instanceof DankSlot) {
+      ITextComponent component = new TranslationTextComponent("text.dankstorage.lock",
+              new StringTextComponent("ctrl").applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY);
+      tooltip.add(component.getFormattedText());
+    }
     this.renderTooltip(tooltip, p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.font : font));
     net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
   }
