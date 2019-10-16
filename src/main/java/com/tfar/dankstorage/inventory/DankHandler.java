@@ -21,6 +21,7 @@ public class DankHandler extends ItemStackHandler {
   public DankHandler(int size, int stacklimit) {
     super(size);
     this.stacklimit = stacklimit;
+    lockedSlots = new int[size];
   }
 
   public boolean isEmpty(){
@@ -150,9 +151,7 @@ public class DankHandler extends ItemStackHandler {
         }
       }
     }
-    if (nbt.contains("LockedSlots")){
-      this.lockedSlots = nbt.getIntArray("LockedSlots");
-    } else lockedSlots = new int[getSlots()];
+    lockedSlots = nbt.getIntArray("LockedSlots").length == getSlots() ? nbt.getIntArray("LockedSlots") : new int[getSlots()];
     onLoad();
   }
 

@@ -13,6 +13,7 @@ import com.tfar.dankstorage.network.DankPacketHandler;
 import com.tfar.dankstorage.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -27,9 +28,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Iterator;
+import java.util.List;
 
 public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstractDankContainer> extends ContainerScreen<T> {
 
@@ -177,9 +181,17 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
   }
 
   //todo: blacklist tooltip?
+
   @Override
-  protected void renderHoveredToolTip(int p_191948_1_, int p_191948_2_) {
-    super.renderHoveredToolTip(p_191948_1_, p_191948_2_);
+  protected void renderTooltip(ItemStack p_renderTooltip_1_, int p_renderTooltip_2_, int p_renderTooltip_3_) {
+    FontRenderer font = p_renderTooltip_1_.getItem().getFontRenderer(p_renderTooltip_1_);
+    net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(p_renderTooltip_1_);
+    List<String> tooltip = this.getTooltipFromItem(p_renderTooltip_1_);
+    ITextComponent component = new TranslationTextComponent("text.dankstorage.lock",
+            new StringTextComponent("ctrl").applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY);
+    tooltip.add(component.getFormattedText());
+    this.renderTooltip(tooltip, p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.font : font));
+    net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
   }
 
   private void drawItemStack(ItemStack stack, int x, int y, String altText) {

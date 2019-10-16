@@ -28,17 +28,7 @@ public class PortableDankHandler extends DankHandler {
   }
 
   public void writeItemStack() {
-    if (false) {
-      return;
-    }
-    if (bag.isEmpty()) {
-      if (bag.hasTag()) {
-        bag.getTag().remove("Items");
-        if (bag.getTag().isEmpty()) {
-          bag.setTag(null);
-        }
-      }
-    } else {
+
       int mode = Utils.getMode(bag).ordinal();
       int construction = Utils.getUseType(bag).ordinal();
       int selectedSlot = Utils.getSelectedSlot(bag);
@@ -48,7 +38,6 @@ public class PortableDankHandler extends DankHandler {
       bag.getOrCreateTag().putInt("construction",construction);
       bag.getOrCreateTag().putInt("selectedSlot",selectedSlot);
       bag.getOrCreateTag().putBoolean("tag",tag);
-    }
   }
 
   @Nonnull

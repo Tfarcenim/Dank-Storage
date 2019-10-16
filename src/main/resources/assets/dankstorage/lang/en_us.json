@@ -27,6 +27,8 @@
 
   "text.dankstorage.shift": "Press %s for Info",
   "text.dankstorage.empty": "Empty",
+  "text.dankstorage.lock": "Press %s to Lock",
+
 
   "text.dankstorage.changemode": "Press %s to change mode",
   "text.dankstorage.currentmode": "Current Usetype: %s",
