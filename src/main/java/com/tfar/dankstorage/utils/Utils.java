@@ -7,10 +7,17 @@ import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.CMessageToggleUseType;
 import com.tfar.dankstorage.tile.AbstractDankStorageTile;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.handler.codec.EncoderException;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
@@ -18,6 +25,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -158,15 +167,21 @@ public class Utils {
   }
 
   public static void changeSlot(ItemStack bag, boolean right) {
-    int selectedSlot = getSelectedSlot(bag);
+    //don't change slot if empty
+    PortableDankHandler handler = getHandler(bag,false);
+    if (handler.isEmpty())return;
+    int selectedSlot = getSelectedSlot(bag) + (right ? 1 : -1);
     int size = getSize(bag);
-
-    if (right) {
-      selectedSlot++;
-      if (selectedSlot >= size) selectedSlot = 0;
-    } else {
-      selectedSlot--;
-      if (selectedSlot < 0) selectedSlot = size - 1;
+    if (selectedSlot < 0)selectedSlot = size - 1;
+    //keep iterating until a not empty slot is found
+    while (handler.getStackInSlot(selectedSlot).isEmpty()) {
+      if (right) {
+        selectedSlot++;
+        if (selectedSlot >= size) selectedSlot = 0;
+      } else {
+        selectedSlot--;
+        if (selectedSlot < 0) selectedSlot = size - 1;
+      }
     }
     setSelectedSlot(bag, selectedSlot);
   }
@@ -194,4 +209,63 @@ public class Utils {
     Set<ResourceLocation> taglist2 = stack2.getItem().getTags();
     return !Collections.disjoint(taglist1,taglist2);
   }
+
+
+  public static ItemStack readExtendedItemStack(ByteBuf buf){
+    int i = buf.readInt();
+
+    if (i < 0) {
+      return ItemStack.EMPTY;
+    } else {
+      int j = buf.readInt();
+      ItemStack itemstack = new ItemStack(Item.getItemById(i), j);
+      itemstack.setTag(readNBT(buf));
+      return itemstack;
+    }
+  }
+
+  public static void writeExtendedItemStack(ByteBuf buf, ItemStack stack) {
+    if (stack.isEmpty()) {
+      buf.writeInt(-1);
+    } else {
+      buf.writeInt(Item.getIdFromItem(stack.getItem()));
+      buf.writeInt(stack.getCount());
+      CompoundNBT nbttagcompound = null;
+
+      if (stack.getItem().getShareTag(stack) != null) {
+        nbttagcompound = stack.getItem().getShareTag(stack);
+      }
+
+      writeNBT(buf, nbttagcompound);
+    }
+  }
+
+  public static void writeNBT(ByteBuf buf, @Nullable CompoundNBT nbt) {
+    if (nbt == null) {
+      buf.writeByte(0);
+    } else {
+      try {
+        CompressedStreamTools.write(nbt, new ByteBufOutputStream(buf));
+      } catch (IOException ioexception) {
+        throw new EncoderException(ioexception);
+      }
+    }
+  }
+
+  public static CompoundNBT readNBT(ByteBuf buf) {
+    int i = buf.readerIndex();
+    byte b0 = buf.readByte();
+
+    if (b0 == 0) {
+      return null;
+    } else {
+      buf.readerIndex(i);
+      try {
+        return CompressedStreamTools.read(new ByteBufInputStream(buf), new NBTSizeTracker(2097152L));
+      } catch (IOException ioexception) {
+        throw new EncoderException(ioexception);
+      }
+    }
+  }
+
 }

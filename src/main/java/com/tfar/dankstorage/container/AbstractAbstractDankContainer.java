@@ -2,14 +2,18 @@ package com.tfar.dankstorage.container;
 
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.DankSlot;
+import com.tfar.dankstorage.network.DankPacketHandler;
+import com.tfar.dankstorage.network.S2CMessageSyncExtendedSlotContents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SSetSlotPacket;
+import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import org.lwjgl.system.CallbackI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -496,7 +500,45 @@ public abstract class AbstractAbstractDankContainer extends Container {
       if (!ItemStack.areItemStacksEqual(itemstack1, itemstack)) {
         itemstack1 = itemstack.isEmpty() ? ItemStack.EMPTY : itemstack.copy();
         this.inventoryItemStacks.set(i, itemstack1);
+
+        for (int j = 0; j < this.listeners.size(); ++j) {
+          IContainerListener listener = this.listeners.get(j);
+          if (listener instanceof ServerPlayerEntity) {
+            ServerPlayerEntity player = (ServerPlayerEntity) listener;
+
+            this.syncSlot(player, i, itemstack1);
+          }
+        }
       }
     }
+  }
+
+  @Override
+  public void addListener(IContainerListener listener) {
+    if (this.listeners.contains(listener)) {
+      throw new IllegalArgumentException("Listener already listening");
+    } else {
+      this.listeners.add(listener);
+      if (listener instanceof ServerPlayerEntity) {
+        ServerPlayerEntity player = (ServerPlayerEntity) listener;
+
+        this.syncInventory(player);
+      }
+      this.detectAndSendChanges();
+    }
+  }
+
+  public void syncInventory(ServerPlayerEntity player) {
+    for (int i = 0; i < this.inventorySlots.size(); i++) {
+      ItemStack stack = (this.inventorySlots.get(i)).getStack();
+
+      DankPacketHandler.INSTANCE.sendTo(new S2CMessageSyncExtendedSlotContents(this.windowId, i, stack),player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+    }
+
+    player.connection.sendPacket(new SSetSlotPacket(-1, -1, player.inventory.getItemStack()));
+  }
+
+  public void syncSlot(ServerPlayerEntity player, int slot, ItemStack stack) {
+    DankPacketHandler.INSTANCE.sendTo(new S2CMessageSyncExtendedSlotContents(this.windowId, slot, stack), player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
   }
 }
