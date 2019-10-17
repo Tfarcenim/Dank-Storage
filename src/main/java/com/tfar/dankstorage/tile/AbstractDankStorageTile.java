@@ -1,3 +1,4 @@
+
 package com.tfar.dankstorage.tile;
 
 import com.tfar.dankstorage.block.DankBlock;
@@ -92,7 +93,7 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
     if (compound.contains("Items")) {
       handler.deserializeNBT(compound.getCompound("Items"));
     }
-      if (compound.contains("CustomName", 8)) {
+    if (compound.contains("CustomName", 8)) {
       this.setCustomName(compound.getString("CustomName"));
     }
   }

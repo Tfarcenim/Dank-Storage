@@ -143,7 +143,7 @@ public class DankScreens {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
       this.font.drawString(this.playerInventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 105, 0x404040);
-      this.font.drawString(this.bag.getDisplayName().getUnformattedComponentText(), 8, 12, 4210752);
+      this.font.drawString(this.container.getBag().getDisplayName().getUnformattedComponentText(), 8, 12, 4210752);
     }
   }
 }

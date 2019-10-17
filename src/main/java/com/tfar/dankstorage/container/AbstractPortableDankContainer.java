@@ -1,5 +1,6 @@
 package com.tfar.dankstorage.container;
 
+import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.inventory.LockedSlot;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.DankPacketHandler;
@@ -22,7 +23,7 @@ public abstract class AbstractPortableDankContainer extends AbstractAbstractDank
 
   public AbstractPortableDankContainer(ContainerType<?> type, int p_i50105_2_, PlayerInventory playerInventory, PlayerEntity player, int rows) {
     super(type, p_i50105_2_, playerInventory, rows);
-    this.bag = player.getHeldItemMainhand();
+    this.bag = player.getHeldItemMainhand().getItem() instanceof DankItemBlock ? player.getHeldItemMainhand() : player.getHeldItemOffhand();
     nbtSize = getNBTSize();
 
     handler = new PortableDankHandler(bag, true) {
@@ -101,6 +102,10 @@ public abstract class AbstractPortableDankContainer extends AbstractAbstractDank
 
   int getNBTSize() {
     return Utils.getNbtSize(bag);
+  }
+
+  public ItemStack getBag() {
+    return bag;
   }
 
   @Override

@@ -8,9 +8,9 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import java.util.function.Supplier;
 
 
-public class CMessageTagMode {
+public class C2SMessageTagMode {
 
-  public CMessageTagMode(){}
+  public C2SMessageTagMode(){}
 
 
 

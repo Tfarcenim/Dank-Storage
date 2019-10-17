@@ -38,10 +38,10 @@ public class DankPacketHandler {
             buffer -> new CMessagePickBlock(),
             CMessagePickBlock::handle);
 
-    INSTANCE.registerMessage(id++, CMessageTagMode.class,
+    INSTANCE.registerMessage(id++, C2SMessageTagMode.class,
             (message, buffer) -> {},
-            buffer -> new CMessageTagMode(),
-            CMessageTagMode::handle);
+            buffer -> new C2SMessageTagMode(),
+            C2SMessageTagMode::handle);
 
     INSTANCE.registerMessage(id++, CMessageSort.class,
             (message, buffer) -> {},

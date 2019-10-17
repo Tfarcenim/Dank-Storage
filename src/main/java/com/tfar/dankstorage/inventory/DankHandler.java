@@ -1,5 +1,6 @@
 package com.tfar.dankstorage.inventory;
 
+import com.tfar.dankstorage.utils.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -40,6 +41,11 @@ public class DankHandler extends ItemStackHandler {
   @Override
   public int getStackLimit(int slot, @Nonnull ItemStack stack) {
     return stacklimit;
+  }
+
+  @Override
+  public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+    return !stack.getItem().isIn(Utils.BLACKLISTED_ITEMS);
   }
 
   @Override

@@ -22,14 +22,11 @@ import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +38,8 @@ import static com.tfar.dankstorage.network.CMessageToggleUseType.useTypes;
 public class Utils {
 
   public static final Tag<Item> WHITELISTED_TAGS = new ItemTags.Wrapper(new ResourceLocation(DankStorage.MODID,"whitelisted_tags"));
+  public static final Tag<Item> BLACKLISTED_ITEMS = new ItemTags.Wrapper(new ResourceLocation(DankStorage.MODID,"blacklisted_items"));
+  public static final Tag<Item> WRENCHES = new ItemTags.Wrapper(new ResourceLocation("forge","wrenches"));
 
   public static Mode getMode(ItemStack bag) {
     return modes[bag.getOrCreateTag().getInt("mode")];
@@ -136,24 +135,27 @@ public class Utils {
       }
   }
 
-  //todo config!
   public static int getStackLimit(ItemStack bag) {
-    switch (getTier(bag)) {
+    return getStackLimit(bag.getItem().getRegistryName());
+  }
+
+  public static int getStackLimit(ResourceLocation registryname) {
+    switch (getTier(registryname)) {
       case 1:
       default:
-        return 256;
+        return DankStorage.ServerConfig.stacklimit1.get();
       case 2:
-        return 1024;
+        return DankStorage.ServerConfig.stacklimit2.get();
       case 3:
-        return 4096;
+        return DankStorage.ServerConfig.stacklimit3.get();
       case 4:
-        return 16384;
+        return DankStorage.ServerConfig.stacklimit4.get();
       case 5:
-        return 65536;
+        return DankStorage.ServerConfig.stacklimit5.get();
       case 6:
-        return 262144;
+        return DankStorage.ServerConfig.stacklimit6.get();
       case 7:
-        return Integer.MAX_VALUE;
+        return DankStorage.ServerConfig.stacklimit7.get();
     }
   }
 
@@ -199,10 +201,6 @@ public class Utils {
 
   public static int getNbtSize(ItemStack stack){
     return getNbtSize(stack.getTag());
-  }
-
-  public static int getNbtSize(TileEntity te){
-    return getNbtSize(te.getUpdateTag());
   }
 
   public static int getNbtSize(@Nullable CompoundNBT nbt){
@@ -284,5 +282,4 @@ public class Utils {
       }
     }
   }
-
 }

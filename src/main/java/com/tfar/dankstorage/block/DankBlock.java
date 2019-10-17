@@ -31,6 +31,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
@@ -47,11 +48,26 @@ public class DankBlock extends Block {
   }
 
   @Override
-  public boolean onBlockActivated(BlockState p_220051_1_, World world, BlockPos pos, PlayerEntity player, Hand p_220051_5_, BlockRayTraceResult p_220051_6_) {
+  public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult result) {
     if (!world.isRemote) {
-      TileEntity tileEntity = world.getTileEntity(pos);
-      if (tileEntity instanceof INamedContainerProvider) {
-        NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tileEntity, tileEntity.getPos());
+      final TileEntity tile = world.getTileEntity(pos);
+
+      if (player.isSneaking()){
+        if (tile instanceof AbstractDankStorageTile){
+          ItemStack dank = new ItemStack(((AbstractDankStorageTile) tile).getDank());
+          CompoundNBT nbt = ((AbstractDankStorageTile) tile).getHandler().serializeNBT();
+          nbt.putInt("mode",((AbstractDankStorageTile) tile).mode);
+          nbt.putInt("selectedSlot",((AbstractDankStorageTile) tile).selectedSlot);
+          dank.setTag(nbt);
+          ItemEntity itemEntity = new ItemEntity(world,pos.getX()+ .5,pos.getY() + .5,pos.getZ()+.5,dank);
+          world.addEntity(itemEntity);
+          world.removeBlock(pos,false);
+          return true;
+        }
+      }
+
+      if (tile instanceof INamedContainerProvider) {
+        NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
 
       } else throw new IllegalStateException("Our named container provider is missing!");
     }
@@ -138,6 +154,9 @@ public class DankBlock extends Block {
       tooltip.add(
               new TranslationTextComponent("text.dankstorage.currentusetype",new TranslationTextComponent(
                       "dankstorage.usetype."+mode.name().toLowerCase(Locale.ROOT)).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
+      tooltip.add(
+              new TranslationTextComponent("text.dankstorage.stacklimit",new StringTextComponent(Utils.getStackLimit(getRegistryName())+"").applyTextStyle(TextFormatting.GREEN)).applyTextStyle(TextFormatting.GRAY));
+
       DankHandler handler = Utils.getHandler(bag,false);
 
       if (handler.isEmpty()){
@@ -150,7 +169,7 @@ public class DankBlock extends Block {
         if (count1>10)break;
         ItemStack item = handler.getStackInSlot(i);
         if (item.isEmpty())continue;
-          ITextComponent count = new StringTextComponent(Integer.toString(item.getCount())).applyTextStyle(TextFormatting.AQUA);
+        ITextComponent count = new StringTextComponent(Integer.toString(item.getCount())).applyTextStyle(TextFormatting.AQUA);
         tooltip.add(new TranslationTextComponent("text.dankstorage.formatcontaineditems", count, item.getDisplayName().applyTextStyle(item.getRarity().color)));
         count1++;
       }
@@ -196,10 +215,10 @@ public class DankBlock extends Block {
     }
     //only iterate empty slots
     if (!rem.isEmpty())
-    for (int slot : emptyslots) {
-      rem = inv.insertItem(slot,rem,false);
-      if (rem.isEmpty())break;
-    }
+      for (int slot : emptyslots) {
+        rem = inv.insertItem(slot,rem,false);
+        if (rem.isEmpty())break;
+      }
     //leftovers
     toPickup.setCount(rem.getCount());
     if (rem.getCount() != count) {

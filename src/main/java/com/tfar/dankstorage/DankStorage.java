@@ -47,7 +47,7 @@ public class DankStorage {
 
     // Register the setup method for modloading
     ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
-    //ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
+    ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
   }
 
@@ -176,16 +176,16 @@ public class DankStorage {
   public static final ClientConfig CLIENT;
   public static final ForgeConfigSpec CLIENT_SPEC;
 
-  //public static final ServerConfig SERVER;
-  //public static final ForgeConfigSpec SERVER_SPEC;
+  public static final ServerConfig SERVER;
+  public static final ForgeConfigSpec SERVER_SPEC;
 
   static {
     final Pair<ClientConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
     CLIENT_SPEC = specPair.getRight();
     CLIENT = specPair.getLeft();
-   // final Pair<ServerConfig, ForgeConfigSpec> specPair2 = new ForgeConfigSpec.Builder().configure(ServerConfig::new);
-  //  SERVER_SPEC = specPair2.getRight();
-  //  SERVER = specPair2.getLeft();
+    final Pair<ServerConfig, ForgeConfigSpec> specPair2 = new ForgeConfigSpec.Builder().configure(ServerConfig::new);
+    SERVER_SPEC = specPair2.getRight();
+    SERVER = specPair2.getLeft();
   }
 
   public static class ClientConfig {
@@ -200,16 +200,42 @@ public class DankStorage {
     }
   }
 
-  /*public static class ServerConfig {
+  public static class ServerConfig {
+    public static ForgeConfigSpec.IntValue stacklimit1;
+    public static ForgeConfigSpec.IntValue stacklimit2;
+    public static ForgeConfigSpec.IntValue stacklimit3;
+    public static ForgeConfigSpec.IntValue stacklimit4;
+    public static ForgeConfigSpec.IntValue stacklimit5;
+    public static ForgeConfigSpec.IntValue stacklimit6;
+    public static ForgeConfigSpec.IntValue stacklimit7;
+
 
     public ServerConfig(ForgeConfigSpec.Builder builder) {
-      List<String> defaults = new ArrayList<>();
-     // defaults.add("forge:cobblestone");
       builder.push("server");
-
+      stacklimit1 = builder.
+              comment("Stack limit of first dank storage")
+              .defineInRange("stacklimit1",256,1,Integer.MAX_VALUE);
+      stacklimit2 = builder.
+              comment("Stack limit of second dank storage")
+              .defineInRange("stacklimit2",1024,1,Integer.MAX_VALUE);
+      stacklimit3 = builder.
+              comment("Stack limit of third dank storage")
+              .defineInRange("stacklimit3",4096,1,Integer.MAX_VALUE);
+      stacklimit4 = builder.
+              comment("Stack limit of fourth dank storage")
+              .defineInRange("stacklimit4",16384,1,Integer.MAX_VALUE);
+      stacklimit5 = builder.
+              comment("Stack limit of fifth dank storage")
+              .defineInRange("stacklimit5",65536,1,Integer.MAX_VALUE);
+      stacklimit6 = builder.
+              comment("Stack limit of sixth dank storage")
+              .defineInRange("stacklimit6",262144,1,Integer.MAX_VALUE);
+      stacklimit7 = builder.
+              comment("Stack limit of seventh dank storage")
+              .defineInRange("stacklimit7",Integer.MAX_VALUE,1,Integer.MAX_VALUE);
       builder.pop();
     }
-  }*/
+  }
 
   @ObjectHolder(MODID)
   public static class Objects {

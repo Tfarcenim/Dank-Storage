@@ -39,12 +39,14 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
 
   final ResourceLocation background;//= new ResourceLocation("textures/gui/container/shulker_box.png");
 
+  protected final boolean is7;
+
   public AbstractAbstractDankStorageScreen(T container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background, int rows) {
     super(container, playerinventory, component);
     this.background = background;
     ySize += ((rows - 2) * 18);
-
     this.ignoreMouseUp = true;
+    this.is7 = this instanceof DankScreens.DankStorageScreen7 || this instanceof DankScreens.PortableDankStorageScreen7;
   }
 
   @Override
@@ -181,17 +183,23 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     this.renderHoveredToolTip(mouseX, mouseY);
   }
 
-  //todo: blacklist tooltip?
-
   @Override
   protected void renderTooltip(ItemStack p_renderTooltip_1_, int p_renderTooltip_2_, int p_renderTooltip_3_) {
     FontRenderer font = p_renderTooltip_1_.getItem().getFontRenderer(p_renderTooltip_1_);
     net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(p_renderTooltip_1_);
     List<String> tooltip = this.getTooltipFromItem(p_renderTooltip_1_);
+
+    if (hoveredSlot != null){
+      if (hoveredSlot.getStack().getItem().isIn(Utils.BLACKLISTED_ITEMS)) {
+        ITextComponent component1 = new TranslationTextComponent("text.dankstorage.blacklisted").
+                applyTextStyle(TextFormatting.DARK_RED);
+        tooltip.add(component1.getFormattedText());
+      }
     if (hoveredSlot instanceof DankSlot) {
-      ITextComponent component = new TranslationTextComponent("text.dankstorage.lock",
+      ITextComponent component2 = new TranslationTextComponent("text.dankstorage.lock",
               new StringTextComponent("ctrl").applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY);
-      tooltip.add(component.getFormattedText());
+      tooltip.add(component2.getFormattedText());
+    }
     }
     this.renderTooltip(tooltip, p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.font : font));
     net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
@@ -346,7 +354,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
       Slot slot = getSlotAtPosition(mouseX,mouseY);
       if (slot instanceof DankSlot) {
         DankPacketHandler.INSTANCE.sendToServer(new C2SMessageLockSlot(slot.slotNumber));
-        Utils.lockSlot(container.getHandler(),slot.slotNumber);
+        if (this instanceof AbstractPortableDankStorageScreen)Utils.lockSlot(container.getHandler(),slot.slotNumber);
         return true;
       }
     }
