@@ -107,6 +107,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
     return itemstack;
   }
 
+  @Nonnull
   @Override
   public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
     ItemStack itemstack = ItemStack.EMPTY;
@@ -525,10 +526,8 @@ public abstract class AbstractAbstractDankContainer extends Container {
   public void syncInventory(ServerPlayerEntity player) {
     for (int i = 0; i < this.inventorySlots.size(); i++) {
       ItemStack stack = (this.inventorySlots.get(i)).getStack();
-
       DankPacketHandler.INSTANCE.sendTo(new S2CSyncExtendedSlotContents(this.windowId, i, stack),player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
     }
-
     player.connection.sendPacket(new SSetSlotPacket(-1, -1, player.inventory.getItemStack()));
   }
 

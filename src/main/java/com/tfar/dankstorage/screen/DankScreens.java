@@ -75,15 +75,9 @@ public class DankScreens {
     public DankStorageScreen7(DankContainers.DankContainer7 container, PlayerInventory playerinventory, ITextComponent component) {
       super(container, playerinventory, component, background7);
     }
-    @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-      this.font.drawString(this.playerInventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 105, 0x404040);
-      this.font.drawString(this.te.getDisplayName().getUnformattedComponentText(), 8, 12, 4210752);
-    }
   }
 
   public static class PortableDankStorageScreen1 extends AbstractPortableDankStorageScreen<DankContainers.PortableDankContainer1> {
-
 
     public PortableDankStorageScreen1(DankContainers.PortableDankContainer1 container, PlayerInventory playerinventory, ITextComponent component) {
       super(container,playerinventory, component, background1);
@@ -92,15 +86,12 @@ public class DankScreens {
 
   public static class PortableDankStorageScreen2 extends AbstractPortableDankStorageScreen<DankContainers.PortableDankContainer2> {
 
-
-
     public PortableDankStorageScreen2(DankContainers.PortableDankContainer2 container, PlayerInventory playerinventory, ITextComponent component) {
       super(container, playerinventory, component, background2);
     }
   }
 
   public static class PortableDankStorageScreen3 extends AbstractPortableDankStorageScreen<DankContainers.PortableDankContainer3> {
-
 
     public PortableDankStorageScreen3(DankContainers.PortableDankContainer3 container, PlayerInventory playerinventory, ITextComponent component) {
       super(container, playerinventory, component, background3);
@@ -109,16 +100,12 @@ public class DankScreens {
 
   public static class PortableDankStorageScreen4 extends AbstractPortableDankStorageScreen<DankContainers.PortableDankContainer4> {
 
-
-
     public PortableDankStorageScreen4(DankContainers.PortableDankContainer4 container, PlayerInventory playerinventory, ITextComponent component) {
       super(container, playerinventory, component, background4);
     }
   }
 
   public static class PortableDankStorageScreen5 extends AbstractPortableDankStorageScreen<DankContainers.PortableDankContainer5> {
-
-
 
     public PortableDankStorageScreen5(DankContainers.PortableDankContainer5 container, PlayerInventory playerinventory, ITextComponent component) {
       super(container, playerinventory, component, background5);
@@ -127,7 +114,6 @@ public class DankScreens {
 
   public static class PortableDankStorageScreen6 extends AbstractPortableDankStorageScreen<DankContainers.PortableDankContainer6> {
 
-
     public PortableDankStorageScreen6(DankContainers.PortableDankContainer6 container, PlayerInventory playerinventory, ITextComponent component) {
       super(container, playerinventory, component, background6);
     }
@@ -135,15 +121,8 @@ public class DankScreens {
 
   public static class PortableDankStorageScreen7 extends AbstractPortableDankStorageScreen<DankContainers.PortableDankContainer7> {
 
-
-
     public PortableDankStorageScreen7(DankContainers.PortableDankContainer7 container, PlayerInventory playerinventory, ITextComponent component) {
       super(container, playerinventory, component, background7);
-    }
-    @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-      this.font.drawString(this.playerInventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 105, 0x404040);
-      this.font.drawString(this.container.getBag().getDisplayName().getUnformattedComponentText(), 8, 12, 4210752);
     }
   }
 }

@@ -6,7 +6,6 @@ import com.tfar.dankstorage.container.AbstractAbstractDankContainer;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.CMessageToggleUseType;
-import com.tfar.dankstorage.tile.AbstractDankStorageTile;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
@@ -206,6 +205,7 @@ public class Utils {
   public static int getNbtSize(@Nullable CompoundNBT nbt){
     PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
     buffer.writeCompoundTag(nbt);
+    buffer.release();
     return buffer.writerIndex();
   }
 

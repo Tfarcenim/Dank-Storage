@@ -1,5 +1,6 @@
 package com.tfar.dankstorage.block;
 
+import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.capability.CapabilityDankStorageProvider;
 import com.tfar.dankstorage.container.PortableDankProvider;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
@@ -194,6 +195,19 @@ public class DankItemBlock extends BlockItem {
       case FILTERED_PICKUP:return 0xffffff00;
       case VOID_PICKUP:return 0xffff0000;
     }
+  }
+
+  @Nullable
+  @Override
+  public CompoundNBT getShareTag(ItemStack stack) {
+    if(DankStorage.ServerConfig.useShareTag.get()){
+      CompoundNBT nbt = stack.getTag();
+      if (nbt == null)return null;
+      CompoundNBT sync = nbt.copy();
+      sync.remove("Items");
+      return sync;
+    }
+    return super.getShareTag(stack);
   }
 
   @Nonnull

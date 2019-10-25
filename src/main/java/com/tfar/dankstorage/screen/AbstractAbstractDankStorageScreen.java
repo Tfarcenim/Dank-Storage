@@ -40,19 +40,21 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
   final ResourceLocation background;//= new ResourceLocation("textures/gui/container/shulker_box.png");
 
   protected final boolean is7;
+  protected final int offset;
 
-  public AbstractAbstractDankStorageScreen(T container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background, int rows) {
+  public AbstractAbstractDankStorageScreen(T container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background) {
     super(container, playerinventory, component);
     this.background = background;
-    ySize += ((rows - 2) * 18);
+    ySize += ((container.rows - 2) * 18);
     this.ignoreMouseUp = true;
     this.is7 = this instanceof DankScreens.DankStorageScreen7 || this instanceof DankScreens.PortableDankStorageScreen7;
+    offset = is7 ? 5 : 0;
   }
 
   @Override
   protected void init() {
     super.init();
-    this.addButton(new SmallButton(guiLeft + 143, guiTop + 4,26,12,"Sort", b -> {
+    this.addButton(new SmallButton(guiLeft + 143, guiTop + 4 + offset,26,12,"Sort", b -> {
       DankPacketHandler.INSTANCE.sendToServer(new CMessageSort());
       Utils.sort(Minecraft.getInstance().player);
     }));
@@ -60,8 +62,8 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
 
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-    this.font.drawString(this.playerInventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 110, 0x404040);
-
+    this.font.drawString(this.playerInventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 110 + offset, 0x404040);
+    this.font.drawString(this.getOriginalName().getUnformattedComponentText(), 8, 6 + offset, 0x404040);
   }
 
   @Override
@@ -76,7 +78,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
       int j = i % 9;
       int k = i / 9;
       int offsetx = 8;
-      int offsety = 18;
+      int offsety = 18 + offset;
       if (container.getHandler().lockedSlots[i] == 1)
         fill(guiLeft + j * 18 + offsetx, guiTop + k * 18 + offsety,
                 guiLeft + j * 18 + offsetx + 16, guiTop + k * 18 + offsety+ 16, 0xFFFF0000);
@@ -218,6 +220,8 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     this.itemRenderer.zLevel = 0.0F;
     RenderItemExtended.INSTANCE.setZLevel(this.itemRenderer.zLevel);
   }
+
+  public abstract ITextComponent getOriginalName();
 
   private void drawSlot(Slot slotIn) {
     int i = slotIn.xPos;

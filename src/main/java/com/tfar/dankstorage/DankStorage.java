@@ -208,6 +208,7 @@ public class DankStorage {
     public static ForgeConfigSpec.IntValue stacklimit5;
     public static ForgeConfigSpec.IntValue stacklimit6;
     public static ForgeConfigSpec.IntValue stacklimit7;
+    public static ForgeConfigSpec.BooleanValue useShareTag;
 
 
     public ServerConfig(ForgeConfigSpec.Builder builder) {
@@ -233,6 +234,10 @@ public class DankStorage {
       stacklimit7 = builder.
               comment("Stack limit of seventh dank storage")
               .defineInRange("stacklimit7",Integer.MAX_VALUE,1,Integer.MAX_VALUE);
+      useShareTag = builder.
+              comment("Use Share Tag instead of full NBT to reduce the chance of NBT overflow.  Warning: this will cause the Dank\n" +
+                      "Storage to wipe it's items in Creative Mode.  There is nothing I can do about this as it is a vanilla bug.")
+              .define("useShareTag",false);
       builder.pop();
     }
   }

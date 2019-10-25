@@ -100,7 +100,7 @@ public abstract class AbstractPortableDankContainer extends AbstractAbstractDank
     }
   }
 
-  int getNBTSize() {
+  private int getNBTSize() {
     return Utils.getNbtSize(bag);
   }
 
