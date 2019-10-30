@@ -5,6 +5,7 @@ import com.tfar.dankstorage.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.play.server.SSetSlotPacket;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -33,7 +34,11 @@ public class PortableDankHandler extends DankHandler {
       int construction = Utils.getUseType(bag).ordinal();
       int selectedSlot = Utils.getSelectedSlot(bag);
       boolean tag = Utils.tag(bag);
+      CompoundNBT nbt = null;
+      if (bag.hasDisplayName()) nbt = bag.getChildTag("display");
+
       bag.setTag(serializeNBT());
+      if (nbt != null)bag.getOrCreateTag().put("display",nbt);
       bag.getOrCreateTag().putInt("mode",mode);
       bag.getOrCreateTag().putInt("construction",construction);
       bag.getOrCreateTag().putInt("selectedSlot",selectedSlot);

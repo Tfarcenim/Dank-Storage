@@ -16,19 +16,17 @@ public class DankTiles {
   public static class DankStorageTile1 extends AbstractDankStorageTile {
 
     public DankStorageTile1() {
-      super(DankStorage.Objects.dank_1_tile,1,256);
+      super(DankStorage.Objects.dank_1_tile,1,DankStorage.ServerConfig.stacklimit1.get());
     }
 
     @Nullable
     @Override
     public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-      AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
-      DankHandler handler = tile.getHandler();
       return new DankContainers.DankContainer1(i,world,pos,playerInventory,playerEntity);
     }
     @Override
     public ITextComponent getName() {
-      return this.hasCustomName() ? new TranslationTextComponent(this.customName) : new TranslationTextComponent("container.dankstorage.dank_1");
+      return this.hasCustomName() ? this.customName : new TranslationTextComponent("container.dankstorage.dank_1");
     }
 
     @Override
@@ -40,20 +38,18 @@ public class DankTiles {
   public static class DankStorageTile2 extends AbstractDankStorageTile {
 
     public DankStorageTile2() {
-      super(DankStorage.Objects.dank_2_tile,2,1024);
+      super(DankStorage.Objects.dank_2_tile,2,DankStorage.ServerConfig.stacklimit2.get());
     }
 
     @Nullable
     @Override
     public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-      AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
-      DankHandler handler = tile.getHandler();
       return new DankContainers.DankContainer2(i,world,pos,playerInventory,playerEntity);
     }
 
     @Override
     public ITextComponent getName() {
-      return this.hasCustomName() ? new TranslationTextComponent(this.customName) : new TranslationTextComponent("container.dankstorage.dank_2");
+      return this.hasCustomName() ? this.customName : new TranslationTextComponent("container.dankstorage.dank_2");
     }
 
     @Override
@@ -65,20 +61,18 @@ public class DankTiles {
   public static class DankStorageTile3 extends AbstractDankStorageTile {
 
     public DankStorageTile3() {
-      super(DankStorage.Objects.dank_3_tile,3,4096);
+      super(DankStorage.Objects.dank_3_tile,3,DankStorage.ServerConfig.stacklimit3.get());
     }
 
     @Nullable
     @Override
     public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-      AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
-      DankHandler handler = tile.getHandler();
       return new DankContainers.DankContainer3(i,world,pos,playerInventory,playerEntity);
     }
 
     @Override
     public ITextComponent getName() {
-      return this.hasCustomName() ? new TranslationTextComponent(this.customName) : new TranslationTextComponent("container.dankstorage.dank_3");
+      return this.hasCustomName() ? this.customName : new TranslationTextComponent("container.dankstorage.dank_3");
     }
 
     @Override
@@ -90,20 +84,18 @@ public class DankTiles {
   public static class DankStorageTile4 extends AbstractDankStorageTile {
 
     public DankStorageTile4() {
-      super(DankStorage.Objects.dank_4_tile,4,16384);
+      super(DankStorage.Objects.dank_4_tile,4,DankStorage.ServerConfig.stacklimit4.get());
     }
 
     @Nullable
     @Override
     public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-      AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
-      DankHandler handler = tile.getHandler();
       return new DankContainers.DankContainer4(i,world,pos,playerInventory,playerEntity);
     }
 
     @Override
     public ITextComponent getName() {
-      return this.hasCustomName() ? new TranslationTextComponent(this.customName) : new TranslationTextComponent("container.dankstorage.dank_4");
+      return this.hasCustomName() ? this.customName : new TranslationTextComponent("container.dankstorage.dank_4");
     }
 
     @Override
@@ -115,20 +107,18 @@ public class DankTiles {
   public static class DankStorageTile5 extends AbstractDankStorageTile {
 
     public DankStorageTile5() {
-      super(DankStorage.Objects.dank_5_tile,5,65536);
+      super(DankStorage.Objects.dank_5_tile,5,DankStorage.ServerConfig.stacklimit5.get());
     }
 
     @Nullable
     @Override
     public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-      AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
-      DankHandler handler = tile.getHandler();
       return new DankContainers.DankContainer5(i,world,pos,playerInventory,playerEntity);
     }
 
     @Override
     public ITextComponent getName() {
-      return this.hasCustomName() ? new TranslationTextComponent(this.customName) : new TranslationTextComponent("container.dankstorage.dank_5");
+      return this.hasCustomName() ? this.customName : new TranslationTextComponent("container.dankstorage.dank_5");
     }
 
     @Override
@@ -140,20 +130,18 @@ public class DankTiles {
   public static class DankStorageTile6 extends AbstractDankStorageTile {
 
     public DankStorageTile6() {
-      super(DankStorage.Objects.dank_6_tile,6,262144);
+      super(DankStorage.Objects.dank_6_tile,6,DankStorage.ServerConfig.stacklimit6.get());
     }
 
     @Nullable
     @Override
     public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-      AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
-      DankHandler handler = tile.getHandler();
       return new DankContainers.DankContainer6(i,world,pos,playerInventory,playerEntity);
     }
 
     @Override
     public ITextComponent getName() {
-      return this.hasCustomName() ? new TranslationTextComponent(this.customName) : new TranslationTextComponent("container.dankstorage.dank_6");
+      return this.hasCustomName() ? this.customName : new TranslationTextComponent("container.dankstorage.dank_6");
     }
 
     @Override
@@ -165,20 +153,18 @@ public class DankTiles {
   public static class DankStorageTile7 extends AbstractDankStorageTile {
 
     public DankStorageTile7() {
-      super(DankStorage.Objects.dank_7_tile,9,Integer.MAX_VALUE);
+      super(DankStorage.Objects.dank_7_tile,9,DankStorage.ServerConfig.stacklimit7.get());
     }
 
     @Nullable
     @Override
     public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-      AbstractDankStorageTile tile = (AbstractDankStorageTile) world.getTileEntity(pos);
-      DankHandler handler = tile.getHandler();
       return new DankContainers.DankContainer7(i,world,pos,playerInventory,playerEntity);
     }
 
     @Override
     public ITextComponent getName() {
-      return this.hasCustomName() ? new TranslationTextComponent(this.customName) : new TranslationTextComponent("container.dankstorage.dank_7");
+      return this.hasCustomName() ? this.customName : new TranslationTextComponent("container.dankstorage.dank_7");
     }
 
     @Override

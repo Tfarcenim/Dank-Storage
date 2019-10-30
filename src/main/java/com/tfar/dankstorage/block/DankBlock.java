@@ -19,6 +19,7 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.EnchantingTableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
@@ -96,6 +97,9 @@ public class DankBlock extends Block {
         ((AbstractDankStorageTile) te).setContents(stack.getTag());
         ((AbstractDankStorageTile) te).mode = stack.getTag().getInt("mode");
         ((AbstractDankStorageTile) te).selectedSlot = stack.getTag().getInt("selectedSlot");
+        if (stack.hasDisplayName()) {
+          ((AbstractDankStorageTile) te).setCustomName(stack.getDisplayName());
+        }
       }
     }
   }

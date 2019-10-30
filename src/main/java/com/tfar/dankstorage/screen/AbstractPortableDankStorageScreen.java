@@ -19,27 +19,30 @@ public abstract class AbstractPortableDankStorageScreen<T extends AbstractPortab
   protected void init() {
     super.init();
     int start = 0;
-    this.addButton(new ToggleButton(guiLeft + (start += 45), guiTop + 6 + offset,8,8, b -> {
+    int namelength = font.getStringWidth(getContainerName().getUnformattedComponentText());
+    start += namelength;
+    this.addButton(new ToggleButton(guiLeft + (start += 16), guiTop + 6 ,8,8, b -> {
       ((ToggleButton)b).toggle();
       DankPacketHandler.INSTANCE.sendToServer(new C2SMessageTagMode());
     }, Utils.tag(container.getBag())));
-    this.addButton(new TripleToggleButton(guiLeft + (start += 40), guiTop + 6 + offset,8,8, b -> {
+    this.addButton(new TripleToggleButton(guiLeft + (start += 30), guiTop + 6 ,8,8, b -> {
       ((TripleToggleButton)b).toggle();
       DankPacketHandler.INSTANCE.sendToServer(new CMessageTogglePickup());
     }, Utils.getMode(container.getBag()).ordinal()));
   }
 
   @Override
-  public ITextComponent getOriginalName() {
+  public ITextComponent getContainerName() {
     return container.getBag().getDisplayName();
   }
 
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-    this.font.drawString("Tag", 55, 6 + offset, 0x404040);
-    this.font.drawString("Pickup", 95, 6 + offset, 0x404040);
+    int namelength = font.getStringWidth(getContainerName().getUnformattedComponentText());
+    this.font.drawString("Tag", 25 + namelength, 6, 0x404040);
+    this.font.drawString("Pickup", 56 + namelength, 6 , 0x404040);
     int color = container.nbtSize > 2000000 ? 0x800000 : 0x008000;
-    this.font.drawString("NBT: "+container.nbtSize,70,this.ySize - 110 + offset,color);
+    this.font.drawString("NBT: " + container.nbtSize,70,this.ySize - 94,color);
   }
 }

@@ -13,7 +13,7 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankContainer>
   }
 
   @Override
-  public ITextComponent getOriginalName() {
+  public ITextComponent getContainerName() {
     return container.te.getDisplayName();
   }
 }

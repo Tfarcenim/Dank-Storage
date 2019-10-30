@@ -5,7 +5,6 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.tfar.dankstorage.client.RenderItemExtended;
 import com.tfar.dankstorage.container.AbstractAbstractDankContainer;
 import com.tfar.dankstorage.container.AbstractDankContainer;
-import com.tfar.dankstorage.container.DankContainers;
 import com.tfar.dankstorage.inventory.DankSlot;
 import com.tfar.dankstorage.network.C2SMessageLockSlot;
 import com.tfar.dankstorage.network.CMessageSort;
@@ -40,21 +39,20 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
   final ResourceLocation background;//= new ResourceLocation("textures/gui/container/shulker_box.png");
 
   protected final boolean is7;
-  protected final int offset;
+ // protected final int offset;
 
   public AbstractAbstractDankStorageScreen(T container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background) {
     super(container, playerinventory, component);
     this.background = background;
-    ySize += ((container.rows - 2) * 18);
+    this.ySize = 114 + this.container.rows * 18;
     this.ignoreMouseUp = true;
     this.is7 = this instanceof DankScreens.DankStorageScreen7 || this instanceof DankScreens.PortableDankStorageScreen7;
-    offset = is7 ? 5 : 0;
   }
 
   @Override
   protected void init() {
     super.init();
-    this.addButton(new SmallButton(guiLeft + 143, guiTop + 4 + offset,26,12,"Sort", b -> {
+    this.addButton(new SmallButton(guiLeft + 143, guiTop + 4 ,26,12,"Sort", b -> {
       DankPacketHandler.INSTANCE.sendToServer(new CMessageSort());
       Utils.sort(Minecraft.getInstance().player);
     }));
@@ -62,23 +60,25 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
 
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-    this.font.drawString(this.playerInventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 110 + offset, 0x404040);
-    this.font.drawString(this.getOriginalName().getUnformattedComponentText(), 8, 6 + offset, 0x404040);
+    this.font.drawString(this.playerInventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 94, 0x404040);
+    this.font.drawString(this.getContainerName().getFormattedText(), 8, 6, 0x404040);
   }
 
   @Override
   protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
 
     minecraft.getTextureManager().bindTexture(background);
-    if (!(this.container instanceof DankContainers.DankContainer7 || this.container instanceof DankContainers.PortableDankContainer7))
+    if (is7)
+      blit(guiLeft, guiTop, 0, 0, xSize, ySize, 256, 512);
+     else
       blit(guiLeft, guiTop, 0, 0, xSize, ySize);
-    else blit(guiLeft, guiTop, 0, -5, xSize, ySize, 256, 512);
+
 
     for (int i = 0; i < (container.rows * 9);i++){
       int j = i % 9;
       int k = i / 9;
       int offsetx = 8;
-      int offsety = 18 + offset;
+      int offsety = 18 ;
       if (container.getHandler().lockedSlots[i] == 1)
         fill(guiLeft + j * 18 + offsetx, guiTop + k * 18 + offsety,
                 guiLeft + j * 18 + offsetx + 16, guiTop + k * 18 + offsety+ 16, 0xFFFF0000);
@@ -221,7 +221,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     RenderItemExtended.INSTANCE.setZLevel(this.itemRenderer.zLevel);
   }
 
-  public abstract ITextComponent getOriginalName();
+  public abstract ITextComponent getContainerName();
 
   private void drawSlot(Slot slotIn) {
     int i = slotIn.xPos;

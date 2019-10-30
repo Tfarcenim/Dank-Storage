@@ -34,8 +34,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
     for (int row = 0; row < rows; ++row) {
       for (int col = 0; col < 9; ++col) {
         int x = 8 + col * 18;
-        int y = row * 18 + 17 + 1;
-        if (rows == 9)y+=5;
+        int y = row * 18 + 18;
         this.addSlot(new DankSlot(handler, slotIndex, x, y));
         slotIndex++;
       }
@@ -45,15 +44,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
   public abstract DankHandler getHandler();
 
   protected void addPlayerSlots(InvWrapper playerinventory) {
-    int yStart = 50;
-    switch (rows){
-      case 9:yStart +=59;
-      case 6:yStart +=18;
-      case 5:yStart +=18;
-      case 4:yStart +=20;
-      case 3:yStart +=16;
-      case 2:yStart +=18;
-    }
+    int yStart = 32 + 18 * rows;
     for (int row = 0; row < 3; ++row) {
       for (int col = 0; col < 9; ++col) {
         int x = 8 + col * 18;

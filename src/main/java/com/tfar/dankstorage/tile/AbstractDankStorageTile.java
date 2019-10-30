@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 public abstract class AbstractDankStorageTile extends TileEntity implements INameable, INamedContainerProvider {
 
   public int numPlayersUsing = 0;
-  protected String customName;
+  protected ITextComponent customName;
   public int mode = 0;
   public int selectedSlot;
 
@@ -94,7 +94,7 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
       handler.deserializeNBT(compound.getCompound("Items"));
     }
     if (compound.contains("CustomName", 8)) {
-      this.setCustomName(compound.getString("CustomName"));
+      this.setCustomName(ITextComponent.Serializer.fromJson(compound.getString("CustomName")));
     }
   }
 
@@ -106,7 +106,7 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
     tag.putInt("selectedSlot",selectedSlot);
     tag.put("Items", handler.serializeNBT());
     if (this.hasCustomName()) {
-      tag.putString("CustomName", this.customName);
+      tag.putString("CustomName", ITextComponent.Serializer.toJson(this.customName));
     }
     return tag;
   }
@@ -143,18 +143,19 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
     return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? optional.cast() : super.getCapability(capability, facing);
   }
 
-  @Override
-  public boolean hasCustomName() {
-    return this.customName != null && !this.customName.isEmpty();
-  }
-
-  public void setCustomName(String p_190575_1_) {
+  public void setCustomName(ITextComponent p_190575_1_) {
     this.customName = p_190575_1_;
   }
 
   @Override
   public ITextComponent getDisplayName() {
-    return (this.hasCustomName() ? this.getName() : this.getName());
+    return this.getName();
+  }
+
+  @Nullable
+  @Override
+  public ITextComponent getCustomName() {
+    return customName;
   }
 
   public abstract Item getDank();
