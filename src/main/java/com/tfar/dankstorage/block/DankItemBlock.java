@@ -1,7 +1,6 @@
 package com.tfar.dankstorage.block;
 
 import com.tfar.dankstorage.DankStorage;
-import com.tfar.dankstorage.capability.CapabilityDankStorageProvider;
 import com.tfar.dankstorage.container.PortableDankProvider;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.CMessageTogglePickup;
@@ -16,12 +15,16 @@ import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,7 +44,13 @@ public class DankItemBlock extends BlockItem {
 
   @Override
   public ICapabilityProvider initCapabilities(final ItemStack stack, final CompoundNBT nbt) {
-    return new CapabilityDankStorageProvider(stack);
+    return new ICapabilityProvider() {
+      @Nonnull
+      @Override
+      public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? LazyOptional.of(() -> Utils.getHandler(stack, false)).cast() : LazyOptional.empty();
+      }
+    };
   }
 
   @Nonnull

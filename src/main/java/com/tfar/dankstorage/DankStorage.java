@@ -2,7 +2,6 @@ package com.tfar.dankstorage;
 
 import com.tfar.dankstorage.block.DankBlock;
 import com.tfar.dankstorage.block.DankItemBlock;
-import com.tfar.dankstorage.capability.CapabilityDankStorage;
 import com.tfar.dankstorage.client.RenderDankStorage;
 import com.tfar.dankstorage.container.DankContainers;
 import com.tfar.dankstorage.network.DankPacketHandler;
@@ -53,7 +52,7 @@ public class DankStorage {
 
   private void setup(final FMLCommonSetupEvent event) {
     DankPacketHandler.registerMessages(MODID);
-    CapabilityDankStorage.register();
+    //CapabilityDankStorage.register();
   }
 
   // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
