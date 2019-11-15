@@ -4,6 +4,8 @@ import com.tfar.dankstorage.block.DankBlock;
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.client.RenderDankStorage;
 import com.tfar.dankstorage.container.DankContainers;
+import com.tfar.dankstorage.item.UpgradeInfo;
+import com.tfar.dankstorage.item.UpgradeItem;
 import com.tfar.dankstorage.network.DankPacketHandler;
 import com.tfar.dankstorage.recipe.DankUpgradeRecipes;
 import com.tfar.dankstorage.tile.DankTiles;
@@ -35,6 +37,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.stream.IntStream;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(DankStorage.MODID)
@@ -74,8 +77,9 @@ public class DankStorage {
     @SubscribeEvent
     public static void items(final RegistryEvent.Register<Item> event) {
       Item.Properties properties = new Item.Properties().group(ItemGroup.DECORATIONS).maxStackSize(1).setTEISR(RegistryEvents::get);
-      for (Block block : MOD_BLOCKS)
-        register(new DankItemBlock(block, properties), block.getRegistryName().getPath(), event.getRegistry());
+      MOD_BLOCKS.forEach(block -> register(new DankItemBlock(block, properties), block.getRegistryName().getPath(), event.getRegistry()));
+      Item.Properties properties1 = new Item.Properties().group(ItemGroup.DECORATIONS);
+      IntStream.range(1,7).forEach(i -> register(new UpgradeItem(properties1,new UpgradeInfo(i,i+1)),i+"_to_"+(i+1),event.getRegistry()));
     }
 
     private static Callable<ItemStackTileEntityRenderer> get() {

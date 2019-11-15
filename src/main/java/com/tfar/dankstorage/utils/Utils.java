@@ -1,6 +1,7 @@
 package com.tfar.dankstorage.utils;
 
 import com.tfar.dankstorage.DankStorage;
+import com.tfar.dankstorage.block.DankBlock;
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.container.AbstractAbstractDankContainer;
 import com.tfar.dankstorage.inventory.DankHandler;
@@ -23,6 +24,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -200,6 +202,10 @@ public class Utils {
 
   public static int getNbtSize(ItemStack stack){
     return getNbtSize(stack.getTag());
+  }
+
+  public static DankBlock getBlockFromTier(int tier){
+    return (DankBlock) ForgeRegistries.BLOCKS.getValue(new ResourceLocation(DankStorage.MODID,"dank_"+tier));
   }
 
   public static int getNbtSize(@Nullable CompoundNBT nbt){

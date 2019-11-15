@@ -196,6 +196,11 @@ public class DankBlock extends Block {
     return super.getNameTextComponent();
   }
 
+  @Override
+  public void onReplaced(BlockState state, World p_196243_2_, BlockPos p_196243_3_, BlockState newState, boolean p_196243_5_) {
+super.onReplaced(state,p_196243_2_,p_196243_3_,newState,p_196243_5_);
+  }
+
   public static boolean onItemPickup(EntityItemPickupEvent event, ItemStack bag) {
 
     Mode mode = Utils.getMode(bag);

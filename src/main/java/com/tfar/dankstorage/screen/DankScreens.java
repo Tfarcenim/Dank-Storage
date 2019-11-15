@@ -15,7 +15,8 @@ public class DankScreens {
   private static final ResourceLocation background2 = new ResourceLocation(DankStorage.MODID,
           "textures/container/gui/dank2.png");
 
-  private static final ResourceLocation background3 = new ResourceLocation("textures/gui/container/shulker_box.png");
+  private static final ResourceLocation background3 = new ResourceLocation(DankStorage.MODID,
+          "textures/container/gui/dank3.png");
 
   private static final ResourceLocation background4 = new ResourceLocation(DankStorage.MODID,
           "textures/container/gui/dank4.png");
