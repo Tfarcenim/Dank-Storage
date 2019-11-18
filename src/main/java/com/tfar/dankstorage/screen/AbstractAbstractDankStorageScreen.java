@@ -192,8 +192,13 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     List<String> tooltip = this.getTooltipFromItem(p_renderTooltip_1_);
 
     if (hoveredSlot != null){
-      if (hoveredSlot.getStack().getItem().isIn(Utils.BLACKLISTED_ITEMS)) {
-        ITextComponent component1 = new TranslationTextComponent("text.dankstorage.blacklisted").
+      if (hoveredSlot.getStack().getItem().isIn(Utils.BLACKLISTED_STORAGE)) {
+        ITextComponent component1 = new TranslationTextComponent("text.dankstorage.blacklisted_storage").
+                applyTextStyle(TextFormatting.DARK_RED);
+        tooltip.add(component1.getFormattedText());
+      }
+      if (hoveredSlot.getStack().getItem().isIn(Utils.BLACKLISTED_USAGE)) {
+        ITextComponent component1 = new TranslationTextComponent("text.dankstorage.blacklisted_usage").
                 applyTextStyle(TextFormatting.DARK_RED);
         tooltip.add(component1.getFormattedText());
       }

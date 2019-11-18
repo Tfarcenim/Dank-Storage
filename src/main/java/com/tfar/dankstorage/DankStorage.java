@@ -23,6 +23,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -39,6 +40,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.stream.IntStream;
 
+import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
+
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(DankStorage.MODID)
 public class DankStorage {
@@ -51,11 +54,18 @@ public class DankStorage {
     ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
     ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+    EVENT_BUS.addListener(this::drop);
   }
 
   private void setup(final FMLCommonSetupEvent event) {
     DankPacketHandler.registerMessages(MODID);
-    //CapabilityDankStorage.register();
+  }
+
+  private void drop(final ItemTossEvent event) {
+    if (event.getEntityItem().getItem().getItem() instanceof DankItemBlock){
+      //no
+      event.getEntityItem().setInvulnerable(true);
+    }
   }
 
   // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD

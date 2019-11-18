@@ -11,7 +11,6 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.stream.IntStream;
 
 public class DankHandler extends ItemStackHandler {
@@ -27,6 +26,10 @@ public class DankHandler extends ItemStackHandler {
 
   public boolean isEmpty(){
     return IntStream.range(0, this.getSlots()).allMatch(i -> this.getStackInSlot(i).isEmpty());
+  }
+
+  public boolean noValidSlots(){
+    return isEmpty() || IntStream.range(0,getSlots()).allMatch(i -> getStackInSlot(i).getItem().isIn(Utils.BLACKLISTED_USAGE));
   }
 
   @Override
@@ -45,7 +48,7 @@ public class DankHandler extends ItemStackHandler {
 
   @Override
   public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-    return !stack.getItem().isIn(Utils.BLACKLISTED_ITEMS);
+    return !stack.getItem().isIn(Utils.BLACKLISTED_STORAGE);
   }
 
   @Override

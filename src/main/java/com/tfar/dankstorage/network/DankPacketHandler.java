@@ -28,10 +28,10 @@ public class DankPacketHandler {
             buffer -> new CMessageToggleUseType(),
             CMessageToggleUseType::handle);
 
-    INSTANCE.registerMessage(id++, C2SMessageChangeSlot.class,
-            C2SMessageChangeSlot::encode,
-            C2SMessageChangeSlot::new,
-            C2SMessageChangeSlot::handle);
+    INSTANCE.registerMessage(id++, C2SMessageScrollSlot.class,
+            C2SMessageScrollSlot::encode,
+            C2SMessageScrollSlot::new,
+            C2SMessageScrollSlot::handle);
 
     INSTANCE.registerMessage(id++, CMessagePickBlock.class,
             (cMessagePickBlock, buffer) -> {},

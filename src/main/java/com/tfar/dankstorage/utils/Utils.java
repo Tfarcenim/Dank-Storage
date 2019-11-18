@@ -24,6 +24,8 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -39,7 +41,9 @@ import static com.tfar.dankstorage.network.CMessageToggleUseType.useTypes;
 public class Utils {
 
   public static final Tag<Item> WHITELISTED_TAGS = new ItemTags.Wrapper(new ResourceLocation(DankStorage.MODID,"whitelisted_tags"));
-  public static final Tag<Item> BLACKLISTED_ITEMS = new ItemTags.Wrapper(new ResourceLocation(DankStorage.MODID,"blacklisted_items"));
+  public static final Tag<Item> BLACKLISTED_STORAGE = new ItemTags.Wrapper(new ResourceLocation(DankStorage.MODID,"blacklisted_storage"));
+  public static final Tag<Item> BLACKLISTED_USAGE = new ItemTags.Wrapper(new ResourceLocation(DankStorage.MODID,"blacklisted_usage"));
+
   public static final Tag<Item> WRENCHES = new ItemTags.Wrapper(new ResourceLocation("forge","wrenches"));
 
   public static Mode getMode(ItemStack bag) {
@@ -173,14 +177,14 @@ public class Utils {
   }
 
   public static void changeSlot(ItemStack bag, boolean right) {
-    //don't change slot if empty
     PortableDankHandler handler = getHandler(bag,false);
-    if (handler.isEmpty())return;
+    //don't change slot if empty
+    if (handler.noValidSlots())return;
     int selectedSlot = getSelectedSlot(bag) + (right ? 1 : -1);
     int size = getSize(bag);
     if (selectedSlot < 0)selectedSlot = size - 1;
-    //keep iterating until a not empty slot is found
-    while (handler.getStackInSlot(selectedSlot).isEmpty()) {
+    //keep iterating until a valid slot is found (not empty and not blacklisted from usage)
+    while (handler.getStackInSlot(selectedSlot).isEmpty() || handler.getStackInSlot(selectedSlot).getItem().isIn(BLACKLISTED_USAGE)) {
       if (right) {
         selectedSlot++;
         if (selectedSlot >= size) selectedSlot = 0;
@@ -216,9 +220,10 @@ public class Utils {
   }
 
   public static ItemStack getItemStackInSelectedSlot(ItemStack bag){
-    DankHandler handler = getHandler(bag,false);
+    DankHandler handler = (DankHandler) bag.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
     int selectedSlot = Utils.getSelectedSlot(bag);
-    return handler.getStackInSlot(selectedSlot);
+    ItemStack stack = handler.getStackInSlot(selectedSlot);
+    return stack.getItem().isIn(BLACKLISTED_USAGE) ? ItemStack.EMPTY : stack;
   }
 
   public static boolean doItemStacksShareWhitelistedTags(final ItemStack stack1,final ItemStack stack2) {

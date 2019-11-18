@@ -116,10 +116,6 @@ public class DankItemBlock extends BlockItem {
         //todo support other items?
         else {
           ItemStack newBag = bag.copy();
-          //stack overflow issues
-          if (toPlace.getItem() instanceof DankItemBlock)
-            return new ActionResult<>(ActionResultType.PASS, player.getHeldItem(hand));
-
           player.setItemStackToSlot(hand1, toPlace);
           ActionResult<ItemStack> actionResult = toPlace.getItem().onItemRightClick(world, player, hand);
           PortableDankHandler handler = Utils.getHandler(newBag, true);

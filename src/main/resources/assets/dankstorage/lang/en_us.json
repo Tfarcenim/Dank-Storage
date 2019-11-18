@@ -47,7 +47,8 @@
   "dankstorage.usetype.construction": "Construction",
   "dankstorage.usetype.chest": "Chest",
 
-  "text.dankstorage.blacklisted": "This item has been blacklisted from storage!",
+  "text.dankstorage.blacklisted_storage": "This item has been blacklisted from storage!",
+  "text.dankstorage.blacklisted_usage": "This item cannot be used from storage!",
 
   "text.dankstorage.stacklimit": "Stack Limit: %s",
 

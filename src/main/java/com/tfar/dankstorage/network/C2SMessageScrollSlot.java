@@ -10,16 +10,16 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import java.util.function.Supplier;
 
 
-public class C2SMessageChangeSlot {
+public class C2SMessageScrollSlot {
 
   boolean right;
 
-  public C2SMessageChangeSlot(){}
+  public C2SMessageScrollSlot(){}
 
-  public C2SMessageChangeSlot(boolean right){ this.right = right;}
+  public C2SMessageScrollSlot(boolean right){ this.right = right;}
 
   //decode
-  public C2SMessageChangeSlot(PacketBuffer buf) {
+  public C2SMessageScrollSlot(PacketBuffer buf) {
     this.right = buf.readBoolean();
   }
 

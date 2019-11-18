@@ -20,7 +20,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -123,7 +122,7 @@ public class Client {
       PlayerEntity player = Minecraft.getInstance().player;
       if (player != null && player.isSneaking() && (Utils.isConstruction(player.getHeldItemMainhand()) || Utils.isConstruction(player.getHeldItemOffhand()))) {
         boolean right = e.getScrollDelta() < 0;
-        DankPacketHandler.INSTANCE.sendToServer(new C2SMessageChangeSlot(right));
+        DankPacketHandler.INSTANCE.sendToServer(new C2SMessageScrollSlot(right));
         e.setCanceled(true);
       }
     }
