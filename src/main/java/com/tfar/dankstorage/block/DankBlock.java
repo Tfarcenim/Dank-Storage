@@ -1,8 +1,10 @@
 package com.tfar.dankstorage.block;
 
 import com.tfar.dankstorage.client.Client;
+import com.tfar.dankstorage.container.AbstractAbstractDankContainer;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
+import com.tfar.dankstorage.network.CMessageTogglePickup;
 import com.tfar.dankstorage.network.CMessageToggleUseType;
 import com.tfar.dankstorage.utils.Utils;
 import com.tfar.dankstorage.tile.AbstractDankStorageTile;
@@ -15,6 +17,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
@@ -34,9 +37,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -161,7 +166,7 @@ public class DankBlock extends Block {
       tooltip.add(
               new TranslationTextComponent("text.dankstorage.stacklimit",new StringTextComponent(Utils.getStackLimit(getRegistryName())+"").applyTextStyle(TextFormatting.GREEN)).applyTextStyle(TextFormatting.GRAY));
 
-      DankHandler handler = Utils.getHandler(bag,false);
+      DankHandler handler = Utils.getHandler(bag);
 
       if (handler.isEmpty()){
         tooltip.add(
@@ -204,30 +209,29 @@ super.onReplaced(state,p_196243_2_,p_196243_3_,newState,p_196243_5_);
   public static boolean onItemPickup(EntityItemPickupEvent event, ItemStack bag) {
 
     Mode mode = Utils.getMode(bag);
-
-    if (mode == Mode.NORMAL) {
-      return false;
-    }
+    if (mode == Mode.NORMAL)return false;
+    PortableDankHandler inv = Utils.getHandler(bag);
     ItemStack toPickup = event.getItem().getItem();
     int count = toPickup.getCount();
-    PortableDankHandler inv = Utils.getHandler(bag,false);
     ItemStack rem = toPickup.copy();
-    //stack with existing items
-    List<Integer> emptyslots = new LinkedList<>();
-    for (int i = 0; i < inv.getSlots(); i++){
-      if (inv.getStackInSlot(i).isEmpty()){
-        emptyslots.add(i);
-        continue;
-      }
-      rem = inv.insertItem(i,rem,false);
-      if (rem.isEmpty())break;
-    }
-    //only iterate empty slots
-    if (!rem.isEmpty())
-      for (int slot : emptyslots) {
-        rem = inv.insertItem(slot,rem,false);
-        if (rem.isEmpty())break;
-      }
+    boolean oredict = Utils.tag(bag);
+
+        //stack with existing items
+        List<Integer> emptyslots = new ArrayList<>();
+        for (int i = 0; i < inv.getSlots(); i++){
+          if (inv.getStackInSlot(i).isEmpty()){
+            emptyslots.add(i);
+            continue;
+          }
+          rem = insertIntoHandler(mode,inv,i,rem,false,oredict);
+          if (rem.isEmpty())break;
+        }
+        //only iterate empty slots
+        if (!rem.isEmpty())
+          for (int slot : emptyslots) {
+            rem = insertIntoHandler(mode,inv,slot,rem,false,oredict);
+            if (rem.isEmpty())break;
+          }
     //leftovers
     toPickup.setCount(rem.getCount());
     if (rem.getCount() != count) {
@@ -237,5 +241,29 @@ super.onReplaced(state,p_196243_2_,p_196243_3_,newState,p_196243_5_);
       inv.writeItemStack();
     }
     return toPickup.isEmpty();
+  }
+
+
+
+  public static ItemStack insertIntoHandler(Mode mode, PortableDankHandler inv, int slot, ItemStack toInsert, boolean simulate, boolean oredict){
+
+    ItemStack existing = inv.getStackInSlot(slot);
+    if (ItemHandlerHelper.canItemStacksStack(toInsert,existing) || (oredict && Utils.doItemStacksShareWhitelistedTags(toInsert,existing))){
+      int stackLimit = inv.stacklimit;
+      int total = toInsert.getCount() + existing.getCount();
+      int remainder = total - stackLimit;
+      if (remainder <= 0) {
+        if (!simulate)inv.getContents().set(slot, ItemHandlerHelper.copyStackWithSize(existing, total));
+        return ItemStack.EMPTY;
+      }
+      else {
+        if (!simulate) inv.getContents().set(slot, ItemHandlerHelper.copyStackWithSize(toInsert, stackLimit));
+        if (mode == Mode.VOID_PICKUP) return ItemStack.EMPTY;
+        return ItemHandlerHelper.copyStackWithSize(toInsert, remainder);
+      }
+    } else if (existing.isEmpty() && mode == Mode.FILTERED_PICKUP && toInsert.isItemEqual(existing) && ItemStack.areItemStackTagsEqual(existing, toInsert)){
+      if (!simulate)inv.getContents().set(slot, toInsert);
+      return ItemHandlerHelper.copyStackWithSize(toInsert,toInsert.getCount() - inv.getStackLimit(slot,toInsert));
+    } else return toInsert;
   }
 }

@@ -177,7 +177,7 @@ public class Utils {
   }
 
   public static void changeSlot(ItemStack bag, boolean right) {
-    PortableDankHandler handler = getHandler(bag,false);
+    PortableDankHandler handler = getHandler(bag);
     //don't change slot if empty
     if (handler.noValidSlots())return;
     int selectedSlot = getSelectedSlot(bag) + (right ? 1 : -1);
@@ -200,8 +200,8 @@ public class Utils {
     return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTag().getBoolean("tag");
   }
 
-  public static PortableDankHandler getHandler(ItemStack bag, boolean manual) {
-    return new PortableDankHandler(bag, manual);
+  public static PortableDankHandler getHandler(ItemStack bag) {
+    return new PortableDankHandler(bag);
   }
 
   public static int getNbtSize(ItemStack stack){

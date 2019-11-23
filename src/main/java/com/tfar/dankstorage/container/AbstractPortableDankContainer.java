@@ -26,7 +26,7 @@ public abstract class AbstractPortableDankContainer extends AbstractAbstractDank
     this.bag = player.getHeldItemMainhand().getItem() instanceof DankItemBlock ? player.getHeldItemMainhand() : player.getHeldItemOffhand();
     nbtSize = getNBTSize();
 
-    handler = new PortableDankHandler(bag, true) {
+    handler = new PortableDankHandler(bag) {
 
       @Override
       protected void onLoad() {

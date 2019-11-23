@@ -140,7 +140,7 @@ public class Client {
       }
 
       if (Utils.isConstruction(bag)) {
-        PortableDankHandler handler = Utils.getHandler(bag,true);
+        PortableDankHandler handler = Utils.getHandler(bag);
         ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
 
         if (!toPlace.isEmpty()) {

@@ -48,7 +48,7 @@ public class DankItemBlock extends BlockItem {
       @Nonnull
       @Override
       public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? LazyOptional.of(() -> Utils.getHandler(stack, false)).cast() : LazyOptional.empty();
+        return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? LazyOptional.of(() -> Utils.getHandler(stack)).cast() : LazyOptional.empty();
       }
     };
   }
@@ -118,7 +118,7 @@ public class DankItemBlock extends BlockItem {
           ItemStack newBag = bag.copy();
           player.setItemStackToSlot(hand1, toPlace);
           ActionResult<ItemStack> actionResult = toPlace.getItem().onItemRightClick(world, player, hand);
-          PortableDankHandler handler = Utils.getHandler(newBag, true);
+          PortableDankHandler handler = Utils.getHandler(newBag);
           handler.setStackInSlot(Utils.getSelectedSlot(newBag), actionResult.getResult());
           player.setItemStackToSlot(hand1, newBag);
         }
@@ -130,7 +130,7 @@ public class DankItemBlock extends BlockItem {
   @Override
   public boolean itemInteractionForEntity(ItemStack bag, PlayerEntity player, LivingEntity entity, Hand hand) {
     if (!Utils.isConstruction(bag))return false;
-    PortableDankHandler handler = Utils.getHandler(bag,false);
+    PortableDankHandler handler = Utils.getHandler(bag);
     ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
     EquipmentSlotType hand1 = hand == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
     player.setItemStackToSlot(hand1, toPlace);
@@ -173,14 +173,14 @@ public class DankItemBlock extends BlockItem {
 
     if (internal.getItem().isFood()){
      ItemStack food = entity.onFoodEaten(world, internal);
-     PortableDankHandler handler = Utils.getHandler(stack,false);
+     PortableDankHandler handler = Utils.getHandler(stack);
      handler.setStackInSlot(Utils.getSelectedSlot(stack), food);
      return stack;
     }
 
     if (internal.getItem() instanceof PotionItem){
       ItemStack potion = internal.onItemUseFinish(world,entity);
-      PortableDankHandler handler = Utils.getHandler(stack,false);
+      PortableDankHandler handler = Utils.getHandler(stack);
       handler.setStackInSlot(Utils.getSelectedSlot(stack), potion);
       return stack;
     }
@@ -228,7 +228,7 @@ public class DankItemBlock extends BlockItem {
       return ActionResultType.PASS;
     }
 
-    PortableDankHandler handler = Utils.getHandler(bag,false);
+    PortableDankHandler handler = Utils.getHandler(bag);
     int selectedSlot = Utils.getSelectedSlot(bag);
 
     ItemStack toPlace = handler.getStackInSlot(selectedSlot).copy();
