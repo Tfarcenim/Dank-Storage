@@ -1,5 +1,6 @@
 package com.tfar.dankstorage.block;
 
+import com.google.common.collect.Sets;
 import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.container.PortableDankProvider;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
@@ -7,6 +8,7 @@ import com.tfar.dankstorage.network.CMessageTogglePickup;
 import com.tfar.dankstorage.network.CMessageToggleUseType;
 import com.tfar.dankstorage.utils.Utils;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -17,17 +19,21 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Set;
 
 public class DankItemBlock extends BlockItem {
   public DankItemBlock(Block p_i48527_1_, Properties p_i48527_2_) {
@@ -81,6 +87,33 @@ public class DankItemBlock extends BlockItem {
     if (!Utils.isConstruction(bag))return 0;
     ItemStack stack = Utils.getItemStackInSelectedSlot(bag);
     return stack.getItem().getUseDuration(stack);
+  }
+
+  @Override
+  public Set<ToolType> getToolTypes(ItemStack bag) {
+    if (!Utils.isConstruction(bag))return Sets.newHashSet();
+    ItemStack tool = Utils.getItemStackInSelectedSlot(bag);
+    return tool.getItem().getToolTypes(tool);
+  }
+
+  @Override
+  public int getHarvestLevel(ItemStack bag, ToolType p_getHarvestLevel_2_, @Nullable PlayerEntity p_getHarvestLevel_3_, @Nullable BlockState p_getHarvestLevel_4_) {
+    if (!Utils.isConstruction(bag))return -1;
+
+    ItemStack tool = Utils.getItemStackInSelectedSlot(bag);
+    return tool.getItem().getHarvestLevel(tool, p_getHarvestLevel_2_, p_getHarvestLevel_3_, p_getHarvestLevel_4_);
+  }
+
+  @Override
+  public float getDestroySpeed(ItemStack bag, BlockState p_150893_2_) {
+    if (!Utils.isConstruction(bag))return 1;
+    ItemStack tool = Utils.getItemStackInSelectedSlot(bag);
+    return tool.getItem().getDestroySpeed(tool, p_150893_2_);
+  }
+
+  @Override
+  public boolean onBlockDestroyed(ItemStack p_179218_1_, World p_179218_2_, BlockState p_179218_3_, BlockPos p_179218_4_, LivingEntity p_179218_5_) {
+    return super.onBlockDestroyed(p_179218_1_, p_179218_2_, p_179218_3_, p_179218_4_, p_179218_5_);
   }
 
   @Nonnull
@@ -206,11 +239,14 @@ public class DankItemBlock extends BlockItem {
   @Override
   public CompoundNBT getShareTag(ItemStack stack) {
     if(DankStorage.ServerConfig.useShareTag.get()){
+      //Double check it is actually a stack of the correct type
       CompoundNBT nbt = stack.getTag();
-      if (nbt == null)return null;
-      CompoundNBT sync = nbt.copy();
-      sync.remove("Items");
-      return sync;
+      if (nbt == null || !nbt.contains(Utils.INV, Constants.NBT.TAG_LIST)) {
+        //If we don't have any NBT or already don't have the key just return the NBT as is
+        return nbt;
+      }
+      //Don't sync the list of consumed stacks to the client to make sure it doesn't overflow the packet
+      return Utils.copyNBTSkipKey(nbt, Utils.INV);
     }
     return super.getShareTag(stack);
   }

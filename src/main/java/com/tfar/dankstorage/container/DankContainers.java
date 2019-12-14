@@ -3,8 +3,6 @@ package com.tfar.dankstorage.container;
 import com.tfar.dankstorage.DankStorage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -59,51 +57,51 @@ public class DankContainers {
     }
   }
 
-  public static class DankContainer1 extends AbstractDankContainer {
+  public static class TileDankContainer1 extends AbstractTileDankContainer {
 
-    public DankContainer1(int p_i50105_2_, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
+    public TileDankContainer1(int p_i50105_2_, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
       super(DankStorage.Objects.dank_1_container, p_i50105_2_,world,pos,playerInventory,player, 1);
     }
   }
 
-  public static class DankContainer2 extends AbstractDankContainer {
+  public static class TileDankContainer2 extends AbstractTileDankContainer {
 
-    public DankContainer2(int p_i50105_2_, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
+    public TileDankContainer2(int p_i50105_2_, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
       super(DankStorage.Objects.dank_2_container, p_i50105_2_,world,pos,playerInventory,player, 2);
     }
   }
 
-  public static class DankContainer3 extends AbstractDankContainer {
+  public static class TileDankContainer3 extends AbstractTileDankContainer {
 
-    public DankContainer3(int p_i50105_2_, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
+    public TileDankContainer3(int p_i50105_2_, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
       super(DankStorage.Objects.dank_3_container, p_i50105_2_,world,pos,playerInventory,player, 3);
     }
   }
 
-  public static class DankContainer4 extends AbstractDankContainer {
+  public static class TileDankContainer4 extends AbstractTileDankContainer {
 
-    public DankContainer4(int p_i50105_2_, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
+    public TileDankContainer4(int p_i50105_2_, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
       super(DankStorage.Objects.dank_4_container, p_i50105_2_,world,pos,playerInventory,player, 4);
     }
   }
 
-  public static class DankContainer5 extends AbstractDankContainer {
+  public static class TileDankContainer5 extends AbstractTileDankContainer {
 
-    public DankContainer5(int p_i50105_2_, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
+    public TileDankContainer5(int p_i50105_2_, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
       super(DankStorage.Objects.dank_5_container, p_i50105_2_,world,pos,playerInventory,player, 5);
     }
   }
 
-  public static class DankContainer6 extends AbstractDankContainer {
+  public static class TileDankContainer6 extends AbstractTileDankContainer {
 
-    public DankContainer6(int p_i50105_2_, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
+    public TileDankContainer6(int p_i50105_2_, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
       super(DankStorage.Objects.dank_6_container, p_i50105_2_,world,pos,playerInventory,player, 6);
     }
   }
 
-  public static class DankContainer7 extends AbstractDankContainer {
+  public static class TileDankContainer7 extends AbstractTileDankContainer {
 
-    public DankContainer7(int p_i50105_2_, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
+    public TileDankContainer7(int p_i50105_2_, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
       super(DankStorage.Objects.dank_7_container, p_i50105_2_,world,pos,playerInventory,player, 9);
     }
   }

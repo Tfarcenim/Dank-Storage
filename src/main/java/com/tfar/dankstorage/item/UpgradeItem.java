@@ -27,8 +27,6 @@ public class UpgradeItem extends Item {
 
   protected final UpgradeInfo upgradeInfo;
 
-
-
   public UpgradeItem(Properties properties, UpgradeInfo info) {
     super(properties);
     this.upgradeInfo = info;

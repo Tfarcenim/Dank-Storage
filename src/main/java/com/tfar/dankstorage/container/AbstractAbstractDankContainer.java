@@ -125,7 +125,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
         Slot slot7 = this.inventorySlots.get(slotId);
         ItemStack mouseStack = PlayerInventory.getItemStack();
 
-        if (slot7 != null && AbstractDankContainer.canAddItemToSlot(slot7, mouseStack, true) && slot7.isItemValid(mouseStack) && (this.dragMode == 2 || mouseStack.getCount() > this.dragSlots.size()) && this.canDragIntoSlot(slot7)) {
+        if (slot7 != null && AbstractTileDankContainer.canAddItemToSlot(slot7, mouseStack, true) && slot7.isItemValid(mouseStack) && (this.dragMode == 2 || mouseStack.getCount() > this.dragSlots.size()) && this.canDragIntoSlot(slot7)) {
           this.dragSlots.add(slot7);
         }
       } else if (this.dragEvent == 2) {
@@ -136,7 +136,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
           for (Slot dragSlot : this.dragSlots) {
             ItemStack mouseStack = PlayerInventory.getItemStack();
 
-            if (dragSlot != null && AbstractDankContainer.canAddItemToSlot(dragSlot, mouseStack, true) && dragSlot.isItemValid(mouseStack) && (this.dragMode == 2 || mouseStack.getCount() >= this.dragSlots.size()) && this.canDragIntoSlot(dragSlot)) {
+            if (dragSlot != null && AbstractTileDankContainer.canAddItemToSlot(dragSlot, mouseStack, true) && dragSlot.isItemValid(mouseStack) && (this.dragMode == 2 || mouseStack.getCount() >= this.dragSlots.size()) && this.canDragIntoSlot(dragSlot)) {
               ItemStack itemstack14 = mouseStackCopy.copy();
               int j3 = dragSlot.getHasStack() ? dragSlot.getStack().getCount() : 0;
               computeStackSize(this.dragSlots, this.dragMode, itemstack14, j3);
@@ -357,7 +357,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
           for (int l = i; l >= 0 && l < this.inventorySlots.size() && mouseStack.getCount() < mouseStack.getMaxStackSize(); l += j) {
             Slot slot1 = this.inventorySlots.get(l);
 
-            if (slot1.getHasStack() && AbstractDankContainer.canAddItemToSlot(slot1, mouseStack, true) && slot1.canTakeStack(player) && this.canMergeSlot(mouseStack, slot1)) {
+            if (slot1.getHasStack() && AbstractTileDankContainer.canAddItemToSlot(slot1, mouseStack, true) && slot1.canTakeStack(player) && this.canMergeSlot(mouseStack, slot1)) {
               ItemStack itemstack2 = slot1.getStack();
 
               if (k != 0 || itemstack2.getCount() < slot1.getItemStackLimit(itemstack2)) {

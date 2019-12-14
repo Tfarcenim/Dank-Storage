@@ -1,10 +1,12 @@
-package com.tfar.dankstorage.screen;
+package com.tfar.dankstorage.client.screens;
 
 import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.tfar.dankstorage.client.RenderItemExtended;
+import com.tfar.dankstorage.client.button.SmallButton;
+import com.tfar.dankstorage.client.screens.DankScreens;
 import com.tfar.dankstorage.container.AbstractAbstractDankContainer;
-import com.tfar.dankstorage.container.AbstractDankContainer;
+import com.tfar.dankstorage.container.AbstractTileDankContainer;
 import com.tfar.dankstorage.inventory.DankSlot;
 import com.tfar.dankstorage.network.C2SMessageLockSlot;
 import com.tfar.dankstorage.network.CMessageSort;
@@ -33,13 +35,13 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstractDankContainer> extends ContainerScreen<T> {
 
   final ResourceLocation background;//= new ResourceLocation("textures/gui/container/shulker_box.png");
 
   protected final boolean is7;
- // protected final int offset;
 
   public AbstractAbstractDankStorageScreen(T container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background) {
     super(container, playerinventory, component);
@@ -96,9 +98,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     GlStateManager.disableLighting();
     GlStateManager.disableDepthTest();
 
-    for (int k = 0; k < this.buttons.size(); ++k) {
-      this.buttons.get(k).render(mouseX, mouseY, partialTicks);
-    }
+    IntStream.range(0, this.buttons.size()).forEach(k -> this.buttons.get(k).render(mouseX, mouseY, partialTicks));
    // for (int l = 0; l < this.buttons.size(); ++l) {
       // this.buttons.get(l).drawLabel(this.minecraft, mouseX, mouseY);
    // }
@@ -245,7 +245,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
         return;
       }
 
-      if (AbstractDankContainer.canAddItemToSlot(slotIn, itemstack1, true) && this.container.canDragIntoSlot(slotIn)) {
+      if (AbstractTileDankContainer.canAddItemToSlot(slotIn, itemstack1, true) && this.container.canDragIntoSlot(slotIn)) {
         itemstack = itemstack1.copy();
         flag = true;
         Container.computeStackSize(this.dragSplittingSlots, this.dragSplittingLimit, itemstack, slotIn.getStack().isEmpty() ? 0 : slotIn.getStack().getCount());
@@ -458,7 +458,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
           if (slot != this.clickedSlot && !this.clickedSlot.getStack().isEmpty()) {
             this.draggedStack = this.clickedSlot.getStack().copy();
           }
-        } else if (this.draggedStack.getCount() > 1 && slot != null && AbstractDankContainer.canAddItemToSlot(slot, this.draggedStack, false)) {
+        } else if (this.draggedStack.getCount() > 1 && slot != null && AbstractTileDankContainer.canAddItemToSlot(slot, this.draggedStack, false)) {
           long i = System.currentTimeMillis();
 
           if (this.currentDragTargetSlot == slot) {
@@ -475,7 +475,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
           }
         }
       }
-    } else if (this.dragSplitting && slot != null && !itemstack.isEmpty() && (itemstack.getCount() > this.dragSplittingSlots.size() || this.dragSplittingLimit == 2) && AbstractDankContainer.canAddItemToSlot(slot, itemstack, true) && slot.isItemValid(itemstack) && this.container.canDragIntoSlot(slot)) {
+    } else if (this.dragSplitting && slot != null && !itemstack.isEmpty() && (itemstack.getCount() > this.dragSplittingSlots.size() || this.dragSplittingLimit == 2) && AbstractTileDankContainer.canAddItemToSlot(slot, itemstack, true) && slot.isItemValid(itemstack) && this.container.canDragIntoSlot(slot)) {
       this.dragSplittingSlots.add(slot);
       this.updateDragSplitting();
     }
@@ -511,7 +511,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
       if (Screen.hasShiftDown()) {
         if (!this.shiftClickedSlot.isEmpty()) {
           for (Slot slot2 : this.container.inventorySlots) {
-            if (slot2 != null && slot2.canTakeStack(this.minecraft.player) && slot2.getHasStack() && slot2.isSameInventory(slot1) && AbstractDankContainer.canAddItemToSlot(slot2, this.shiftClickedSlot, true)) {
+            if (slot2 != null && slot2.canTakeStack(this.minecraft.player) && slot2.getHasStack() && slot2.isSameInventory(slot1) && AbstractTileDankContainer.canAddItemToSlot(slot2, this.shiftClickedSlot, true)) {
               this.handleMouseClick(slot2, slot2.slotNumber, state, ClickType.QUICK_MOVE);
             }
           }
@@ -541,7 +541,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
             this.draggedStack = this.clickedSlot.getStack();
           }
 
-          boolean flag2 = AbstractDankContainer.canAddItemToSlot(slot1, this.draggedStack, false);
+          boolean flag2 = AbstractTileDankContainer.canAddItemToSlot(slot1, this.draggedStack, false);
 
           if (k != -1 && !this.draggedStack.isEmpty() && flag2) {
             this.handleMouseClick(this.clickedSlot, this.clickedSlot.slotNumber, state, ClickType.PICKUP);

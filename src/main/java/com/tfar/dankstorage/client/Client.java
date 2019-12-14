@@ -5,7 +5,7 @@ import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.*;
-import com.tfar.dankstorage.screen.*;
+import com.tfar.dankstorage.client.screens.*;
 import com.tfar.dankstorage.utils.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;

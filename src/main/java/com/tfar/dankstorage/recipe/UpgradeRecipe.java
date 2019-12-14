@@ -4,17 +4,18 @@ import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.utils.Utils;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.ShapedRecipe;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 
-public abstract class AbstractDankUpgradeRecipe extends ShapedRecipe {
+public class UpgradeRecipe extends ShapedRecipe {
 
-  public AbstractDankUpgradeRecipe(ResourceLocation idIn,NonNullList<Ingredient> ingredients,ItemStack result) {
-    super(idIn,DankStorage.MODID, 3, 3, ingredients,result);
+  public final ShapedRecipe wrappedRecipe;
+
+  public UpgradeRecipe(ShapedRecipe recipe){
+    super(recipe.getId(),recipe.getGroup(),recipe.getWidth(),recipe.getHeight(),recipe.getIngredients(),recipe.getRecipeOutput());
+    wrappedRecipe = recipe;
   }
 
   @Nonnull
@@ -26,5 +27,10 @@ public abstract class AbstractDankUpgradeRecipe extends ShapedRecipe {
     bag.setTag(oldBag.getTag());
     bag.getTag().putInt("Size",Utils.getSlotCount(bag));
     return bag;
+  }
+
+  @Override
+  public IRecipeSerializer<?> getSerializer() {
+    return DankStorage.Objects.upgrade;
   }
 }

@@ -18,6 +18,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tags.ItemTags;
@@ -25,9 +26,9 @@ import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,6 +46,9 @@ public class Utils {
   public static final Tag<Item> BLACKLISTED_USAGE = new ItemTags.Wrapper(new ResourceLocation(DankStorage.MODID,"blacklisted_usage"));
 
   public static final Tag<Item> WRENCHES = new ItemTags.Wrapper(new ResourceLocation("forge","wrenches"));
+
+  //todo rename this to inv in 1.15
+  public static final String INV = "Items";
 
   public static Mode getMode(ItemStack bag) {
     return modes[bag.getOrCreateTag().getInt("mode")];
@@ -72,7 +76,7 @@ public class Utils {
   public static void cyclePlacement(ItemStack bag, PlayerEntity player) {
     int ordinal = bag.getOrCreateTag().getInt("construction");
     ordinal++;
-    if (ordinal > 2) ordinal = 0;
+    if (ordinal >= useTypes.length) ordinal = 0;
     bag.getOrCreateTag().putInt("construction", ordinal);
     player.sendStatusMessage(
             new TranslationTextComponent("dankstorage.construction." + useTypes[ordinal].name()), true);
@@ -293,4 +297,30 @@ public class Utils {
       }
     }
   }
+
+  /**
+   * Copies the nbt compound similar to how {@link CompoundNBT#copy()} does, except it just skips the desired key instead of having to copy a potentially large value
+   * which may be expensive, and then remove it from the copy.
+   *
+   * @implNote If the input {@link CompoundNBT} only contains the key we want to skip, we return null instead of an empty {@link CompoundNBT}.
+   */
+  @Nullable
+  public static CompoundNBT copyNBTSkipKey(@Nonnull CompoundNBT nbt, @Nonnull String keyToSkip) {
+    CompoundNBT copiedNBT = new CompoundNBT();
+    for (String key : nbt.keySet()) {
+      if (keyToSkip.equals(key)) {
+        continue;
+      }
+      INBT innerNBT = nbt.get(key);
+      if (innerNBT != null) {
+        //Shouldn't be null but double check
+        copiedNBT.put(key, innerNBT.copy());
+      }
+    }
+    if (copiedNBT.isEmpty()) {
+      return null;
+    }
+    return copiedNBT;
+  }
+
 }

@@ -7,7 +7,7 @@ import com.tfar.dankstorage.container.DankContainers;
 import com.tfar.dankstorage.item.UpgradeInfo;
 import com.tfar.dankstorage.item.UpgradeItem;
 import com.tfar.dankstorage.network.DankPacketHandler;
-import com.tfar.dankstorage.recipe.DankUpgradeRecipes;
+import com.tfar.dankstorage.recipe.Serializer2;
 import com.tfar.dankstorage.tile.DankTiles;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -16,7 +16,6 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -79,9 +78,7 @@ public class DankStorage {
       // register a new block here
 
       Block.Properties properties = Block.Properties.create(Material.IRON).hardnessAndResistance(1,30);
-      for (int i = 1; i < 8; i++) {
-        register(new DankBlock(properties), "dank_" + i, event.getRegistry());
-      }
+      IntStream.range(1,8).forEach(i -> register(new DankBlock(properties), "dank_" + i, event.getRegistry()));
     }
 
     @SubscribeEvent
@@ -98,12 +95,7 @@ public class DankStorage {
 
     @SubscribeEvent
     public static void recipes(final RegistryEvent.Register<IRecipeSerializer<?>> event) {
-      register(new SpecialRecipeSerializer<>(DankUpgradeRecipes.DankUpgradeRecipe1::new),"upgrade1",event.getRegistry());
-      register(new SpecialRecipeSerializer<>(DankUpgradeRecipes.DankUpgradeRecipe2::new),"upgrade2",event.getRegistry());
-      register(new SpecialRecipeSerializer<>(DankUpgradeRecipes.DankUpgradeRecipe3::new),"upgrade3",event.getRegistry());
-      register(new SpecialRecipeSerializer<>(DankUpgradeRecipes.DankUpgradeRecipe4::new),"upgrade4",event.getRegistry());
-      register(new SpecialRecipeSerializer<>(DankUpgradeRecipes.DankUpgradeRecipe5::new),"upgrade5",event.getRegistry());
-      register(new SpecialRecipeSerializer<>(DankUpgradeRecipes.DankUpgradeRecipe6::new),"upgrade6",event.getRegistry());
+      register(new Serializer2(),"upgrade",event.getRegistry());
     }
 
     @SubscribeEvent
@@ -111,7 +103,7 @@ public class DankStorage {
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        return new DankContainers.DankContainer1(windowId, inv.player.world, pos, inv, inv.player);
+        return new DankContainers.TileDankContainer1(windowId, inv.player.world, pos, inv, inv.player);
       }), "dank_1_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
               -> new DankContainers.PortableDankContainer1(windowId, inv, inv.player)), "portable_dank_1_container", event.getRegistry());
@@ -119,7 +111,7 @@ public class DankStorage {
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        return new DankContainers.DankContainer2(windowId, inv.player.world, pos, inv, inv.player);
+        return new DankContainers.TileDankContainer2(windowId, inv.player.world, pos, inv, inv.player);
       }), "dank_2_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
               -> new DankContainers.PortableDankContainer2(windowId, inv, inv.player)), "portable_dank_2_container", event.getRegistry());
@@ -127,7 +119,7 @@ public class DankStorage {
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        return new DankContainers.DankContainer3(windowId, inv.player.world, pos, inv, inv.player);
+        return new DankContainers.TileDankContainer3(windowId, inv.player.world, pos, inv, inv.player);
       }), "dank_3_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
               -> new DankContainers.PortableDankContainer3(windowId, inv, inv.player)), "portable_dank_3_container", event.getRegistry());
@@ -136,7 +128,7 @@ public class DankStorage {
               -> {
         BlockPos pos = data.readBlockPos();
 
-        return new DankContainers.DankContainer4(windowId, inv.player.world, pos, inv, inv.player);
+        return new DankContainers.TileDankContainer4(windowId, inv.player.world, pos, inv, inv.player);
       }), "dank_4_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
               -> new DankContainers.PortableDankContainer4(windowId, inv, inv.player)), "portable_dank_4_container", event.getRegistry());
@@ -144,7 +136,7 @@ public class DankStorage {
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        return new DankContainers.DankContainer5(windowId, inv.player.world, pos, inv, inv.player);
+        return new DankContainers.TileDankContainer5(windowId, inv.player.world, pos, inv, inv.player);
       }), "dank_5_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
               -> new DankContainers.PortableDankContainer5(windowId, inv, inv.player)), "portable_dank_5_container", event.getRegistry());
@@ -152,7 +144,7 @@ public class DankStorage {
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        return new DankContainers.DankContainer6(windowId, inv.player.world, pos, inv, inv.player);
+        return new DankContainers.TileDankContainer6(windowId, inv.player.world, pos, inv, inv.player);
       }), "dank_6_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
               -> new DankContainers.PortableDankContainer6(windowId, inv, inv.player)), "portable_dank_6_container", event.getRegistry());
@@ -160,7 +152,7 @@ public class DankStorage {
       register(IForgeContainerType.create((windowId, inv, data)
               -> {
         BlockPos pos = data.readBlockPos();
-        return new DankContainers.DankContainer7(windowId, inv.player.world, pos, inv, inv.player);
+        return new DankContainers.TileDankContainer7(windowId, inv.player.world, pos, inv, inv.player);
       }), "dank_7_container", event.getRegistry());
       register(IForgeContainerType.create((windowId, inv, data)
               -> new DankContainers.PortableDankContainer7(windowId, inv, inv.player)), "portable_dank_7_container", event.getRegistry());
@@ -266,13 +258,13 @@ public class DankStorage {
     public static final Block dank_6 = null;
     public static final Block dank_7 = null;
 
-    public static final ContainerType<DankContainers.DankContainer1> dank_1_container = null;
-    public static final ContainerType<DankContainers.DankContainer2> dank_2_container = null;
-    public static final ContainerType<DankContainers.DankContainer3> dank_3_container = null;
-    public static final ContainerType<DankContainers.DankContainer4> dank_4_container = null;
-    public static final ContainerType<DankContainers.DankContainer5> dank_5_container = null;
-    public static final ContainerType<DankContainers.DankContainer6> dank_6_container = null;
-    public static final ContainerType<DankContainers.DankContainer7> dank_7_container = null;
+    public static final ContainerType<DankContainers.TileDankContainer1> dank_1_container = null;
+    public static final ContainerType<DankContainers.TileDankContainer2> dank_2_container = null;
+    public static final ContainerType<DankContainers.TileDankContainer3> dank_3_container = null;
+    public static final ContainerType<DankContainers.TileDankContainer4> dank_4_container = null;
+    public static final ContainerType<DankContainers.TileDankContainer5> dank_5_container = null;
+    public static final ContainerType<DankContainers.TileDankContainer6> dank_6_container = null;
+    public static final ContainerType<DankContainers.TileDankContainer7> dank_7_container = null;
 
 
     public static final ContainerType<DankContainers.PortableDankContainer1> portable_dank_1_container = null;
@@ -284,7 +276,7 @@ public class DankStorage {
     public static final ContainerType<DankContainers.PortableDankContainer7> portable_dank_7_container = null;
 
 
-    public static final TileEntityType<DankTiles.DankStorageTile1> dank_1_tile = null;
+    public static final TileEntityType<?> dank_1_tile = null;
     public static final TileEntityType<DankTiles.DankStorageTile2> dank_2_tile = null;
     public static final TileEntityType<DankTiles.DankStorageTile3> dank_3_tile = null;
     public static final TileEntityType<DankTiles.DankStorageTile4> dank_4_tile = null;
@@ -292,11 +284,6 @@ public class DankStorage {
     public static final TileEntityType<DankTiles.DankStorageTile6> dank_6_tile = null;
     public static final TileEntityType<DankTiles.DankStorageTile7> dank_7_tile = null;
 
-    public static final IRecipeSerializer<?> upgrade1 = null;
-    public static final IRecipeSerializer<?> upgrade2 = null;
-    public static final IRecipeSerializer<?> upgrade3 = null;
-    public static final IRecipeSerializer<?> upgrade4 = null;
-    public static final IRecipeSerializer<?> upgrade5 = null;
-    public static final IRecipeSerializer<?> upgrade6 = null;
+    public static final IRecipeSerializer<?> upgrade = null;
   }
 }

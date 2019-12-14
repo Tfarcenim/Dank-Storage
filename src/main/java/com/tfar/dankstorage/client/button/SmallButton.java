@@ -1,26 +1,28 @@
-package com.tfar.dankstorage.screen;
+package com.tfar.dankstorage.client.button;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import com.tfar.dankstorage.client.Client;
 import net.minecraft.client.gui.widget.button.Button;
 
 public class SmallButton extends Button {
-  public SmallButton(int x, int y, int widthIn, int heightIn, String buttonText, IPressable callback)
-  {
+  public SmallButton(int x, int y, int widthIn, int heightIn, String buttonText, IPressable callback) {
     super(x, y, widthIn, heightIn, buttonText, callback);
   }
 
-  @Override
-  public void render(int mouseX, int mouseY, float partialTicks)
-  {
-    if (visible)
-    {
-      Minecraft minecraft = Minecraft.getInstance();
-      FontRenderer fontrenderer = minecraft.fontRenderer;
-      minecraft.getTextureManager().bindTexture(WIDGETS_LOCATION);
+  public boolean shouldDrawText(){
+    return !getMessage().isEmpty();
+  }
 
-      GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+  public void tint(){
+    GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+  }
+
+  @Override
+  public void render(int mouseX, int mouseY, float partialTicks) {
+    if (visible) {
+      Client.mc.getTextureManager().bindTexture(WIDGETS_LOCATION);
+
+      tint();
 
       isHovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
 
@@ -43,23 +45,20 @@ public class SmallButton extends Button {
               0, 46 + i * 20 + 20 - halfheight2, halfwidth1, halfheight2);
       blit(x + halfwidth1, y + halfheight1,
               200 - halfwidth2, 46 + i * 20 + 20 - halfheight2, halfwidth2, halfheight2);
-
-      int textColor = 14737632;
-
-      if (packedFGColor != 0)
-      {
-        textColor = packedFGColor;
-      }
-      else if (!this.visible)
-      {
-        textColor = 10526880;
-      }
-      else if (this.isHovered)
-      {
-        textColor = 16777120;
-      }
-
-      this.drawCenteredString(fontrenderer, getMessage(), x + halfwidth2, y + (this.height - 8) / 2, textColor);
+      if (shouldDrawText())drawText(halfwidth2);
     }
+  }
+
+  public void drawText(int halfwidth2){
+    int textColor = 0xe0e0e0;
+
+    if (packedFGColor != 0) {
+      textColor = packedFGColor;
+    } else if (!this.visible) {
+      textColor = 0xa0a0a0;
+    } else if (this.isHovered) {
+      textColor = 0xffffa0;
+    }
+    this.drawCenteredString(Client.mc.fontRenderer, getMessage(), x + halfwidth2, y + (this.height - 8) / 2, textColor);
   }
 }

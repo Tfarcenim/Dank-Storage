@@ -3,6 +3,7 @@ package com.tfar.dankstorage.tile;
 
 import com.tfar.dankstorage.block.DankBlock;
 import com.tfar.dankstorage.inventory.DankHandler;
+import com.tfar.dankstorage.utils.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
@@ -90,8 +91,8 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
     super.read(compound);
     this.mode = compound.getInt("mode");
     this.selectedSlot = compound.getInt("selectedSlot");
-    if (compound.contains("Items")) {
-      handler.deserializeNBT(compound.getCompound("Items"));
+    if (compound.contains(Utils.INV)) {
+      handler.deserializeNBT(compound.getCompound(Utils.INV));
     }
     if (compound.contains("CustomName", 8)) {
       this.setCustomName(ITextComponent.Serializer.fromJson(compound.getString("CustomName")));
@@ -104,7 +105,7 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
     super.write(tag);
     tag.putInt("mode",mode);
     tag.putInt("selectedSlot",selectedSlot);
-    tag.put("Items", handler.serializeNBT());
+    tag.put(Utils.INV, handler.serializeNBT());
     if (this.hasCustomName()) {
       tag.putString("CustomName", ITextComponent.Serializer.toJson(this.customName));
     }

@@ -1,5 +1,7 @@
-package com.tfar.dankstorage.screen;
+package com.tfar.dankstorage.client.screens;
 
+import com.tfar.dankstorage.client.button.RedGreenToggleButton;
+import com.tfar.dankstorage.client.button.TripleToggleButton;
 import com.tfar.dankstorage.container.AbstractPortableDankContainer;
 import com.tfar.dankstorage.network.C2SMessageTagMode;
 import com.tfar.dankstorage.network.CMessageTogglePickup;
@@ -21,8 +23,8 @@ public abstract class AbstractPortableDankStorageScreen<T extends AbstractPortab
     int start = 0;
     int namelength = font.getStringWidth(getContainerName().getUnformattedComponentText());
     start += namelength;
-    this.addButton(new ToggleButton(guiLeft + (start += 16), guiTop + 6 ,8,8, b -> {
-      ((ToggleButton)b).toggle();
+    this.addButton(new RedGreenToggleButton(guiLeft + (start += 16), guiTop + 6 ,8,8, b -> {
+      ((RedGreenToggleButton)b).toggle();
       DankPacketHandler.INSTANCE.sendToServer(new C2SMessageTagMode());
     }, Utils.tag(container.getBag())));
     this.addButton(new TripleToggleButton(guiLeft + (start += 30), guiTop + 6 ,8,8, b -> {

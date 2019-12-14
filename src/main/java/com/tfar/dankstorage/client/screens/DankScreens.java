@@ -1,4 +1,4 @@
-package com.tfar.dankstorage.screen;
+package com.tfar.dankstorage.client.screens;
 
 import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.container.DankContainers;
@@ -29,51 +29,51 @@ public class DankScreens {
   private static final ResourceLocation background7 = new ResourceLocation(DankStorage.MODID,
           "textures/container/gui/dank7.png");
 
-  public static class DankStorageScreen1 extends AbstractDankStorageScreen<DankContainers.DankContainer1> {
+  public static class DankStorageScreen1 extends AbstractTileDankStorageScreen<DankContainers.TileDankContainer1> {
 
-    public DankStorageScreen1(DankContainers.DankContainer1 container, PlayerInventory playerinventory, ITextComponent component) {
+    public DankStorageScreen1(DankContainers.TileDankContainer1 container, PlayerInventory playerinventory, ITextComponent component) {
       super(container, playerinventory, component, background1);
     }
   }
 
-  public static class DankStorageScreen2 extends AbstractDankStorageScreen<DankContainers.DankContainer2> {
+  public static class DankStorageScreen2 extends AbstractTileDankStorageScreen<DankContainers.TileDankContainer2> {
 
-    public DankStorageScreen2(DankContainers.DankContainer2 container, PlayerInventory playerinventory, ITextComponent component) {
+    public DankStorageScreen2(DankContainers.TileDankContainer2 container, PlayerInventory playerinventory, ITextComponent component) {
       super(container, playerinventory, component, background2);
     }
   }
 
-  public static class DankStorageScreen3 extends AbstractDankStorageScreen<DankContainers.DankContainer3> {
+  public static class DankStorageScreen3 extends AbstractTileDankStorageScreen<DankContainers.TileDankContainer3> {
 
-    public DankStorageScreen3(DankContainers.DankContainer3 container, PlayerInventory playerinventory, ITextComponent component) {
+    public DankStorageScreen3(DankContainers.TileDankContainer3 container, PlayerInventory playerinventory, ITextComponent component) {
       super(container, playerinventory, component, background3);
     }
   }
 
-  public static class DankStorageScreen4 extends AbstractDankStorageScreen<DankContainers.DankContainer4> {
+  public static class DankStorageScreen4 extends AbstractTileDankStorageScreen<DankContainers.TileDankContainer4> {
 
-    public DankStorageScreen4(DankContainers.DankContainer4 container, PlayerInventory playerinventory, ITextComponent component) {
+    public DankStorageScreen4(DankContainers.TileDankContainer4 container, PlayerInventory playerinventory, ITextComponent component) {
       super(container, playerinventory, component, background4);
     }
   }
 
-  public static class DankStorageScreen5 extends AbstractDankStorageScreen<DankContainers.DankContainer5> {
+  public static class DankStorageScreen5 extends AbstractTileDankStorageScreen<DankContainers.TileDankContainer5> {
 
-    public DankStorageScreen5(DankContainers.DankContainer5 container, PlayerInventory playerinventory, ITextComponent component) {
+    public DankStorageScreen5(DankContainers.TileDankContainer5 container, PlayerInventory playerinventory, ITextComponent component) {
       super(container, playerinventory, component, background5);
     }
   }
 
-  public static class DankStorageScreen6 extends AbstractDankStorageScreen<DankContainers.DankContainer6> {
+  public static class DankStorageScreen6 extends AbstractTileDankStorageScreen<DankContainers.TileDankContainer6> {
 
-    public DankStorageScreen6(DankContainers.DankContainer6 container, PlayerInventory playerinventory, ITextComponent component) {
+    public DankStorageScreen6(DankContainers.TileDankContainer6 container, PlayerInventory playerinventory, ITextComponent component) {
       super(container, playerinventory, component, background6);
     }
   }
 
-  public static class DankStorageScreen7 extends AbstractDankStorageScreen<DankContainers.DankContainer7> {
+  public static class DankStorageScreen7 extends AbstractTileDankStorageScreen<DankContainers.TileDankContainer7> {
 
-    public DankStorageScreen7(DankContainers.DankContainer7 container, PlayerInventory playerinventory, ITextComponent component) {
+    public DankStorageScreen7(DankContainers.TileDankContainer7 container, PlayerInventory playerinventory, ITextComponent component) {
       super(container, playerinventory, component, background7);
     }
   }

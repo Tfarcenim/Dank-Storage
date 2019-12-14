@@ -11,11 +11,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
-public abstract class AbstractDankContainer extends AbstractAbstractDankContainer {
+public abstract class AbstractTileDankContainer extends AbstractAbstractDankContainer {
 
   public AbstractDankStorageTile te;
 
-  public AbstractDankContainer(ContainerType<?> type, int p_i50105_2_, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player, int rows) {
+  public AbstractTileDankContainer(ContainerType<?> type, int p_i50105_2_, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player, int rows) {
     super(type, p_i50105_2_, playerInventory,rows);
     te = (AbstractDankStorageTile) world.getTileEntity(pos);
     te.openInventory(player);
