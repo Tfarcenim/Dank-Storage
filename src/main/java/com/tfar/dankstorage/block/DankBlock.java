@@ -248,7 +248,7 @@ super.onReplaced(state,p_196243_2_,p_196243_3_,newState,p_196243_5_);
   public static ItemStack insertIntoHandler(Mode mode, PortableDankHandler inv, int slot, ItemStack toInsert, boolean simulate, boolean oredict){
 
     ItemStack existing = inv.getStackInSlot(slot);
-    if (ItemHandlerHelper.canItemStacksStack(toInsert,existing) || (oredict && Utils.doItemStacksShareWhitelistedTags(toInsert,existing))){
+    if (ItemHandlerHelper.canItemStacksStack(toInsert,existing) || (oredict && Utils.areItemStacksConvertible(toInsert,existing))){
       int stackLimit = inv.stacklimit;
       int total = toInsert.getCount() + existing.getCount();
       int remainder = total - stackLimit;

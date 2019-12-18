@@ -31,17 +31,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.tfar.dankstorage.network.CMessageTogglePickup.*;
 import static com.tfar.dankstorage.network.CMessageToggleUseType.useTypes;
 
 public class Utils {
 
-  public static final Tag<Item> WHITELISTED_TAGS = new ItemTags.Wrapper(new ResourceLocation(DankStorage.MODID,"whitelisted_tags"));
   public static final Tag<Item> BLACKLISTED_STORAGE = new ItemTags.Wrapper(new ResourceLocation(DankStorage.MODID,"blacklisted_storage"));
   public static final Tag<Item> BLACKLISTED_USAGE = new ItemTags.Wrapper(new ResourceLocation(DankStorage.MODID,"blacklisted_usage"));
 
@@ -79,7 +75,7 @@ public class Utils {
     if (ordinal >= useTypes.length) ordinal = 0;
     bag.getOrCreateTag().putInt("construction", ordinal);
     player.sendStatusMessage(
-            new TranslationTextComponent("dankstorage.construction." + useTypes[ordinal].name()), true);
+            new TranslationTextComponent("dankstorage.usetype." + useTypes[ordinal].name()), true);
   }
 
   public static int getSelectedSlot(ItemStack bag) {
@@ -230,16 +226,18 @@ public class Utils {
     return stack.getItem().isIn(BLACKLISTED_USAGE) ? ItemStack.EMPTY : stack;
   }
 
-  public static boolean doItemStacksShareWhitelistedTags(final ItemStack stack1,final ItemStack stack2) {
+  public static final Set<ResourceLocation> taglist = new HashSet<>();
+
+  public static boolean areItemStacksConvertible(final ItemStack stack1, final ItemStack stack2){
     if (stack1.hasTag() || stack2.hasTag()) return false;
+    Set<ResourceLocation> taglistofstack1 = stack1.getItem().getTags();
+    Set<ResourceLocation> taglistofstack2 = stack2.getItem().getTags();
 
-    if (!stack1.getItem().isIn(WHITELISTED_TAGS) || !stack2.getItem().isIn(WHITELISTED_TAGS))return false;
-
-    Set<ResourceLocation> taglist1 = stack1.getItem().getTags();
-    Set<ResourceLocation> taglist2 = stack2.getItem().getTags();
-    return !Collections.disjoint(taglist1,taglist2);
+    Set<ResourceLocation> commontags = new HashSet<>(taglistofstack1);
+    commontags.retainAll(taglistofstack2);
+    commontags.retainAll(taglist);
+    return !commontags.isEmpty();
   }
-
 
   public static ItemStack readExtendedItemStack(ByteBuf buf){
     int i = buf.readInt();

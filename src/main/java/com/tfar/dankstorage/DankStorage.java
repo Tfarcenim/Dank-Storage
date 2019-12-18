@@ -1,5 +1,6 @@
 package com.tfar.dankstorage;
 
+import com.google.common.collect.Lists;
 import com.tfar.dankstorage.block.DankBlock;
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.client.RenderDankStorage;
@@ -9,6 +10,7 @@ import com.tfar.dankstorage.item.UpgradeItem;
 import com.tfar.dankstorage.network.DankPacketHandler;
 import com.tfar.dankstorage.recipe.Serializer2;
 import com.tfar.dankstorage.tile.DankTiles;
+import com.tfar.dankstorage.utils.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
@@ -29,6 +31,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.ObjectHolder;
@@ -54,6 +57,14 @@ public class DankStorage {
     ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
     EVENT_BUS.addListener(this::drop);
+    FMLJavaModLoadingContext.get().getModEventBus().addListener(this::sync);
+  }
+
+  private void sync(ModConfig.ModConfigEvent e){
+    if (e.getConfig().getModId().equals(MODID)){
+      Utils.taglist.clear();
+      ServerConfig.convertible_tags.get().forEach(s -> Utils.taglist.add(new ResourceLocation(s)));
+    }
   }
 
   private void setup(final FMLCommonSetupEvent event) {
@@ -61,7 +72,7 @@ public class DankStorage {
   }
 
   private void drop(final ItemTossEvent event) {
-    if (event.getEntityItem().getItem().getItem() instanceof DankItemBlock){
+    if (event.getEntityItem().getItem().getItem() instanceof DankItemBlock) {
       //no
       event.getEntityItem().setInvulnerable(true);
     }
@@ -77,8 +88,8 @@ public class DankStorage {
     public static void blocks(final RegistryEvent.Register<Block> event) {
       // register a new block here
 
-      Block.Properties properties = Block.Properties.create(Material.IRON).hardnessAndResistance(1,30);
-      IntStream.range(1,8).forEach(i -> register(new DankBlock(properties), "dank_" + i, event.getRegistry()));
+      Block.Properties properties = Block.Properties.create(Material.IRON).hardnessAndResistance(1, 30);
+      IntStream.range(1, 8).forEach(i -> register(new DankBlock(properties), "dank_" + i, event.getRegistry()));
     }
 
     @SubscribeEvent
@@ -86,7 +97,7 @@ public class DankStorage {
       Item.Properties properties = new Item.Properties().group(ItemGroup.DECORATIONS).maxStackSize(1).setTEISR(RegistryEvents::get);
       MOD_BLOCKS.forEach(block -> register(new DankItemBlock(block, properties), block.getRegistryName().getPath(), event.getRegistry()));
       Item.Properties properties1 = new Item.Properties().group(ItemGroup.DECORATIONS);
-      IntStream.range(1,7).forEach(i -> register(new UpgradeItem(properties1,new UpgradeInfo(i,i+1)),i+"_to_"+(i+1),event.getRegistry()));
+      IntStream.range(1, 7).forEach(i -> register(new UpgradeItem(properties1, new UpgradeInfo(i, i + 1)), i + "_to_" + (i + 1), event.getRegistry()));
     }
 
     private static Callable<ItemStackTileEntityRenderer> get() {
@@ -95,7 +106,7 @@ public class DankStorage {
 
     @SubscribeEvent
     public static void recipes(final RegistryEvent.Register<IRecipeSerializer<?>> event) {
-      register(new Serializer2(),"upgrade",event.getRegistry());
+      register(new Serializer2(), "upgrade", event.getRegistry());
     }
 
     @SubscribeEvent
@@ -159,7 +170,6 @@ public class DankStorage {
     }
 
 
-
     @SubscribeEvent
     public static void tiles(final RegistryEvent.Register<TileEntityType<?>> event) {
       register(TileEntityType.Builder.create(DankTiles.DankStorageTile1::new, Objects.dank_1).build(null), "dank_1_tile", event.getRegistry());
@@ -200,7 +210,7 @@ public class DankStorage {
       builder.push("client");
       preview = builder
               .comment("Whether to display the preview of the item in the dank, disable if you have optifine")
-              .define("preview",true);
+              .define("preview", true);
       builder.pop();
     }
   }
@@ -214,35 +224,67 @@ public class DankStorage {
     public static ForgeConfigSpec.IntValue stacklimit6;
     public static ForgeConfigSpec.IntValue stacklimit7;
     public static ForgeConfigSpec.BooleanValue useShareTag;
+    public static ForgeConfigSpec.ConfigValue<List<String>> convertible_tags;
 
+    public static final List<String> defaults = Lists.newArrayList(
+            "forge:ingots/iron",
+            "forge:ingots/gold",
+            "forge:ores/coal",
+            "forge:ores/diamond",
+            "forge:ores/emerald",
+            "forge:ores/gold",
+            "forge:ores/iron",
+            "forge:ores/lapis",
+            "forge:ores/redstone",
+
+            "forge:gems/amethyst",
+            "forge:gems/peridot",
+            "forge:gems/ruby",
+
+            "forge:ingots/copper",
+            "forge:ingots/lead",
+            "forge:ingots/nickel",
+            "forge:ingots/silver",
+            "forge:ingots/tin",
+
+            "forge:ores/copper",
+            "forge:ores/lead",
+            "forge:ores/ruby",
+            "forge:ores/silver",
+            "forge:ores/tin");
 
     public ServerConfig(ForgeConfigSpec.Builder builder) {
       builder.push("server");
       stacklimit1 = builder.
               comment("Stack limit of first dank storage")
-              .defineInRange("stacklimit1",256,1,Integer.MAX_VALUE);
+              .defineInRange("stacklimit1", 256, 1, Integer.MAX_VALUE);
       stacklimit2 = builder.
               comment("Stack limit of second dank storage")
-              .defineInRange("stacklimit2",1024,1,Integer.MAX_VALUE);
+              .defineInRange("stacklimit2", 1024, 1, Integer.MAX_VALUE);
       stacklimit3 = builder.
               comment("Stack limit of third dank storage")
-              .defineInRange("stacklimit3",4096,1,Integer.MAX_VALUE);
+              .defineInRange("stacklimit3", 4096, 1, Integer.MAX_VALUE);
       stacklimit4 = builder.
               comment("Stack limit of fourth dank storage")
-              .defineInRange("stacklimit4",16384,1,Integer.MAX_VALUE);
+              .defineInRange("stacklimit4", 16384, 1, Integer.MAX_VALUE);
       stacklimit5 = builder.
               comment("Stack limit of fifth dank storage")
-              .defineInRange("stacklimit5",65536,1,Integer.MAX_VALUE);
+              .defineInRange("stacklimit5", 65536, 1, Integer.MAX_VALUE);
       stacklimit6 = builder.
               comment("Stack limit of sixth dank storage")
-              .defineInRange("stacklimit6",262144,1,Integer.MAX_VALUE);
+              .defineInRange("stacklimit6", 262144, 1, Integer.MAX_VALUE);
       stacklimit7 = builder.
               comment("Stack limit of seventh dank storage")
-              .defineInRange("stacklimit7",Integer.MAX_VALUE,1,Integer.MAX_VALUE);
+              .defineInRange("stacklimit7", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
+
+      convertible_tags = builder.
+              comment("Tags that are eligible for conversion, input as a list of resourcelocation, eg 'forge:ingots/iron'")
+              .define("convertible tags", defaults);
+
       useShareTag = builder.
-              comment("Use Share Tag instead of full NBT to reduce the chance of NBT overflow.  Warning: this will cause the Dank\n" +
+              comment("Use Share Tag instead of full NBT to reduce the chance of NBT oversending causing clients to be disconnected.  Warning: this will cause the Dank\n" +
                       "Storage to wipe it's items in Creative Mode.  There is nothing I can do about this as it is a vanilla bug.")
-              .define("useShareTag",false);
+              .define("useShareTag", false);
       builder.pop();
     }
   }

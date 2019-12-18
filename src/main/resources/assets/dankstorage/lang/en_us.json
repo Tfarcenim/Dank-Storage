@@ -52,5 +52,7 @@
 
   "text.dankstorage.stacklimit": "Stack Limit: %s",
 
+  "text.dankstorage.exact": "Exact Count: %s",
+
   "text.dankstorage.formatcontaineditems" : "%s %s"
 }

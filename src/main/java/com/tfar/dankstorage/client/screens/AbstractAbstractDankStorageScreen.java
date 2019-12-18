@@ -206,6 +206,11 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
       ITextComponent component2 = new TranslationTextComponent("text.dankstorage.lock",
               new StringTextComponent("ctrl").applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY);
       tooltip.add(component2.getFormattedText());
+      if (hoveredSlot.getStack().getCount()>=1000){
+        ITextComponent component3 = new TranslationTextComponent(
+                "text.dankstorage.exact",new StringTextComponent(Integer.toString(hoveredSlot.getStack().getCount())).applyTextStyle(TextFormatting.AQUA)).applyTextStyle(TextFormatting.GRAY);
+        tooltip.add(component3.getFormattedText());
+      }
     }
     }
     this.renderTooltip(tooltip, p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.font : font));
