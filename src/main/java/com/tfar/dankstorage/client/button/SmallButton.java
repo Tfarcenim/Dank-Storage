@@ -1,6 +1,7 @@
 package com.tfar.dankstorage.client.button;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.tfar.dankstorage.client.Client;
 import net.minecraft.client.gui.widget.button.Button;
 
@@ -14,7 +15,7 @@ public class SmallButton extends Button {
   }
 
   public void tint(){
-    GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+    RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
   }
 
   @Override
@@ -28,9 +29,9 @@ public class SmallButton extends Button {
 
       int i = getYImage(isHovered);
 
-      GlStateManager.enableBlend();
-      GlStateManager.blendFuncSeparate(770, 771, 1, 0);
-      GlStateManager.blendFunc(770, 771);
+      RenderSystem.enableBlend();
+      RenderSystem.blendFuncSeparate(770, 771, 1, 0);
+      RenderSystem.blendFunc(770, 771);
 
       int halfwidth1 = this.width / 2;
       int halfwidth2 = this.width - halfwidth1;

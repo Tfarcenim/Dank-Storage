@@ -44,7 +44,7 @@ public class Utils {
   public static final Tag<Item> WRENCHES = new ItemTags.Wrapper(new ResourceLocation("forge","wrenches"));
 
   //todo rename this to inv in 1.15
-  public static final String INV = "Items";
+  public static final String INV = "inv";
 
   public static Mode getMode(ItemStack bag) {
     return modes[bag.getOrCreateTag().getInt("mode")];

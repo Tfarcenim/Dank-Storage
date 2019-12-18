@@ -131,14 +131,14 @@ public class DankItemBlock extends BlockItem {
         EquipmentSlotType hand1 = hand == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
         //handle empty
         if (toPlace.isEmpty()){
-          return ActionResult.newResult(ActionResultType.PASS, bag);
+          return ActionResult.func_226250_c_(bag);
         }
 
         //handle food
         if (toPlace.getItem().isFood()) {
           if (player.canEat(false)) {
             player.setActiveHand(hand);
-            return ActionResult.newResult(ActionResultType.PASS, bag);
+            return ActionResult.func_226250_c_(bag);
           }
         }
         //handle potion

@@ -1,10 +1,10 @@
 package com.tfar.dankstorage.client.screens;
 
 import com.mojang.blaze3d.platform.GLX;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.datafixers.util.Pair;
 import com.tfar.dankstorage.client.RenderItemExtended;
 import com.tfar.dankstorage.client.button.SmallButton;
-import com.tfar.dankstorage.client.screens.DankScreens;
 import com.tfar.dankstorage.container.AbstractAbstractDankContainer;
 import com.tfar.dankstorage.container.AbstractTileDankContainer;
 import com.tfar.dankstorage.inventory.DankSlot;
@@ -32,6 +32,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import org.lwjgl.opengl.GL13;
 
 import java.util.Iterator;
 import java.util.List;
@@ -93,26 +94,26 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     int i = this.guiLeft;
     int j = this.guiTop;
     this.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-    GlStateManager.disableRescaleNormal();
+    RenderSystem.disableRescaleNormal();
     RenderHelper.disableStandardItemLighting();
-    GlStateManager.disableLighting();
-    GlStateManager.disableDepthTest();
+    RenderSystem.disableLighting();
+    RenderSystem.disableDepthTest();
 
     IntStream.range(0, this.buttons.size()).forEach(k -> this.buttons.get(k).render(mouseX, mouseY, partialTicks));
    // for (int l = 0; l < this.buttons.size(); ++l) {
       // this.buttons.get(l).drawLabel(this.minecraft, mouseX, mouseY);
    // }
 
-    RenderHelper.enableGUIStandardItemLighting();
-    GlStateManager.pushMatrix();
-    GlStateManager.translatef((float) i, (float) j, 0.0F);
-    GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-    GlStateManager.enableRescaleNormal();
+    RenderHelper.func_227780_a_();
+    RenderSystem.pushMatrix();
+    RenderSystem.translatef((float) i, (float) j, 0.0F);
+    RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+    RenderSystem.enableRescaleNormal();
     this.hoveredSlot = null;
     int k = 240;
     int l = 240;
-    GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, k, l);
-    GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+    RenderSystem.glMultiTexCoord2f(GL13.GL_TEXTURE1, k, l);
+    RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
     for (int i1 = 0; i1 < this.container.inventorySlots.size(); ++i1) {
       Slot slot = this.container.inventorySlots.get(i1);
@@ -123,21 +124,21 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
 
       if (this.isMouseOverSlot(slot, mouseX, mouseY) && slot.isEnabled()) {
         this.hoveredSlot = slot;
-        GlStateManager.disableLighting();
-        GlStateManager.disableDepthTest();
+        RenderSystem.disableLighting();
+        RenderSystem.disableDepthTest();
         int j1 = slot.xPos;
         int k1 = slot.yPos;
-        GlStateManager.colorMask(true, true, true, false);
+        RenderSystem.colorMask(true, true, true, false);
         this.fillGradient(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
-        GlStateManager.colorMask(true, true, true, true);
-        GlStateManager.enableLighting();
-        GlStateManager.enableDepthTest();
+        RenderSystem.colorMask(true, true, true, true);
+        RenderSystem.enableLighting();
+        RenderSystem.enableDepthTest();
       }
     }
 
     RenderHelper.disableStandardItemLighting();
     this.drawGuiContainerForegroundLayer(mouseX, mouseY);
-    RenderHelper.enableGUIStandardItemLighting();
+    RenderHelper.func_227780_a_();
     net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawForeground(this, mouseX, mouseY));
     PlayerInventory inventoryplayer = this.minecraft.player.inventory;
     ItemStack itemstack = this.draggedStack.isEmpty() ? inventoryplayer.getItemStack() : this.draggedStack;
@@ -177,10 +178,8 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
       this.drawItemStack(this.returningStack, l1, i2, null);
     }
 
-    GlStateManager.popMatrix();
-    GlStateManager.enableLighting();
-    GlStateManager.enableDepthTest();
-    RenderHelper.enableStandardItemLighting();
+    RenderSystem.popMatrix();
+    RenderSystem.enableDepthTest();
 
     this.renderHoveredToolTip(mouseX, mouseY);
   }
@@ -218,15 +217,15 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
   }
 
   private void drawItemStack(ItemStack stack, int x, int y, String altText) {
-    GlStateManager.translatef(0.0F, 0.0F, 32.0F);
-    this.blitOffset = 200;
+    RenderSystem.translatef(0.0F, 0.0F, 32.0F);
+    this.setBlitOffset(200);
     this.itemRenderer.zLevel = 200.0F;
     RenderItemExtended.INSTANCE.setZLevel(this.itemRenderer.zLevel);
     net.minecraft.client.gui.FontRenderer fonts = stack.getItem().getFontRenderer(stack);
     if (fonts == null) fonts = font;
     this.itemRenderer.renderItemAndEffectIntoGUI(stack, x, y);
     this.itemRenderer.renderItemOverlayIntoGUI(fonts, stack, x, y - (this.draggedStack.isEmpty() ? 0 : 8), altText);
-    this.blitOffset = 0;
+    this.setBlitOffset(0);
     this.itemRenderer.zLevel = 0.0F;
     RenderItemExtended.INSTANCE.setZLevel(this.itemRenderer.zLevel);
   }
@@ -266,17 +265,16 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
       }
     }
 
-    this.blitOffset = 100;
+    this.setBlitOffset(100);
     this.itemRenderer.zLevel = 100;
 
     if (itemstack.isEmpty() && slotIn.isEnabled()) {
-      TextureAtlasSprite textureatlassprite = slotIn.getBackgroundSprite();
+      Pair<ResourceLocation, ResourceLocation> pair = slotIn.func_225517_c_();
 
-      if (textureatlassprite != null) {
-        GlStateManager.disableLighting();
-        this.minecraft.getTextureManager().bindTexture(slotIn.getBackgroundLocation());
-        AbstractGui.blit(i, j, blitOffset, 16, 16, textureatlassprite);
-        GlStateManager.enableLighting();
+      if (pair != null) {
+        TextureAtlasSprite textureatlassprite = this.minecraft.func_228015_a_(pair.getFirst()).apply(pair.getSecond());
+        this.minecraft.getTextureManager().bindTexture(textureatlassprite.func_229241_m_().func_229223_g_());
+        blit(i, j, this.getBlitOffset(), 16, 16, textureatlassprite);
         flag1 = true;
       }
     }
@@ -286,7 +284,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
         fill(i, j, i + 16, j + 16, 0x80ffffff);
       }
 
-      GlStateManager.enableDepthTest();
+      RenderSystem.enableDepthTest();
       this.itemRenderer.renderItemAndEffectIntoGUI(this.minecraft.player, itemstack, i, j);
       RenderItemExtended.INSTANCE.setZLevel(this.itemRenderer.zLevel);
       if (slotIn instanceof DankSlot) {
@@ -297,7 +295,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     }
 
     this.itemRenderer.zLevel = 0.0F;
-    this.blitOffset = 0;
+    this.setBlitOffset(0);
     RenderItemExtended.INSTANCE.setZLevel(this.itemRenderer.zLevel);
   }
 

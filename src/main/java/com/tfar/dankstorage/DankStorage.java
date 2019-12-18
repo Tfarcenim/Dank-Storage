@@ -94,7 +94,7 @@ public class DankStorage {
 
     @SubscribeEvent
     public static void items(final RegistryEvent.Register<Item> event) {
-      Item.Properties properties = new Item.Properties().group(ItemGroup.DECORATIONS).maxStackSize(1).setTEISR(RegistryEvents::get);
+      Item.Properties properties = new Item.Properties().group(ItemGroup.DECORATIONS).maxStackSize(1);
       MOD_BLOCKS.forEach(block -> register(new DankItemBlock(block, properties), block.getRegistryName().getPath(), event.getRegistry()));
       Item.Properties properties1 = new Item.Properties().group(ItemGroup.DECORATIONS);
       IntStream.range(1, 7).forEach(i -> register(new UpgradeItem(properties1, new UpgradeInfo(i, i + 1)), i + "_to_" + (i + 1), event.getRegistry()));

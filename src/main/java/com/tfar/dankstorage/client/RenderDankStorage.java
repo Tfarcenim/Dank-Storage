@@ -1,7 +1,10 @@
 package com.tfar.dankstorage.client;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
@@ -18,7 +21,7 @@ public class RenderDankStorage extends ItemStackTileEntityRenderer {
   public DankBakedModel model;
   public static ItemCameraTransforms.TransformType transform;
   public static List<RenderDankStorage> teisrs = new ArrayList<>();
-  private ItemRenderer itemRenderer;
+  private DankItemRenderer itemRenderer;
   public RenderDankStorage() {
     teisrs.add(this);
   }
@@ -30,12 +33,12 @@ public class RenderDankStorage extends ItemStackTileEntityRenderer {
 
 
   @Override
-  public void renderByItem(ItemStack stack) {
-    GlStateManager.pushMatrix();
+  public void func_228364_a_(ItemStack stack, MatrixStack matrixStack, IRenderTypeBuffer iRenderTypeBuffer, int p_228364_4_, int p_228364_5_) {
+    RenderSystem.pushMatrix();
     if (itemRenderer == null)itemRenderer = new DankItemRenderer(mc.textureManager,mc.getModelManager(),mc.getItemColors(),mc.getItemRenderer().getItemModelMesher());
-    model.handlePerspective(transform);
-    this.itemRenderer.renderItem(stack, model.internal);
-    GlStateManager.popMatrix();
+    model.handlePerspective(transform,matrixStack);
+    this.itemRenderer.func_229111_a_(stack,transform,false,matrixStack,iRenderTypeBuffer,p_228364_4_,p_228364_5_, model.internal);
+    RenderSystem.popMatrix();
   }
 }
 

@@ -1,6 +1,7 @@
 package com.tfar.dankstorage.client.button;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 public class RedGreenToggleButton extends SmallButton {
 
@@ -17,7 +18,7 @@ public class RedGreenToggleButton extends SmallButton {
 
   @Override
   public void tint() {
-    if (toggled)GlStateManager.color3f(0,1,0);
-    else GlStateManager.color3f(1,0,0);
+    if (toggled) RenderSystem.color3f(0,1,0);
+    else RenderSystem.color3f(1,0,0);
   }
 }

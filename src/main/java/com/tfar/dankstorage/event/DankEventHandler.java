@@ -46,6 +46,6 @@ public class DankEventHandler {
     PlayerEntity player = event.getPlayer();
     if (!player.getHeldItem(event.getHand()).getItem().isIn(Utils.WRENCHES)) return;
     event.setCanceled(true);
-    event.getWorld().getBlockState(pos).getBlock().onBlockActivated(state,event.getWorld(),pos, player, event.getHand(),null);
+    event.getWorld().getBlockState(pos).getBlock().func_225533_a_(state,event.getWorld(),pos, player, event.getHand(),null);
   }
 }

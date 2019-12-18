@@ -1,6 +1,7 @@
 package com.tfar.dankstorage.client;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
@@ -67,6 +68,7 @@ public class Client {
 
   @SubscribeEvent
   public static void models(ModelBakeEvent e){
+    if (true)return;
     Map<ResourceLocation, IBakedModel> models = e.getModelRegistry();
     for (int i = 0; i < 14 ;i++) {
       ResourceLocation rl = modelLocations[i];
@@ -120,7 +122,7 @@ public class Client {
     @SubscribeEvent
     public static void mousewheel(InputEvent.MouseScrollEvent e) {
       PlayerEntity player = Minecraft.getInstance().player;
-      if (player != null && player.isSneaking() && (Utils.isConstruction(player.getHeldItemMainhand()) || Utils.isConstruction(player.getHeldItemOffhand()))) {
+      if (player != null && player.isCrouching() && (Utils.isConstruction(player.getHeldItemMainhand()) || Utils.isConstruction(player.getHeldItemOffhand()))) {
         boolean right = e.getScrollDelta() < 0;
         DankPacketHandler.INSTANCE.sendToServer(new C2SMessageScrollSlot(right));
         e.setCanceled(true);
@@ -150,8 +152,8 @@ public class Client {
           Integer color = toPlace.getItem().getRarity(toPlace).color.getColor();
 
           int c = color != null ? color : 0xFFFFFF;
-          GlStateManager.enableRescaleNormal();
-          RenderHelper.enableGUIStandardItemLighting();
+          RenderSystem.enableRescaleNormal();
+          RenderHelper.func_227780_a_();
           int xStart = event.getWindow().getScaledWidth() / 2;
           int yStart = event.getWindow().getScaledHeight();
           final int itemX = xStart - 150;
@@ -161,13 +163,13 @@ public class Client {
 
           mc.getItemRenderer().renderItemOverlays(mc.fontRenderer, toPlace, itemX, itemY);
           RenderHelper.disableStandardItemLighting();
-          GlStateManager.disableRescaleNormal();
-          GlStateManager.popMatrix();
+          RenderSystem.disableRescaleNormal();
+          RenderSystem.popMatrix();
         }
       }
 
       String mode = Utils.getUseType(bag).name();
-      drawLineOffsetStringOnHUD(mode, 20, 1,0xFFFFFF, 29);
+      //drawLineOffsetStringOnHUD(mode, 20, 1,0xFFFFFF, 29);
       mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
     }
   }

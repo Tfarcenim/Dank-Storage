@@ -24,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.EnchantingTableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -54,11 +55,11 @@ public class DankBlock extends Block {
   }
 
   @Override
-  public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult result) {
+  public ActionResultType func_225533_a_(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
     if (!world.isRemote) {
       final TileEntity tile = world.getTileEntity(pos);
 
-      if (player.isSneaking()){
+      if (player.isCrouching()){
         if (tile instanceof AbstractDankStorageTile){
           ItemStack dank = new ItemStack(((AbstractDankStorageTile) tile).getDank());
           CompoundNBT nbt = ((AbstractDankStorageTile) tile).getHandler().serializeNBT();
@@ -68,16 +69,16 @@ public class DankBlock extends Block {
           ItemEntity itemEntity = new ItemEntity(world,pos.getX()+ .5,pos.getY() + .5,pos.getZ()+.5,dank);
           world.addEntity(itemEntity);
           world.removeBlock(pos,false);
-          return true;
+          return ActionResultType.SUCCESS;
         }
       }
 
       if (tile instanceof INamedContainerProvider) {
         NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
 
-      } else throw new IllegalStateException("Our named container provider is missing!");
+      }
     }
-    return true;
+    return ActionResultType.SUCCESS;
   }
 
   @Override
@@ -237,7 +238,7 @@ super.onReplaced(state,p_196243_2_,p_196243_3_,newState,p_196243_5_);
     if (rem.getCount() != count) {
       bag.setAnimationsToGo(5);
       PlayerEntity player = event.getPlayer();
-      player.world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((player.getRNG().nextFloat() - player.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
+      player.world.playSound(null, player.func_226277_ct_(), player.func_226278_cu_(), player.func_226281_cx_(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((player.getRNG().nextFloat() - player.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
       inv.writeItemStack();
     }
     return toPickup.isEmpty();
