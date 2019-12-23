@@ -26,7 +26,7 @@ public abstract class AbstractPortableDankStorageScreen<T extends AbstractPortab
     this.addButton(new RedGreenToggleButton(guiLeft + (start += 16), guiTop + 6 ,8,8, b -> {
       ((RedGreenToggleButton)b).toggle();
       DankPacketHandler.INSTANCE.sendToServer(new C2SMessageTagMode());
-    }, Utils.tag(container.getBag())));
+    }, Utils.oredict(container.getBag())));
     this.addButton(new TripleToggleButton(guiLeft + (start += 30), guiTop + 6 ,8,8, b -> {
       ((TripleToggleButton)b).toggle();
       DankPacketHandler.INSTANCE.sendToServer(new CMessageTogglePickup());

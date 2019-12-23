@@ -35,7 +35,7 @@ public class C2SMessageLockSlot {
       ctx.get().enqueueWork(  ()->  {
         Container container = player.openContainer;
         if (container instanceof AbstractAbstractDankContainer) {
-          Utils.lockSlot(((AbstractAbstractDankContainer) container).getHandler(),slot);
+          ((AbstractAbstractDankContainer) container).getHandler().lockSlot(slot);
         }
       });
       ctx.get().setPacketHandled(true);

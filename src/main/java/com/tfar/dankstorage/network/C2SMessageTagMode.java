@@ -21,7 +21,7 @@ public class C2SMessageTagMode {
 
       ctx.get().enqueueWork(() ->  {
         if (player.getHeldItemMainhand().getItem() instanceof DankItemBlock) {
-          boolean toggle = Utils.tag(player.getHeldItemMainhand());
+          boolean toggle = Utils.oredict(player.getHeldItemMainhand());
           player.getHeldItemMainhand().getOrCreateTag().putBoolean("tag",!toggle);
         }
       });

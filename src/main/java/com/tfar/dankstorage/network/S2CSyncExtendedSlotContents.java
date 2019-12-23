@@ -1,11 +1,13 @@
 package com.tfar.dankstorage.network;
 
 import com.tfar.dankstorage.container.AbstractAbstractDankContainer;
+import com.tfar.dankstorage.utils.PacketBufferEX;
 import com.tfar.dankstorage.utils.Utils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -28,16 +30,18 @@ public class S2CSyncExtendedSlotContents {
     this.stack = stack.copy();
   }
 
-  public S2CSyncExtendedSlotContents(ByteBuf buf) {
+  public S2CSyncExtendedSlotContents(PacketBuffer buf) {
+    buf = new PacketBufferEX(buf);
     this.windowId = buf.readByte();
     this.slot = buf.readInt();
-      this.stack = Utils.readExtendedItemStack(buf);
+    this.stack = ((PacketBufferEX) buf).readExtendedItemStack();
   }
 
-  public void encode(ByteBuf buf) {
+  public void encode(PacketBuffer buf) {
+    buf = new PacketBufferEX(buf);
     buf.writeByte(this.windowId);
     buf.writeInt(this.slot);
-    Utils.writeExtendedItemStack(buf, stack);
+    ((PacketBufferEX) buf).writeExtendedItemStack(stack);
   }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {

@@ -1,6 +1,5 @@
 package com.tfar.dankstorage.client.screens;
 
-import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 import com.tfar.dankstorage.client.RenderItemExtended;
@@ -13,7 +12,6 @@ import com.tfar.dankstorage.network.CMessageSort;
 import com.tfar.dankstorage.network.DankPacketHandler;
 import com.tfar.dankstorage.utils.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.Screen;
@@ -220,14 +218,14 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     RenderSystem.translatef(0.0F, 0.0F, 32.0F);
     this.setBlitOffset(200);
     this.itemRenderer.zLevel = 200.0F;
-    RenderItemExtended.INSTANCE.setZLevel(this.itemRenderer.zLevel);
+    RenderItemExtended.INSTANCE.zLevel = this.itemRenderer.zLevel;
     net.minecraft.client.gui.FontRenderer fonts = stack.getItem().getFontRenderer(stack);
     if (fonts == null) fonts = font;
     this.itemRenderer.renderItemAndEffectIntoGUI(stack, x, y);
     this.itemRenderer.renderItemOverlayIntoGUI(fonts, stack, x, y - (this.draggedStack.isEmpty() ? 0 : 8), altText);
     this.setBlitOffset(0);
     this.itemRenderer.zLevel = 0.0F;
-    RenderItemExtended.INSTANCE.setZLevel(this.itemRenderer.zLevel);
+    RenderItemExtended.INSTANCE.zLevel = this.itemRenderer.zLevel;
   }
 
   public abstract ITextComponent getContainerName();
@@ -286,7 +284,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
 
       RenderSystem.enableDepthTest();
       this.itemRenderer.renderItemAndEffectIntoGUI(this.minecraft.player, itemstack, i, j);
-      RenderItemExtended.INSTANCE.setZLevel(this.itemRenderer.zLevel);
+      RenderItemExtended.INSTANCE.zLevel = this.itemRenderer.zLevel;
       if (slotIn instanceof DankSlot) {
         RenderItemExtended.INSTANCE.renderItemOverlayIntoGUI(this.font, itemstack, i, j, s);
       } else {
@@ -296,7 +294,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
 
     this.itemRenderer.zLevel = 0.0F;
     this.setBlitOffset(0);
-    RenderItemExtended.INSTANCE.setZLevel(this.itemRenderer.zLevel);
+    RenderItemExtended.INSTANCE.zLevel = itemRenderer.zLevel;
   }
 
   private void updateDragSplitting() {
@@ -366,7 +364,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
       Slot slot = getSlotAtPosition(mouseX,mouseY);
       if (slot instanceof DankSlot) {
         DankPacketHandler.INSTANCE.sendToServer(new C2SMessageLockSlot(slot.slotNumber));
-        if (this instanceof AbstractPortableDankStorageScreen)Utils.lockSlot(container.getHandler(),slot.slotNumber);
+        if (this instanceof AbstractPortableDankStorageScreen)container.getHandler().lockSlot(slot.slotNumber);
         return true;
       }
     }

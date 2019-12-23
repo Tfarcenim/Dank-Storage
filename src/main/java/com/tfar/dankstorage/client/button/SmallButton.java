@@ -1,6 +1,5 @@
 package com.tfar.dankstorage.client.button;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.tfar.dankstorage.client.Client;
 import net.minecraft.client.gui.widget.button.Button;

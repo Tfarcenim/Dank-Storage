@@ -100,6 +100,10 @@ public class DankHandler extends ItemStackHandler {
     return stacks;
   }
 
+  public void lockSlot(int slot){
+    lockedSlots[slot] = 1 - lockedSlots[slot];
+  }
+
   public boolean isLocked(int slot){
     return lockedSlots[slot] == 1;
   }

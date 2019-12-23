@@ -5,7 +5,6 @@ import com.tfar.dankstorage.container.DankContainers;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.item.Item;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -27,11 +26,6 @@ public class DankTiles {
     public ITextComponent getName() {
       return this.hasCustomName() ? this.customName : new TranslationTextComponent("container.dankstorage.dank_1");
     }
-
-    @Override
-    public Item getDank() {
-      return DankStorage.Objects.dank_1.asItem();
-    }
   }
 
   public static class DankStorageTile2 extends AbstractDankStorageTile {
@@ -49,11 +43,6 @@ public class DankTiles {
     @Override
     public ITextComponent getName() {
       return this.hasCustomName() ? this.customName : new TranslationTextComponent("container.dankstorage.dank_2");
-    }
-
-    @Override
-    public Item getDank() {
-      return DankStorage.Objects.dank_2.asItem();
     }
   }
 
@@ -73,11 +62,6 @@ public class DankTiles {
     public ITextComponent getName() {
       return this.hasCustomName() ? this.customName : new TranslationTextComponent("container.dankstorage.dank_3");
     }
-
-    @Override
-    public Item getDank() {
-      return DankStorage.Objects.dank_3.asItem();
-    }
   }
 
   public static class DankStorageTile4 extends AbstractDankStorageTile {
@@ -95,11 +79,6 @@ public class DankTiles {
     @Override
     public ITextComponent getName() {
       return this.hasCustomName() ? this.customName : new TranslationTextComponent("container.dankstorage.dank_4");
-    }
-
-    @Override
-    public Item getDank() {
-      return DankStorage.Objects.dank_4.asItem();
     }
   }
 
@@ -119,11 +98,6 @@ public class DankTiles {
     public ITextComponent getName() {
       return this.hasCustomName() ? this.customName : new TranslationTextComponent("container.dankstorage.dank_5");
     }
-
-    @Override
-    public Item getDank() {
-      return DankStorage.Objects.dank_5.asItem();
-    }
   }
 
   public static class DankStorageTile6 extends AbstractDankStorageTile {
@@ -142,11 +116,6 @@ public class DankTiles {
     public ITextComponent getName() {
       return this.hasCustomName() ? this.customName : new TranslationTextComponent("container.dankstorage.dank_6");
     }
-
-    @Override
-    public Item getDank() {
-      return DankStorage.Objects.dank_6.asItem();
-    }
   }
 
   public static class DankStorageTile7 extends AbstractDankStorageTile {
@@ -164,11 +133,6 @@ public class DankTiles {
     @Override
     public ITextComponent getName() {
       return this.hasCustomName() ? this.customName : new TranslationTextComponent("container.dankstorage.dank_7");
-    }
-
-    @Override
-    public Item getDank() {
-      return DankStorage.Objects.dank_7.asItem();
     }
   }
 }

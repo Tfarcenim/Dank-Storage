@@ -19,27 +19,11 @@ public class PortableDankHandler extends DankHandler {
   }
 
   public void writeItemStack() {
-
-      int mode = Utils.getMode(bag).ordinal();
-      int construction = Utils.getUseType(bag).ordinal();
-      int selectedSlot = Utils.getSelectedSlot(bag);
-      boolean tag = Utils.tag(bag);
-      CompoundNBT nbt = null;
-      if (bag.hasDisplayName()) nbt = bag.getChildTag("display");
-
-      bag.setTag(serializeNBT());
-      if (nbt != null)bag.getOrCreateTag().put("display",nbt);
-      bag.getOrCreateTag().putInt("mode",mode);
-      bag.getOrCreateTag().putInt("construction",construction);
-      bag.getOrCreateTag().putInt("selectedSlot",selectedSlot);
-      bag.getOrCreateTag().putBoolean("tag",tag);
-
+      bag.getOrCreateTag().put(Utils.INV,serializeNBT());
   }
 
   public void readItemStack() {
-    if (bag.hasTag()) {
-      deserializeNBT(bag.getTag());
-    }
+      deserializeNBT(bag.getOrCreateChildTag(Utils.INV));
   }
 
   @Override

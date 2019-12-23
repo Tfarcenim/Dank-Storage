@@ -1,6 +1,5 @@
 package com.tfar.dankstorage.client.button;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 public class RedGreenToggleButton extends SmallButton {

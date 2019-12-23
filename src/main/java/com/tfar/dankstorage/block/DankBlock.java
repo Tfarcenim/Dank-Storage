@@ -1,10 +1,9 @@
 package com.tfar.dankstorage.block;
 
+import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.client.Client;
-import com.tfar.dankstorage.container.AbstractAbstractDankContainer;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
-import com.tfar.dankstorage.network.CMessageTogglePickup;
 import com.tfar.dankstorage.network.CMessageToggleUseType;
 import com.tfar.dankstorage.utils.Utils;
 import com.tfar.dankstorage.tile.AbstractDankStorageTile;
@@ -17,17 +16,12 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.EnchantingTableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.*;
@@ -36,14 +30,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -55,20 +47,13 @@ public class DankBlock extends Block {
   }
 
   @Override
-  public ActionResultType func_225533_a_(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
+  public ActionResultType func_225533_a_(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult p_225533_6_) {
     if (!world.isRemote) {
       final TileEntity tile = world.getTileEntity(pos);
 
-      if (player.isCrouching()){
+      if (player.isCrouching() && player.getHeldItem(hand).getItem().isIn(Utils.WRENCHES)){
         if (tile instanceof AbstractDankStorageTile){
-          ItemStack dank = new ItemStack(((AbstractDankStorageTile) tile).getDank());
-          CompoundNBT nbt = ((AbstractDankStorageTile) tile).getHandler().serializeNBT();
-          nbt.putInt("mode",((AbstractDankStorageTile) tile).mode);
-          nbt.putInt("selectedSlot",((AbstractDankStorageTile) tile).selectedSlot);
-          dank.setTag(nbt);
-          ItemEntity itemEntity = new ItemEntity(world,pos.getX()+ .5,pos.getY() + .5,pos.getZ()+.5,dank);
-          world.addEntity(itemEntity);
-          world.removeBlock(pos,false);
+          world.func_225521_a_(pos,true,player);
           return ActionResultType.SUCCESS;
         }
       }
@@ -82,25 +67,11 @@ public class DankBlock extends Block {
   }
 
   @Override
-  public void onBlockHarvested(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-    final TileEntity tile = world.getTileEntity(pos);
-    if (tile instanceof AbstractDankStorageTile && !world.isRemote){
-      ItemStack dank = new ItemStack(((AbstractDankStorageTile) tile).getDank());
-      CompoundNBT nbt = ((AbstractDankStorageTile) tile).getHandler().serializeNBT();
-      nbt.putInt("mode",((AbstractDankStorageTile) tile).mode);
-      nbt.putInt("selectedSlot",((AbstractDankStorageTile) tile).selectedSlot);
-      dank.setTag(nbt);
-      ItemEntity itemEntity = new ItemEntity(world,pos.getX()+ .5,pos.getY() + .5,pos.getZ()+.5,dank);
-      world.addEntity(itemEntity);
-    }
-  }
-
-  @Override
   public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity entity, ItemStack stack) {
     TileEntity te = world.getTileEntity(pos);
-    if (te instanceof AbstractDankStorageTile && !world.isRemote && entity != null) {
+    if (te instanceof AbstractDankStorageTile && !world.isRemote) {
       if (stack.hasTag()){
-        ((AbstractDankStorageTile) te).setContents(stack.getTag());
+        ((AbstractDankStorageTile) te).setContents(stack.getOrCreateChildTag(Utils.INV));
         ((AbstractDankStorageTile) te).mode = stack.getTag().getInt("mode");
         ((AbstractDankStorageTile) te).selectedSlot = stack.getTag().getInt("selectedSlot");
         if (stack.hasDisplayName()) {
@@ -151,7 +122,7 @@ public class DankBlock extends Block {
   @Override
   @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack bag, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-    //if (bag.hasTag())tooltip.add(new StringTextComponent(bag.getTag().toString()));
+    if (bag.hasTag())tooltip.add(new StringTextComponent(bag.getTag().toString()));
 
     if (!Screen.hasShiftDown()){
       tooltip.add(new TranslationTextComponent("text.dankstorage.shift",
@@ -202,11 +173,6 @@ public class DankBlock extends Block {
     return super.getNameTextComponent();
   }
 
-  @Override
-  public void onReplaced(BlockState state, World p_196243_2_, BlockPos p_196243_3_, BlockState newState, boolean p_196243_5_) {
-super.onReplaced(state,p_196243_2_,p_196243_3_,newState,p_196243_5_);
-  }
-
   public static boolean onItemPickup(EntityItemPickupEvent event, ItemStack bag) {
 
     Mode mode = Utils.getMode(bag);
@@ -215,7 +181,7 @@ super.onReplaced(state,p_196243_2_,p_196243_3_,newState,p_196243_5_);
     ItemStack toPickup = event.getItem().getItem();
     int count = toPickup.getCount();
     ItemStack rem = toPickup.copy();
-    boolean oredict = Utils.tag(bag);
+    boolean oredict = Utils.oredict(bag);
 
         //stack with existing items
         List<Integer> emptyslots = new ArrayList<>();

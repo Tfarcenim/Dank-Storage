@@ -159,8 +159,6 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
     return customName;
   }
 
-  public abstract Item getDank();
-
   public void setContents(CompoundNBT nbt){
     handler.deserializeNBT(nbt);
   }

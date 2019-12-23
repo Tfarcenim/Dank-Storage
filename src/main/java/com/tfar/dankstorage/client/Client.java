@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
@@ -95,10 +96,6 @@ public class Client {
     ScreenManager.registerFactory(DankStorage.Objects.dank_7_container, DankScreens.DankStorageScreen7::new);
     ScreenManager.registerFactory(DankStorage.Objects.portable_dank_7_container, DankScreens.PortableDankStorageScreen7::new);
 
-    for (Block block : MOD_BLOCKS){
-      //block.asItem().
-    }
-
     CONSTRUCTION = new KeyBinding("key.dankstorage.construction", GLFW.GLFW_KEY_I, "key.categories.dankstorage");
 
     ClientRegistry.registerKeyBinding(CONSTRUCTION);
@@ -146,22 +143,21 @@ public class Client {
         ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
 
         if (!toPlace.isEmpty()) {
-          // String s1 = s.getUnformattedComponentText();
-          //String slot = String.valueOf(Utils.getSelectedSlot(bag));
+
 
           Integer color = toPlace.getItem().getRarity(toPlace).color.getColor();
 
           int c = color != null ? color : 0xFFFFFF;
-          RenderSystem.enableRescaleNormal();
-          RenderHelper.func_227780_a_();
+
           int xStart = event.getWindow().getScaledWidth() / 2;
           int yStart = event.getWindow().getScaledHeight();
           final int itemX = xStart - 150;
           final int itemY = yStart - 20;
+          RenderSystem.enableRescaleNormal();
+          RenderHelper.func_227780_a_();
+          RenderSystem.pushMatrix();
+          //drawItemStack(toPlace,itemX,itemY);
 
-          mc.getItemRenderer().renderItemAndEffectIntoGUI(toPlace, itemX, itemY);
-
-          mc.getItemRenderer().renderItemOverlays(mc.fontRenderer, toPlace, itemX, itemY);
           RenderHelper.disableStandardItemLighting();
           RenderSystem.disableRescaleNormal();
           RenderSystem.popMatrix();
@@ -169,7 +165,6 @@ public class Client {
       }
 
       String mode = Utils.getUseType(bag).name();
-      //drawLineOffsetStringOnHUD(mode, 20, 1,0xFFFFFF, 29);
       mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
     }
   }
@@ -178,6 +173,21 @@ public class Client {
 
   public static void drawLineOffsetStringOnHUD(String string, int xOffset, int yOffset, int color, int lineOffset) {
     drawStringOnHUD(string, xOffset, yOffset, color, lineOffset);
+  }
+
+  /**
+   * Draws an ItemStack.
+   *
+   * The z index is increased by 32 (and not decreased afterwards), and the item is then rendered at z=200.
+   */
+  public static void drawItemStack(ItemStack stack, int x, int y) {
+
+    ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+    RenderSystem.translatef(0.0F, 0.0F, 32.0F);
+    itemRenderer.zLevel = 200.0F;
+    net.minecraft.client.gui.FontRenderer font = stack.getItem().getFontRenderer(stack);
+    itemRenderer.renderItemAndEffectIntoGUI(stack, x, y);
+    itemRenderer.zLevel = 0.0F;
   }
 
   public static void drawStringOnHUD(String string, int xOffset, int yOffset, int color, int lineOffset) {

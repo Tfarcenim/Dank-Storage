@@ -9,6 +9,9 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.client.renderer.model.ModelManager;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
@@ -16,13 +19,12 @@ import net.minecraft.util.math.MathHelper;
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 
-public class RenderItemExtended {
+public class RenderItemExtended extends ItemRenderer {
 
-  ItemRenderer itemRender = Minecraft.getInstance().getItemRenderer();
-  public static final RenderItemExtended INSTANCE = new RenderItemExtended();
+  public static final RenderItemExtended INSTANCE = new RenderItemExtended(Minecraft.getInstance().textureManager,Minecraft.getInstance().getModelManager(),Minecraft.getInstance().getItemColors());
 
-  public void setZLevel(float z) {
-    itemRender.zLevel = z;
+  protected RenderItemExtended(TextureManager textureManagerIn, ModelManager modelManagerIn, ItemColors itemColorsIn) {
+    super(textureManagerIn, modelManagerIn, itemColorsIn);
   }
 
   public void renderItemOverlayIntoGUI(FontRenderer fr, ItemStack stack, int xPosition, int yPosition,
@@ -31,8 +33,8 @@ public class RenderItemExtended {
       MatrixStack matrixstack = new MatrixStack();
 
       if (stack.getCount() != 1 || text != null) {
-        String s = text == null ? String.valueOf(stack.getCount()) : text;
-        matrixstack.func_227861_a_(0.0D, 0.0D, (double)(itemRender.zLevel + 200.0F));
+        String s = text == null ? getStringFromInt(stack.getCount()) : text;
+        matrixstack.func_227861_a_(0.0D, 0.0D, (double)(this.zLevel + 200.0F));
         IRenderTypeBuffer.Impl irendertypebuffer$impl = IRenderTypeBuffer.func_228455_a_(Tessellator.getInstance().getBuffer());
 
         RenderSystem.pushMatrix();
@@ -64,8 +66,6 @@ public class RenderItemExtended {
         RenderSystem.enableLighting();
         RenderSystem.enableDepthTest();
       }
-
-
 
       ClientPlayerEntity entityplayersp = Minecraft.getInstance().player;
       float f3 = entityplayersp == null ? 0.0F
