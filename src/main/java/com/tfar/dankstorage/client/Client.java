@@ -1,20 +1,20 @@
 package com.tfar.dankstorage.client;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.tfar.dankstorage.DankStorage;
 import com.tfar.dankstorage.block.DankItemBlock;
+import com.tfar.dankstorage.client.screens.DankScreens;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
-import com.tfar.dankstorage.network.*;
-import com.tfar.dankstorage.client.screens.*;
+import com.tfar.dankstorage.network.C2SMessageScrollSlot;
+import com.tfar.dankstorage.network.CMessagePickBlock;
+import com.tfar.dankstorage.network.CMessageToggleUseType;
+import com.tfar.dankstorage.network.DankPacketHandler;
 import com.tfar.dankstorage.utils.Utils;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.IngameGui;
 import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.settings.KeyBinding;
@@ -35,9 +35,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.Map;
 
-import static com.tfar.dankstorage.DankStorage.RegistryEvents.MOD_BLOCKS;
-
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD,value = Dist.CLIENT)
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class Client {
 
   public static KeyBinding CONSTRUCTION;
@@ -45,41 +43,41 @@ public class Client {
 
   @SubscribeEvent
   public static void client(ModelRegistryEvent e) {
-   // ResourceLocation rl1 = new ResourceLocation(DankStorage.MODID,"dank_model");
-   // ModelLoader.addSpecialModel(rl1);
+    // ResourceLocation rl1 = new ResourceLocation(DankStorage.MODID,"dank_model");
+    // ModelLoader.addSpecialModel(rl1);
   }
 
   public static final ModelResourceLocation[] modelLocations = new ModelResourceLocation[]{
-          new ModelResourceLocation(DankStorage.MODID+":dank_1",""),
-          new ModelResourceLocation(DankStorage.MODID+":dank_2",""),
-          new ModelResourceLocation(DankStorage.MODID+":dank_3",""),
-          new ModelResourceLocation(DankStorage.MODID+":dank_4",""),
-          new ModelResourceLocation(DankStorage.MODID+":dank_5",""),
-          new ModelResourceLocation(DankStorage.MODID+":dank_6",""),
-          new ModelResourceLocation(DankStorage.MODID+":dank_7",""),
+          new ModelResourceLocation(DankStorage.MODID + ":dank_1", ""),
+          new ModelResourceLocation(DankStorage.MODID + ":dank_2", ""),
+          new ModelResourceLocation(DankStorage.MODID + ":dank_3", ""),
+          new ModelResourceLocation(DankStorage.MODID + ":dank_4", ""),
+          new ModelResourceLocation(DankStorage.MODID + ":dank_5", ""),
+          new ModelResourceLocation(DankStorage.MODID + ":dank_6", ""),
+          new ModelResourceLocation(DankStorage.MODID + ":dank_7", ""),
 
-          new ModelResourceLocation(DankStorage.MODID+":dank_1","inventory"),
-          new ModelResourceLocation(DankStorage.MODID+":dank_2","inventory"),
-          new ModelResourceLocation(DankStorage.MODID+":dank_3","inventory"),
-          new ModelResourceLocation(DankStorage.MODID+":dank_4","inventory"),
-          new ModelResourceLocation(DankStorage.MODID+":dank_5","inventory"),
-          new ModelResourceLocation(DankStorage.MODID+":dank_6","inventory"),
-          new ModelResourceLocation(DankStorage.MODID+":dank_7","inventory"),
+          new ModelResourceLocation(DankStorage.MODID + ":dank_1", "inventory"),
+          new ModelResourceLocation(DankStorage.MODID + ":dank_2", "inventory"),
+          new ModelResourceLocation(DankStorage.MODID + ":dank_3", "inventory"),
+          new ModelResourceLocation(DankStorage.MODID + ":dank_4", "inventory"),
+          new ModelResourceLocation(DankStorage.MODID + ":dank_5", "inventory"),
+          new ModelResourceLocation(DankStorage.MODID + ":dank_6", "inventory"),
+          new ModelResourceLocation(DankStorage.MODID + ":dank_7", "inventory"),
   };
 
   @SubscribeEvent
-  public static void models(ModelBakeEvent e){
-    if (true)return;
+  public static void models(ModelBakeEvent e) {
+    if (true) return;
     Map<ResourceLocation, IBakedModel> models = e.getModelRegistry();
-    for (int i = 0; i < 14 ;i++) {
+    for (int i = 0; i < 14; i++) {
       ResourceLocation rl = modelLocations[i];
       DankBakedModel model = new DankBakedModel(models.get(modelLocations[i]));
-      if (i < 7)RenderDankStorage.teisrs.get(i).setModel(model);
+      if (i < 7) RenderDankStorage.teisrs.get(i).setModel(model);
       models.put(rl, model);
     }
   }
 
-    @SubscribeEvent
+  @SubscribeEvent
   public static void client(FMLClientSetupEvent e) {
     ScreenManager.registerFactory(DankStorage.Objects.dank_1_container, DankScreens.DankStorageScreen1::new);
     ScreenManager.registerFactory(DankStorage.Objects.portable_dank_1_container, DankScreens.PortableDankStorageScreen1::new);
@@ -107,7 +105,8 @@ public class Client {
   public static class KeyHandler {
     @SubscribeEvent
     public static void onKeyInput(InputEvent.KeyInputEvent event) {
-      if (mc.player == null || !(mc.player.getHeldItemMainhand().getItem() instanceof DankItemBlock || mc.player.getHeldItemOffhand().getItem() instanceof DankItemBlock))return;
+      if (mc.player == null || !(mc.player.getHeldItemMainhand().getItem() instanceof DankItemBlock || mc.player.getHeldItemOffhand().getItem() instanceof DankItemBlock))
+        return;
       if (CONSTRUCTION.isPressed()) {
         DankPacketHandler.INSTANCE.sendToServer(new CMessageToggleUseType());
       }
@@ -127,17 +126,19 @@ public class Client {
     }
 
     @SubscribeEvent
-    public static void onRenderTick(RenderGameOverlayEvent event) {
+    public static void onRenderTick(RenderGameOverlayEvent.Post event) {
       PlayerEntity player = mc.player;
-      if (!DankStorage.ClientConfig.preview.get() || player == null)return;
+      if (event.getType() != RenderGameOverlayEvent.ElementType.HOTBAR || !DankStorage.ClientConfig.preview.get() || player == null)
+        return;
       if (!(player.openContainer instanceof PlayerContainer)) return;
       ItemStack bag = player.getHeldItemMainhand();
-      if (!(bag.getItem()instanceof DankItemBlock)){
+      if (!(bag.getItem() instanceof DankItemBlock)) {
         bag = player.getHeldItemOffhand();
-        if (!(bag.getItem()instanceof DankItemBlock))
-        return;
+        if (!(bag.getItem() instanceof DankItemBlock))
+          return;
       }
-
+      int xStart = event.getWindow().getScaledWidth() / 2;
+      int yStart = event.getWindow().getScaledHeight();
       if (Utils.isConstruction(bag)) {
         PortableDankHandler handler = Utils.getHandler(bag);
         ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
@@ -149,51 +150,34 @@ public class Client {
 
           int c = color != null ? color : 0xFFFFFF;
 
-          int xStart = event.getWindow().getScaledWidth() / 2;
-          int yStart = event.getWindow().getScaledHeight();
-          final int itemX = xStart - 150;
-          final int itemY = yStart - 20;
-          RenderSystem.enableRescaleNormal();
-          RenderHelper.func_227780_a_();
-          RenderSystem.pushMatrix();
-          //drawItemStack(toPlace,itemX,itemY);
 
-          RenderHelper.disableStandardItemLighting();
-          RenderSystem.disableRescaleNormal();
-          RenderSystem.popMatrix();
+          final int itemX = xStart - 150;
+          final int itemY = yStart - 25;
+          renderHotbarItem(itemX, itemY, 0, player, toPlace);
         }
       }
-
+      final int stringX = xStart - 155;
+      final int stringY = yStart - 10;
       String mode = Utils.getUseType(bag).name();
+      mc.fontRenderer.drawStringWithShadow(mode,stringX,stringY,0xffffff);
       mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
     }
   }
 
-  private static FontRenderer fontRenderer;
+  private static void renderHotbarItem(int x, int y, float partialTicks, PlayerEntity player, ItemStack stack) {
+    float f = (float) stack.getAnimationsToGo() - partialTicks;
+    if (f > 0.0F) {
+      RenderSystem.pushMatrix();
+      float f1 = 1.0F + f / 5.0F;
+      RenderSystem.translatef((float) (x + 8), (float) (y + 12), 0.0F);
+      RenderSystem.scalef(1.0F / f1, (f1 + 1.0F) / 2.0F, 1.0F);
+      RenderSystem.translatef((float) (-(x + 8)), (float) (-(y + 12)), 0.0F);
+    }
 
-  public static void drawLineOffsetStringOnHUD(String string, int xOffset, int yOffset, int color, int lineOffset) {
-    drawStringOnHUD(string, xOffset, yOffset, color, lineOffset);
+    mc.getItemRenderer().renderItemAndEffectIntoGUI(player, stack, x, y);
+    if (f > 0.0F) {
+      RenderSystem.popMatrix();
+    }
+    mc.getItemRenderer().renderItemOverlays(mc.fontRenderer, stack, x, y);
   }
-
-  /**
-   * Draws an ItemStack.
-   *
-   * The z index is increased by 32 (and not decreased afterwards), and the item is then rendered at z=200.
-   */
-  public static void drawItemStack(ItemStack stack, int x, int y) {
-
-    ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-    RenderSystem.translatef(0.0F, 0.0F, 32.0F);
-    itemRenderer.zLevel = 200.0F;
-    net.minecraft.client.gui.FontRenderer font = stack.getItem().getFontRenderer(stack);
-    itemRenderer.renderItemAndEffectIntoGUI(stack, x, y);
-    itemRenderer.zLevel = 0.0F;
-  }
-
-  public static void drawStringOnHUD(String string, int xOffset, int yOffset, int color, int lineOffset) {
-    yOffset += lineOffset * 9;
-    if (fontRenderer == null) fontRenderer = mc.fontRenderer;
-    fontRenderer.drawString(string, 2 + xOffset, 2 + yOffset, color);
-  }
-
 }

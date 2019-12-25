@@ -6,7 +6,6 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-
 public class CMessageSort {
 
   public CMessageSort() {
@@ -14,9 +13,7 @@ public class CMessageSort {
 
   public void handle(Supplier<NetworkEvent.Context> ctx) {
     PlayerEntity player = ctx.get().getSender();
-
     if (player == null) return;
-
     ctx.get().enqueueWork(() -> Utils.sort(player));
   }
 }

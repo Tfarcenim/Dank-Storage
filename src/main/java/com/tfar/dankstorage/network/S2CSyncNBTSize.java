@@ -16,9 +16,7 @@ public class S2CSyncNBTSize {
   private int windowId = 0;
   private int size = 0;
 
-  public S2CSyncNBTSize() {
-
-  }
+  public S2CSyncNBTSize() {}
 
   public S2CSyncNBTSize(int windowId, int slot) {
     this.windowId = windowId;

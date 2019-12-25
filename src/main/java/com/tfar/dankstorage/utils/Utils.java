@@ -37,7 +37,6 @@ public class Utils {
 
   public static final Tag<Item> WRENCHES = new ItemTags.Wrapper(new ResourceLocation("forge", "wrenches"));
 
-  //todo rename this to inv in 1.15
   public static final String INV = "inv";
 
   public static Mode getMode(ItemStack bag) {
@@ -162,19 +161,15 @@ public class Utils {
     return Integer.parseInt(registryname.getPath().substring(5));
   }
 
-  public static int getSize(ItemStack bag) {
-    return bag.getOrCreateTag().getInt("Size");
-  }
-
   public static void changeSlot(ItemStack bag, boolean right) {
-    PortableDankHandler handler = getHandler(bag);
+    bag.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(handler -> {
     //don't change slot if empty
-    if (handler.noValidSlots()) return;
-    int selectedSlot = getSelectedSlot(bag) + (right ? 1 : -1);
-    int size = getSize(bag);
-    if (selectedSlot < 0) selectedSlot = size - 1;
+      DankHandler dankHandler = (DankHandler)handler;
+    if (dankHandler.noValidSlots()) return;
+    int selectedSlot = getSelectedSlot(bag);
+    int size = handler.getSlots();
     //keep iterating until a valid slot is found (not empty and not blacklisted from usage)
-    while (handler.getStackInSlot(selectedSlot).isEmpty() || handler.getStackInSlot(selectedSlot).getItem().isIn(BLACKLISTED_USAGE)) {
+    while (true) {
       if (right) {
         selectedSlot++;
         if (selectedSlot >= size) selectedSlot = 0;
@@ -182,8 +177,10 @@ public class Utils {
         selectedSlot--;
         if (selectedSlot < 0) selectedSlot = size - 1;
       }
+      if (!handler.getStackInSlot(selectedSlot).isEmpty() && !handler.getStackInSlot(selectedSlot).getItem().isIn(BLACKLISTED_USAGE))break;
     }
     setSelectedSlot(bag, selectedSlot);
+    });
   }
 
   public static boolean oredict(ItemStack bag) {

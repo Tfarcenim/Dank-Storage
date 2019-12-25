@@ -20,9 +20,7 @@ public class S2CSyncExtendedSlotContents {
   private int slot = 0;
   private ItemStack stack = ItemStack.EMPTY;
 
-  public S2CSyncExtendedSlotContents() {
-
-  }
+  public S2CSyncExtendedSlotContents() {}
 
   public S2CSyncExtendedSlotContents(int windowId, int slot, ItemStack stack) {
     this.windowId = windowId;

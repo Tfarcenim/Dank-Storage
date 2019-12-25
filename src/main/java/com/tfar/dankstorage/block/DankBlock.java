@@ -147,7 +147,7 @@ public class DankBlock extends Block {
       }
       int count1 = 0;
       for (int i = 0; i < handler.getSlots(); i++) {
-        if (count1>10)break;
+        if (count1 > 10)break;
         ItemStack item = handler.getStackInSlot(i);
         if (item.isEmpty())continue;
         ITextComponent count = new StringTextComponent(Integer.toString(item.getCount())).applyTextStyle(TextFormatting.AQUA);

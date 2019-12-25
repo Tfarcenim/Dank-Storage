@@ -14,9 +14,12 @@ public class C2SMessageScrollSlot {
 
   boolean right;
 
-  public C2SMessageScrollSlot(){}
+  public C2SMessageScrollSlot() {
+  }
 
-  public C2SMessageScrollSlot(boolean right){ this.right = right;}
+  public C2SMessageScrollSlot(boolean right) {
+    this.right = right;
+  }
 
   //decode
   public C2SMessageScrollSlot(PacketBuffer buf) {
@@ -27,21 +30,13 @@ public class C2SMessageScrollSlot {
     buf.writeBoolean(right);
   }
 
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-      PlayerEntity player = ctx.get().getSender();
-
-      if (player == null) return;
-
-      ctx.get().enqueueWork(  ()->  {
-        ItemStack bag = player.getHeldItemMainhand();
-        if (bag.getItem() instanceof DankItemBlock) {
-          boolean construction = Utils.isConstruction(player.getHeldItemMainhand());
-          if (construction){
-            Utils.changeSlot(bag,right);
-          }
-        }
-      });
-      ctx.get().setPacketHandled(true);
-    }
+  public void handle(Supplier<NetworkEvent.Context> ctx) {
+    PlayerEntity player = ctx.get().getSender();
+    ctx.get().enqueueWork(() -> {
+      ItemStack bag = player.getHeldItemMainhand();
+      Utils.changeSlot(bag, right);
+    });
+    ctx.get().setPacketHandled(true);
+  }
 }
 

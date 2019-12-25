@@ -29,9 +29,7 @@ public class C2SMessageLockSlot {
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
       PlayerEntity player = ctx.get().getSender();
-
       if (player == null) return;
-
       ctx.get().enqueueWork(  ()->  {
         Container container = player.openContainer;
         if (container instanceof AbstractAbstractDankContainer) {

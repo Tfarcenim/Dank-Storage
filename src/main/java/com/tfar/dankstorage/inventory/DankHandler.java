@@ -29,7 +29,9 @@ public class DankHandler extends ItemStackHandler {
   }
 
   public boolean noValidSlots(){
-    return isEmpty() || IntStream.range(0,getSlots()).allMatch(i -> getStackInSlot(i).getItem().isIn(Utils.BLACKLISTED_USAGE));
+    return IntStream.range(0,getSlots())
+            .mapToObj(this::getStackInSlot)
+            .allMatch(stack -> stack.isEmpty() || stack.getItem().isIn(Utils.BLACKLISTED_USAGE));
   }
 
   @Override
