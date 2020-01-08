@@ -11,11 +11,8 @@ import javax.annotation.Nonnull;
 
 public class UpgradeRecipe extends ShapedRecipe {
 
-  public final ShapedRecipe wrappedRecipe;
-
   public UpgradeRecipe(ShapedRecipe recipe){
     super(recipe.getId(),recipe.getGroup(),recipe.getWidth(),recipe.getHeight(),recipe.getIngredients(),recipe.getRecipeOutput());
-    wrappedRecipe = recipe;
   }
 
   @Nonnull
@@ -25,7 +22,7 @@ public class UpgradeRecipe extends ShapedRecipe {
     ItemStack oldBag = inv.getStackInSlot(4).copy();
     if (!oldBag.hasTag())return bag;
     bag.setTag(oldBag.getTag());
-    bag.getTag().putInt("Size",Utils.getSlotCount(bag));
+    bag.getOrCreateChildTag(Utils.INV).putInt("Size",Utils.getSlotCount(bag));
     return bag;
   }
 

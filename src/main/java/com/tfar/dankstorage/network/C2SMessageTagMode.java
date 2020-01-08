@@ -12,8 +12,6 @@ public class C2SMessageTagMode {
 
   public C2SMessageTagMode(){}
 
-
-
     public void handle(Supplier<NetworkEvent.Context> ctx) {
       PlayerEntity player = ctx.get().getSender();
 
