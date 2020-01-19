@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.tfar.dankstorage.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "main.refmap.json",
+  "mixins": [
+    "MixinPlayerEntity"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -3,9 +3,12 @@ buildscript {
         maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
+        maven {url='https://dist.creeper.host/Sponge/maven'}
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+
     }
 }
 plugins {
@@ -75,6 +78,9 @@ repositories{
         name = "ModMaven"
         url = "https://modmaven.k-4u.nl"
     }
+
+    maven {url='https://dist.creeper.host/Sponge/maven'}
+
 }
 
 dependencies {
@@ -91,8 +97,9 @@ dependencies {
 
     //compile fg.deobf("curse.maven:building-gadgets:2820989")
 
-    
-    
+
+    compile 'org.spongepowered:mixin:0.8-SNAPSHOT'
+
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"
 
@@ -113,12 +120,13 @@ jar {
     manifest {
         attributes([
                 "Specification-Title": "dankstorage",
-                "Specification-Vendor": "examplemodsareus",
+                "Specification-Vendor": "",
                 "Specification-Version": "1", // We are version 1 of ourselves
                 "Implementation-Title": project.name,
                 "Implementation-Version": "${version}",
                 "Implementation-Vendor" :"examplemodsareus",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "MixinConnector": "com.tfar.dankstorage.MyMixinConnector"
         ])
     }
 }
@@ -143,4 +151,9 @@ publishing {
             url "file:///${project.projectDir}/mcmodsrepo"
         }
     }
+}
+apply plugin: 'org.spongepowered.mixin'
+
+mixin {
+    add sourceSets.main, "main.refmap.json"
 }
