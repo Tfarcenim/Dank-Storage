@@ -1,6 +1,6 @@
 package tfar.dankstorage.item;
 
-import tfar.dankstorage.DankBlock;
+import tfar.dankstorage.block.DankBlock;
 import tfar.dankstorage.utils.Utils;
 
 public class UpgradeInfo {

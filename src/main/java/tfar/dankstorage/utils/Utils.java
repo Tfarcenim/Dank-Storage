@@ -1,7 +1,8 @@
 package tfar.dankstorage.utils;
 
+import net.minecraft.item.Items;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.DankBlock;
+import tfar.dankstorage.block.DankBlock;
 import tfar.dankstorage.DankItemBlock;
 import tfar.dankstorage.container.AbstractAbstractDankContainer;
 import tfar.dankstorage.inventory.DankHandler;
@@ -252,6 +253,17 @@ public class Utils {
       return null;
     }
     return copiedNBT;
+  }
+
+  public static boolean DEV;
+
+  static {
+    try {
+      Items.class.getField("field_190931_a");
+      DEV = false;
+    } catch (NoSuchFieldException e) {
+      DEV = true;
+    }
   }
 
   public static boolean isMixinInClasspath() {

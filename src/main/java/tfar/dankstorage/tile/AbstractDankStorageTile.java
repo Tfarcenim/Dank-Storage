@@ -1,7 +1,7 @@
 
 package tfar.dankstorage.tile;
 
-import tfar.dankstorage.DankBlock;
+import tfar.dankstorage.block.DankBlock;
 import tfar.dankstorage.inventory.DankHandler;
 import tfar.dankstorage.utils.Utils;
 import net.minecraft.entity.player.PlayerEntity;

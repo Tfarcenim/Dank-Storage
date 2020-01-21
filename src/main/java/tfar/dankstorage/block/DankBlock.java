@@ -1,4 +1,4 @@
-package tfar.dankstorage;
+package tfar.dankstorage.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -126,7 +126,7 @@ public class DankBlock extends Block {
   @Override
   @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack bag, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-    if (bag.hasTag())tooltip.add(new StringTextComponent(bag.getTag().toString()));
+    if (bag.hasTag() && Utils.DEV)tooltip.add(new StringTextComponent(bag.getTag().toString()));
 
     if (!Screen.hasShiftDown()){
       tooltip.add(new TranslationTextComponent("text.dankstorage.shift",

@@ -11,7 +11,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import tfar.dankstorage.DankBlock;
+import tfar.dankstorage.block.DankBlock;
 import tfar.dankstorage.DankItemBlock;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.container.AbstractPortableDankContainer;

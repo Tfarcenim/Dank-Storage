@@ -1,6 +1,7 @@
 package tfar.dankstorage;
 
 import com.google.common.collect.Lists;
+import tfar.dankstorage.block.DankBlock;
 import tfar.dankstorage.client.RenderDankStorage;
 import tfar.dankstorage.container.DankContainers;
 import tfar.dankstorage.item.UpgradeInfo;
