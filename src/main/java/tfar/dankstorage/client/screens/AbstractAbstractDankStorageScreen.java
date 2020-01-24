@@ -102,7 +102,6 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
       // this.buttons.get(l).drawLabel(this.minecraft, mouseX, mouseY);
    // }
 
-    RenderHelper.func_227780_a_();
     RenderSystem.pushMatrix();
     RenderSystem.translatef((float) i, (float) j, 0.0F);
     RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -136,7 +135,6 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
 
     RenderHelper.disableStandardItemLighting();
     this.drawGuiContainerForegroundLayer(mouseX, mouseY);
-    RenderHelper.func_227780_a_();
     net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawForeground(this, mouseX, mouseY));
     PlayerInventory inventoryplayer = this.minecraft.player.inventory;
     ItemStack itemstack = this.draggedStack.isEmpty() ? inventoryplayer.getItemStack() : this.draggedStack;

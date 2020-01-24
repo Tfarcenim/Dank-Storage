@@ -157,5 +157,5 @@ publishing {
 apply plugin: 'org.spongepowered.mixin'
 
 mixin {
-    add sourceSets.main, "main.refmap.json"
+    add sourceSets.main, "${modid}.refmap.json"
 }
