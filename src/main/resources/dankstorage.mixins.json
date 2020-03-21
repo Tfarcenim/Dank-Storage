@@ -6,7 +6,8 @@
   "mixins": [
     "MixinPlayerEntity",
     "MixinBowItem",
-    "MixinBlock"
+    "MixinBlock",
+    "ItemStackMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -48,7 +48,7 @@ public class DankItemRenderer extends ItemRenderer {
         IVertexBuilder ivertexbuilder = func_229113_a_(p_229111_5_, rendertype1, true, stack.hasEffect());
         this.func_229114_a_(model, stack, p_229111_6_, p_229111_7_, p_229111_4_, ivertexbuilder);
       } else {
-        stack.getItem().getTileEntityItemStackRenderer().func_228364_a_(stack, p_229111_4_, p_229111_5_, p_229111_6_, p_229111_7_);
+        stack.getItem().getItemStackTileEntityRenderer().func_228364_a_(stack, p_229111_4_, p_229111_5_, p_229111_6_, p_229111_7_);
       }
 
       p_229111_4_.func_227865_b_();
@@ -56,10 +56,6 @@ public class DankItemRenderer extends ItemRenderer {
   }
 
   private void func_229114_a_(IBakedModel p_229114_1_, ItemStack p_229114_2_, int p_229114_3_, int p_229114_4_, MatrixStack p_229114_5_, IVertexBuilder p_229114_6_) {
-    if (false && net.minecraftforge.common.ForgeConfig.CLIENT.allowEmissiveItems.get()) { //TODO: Find way to re-introduce emissive items.
-      net.minecraftforge.client.ForgeHooksClient.renderLitItem(this, p_229114_5_, p_229114_6_, p_229114_1_, p_229114_2_);
-      return;
-    }
     Random random = new Random();
     long i = 42L;
 

@@ -183,7 +183,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
   @Override
   protected void renderTooltip(ItemStack p_renderTooltip_1_, int p_renderTooltip_2_, int p_renderTooltip_3_) {
     FontRenderer font = p_renderTooltip_1_.getItem().getFontRenderer(p_renderTooltip_1_);
-    net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(p_renderTooltip_1_);
+    net.minecraftforge.fml.client.gui.GuiUtils.preItemToolTip(p_renderTooltip_1_);
     List<String> tooltip = this.getTooltipFromItem(p_renderTooltip_1_);
 
     if (hoveredSlot != null){
@@ -209,7 +209,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     }
     }
     this.renderTooltip(tooltip, p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.font : font));
-    net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
+    net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
   }
 
   private void drawItemStack(ItemStack stack, int x, int y, String altText) {

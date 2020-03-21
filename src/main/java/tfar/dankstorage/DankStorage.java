@@ -50,7 +50,7 @@ public class DankStorage {
 
   public DankStorage() {
     if(!Utils.isMixinInClasspath())
-      throw new IllegalStateException("install mixin");
+      throw new IllegalStateException("please install mixin");
     // Register the setup method for modloading
     ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
     ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);

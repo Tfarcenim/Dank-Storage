@@ -100,7 +100,7 @@ public class DankItemBlock extends BlockItem {
     if (!Utils.isConstruction(bag))return -1;
 
     ItemStack tool = Utils.getItemStackInSelectedSlot(bag);
-    return tool.getItem().getHarvestLevel(tool, p_getHarvestLevel_2_, p_getHarvestLevel_3_, p_getHarvestLevel_4_);
+    return tool.getHarvestLevel(p_getHarvestLevel_2_, p_getHarvestLevel_3_, p_getHarvestLevel_4_);
   }
 
   @Override
@@ -110,9 +110,14 @@ public class DankItemBlock extends BlockItem {
     return tool.getItem().getDestroySpeed(tool, p_150893_2_);
   }
 
+  //this is used to damage tools and stuff, we use it here to damage the internal item instead
   @Override
-  public boolean onBlockDestroyed(ItemStack p_179218_1_, World p_179218_2_, BlockState p_179218_3_, BlockPos p_179218_4_, LivingEntity p_179218_5_) {
-    return super.onBlockDestroyed(p_179218_1_, p_179218_2_, p_179218_3_, p_179218_4_, p_179218_5_);
+  public boolean onBlockDestroyed(ItemStack s, World p_179218_2_, BlockState p_179218_3_, BlockPos p_179218_4_, LivingEntity p_179218_5_) {
+    if (!Utils.isConstruction(s))return super.onBlockDestroyed(s, p_179218_2_, p_179218_3_, p_179218_4_, p_179218_5_);
+
+    ItemStack tool = Utils.getItemStackInSelectedSlot(s);
+
+    return tool.getItem().onBlockDestroyed(tool, p_179218_2_, p_179218_3_, p_179218_4_, p_179218_5_);
   }
 
   @Nonnull
