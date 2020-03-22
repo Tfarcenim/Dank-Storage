@@ -2,14 +2,11 @@ package tfar.dankstorage.mixin;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import tfar.dankstorage.DankItemBlock;
 import tfar.dankstorage.utils.MixinHooks;
-import tfar.dankstorage.utils.Utils;
 
 import java.util.function.Consumer;
 
