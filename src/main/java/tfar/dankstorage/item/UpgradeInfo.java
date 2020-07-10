@@ -1,6 +1,7 @@
 package tfar.dankstorage.item;
 
-import tfar.dankstorage.block.DankBlock;
+import net.minecraft.block.BlockState;
+import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.utils.Utils;
 
 public class UpgradeInfo {
@@ -13,7 +14,7 @@ public class UpgradeInfo {
     this.end = end;
   }
 
-  public boolean canUpgrade(DankBlock dank){
-    return Utils.getTier(dank.getRegistryName()) == start;
+  public boolean canUpgrade(BlockState dank){
+    return dank.get(DockBlock.TIER) == start;
   }
 }

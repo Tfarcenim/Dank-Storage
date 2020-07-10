@@ -1,11 +1,11 @@
 {
-  "block.dankstorage.dank_1": "Dank 1",
-  "block.dankstorage.dank_2": "Dank 2",
-  "block.dankstorage.dank_3": "Dank 3",
-  "block.dankstorage.dank_4": "Dank 4",
-  "block.dankstorage.dank_5": "Dank 5",
-  "block.dankstorage.dank_6": "Dank 6",
-  "block.dankstorage.dank_7": "Dank 7",
+  "item.dankstorage.dank_1": "Dank 1",
+  "item.dankstorage.dank_2": "Dank 2",
+  "item.dankstorage.dank_3": "Dank 3",
+  "item.dankstorage.dank_4": "Dank 4",
+  "item.dankstorage.dank_5": "Dank 5",
+  "item.dankstorage.dank_6": "Dank 6",
+  "item.dankstorage.dank_7": "Dank 7",
 
   "item.dankstorage.1_to_2": "1 to 2",
   "item.dankstorage.2_to_3": "2 to 3",
@@ -45,7 +45,6 @@
 
   "dankstorage.usetype.bag": "Bag",
   "dankstorage.usetype.construction": "Construction",
-  "dankstorage.usetype.chest": "Chest",
 
   "text.dankstorage.blacklisted_storage": "This item has been blacklisted from storage!",
   "text.dankstorage.blacklisted_usage": "This item cannot be used from storage!",

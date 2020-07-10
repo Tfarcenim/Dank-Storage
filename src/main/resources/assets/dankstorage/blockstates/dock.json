@@ -1,0 +1,73 @@
+{
+"multipart" :[
+  {
+    "apply": {
+      "model": "dankstorage:block/dock",
+      "uvlock": false
+    }
+  },
+  {
+    "when": {
+      "tier": "1"
+    },
+    "apply": {
+      "model": "dankstorage:block/dank_1",
+      "uvlock": false
+    }
+  },
+  {
+    "when": {
+      "tier": "2"
+    },
+    "apply": {
+      "model": "dankstorage:block/dank_2",
+      "uvlock": false
+    }
+  },
+  {
+    "when": {
+      "tier": "3"
+    },
+    "apply": {
+      "model": "dankstorage:block/dank_3",
+      "uvlock": false
+    }
+  },
+  {
+    "when": {
+      "tier": "4"
+    },
+    "apply": {
+      "model": "dankstorage:block/dank_4",
+      "uvlock": false
+    }
+  },
+  {
+    "when": {
+      "tier": "5"
+    },
+    "apply": {
+      "model": "dankstorage:block/dank_5",
+      "uvlock": false
+    }
+  },
+  {
+    "when": {
+      "tier": "6"
+    },
+    "apply": {
+      "model": "dankstorage:block/dank_6",
+      "uvlock": false
+    }
+  },
+  {
+    "when": {
+      "tier": "7"
+    },
+    "apply": {
+      "model": "dankstorage:block/dank_7",
+      "uvlock": false
+    }
+  }
+]
+}
