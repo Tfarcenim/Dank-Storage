@@ -40,42 +40,6 @@ public class Client {
   public static final Minecraft mc = Minecraft.getInstance();
 
   @SubscribeEvent
-  public static void client(ModelRegistryEvent e) {
-    // ResourceLocation rl1 = new ResourceLocation(DankStorage.MODID,"dank_model");
-    // ModelLoader.addSpecialModel(rl1);
-  }
-
-  public static final ModelResourceLocation[] modelLocations = new ModelResourceLocation[]{
-          new ModelResourceLocation(DankStorage.MODID + ":dank_1", ""),
-          new ModelResourceLocation(DankStorage.MODID + ":dank_2", ""),
-          new ModelResourceLocation(DankStorage.MODID + ":dank_3", ""),
-          new ModelResourceLocation(DankStorage.MODID + ":dank_4", ""),
-          new ModelResourceLocation(DankStorage.MODID + ":dank_5", ""),
-          new ModelResourceLocation(DankStorage.MODID + ":dank_6", ""),
-          new ModelResourceLocation(DankStorage.MODID + ":dank_7", ""),
-
-          new ModelResourceLocation(DankStorage.MODID + ":dank_1", "inventory"),
-          new ModelResourceLocation(DankStorage.MODID + ":dank_2", "inventory"),
-          new ModelResourceLocation(DankStorage.MODID + ":dank_3", "inventory"),
-          new ModelResourceLocation(DankStorage.MODID + ":dank_4", "inventory"),
-          new ModelResourceLocation(DankStorage.MODID + ":dank_5", "inventory"),
-          new ModelResourceLocation(DankStorage.MODID + ":dank_6", "inventory"),
-          new ModelResourceLocation(DankStorage.MODID + ":dank_7", "inventory"),
-  };
-
-  @SubscribeEvent
-  public static void models(ModelBakeEvent e) {
-    if (true) return;
-    Map<ResourceLocation, IBakedModel> models = e.getModelRegistry();
-    for (int i = 0; i < 14; i++) {
-      ResourceLocation rl = modelLocations[i];
-      DankBakedModel model = new DankBakedModel(models.get(modelLocations[i]));
-      if (i < 7) RenderDankStorage.teisrs.get(i).setModel(model);
-      models.put(rl, model);
-    }
-  }
-
-  @SubscribeEvent
   public static void client(FMLClientSetupEvent e) {
     ScreenManager.registerFactory(DankStorage.Objects.dank_1_container, DankScreens.DankStorageScreen1::new);
     ScreenManager.registerFactory(DankStorage.Objects.portable_dank_1_container, DankScreens.PortableDankStorageScreen1::new);
@@ -157,7 +121,7 @@ public class Client {
       final int stringX = xStart - 155;
       final int stringY = yStart - 10;
       String mode = Utils.getUseType(bag).name();
-      mc.fontRenderer.drawStringWithShadow(mode,stringX,stringY,0xffffff);
+      mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(),mode,stringX,stringY,0xffffff);
       mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
     }
   }

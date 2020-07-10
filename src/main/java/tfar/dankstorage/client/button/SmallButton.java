@@ -1,16 +1,18 @@
 package tfar.dankstorage.client.button;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.util.text.ITextComponent;
 import tfar.dankstorage.client.Client;
 import net.minecraft.client.gui.widget.button.Button;
 
 public class SmallButton extends Button {
-  public SmallButton(int x, int y, int widthIn, int heightIn, String buttonText, IPressable callback) {
+  public SmallButton(int x, int y, int widthIn, int heightIn, ITextComponent buttonText, IPressable callback) {
     super(x, y, widthIn, heightIn, buttonText, callback);
   }
 
   public boolean shouldDrawText(){
-    return !getMessage().isEmpty();
+    return !getMessage().getString().isEmpty();
   }
 
   public void tint(){
@@ -18,7 +20,7 @@ public class SmallButton extends Button {
   }
 
   @Override
-  public void render(int mouseX, int mouseY, float partialTicks) {
+  public void render(MatrixStack stack,int mouseX, int mouseY, float partialTicks) {
     if (visible) {
       Client.mc.getTextureManager().bindTexture(WIDGETS_LOCATION);
 
@@ -36,20 +38,20 @@ public class SmallButton extends Button {
       int halfwidth2 = this.width - halfwidth1;
       int halfheight1 = this.height / 2;
       int halfheight2 = this.height - halfheight1;
-      blit(x, y, 0,
+      blit(stack,x, y, 0,
               46 + i * 20, halfwidth1, halfheight1);
-      blit(x + halfwidth1, y, 200 - halfwidth2,
+      blit(stack,x + halfwidth1, y, 200 - halfwidth2,
               46 + i * 20, halfwidth2, halfheight1);
 
-      blit(x, y + halfheight1,
+      blit(stack,x, y + halfheight1,
               0, 46 + i * 20 + 20 - halfheight2, halfwidth1, halfheight2);
-      blit(x + halfwidth1, y + halfheight1,
+      blit(stack,x + halfwidth1, y + halfheight1,
               200 - halfwidth2, 46 + i * 20 + 20 - halfheight2, halfwidth2, halfheight2);
-      if (shouldDrawText())drawText(halfwidth2);
+      if (shouldDrawText())drawText(stack,halfwidth2);
     }
   }
 
-  public void drawText(int halfwidth2){
+  public void drawText(MatrixStack stack,int halfwidth2){
     int textColor = 0xe0e0e0;
 
     if (packedFGColor != 0) {
@@ -59,6 +61,6 @@ public class SmallButton extends Button {
     } else if (this.isHovered) {
       textColor = 0xffffa0;
     }
-    this.drawCenteredString(Client.mc.fontRenderer, getMessage(), x + halfwidth2, y + (this.height - 8) / 2, textColor);
+    this.drawCenteredString(stack,Client.mc.fontRenderer, getMessage(), x + halfwidth2, y + (this.height - 8) / 2, textColor);
   }
 }

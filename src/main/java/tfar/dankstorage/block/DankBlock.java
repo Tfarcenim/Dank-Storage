@@ -51,13 +51,13 @@ public class DankBlock extends Block {
 
   @Nonnull
   @Override
-  public ActionResultType func_225533_a_(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult p_225533_6_) {
+  public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult p_225533_6_) {
     if (!world.isRemote) {
       final TileEntity tile = world.getTileEntity(pos);
 
       if (player.isCrouching() && player.getHeldItem(hand).getItem().isIn(Utils.WRENCHES)){
         if (tile instanceof AbstractDankStorageTile){
-          world.func_225521_a_(pos,true,player);
+          world.destroyBlock(pos,true,player);
           return ActionResultType.SUCCESS;
         }
       }
@@ -130,23 +130,23 @@ public class DankBlock extends Block {
 
     if (!Screen.hasShiftDown()){
       tooltip.add(new TranslationTextComponent("text.dankstorage.shift",
-              new StringTextComponent("Shift").applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
+              new StringTextComponent("Shift").func_240699_a_(TextFormatting.YELLOW)).func_240699_a_(TextFormatting.GRAY));
     }
 
     if (Screen.hasShiftDown()) {
-      tooltip.add(new TranslationTextComponent("text.dankstorage.changemode",new StringTextComponent(Client.CONSTRUCTION.getLocalizedName()).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
+      tooltip.add(new TranslationTextComponent("text.dankstorage.changemode",new StringTextComponent(Client.CONSTRUCTION.getTranslationKey()).func_240699_a_(TextFormatting.YELLOW)).func_240699_a_(TextFormatting.GRAY));
       CMessageToggleUseType.UseType mode = Utils.getUseType(bag);
       tooltip.add(
               new TranslationTextComponent("text.dankstorage.currentusetype",new TranslationTextComponent(
-                      "dankstorage.usetype."+mode.name().toLowerCase(Locale.ROOT)).applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY));
+                      "dankstorage.usetype."+mode.name().toLowerCase(Locale.ROOT)).func_240699_a_(TextFormatting.YELLOW)).func_240699_a_(TextFormatting.GRAY));
       tooltip.add(
-              new TranslationTextComponent("text.dankstorage.stacklimit",new StringTextComponent(Utils.getStackLimit(getRegistryName())+"").applyTextStyle(TextFormatting.GREEN)).applyTextStyle(TextFormatting.GRAY));
+              new TranslationTextComponent("text.dankstorage.stacklimit",new StringTextComponent(Utils.getStackLimit(getRegistryName())+"").func_240699_a_(TextFormatting.GREEN)).func_240699_a_(TextFormatting.GRAY));
 
       DankHandler handler = Utils.getHandler(bag);
 
       if (handler.isEmpty()){
         tooltip.add(
-                new TranslationTextComponent("text.dankstorage.empty").applyTextStyle(TextFormatting.ITALIC));
+                new TranslationTextComponent("text.dankstorage.empty").func_240699_a_(TextFormatting.ITALIC));
         return;
       }
       int count1 = 0;
@@ -154,28 +154,28 @@ public class DankBlock extends Block {
         if (count1 > 10)break;
         ItemStack item = handler.getStackInSlot(i);
         if (item.isEmpty())continue;
-        ITextComponent count = new StringTextComponent(Integer.toString(item.getCount())).applyTextStyle(TextFormatting.AQUA);
-        tooltip.add(new TranslationTextComponent("text.dankstorage.formatcontaineditems", count, item.getDisplayName().applyTextStyle(item.getRarity().color)));
+        ITextComponent count = new StringTextComponent(Integer.toString(item.getCount())).func_240699_a_(TextFormatting.AQUA);
+        //tooltip.add(new TranslationTextComponent("text.dankstorage.formatcontaineditems", count, item.getDisplayName().(item.getRarity().color)));
         count1++;
       }
     }
   }
 
-  @Nonnull
+ /* @Nonnull
   @Override
   public ITextComponent getNameTextComponent() {
     int tier = Utils.getTier(this.getRegistryName());
     switch (tier){
-      case 1:return super.getNameTextComponent().applyTextStyle(TextFormatting.DARK_GRAY);
-      case 2:return super.getNameTextComponent().applyTextStyle(TextFormatting.RED);
-      case 3:return super.getNameTextComponent().applyTextStyle(TextFormatting.GOLD);
-      case 4:return super.getNameTextComponent().applyTextStyle(TextFormatting.GREEN);
-      case 5:return super.getNameTextComponent().applyTextStyle(TextFormatting.AQUA);
-      case 6:return super.getNameTextComponent().applyTextStyle(TextFormatting.DARK_PURPLE);
-      case 7:return super.getNameTextComponent().applyTextStyle(TextFormatting.WHITE);
+      case 1:return super.getNameTextComponent().func_240699_a_(TextFormatting.DARK_GRAY);
+      case 2:return super.getNameTextComponent().func_240699_a_(TextFormatting.RED);
+      case 3:return super.getNameTextComponent().func_240699_a_(TextFormatting.GOLD);
+      case 4:return super.getNameTextComponent().func_240699_a_(TextFormatting.GREEN);
+      case 5:return super.getNameTextComponent().func_240699_a_(TextFormatting.AQUA);
+      case 6:return super.getNameTextComponent().func_240699_a_(TextFormatting.DARK_PURPLE);
+      case 7:return super.getNameTextComponent().func_240699_a_(TextFormatting.WHITE);
     }
     return super.getNameTextComponent();
-  }
+  }*/
 
   public static boolean onItemPickup(EntityItemPickupEvent event, ItemStack bag) {
 
@@ -208,7 +208,7 @@ public class DankBlock extends Block {
     if (rem.getCount() != count) {
       bag.setAnimationsToGo(5);
       PlayerEntity player = event.getPlayer();
-      player.world.playSound(null, player.func_226277_ct_(), player.func_226278_cu_(), player.func_226281_cx_(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((player.getRNG().nextFloat() - player.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
+      player.world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((player.getRNG().nextFloat() - player.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
       inv.writeItemStack();
     }
     return toPickup.isEmpty();

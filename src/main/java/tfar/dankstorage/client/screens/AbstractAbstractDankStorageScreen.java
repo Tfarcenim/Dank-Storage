@@ -1,5 +1,6 @@
 package tfar.dankstorage.client.screens;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 import tfar.dankstorage.client.RenderItemExtended;
@@ -53,26 +54,26 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
   @Override
   protected void init() {
     super.init();
-    this.addButton(new SmallButton(guiLeft + 143, guiTop + 4 ,26,12,"Sort", b -> {
+    this.addButton(new SmallButton(guiLeft + 143, guiTop + 4 ,26,12,new StringTextComponent("Sort"), b -> {
       DankPacketHandler.INSTANCE.sendToServer(new CMessageSort());
       Utils.sort(Minecraft.getInstance().player);
     }));
   }
 
-  @Override
-  protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-    this.font.drawString(this.playerInventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 94, 0x404040);
-    this.font.drawString(this.getContainerName().getFormattedText(), 8, 6, 0x404040);
+  @Override //drawGuiContainerForegroundLayer
+  protected void func_230451_b_(MatrixStack stack,int mouseX, int mouseY) {
+    this.font.drawString(stack,this.playerInventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 94, 0x404040);
+    this.font.drawString(stack,this.getContainerName().getString(), 8, 6, 0x404040);
   }
-
+//drawGuiContainerBackgroundLayer
   @Override
-  protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+  protected void func_230450_a_(MatrixStack stack,float partialTicks, int mouseX, int mouseY) {
 
     minecraft.getTextureManager().bindTexture(background);
     if (is7)
-      blit(guiLeft, guiTop, 0, 0, xSize, ySize, 256, 512);
+      blit(stack,guiLeft, guiTop, 0, 0, xSize, ySize, 256, 512);
      else
-      blit(guiLeft, guiTop, 0, 0, xSize, ySize);
+      blit(stack,guiLeft, guiTop, 0, 0, xSize, ySize);
 
 
     for (int i = 0; i < (container.rows * 9);i++){
@@ -81,23 +82,23 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
       int offsetx = 8;
       int offsety = 18 ;
       if (container.getHandler().lockedSlots[i] == 1)
-        fill(guiLeft + j * 18 + offsetx, guiTop + k * 18 + offsety,
+        fill(stack,guiLeft + j * 18 + offsetx, guiTop + k * 18 + offsety,
                 guiLeft + j * 18 + offsetx + 16, guiTop + k * 18 + offsety+ 16, 0xFFFF0000);
     }
   }
 
   @Override
-  public void render(int mouseX, int mouseY, float partialTicks) {
-    this.renderBackground();
+  public void render(MatrixStack stack,int mouseX, int mouseY, float partialTicks) {
+    this.renderBackground(stack);
     int i = this.guiLeft;
     int j = this.guiTop;
-    this.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+    this.func_230450_a_(stack,partialTicks, mouseX, mouseY);
     RenderSystem.disableRescaleNormal();
     RenderHelper.disableStandardItemLighting();
     RenderSystem.disableLighting();
     RenderSystem.disableDepthTest();
 
-    IntStream.range(0, this.buttons.size()).forEach(k -> this.buttons.get(k).render(mouseX, mouseY, partialTicks));
+    IntStream.range(0, this.buttons.size()).forEach(k -> this.buttons.get(k).render(stack,mouseX, mouseY, partialTicks));
    // for (int l = 0; l < this.buttons.size(); ++l) {
       // this.buttons.get(l).drawLabel(this.minecraft, mouseX, mouseY);
    // }
@@ -116,7 +117,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
       Slot slot = this.container.inventorySlots.get(i1);
 
       if (slot.isEnabled()) {
-        this.drawSlot(slot);
+        this.drawSlot(stack,slot);
       }
 
       if (this.isMouseOverSlot(slot, mouseX, mouseY) && slot.isEnabled()) {
@@ -126,7 +127,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
         int j1 = slot.xPos;
         int k1 = slot.yPos;
         RenderSystem.colorMask(true, true, true, false);
-        this.fillGradient(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
+        this.fillGradient(stack,j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
         RenderSystem.colorMask(true, true, true, true);
         RenderSystem.enableLighting();
         RenderSystem.enableDepthTest();
@@ -134,13 +135,12 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     }
 
     RenderHelper.disableStandardItemLighting();
-    this.drawGuiContainerForegroundLayer(mouseX, mouseY);
-    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawForeground(this, mouseX, mouseY));
+    this.func_230451_b_(stack,mouseX, mouseY);
+    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawForeground(this, stack, mouseX, mouseY));
     PlayerInventory inventoryplayer = this.minecraft.player.inventory;
     ItemStack itemstack = this.draggedStack.isEmpty() ? inventoryplayer.getItemStack() : this.draggedStack;
 
     if (!itemstack.isEmpty()) {
-      int j2 = 8;
       int k2 = this.draggedStack.isEmpty() ? 8 : 16;
       String s = null;
 
@@ -177,38 +177,38 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     RenderSystem.popMatrix();
     RenderSystem.enableDepthTest();
 
-    this.renderHoveredToolTip(mouseX, mouseY);
+    this.func_230459_a_(stack,mouseX, mouseY);
   }
 
   @Override
-  protected void renderTooltip(ItemStack p_renderTooltip_1_, int p_renderTooltip_2_, int p_renderTooltip_3_) {
+  protected void renderTooltip(MatrixStack matrices,ItemStack p_renderTooltip_1_, int p_renderTooltip_2_, int p_renderTooltip_3_) {
     FontRenderer font = p_renderTooltip_1_.getItem().getFontRenderer(p_renderTooltip_1_);
     net.minecraftforge.fml.client.gui.GuiUtils.preItemToolTip(p_renderTooltip_1_);
-    List<String> tooltip = this.getTooltipFromItem(p_renderTooltip_1_);
+    List<ITextComponent> tooltip = this.getTooltipFromItem(p_renderTooltip_1_);
 
     if (hoveredSlot != null){
       if (hoveredSlot.getStack().getItem().isIn(Utils.BLACKLISTED_STORAGE)) {
         ITextComponent component1 = new TranslationTextComponent("text.dankstorage.blacklisted_storage").
-                applyTextStyle(TextFormatting.DARK_RED);
-        tooltip.add(component1.getFormattedText());
+                func_240699_a_(TextFormatting.DARK_RED);
+        tooltip.add(component1);
       }
       if (hoveredSlot.getStack().getItem().isIn(Utils.BLACKLISTED_USAGE)) {
         ITextComponent component1 = new TranslationTextComponent("text.dankstorage.blacklisted_usage").
-                applyTextStyle(TextFormatting.DARK_RED);
-        tooltip.add(component1.getFormattedText());
+                func_240699_a_(TextFormatting.DARK_RED);
+        tooltip.add(component1);
       }
     if (hoveredSlot instanceof DankSlot) {
       ITextComponent component2 = new TranslationTextComponent("text.dankstorage.lock",
-              new StringTextComponent("ctrl").applyTextStyle(TextFormatting.YELLOW)).applyTextStyle(TextFormatting.GRAY);
-      tooltip.add(component2.getFormattedText());
+              new StringTextComponent("ctrl").func_240699_a_(TextFormatting.YELLOW)).func_240699_a_(TextFormatting.GRAY);
+      tooltip.add(component2);
       if (hoveredSlot.getStack().getCount()>=1000){
         ITextComponent component3 = new TranslationTextComponent(
-                "text.dankstorage.exact",new StringTextComponent(Integer.toString(hoveredSlot.getStack().getCount())).applyTextStyle(TextFormatting.AQUA)).applyTextStyle(TextFormatting.GRAY);
-        tooltip.add(component3.getFormattedText());
+                "text.dankstorage.exact",new StringTextComponent(Integer.toString(hoveredSlot.getStack().getCount())).func_240699_a_(TextFormatting.AQUA)).func_240699_a_(TextFormatting.GRAY);
+        tooltip.add(component3);
       }
     }
     }
-    this.renderTooltip(tooltip, p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.font : font));
+    this.renderTooltip(matrices,tooltip, p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.font : font));
     net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
   }
 
@@ -228,7 +228,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
 
   public abstract ITextComponent getContainerName();
 
-  private void drawSlot(Slot slotIn) {
+  private void drawSlot(MatrixStack matrices,Slot slotIn) {
     int i = slotIn.xPos;
     int j = slotIn.yPos;
     ItemStack itemstack = slotIn.getStack();
@@ -268,16 +268,16 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
       Pair<ResourceLocation, ResourceLocation> pair = slotIn.func_225517_c_();
 
       if (pair != null) {
-        TextureAtlasSprite textureatlassprite = this.minecraft.func_228015_a_(pair.getFirst()).apply(pair.getSecond());
-        this.minecraft.getTextureManager().bindTexture(textureatlassprite.func_229241_m_().func_229223_g_());
-        blit(i, j, this.getBlitOffset(), 16, 16, textureatlassprite);
+        TextureAtlasSprite textureatlassprite = this.minecraft.getAtlasSpriteGetter(pair.getFirst()).apply(pair.getSecond());
+        this.minecraft.getTextureManager().bindTexture(textureatlassprite.getAtlasTexture().getTextureLocation());
+        blit(matrices,i, j, this.getBlitOffset(), 16, 16, textureatlassprite);
         flag1 = true;
       }
     }
 
     if (!flag1) {
       if (flag) {
-        fill(i, j, i + 16, j + 16, 0x80ffffff);
+        fill(matrices,i, j, i + 16, j + 16, 0x80ffffff);
       }
 
       RenderSystem.enableDepthTest();

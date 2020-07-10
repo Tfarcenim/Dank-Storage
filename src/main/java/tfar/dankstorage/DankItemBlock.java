@@ -135,14 +135,14 @@ public class DankItemBlock extends BlockItem {
         EquipmentSlotType hand1 = hand == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
         //handle empty
         if (toPlace.isEmpty()){
-          return ActionResult.func_226250_c_(bag);
+          return ActionResult.resultPass(bag);
         }
 
         //handle food
         if (toPlace.getItem().isFood()) {
           if (player.canEat(false)) {
             player.setActiveHand(hand);
-            return ActionResult.func_226250_c_(bag);
+            return ActionResult.resultConsume(bag);
           }
         }
         //handle potion
@@ -165,13 +165,13 @@ public class DankItemBlock extends BlockItem {
   }
 
   @Override
-  public boolean itemInteractionForEntity(ItemStack bag, PlayerEntity player, LivingEntity entity, Hand hand) {
-    if (!Utils.isConstruction(bag))return false;
+  public ActionResultType itemInteractionForEntity(ItemStack bag, PlayerEntity player, LivingEntity entity, Hand hand) {
+    if (!Utils.isConstruction(bag))return ActionResultType.FAIL;
     PortableDankHandler handler = Utils.getHandler(bag);
     ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
     EquipmentSlotType hand1 = hand == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
     player.setItemStackToSlot(hand1, toPlace);
-    boolean result = toPlace.getItem().itemInteractionForEntity(toPlace, player, entity, hand);
+    ActionResultType result = toPlace.getItem().itemInteractionForEntity(toPlace, player, entity, hand);
     handler.setStackInSlot(Utils.getSelectedSlot(bag),toPlace);
     player.setItemStackToSlot(hand1, bag);
     return result;
@@ -180,6 +180,12 @@ public class DankItemBlock extends BlockItem {
   @Override
   public boolean hasEffect(ItemStack stack) {
     return stack.hasTag() && Utils.getMode(stack) != CMessageTogglePickup.Mode.NORMAL;
+  }
+
+  @Nullable
+  @Override
+  protected BlockState getStateForPlacement(BlockItemUseContext context) {
+    return null;
   }
 
   @Nonnull

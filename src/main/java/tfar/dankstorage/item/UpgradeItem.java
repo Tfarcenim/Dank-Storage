@@ -1,5 +1,6 @@
 package tfar.dankstorage.item;
 
+import net.minecraft.util.text.Color;
 import tfar.dankstorage.block.DankBlock;
 import tfar.dankstorage.tile.AbstractDankStorageTile;
 import tfar.dankstorage.utils.Utils;
@@ -49,7 +50,7 @@ public class UpgradeItem extends Item {
 
       if (false) {
         player.sendStatusMessage(new TranslationTextComponent("metalbarrels.in_use")
-                .setStyle(new Style().setColor(TextFormatting.RED)), true);
+                .func_230530_a_(Style.EMPTY.setColor(Color.func_240743_a_(1))), true);
         return ActionResultType.PASS;
   }
 
@@ -73,7 +74,7 @@ public class UpgradeItem extends Item {
       upgradeStack.shrink(1);
 
     player.sendStatusMessage(new TranslationTextComponent("metalbarrels.upgrade_successful")
-            .setStyle(new Style().setColor(TextFormatting.GREEN)), true);
+            .func_230530_a_(Style.EMPTY.setColor(Color.func_240743_a_(1))), true);
     return ActionResultType.SUCCESS;
   }
 }

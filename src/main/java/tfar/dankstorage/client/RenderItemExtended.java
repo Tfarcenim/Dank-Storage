@@ -27,22 +27,23 @@ public class RenderItemExtended extends ItemRenderer {
     super(textureManagerIn, modelManagerIn, itemColorsIn);
   }
 
-  public void renderItemOverlayIntoGUI(FontRenderer fr, ItemStack stack, int xPosition, int yPosition,
+  public void renderItemOverlayIntoGUI(MatrixStack matrices,FontRenderer fr, ItemStack stack, int xPosition, int yPosition,
                                        @Nullable String text) {
     if (!stack.isEmpty()) {
       MatrixStack matrixstack = new MatrixStack();
 
       if (stack.getCount() != 1 || text != null) {
         String s = text == null ? getStringFromInt(stack.getCount()) : text;
-        matrixstack.func_227861_a_(0.0D, 0.0D, (double)(this.zLevel + 200.0F));
-        IRenderTypeBuffer.Impl irendertypebuffer$impl = IRenderTypeBuffer.func_228455_a_(Tessellator.getInstance().getBuffer());
+        matrixstack.translate(0.0D, 0.0D, this.zLevel + 200.0F);
+        IRenderTypeBuffer.Impl irendertypebuffer$impl = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
 
         RenderSystem.pushMatrix();
         float scale = .75f;
         RenderSystem.scalef(scale, scale, 1.0F);
-        fr.func_228079_a_(s, (xPosition + 19 - 2 - (fr.getStringWidth(s)*scale)) /scale,
-                (yPosition + 6 + 3 + (1 / (scale * scale) - 1) ) /scale, 16777215, true, matrixstack.func_227866_c_().func_227870_a_(), irendertypebuffer$impl, false, 0, 15728880);
-        irendertypebuffer$impl.func_228461_a_();
+        fr.drawStringWithShadow(matrices,s, (xPosition + 19 - 2 - (fr.getStringWidth(s)*scale)) /scale,
+                (yPosition + 6 + 3 + (1 / (scale * scale) - 1) ) /scale, 16777215);
+                //true, matrixstack.getLast().getNormal(), irendertypebuffer$impl, false, 0, 15728880);
+        irendertypebuffer$impl.finish();
         RenderSystem.popMatrix();
       }
 
@@ -101,10 +102,10 @@ public class RenderItemExtended extends ItemRenderer {
   private void draw(BufferBuilder renderer, int x, int y, int width, int height, int red, int green, int blue,
                     int alpha) {
     renderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-    renderer.func_225582_a_(x, y, 0.0D).func_225586_a_(red, green, blue, alpha).endVertex();
-    renderer.func_225582_a_(x, y + height, 0.0D).func_225586_a_(red, green, blue, alpha).endVertex();
-    renderer.func_225582_a_(x + width, y + height, 0.0D).func_225586_a_(red, green, blue, alpha).endVertex();
-    renderer.func_225582_a_(x + width, y, 0.0D).func_225586_a_(red, green, blue, alpha).endVertex();
+    renderer.pos(x, y, 0.0D).color(red, green, blue, alpha).endVertex();
+    renderer.pos(x, y + height, 0.0D).color(red, green, blue, alpha).endVertex();
+    renderer.pos(x + width, y + height, 0.0D).color(red, green, blue, alpha).endVertex();
+    renderer.pos(x + width, y, 0.0D).color(red, green, blue, alpha).endVertex();
     Tessellator.getInstance().draw();
   }
 

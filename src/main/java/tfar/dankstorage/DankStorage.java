@@ -2,7 +2,6 @@ package tfar.dankstorage;
 
 import com.google.common.collect.Lists;
 import tfar.dankstorage.block.DankBlock;
-import tfar.dankstorage.client.RenderDankStorage;
 import tfar.dankstorage.container.DankContainers;
 import tfar.dankstorage.item.UpgradeInfo;
 import tfar.dankstorage.item.UpgradeItem;
@@ -98,10 +97,7 @@ public class DankStorage {
       Item.Properties properties1 = new Item.Properties().group(ItemGroup.DECORATIONS);
       IntStream.range(1, 7).forEach(i -> register(new UpgradeItem(properties1, new UpgradeInfo(i, i + 1)), i + "_to_" + (i + 1), event.getRegistry()));
     }
-
-    private static Callable<ItemStackTileEntityRenderer> get() {
-      return RenderDankStorage::new;
-    }
+    
 
     @SubscribeEvent
     public static void recipes(final RegistryEvent.Register<IRecipeSerializer<?>> event) {

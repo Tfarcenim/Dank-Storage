@@ -1,13 +1,14 @@
 package tfar.dankstorage.client.button;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.util.text.StringTextComponent;
 
 public class TripleToggleButton extends SmallButton {
 
   protected int togglestate;
 
   public TripleToggleButton(int x, int y, int widthIn, int heightIn, IPressable callback, int togglestate) {
-    super(x, y, widthIn, heightIn, "", callback);
+    super(x, y, widthIn, heightIn, new StringTextComponent(""), callback);
     this.togglestate = togglestate;
   }
 

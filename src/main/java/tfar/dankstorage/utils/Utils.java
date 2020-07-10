@@ -1,6 +1,7 @@
 package tfar.dankstorage.utils;
 
 import net.minecraft.item.Items;
+import net.minecraft.tags.ITag;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.block.DankBlock;
 import tfar.dankstorage.DankItemBlock;
@@ -33,10 +34,10 @@ import static tfar.dankstorage.network.CMessageToggleUseType.useTypes;
 
 public class Utils {
 
-  public static final Tag<Item> BLACKLISTED_STORAGE = new ItemTags.Wrapper(new ResourceLocation(DankStorage.MODID, "blacklisted_storage"));
-  public static final Tag<Item> BLACKLISTED_USAGE = new ItemTags.Wrapper(new ResourceLocation(DankStorage.MODID, "blacklisted_usage"));
+  public static final ITag.INamedTag<Item> BLACKLISTED_STORAGE = ItemTags.makeWrapperTag(new ResourceLocation(DankStorage.MODID, "blacklisted_storage").toString());
+  public static final ITag.INamedTag<Item> BLACKLISTED_USAGE = ItemTags.makeWrapperTag(new ResourceLocation(DankStorage.MODID, "blacklisted_usage").toString());
 
-  public static final Tag<Item> WRENCHES = new ItemTags.Wrapper(new ResourceLocation("forge", "wrenches"));
+  public static final ITag.INamedTag<Item> WRENCHES = ItemTags.makeWrapperTag(new ResourceLocation("forge", "wrenches").toString());
 
   public static final String INV = "inv";
 

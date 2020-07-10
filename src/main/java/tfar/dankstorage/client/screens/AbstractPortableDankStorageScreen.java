@@ -1,5 +1,6 @@
 package tfar.dankstorage.client.screens;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import tfar.dankstorage.client.button.RedGreenToggleButton;
 import tfar.dankstorage.client.button.TripleToggleButton;
 import tfar.dankstorage.container.AbstractPortableDankContainer;
@@ -39,12 +40,12 @@ public abstract class AbstractPortableDankStorageScreen<T extends AbstractPortab
   }
 
   @Override
-  protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-    super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+  protected void func_230451_b_(MatrixStack stack,int mouseX, int mouseY) {
+    super.func_230451_b_(stack,mouseX, mouseY);
     int namelength = font.getStringWidth(getContainerName().getUnformattedComponentText());
-    this.font.drawString("Tag", 25 + namelength, 6, 0x404040);
-    this.font.drawString("Pickup", 56 + namelength, 6 , 0x404040);
+    this.font.drawString(stack,"Tag", 25 + namelength, 6, 0x404040);
+    this.font.drawString(stack,"Pickup", 56 + namelength, 6 , 0x404040);
     int color = container.nbtSize > 2000000 ? 0x800000 : 0x008000;
-    this.font.drawString("NBT: " + container.nbtSize,70,this.ySize - 94,color);
+    this.font.drawString(stack,"NBT: " + container.nbtSize,70,this.ySize - 94,color);
   }
 }

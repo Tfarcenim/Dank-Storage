@@ -1,6 +1,7 @@
 
 package tfar.dankstorage.tile;
 
+import net.minecraft.block.BlockState;
 import tfar.dankstorage.block.DankBlock;
 import tfar.dankstorage.inventory.DankHandler;
 import tfar.dankstorage.utils.Utils;
@@ -86,15 +87,15 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
   }
 
   @Override
-  public void read(CompoundNBT compound) {
-    super.read(compound);
+  public void read(BlockState state,CompoundNBT compound) {
+    super.read(state,compound);
     this.mode = compound.getInt("mode");
     this.selectedSlot = compound.getInt("selectedSlot");
     if (compound.contains(Utils.INV)) {
       handler.deserializeNBT(compound.getCompound(Utils.INV));
     }
     if (compound.contains("CustomName", 8)) {
-      this.setCustomName(ITextComponent.Serializer.fromJson(compound.getString("CustomName")));
+      this.setCustomName(ITextComponent.Serializer.func_240643_a_(compound.getString("CustomName")));
     }
   }
 
@@ -125,7 +126,7 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
 
   @Override
   public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-    read(pkt.getNbtCompound());
+    read(null,pkt.getNbtCompound());
   }
 
   @Override
