@@ -2,8 +2,6 @@ package tfar.dankstorage.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
@@ -18,22 +16,18 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.math.shapes.IBooleanFunction;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.ItemHandlerHelper;
 import tfar.dankstorage.DankItem;
-import tfar.dankstorage.client.Client;
-import tfar.dankstorage.inventory.DankHandler;
+import tfar.dankstorage.client.screens.DankScreens;
 import tfar.dankstorage.inventory.PortableDankHandler;
-import tfar.dankstorage.network.CMessageToggleUseType;
 import tfar.dankstorage.tile.DankBlockEntity;
 import tfar.dankstorage.utils.Utils;
 
@@ -41,7 +35,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static tfar.dankstorage.network.CMessageTogglePickup.Mode;
 
@@ -49,8 +42,45 @@ public class DockBlock extends Block {
 
   public static final IntegerProperty TIER = IntegerProperty.create("tier",0,7);
 
+  public static final VoxelShape EMPTY;
+
+  public static final VoxelShape DOCKED;
+
+  static {
+    VoxelShape a1 = Block.makeCuboidShape(0,0,0,16,4,16);
+    VoxelShape b1 = Block.makeCuboidShape(4,0,4,12,4,12);
+    VoxelShape shape1 = VoxelShapes.combine(a1,b1, IBooleanFunction.NOT_SAME);
+
+    VoxelShape a2 = Block.makeCuboidShape(0,12,0,16,16,16);
+    VoxelShape b2 = Block.makeCuboidShape(4,12,4,12,16,12);
+    VoxelShape shape2 = VoxelShapes.combine(a2,b2, IBooleanFunction.NOT_SAME);
+
+    VoxelShape p1 = Block.makeCuboidShape(0,4,0,4,12,4);
+
+    VoxelShape p2 = Block.makeCuboidShape(12,4,0,16,12,4);
+
+    VoxelShape p3 = Block.makeCuboidShape(0,4,12,4,12,16);
+
+    VoxelShape p4 = Block.makeCuboidShape(12,4,12,12,12,16);
+
+    EMPTY = VoxelShapes.or(shape1,shape2,p1,p2,p3,p4);
+
+    DOCKED = VoxelShapes.or(EMPTY,Block.makeCuboidShape(4,4,4,12,12,12));
+
+  }
+
   public DockBlock(Properties p_i48440_1_) {
     super(p_i48440_1_);
+  }
+
+  @Override
+  public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+    if (context.getEntity() instanceof PlayerEntity) {
+      PlayerEntity player = (PlayerEntity)context.getEntity();
+      if (player.getHeldItemMainhand().getItem() instanceof DankItem)
+        return DOCKED;
+    }
+    return state.get(TIER) > 0 ? DOCKED : EMPTY;
   }
 
   @Nonnull

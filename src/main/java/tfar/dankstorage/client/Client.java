@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankItem;
 import tfar.dankstorage.client.screens.DankScreens;
+import tfar.dankstorage.client.screens.DockScreen;
 import tfar.dankstorage.client.screens.PortableDankStorageScreen;
 import tfar.dankstorage.inventory.PortableDankHandler;
 import tfar.dankstorage.network.C2SMessageScrollSlot;
@@ -35,19 +36,19 @@ public class Client {
 
   @SubscribeEvent
   public static void client(FMLClientSetupEvent e) {
-    ScreenManager.registerFactory(DankStorage.Objects.dank_1_container, DankScreens.DankStorageScreen1::new);
+    ScreenManager.registerFactory(DankStorage.Objects.dank_1_container, DockScreen::t1);
     ScreenManager.registerFactory(DankStorage.Objects.portable_dank_1_container, PortableDankStorageScreen::t1);
-    ScreenManager.registerFactory(DankStorage.Objects.dank_2_container, DankScreens.DankStorageScreen2::new);
+    ScreenManager.registerFactory(DankStorage.Objects.dank_2_container, DockScreen::t2);
     ScreenManager.registerFactory(DankStorage.Objects.portable_dank_2_container, PortableDankStorageScreen::t2);
-    ScreenManager.registerFactory(DankStorage.Objects.dank_3_container, DankScreens.DankStorageScreen3::new);
+    ScreenManager.registerFactory(DankStorage.Objects.dank_3_container, DockScreen::t3);
     ScreenManager.registerFactory(DankStorage.Objects.portable_dank_3_container, PortableDankStorageScreen::t3);
-    ScreenManager.registerFactory(DankStorage.Objects.dank_4_container, DankScreens.DankStorageScreen4::new);
+    ScreenManager.registerFactory(DankStorage.Objects.dank_4_container, DockScreen::t4);
     ScreenManager.registerFactory(DankStorage.Objects.portable_dank_4_container, PortableDankStorageScreen::t4);
-    ScreenManager.registerFactory(DankStorage.Objects.dank_5_container, DankScreens.DankStorageScreen5::new);
+    ScreenManager.registerFactory(DankStorage.Objects.dank_5_container, DockScreen::t5);
     ScreenManager.registerFactory(DankStorage.Objects.portable_dank_5_container, PortableDankStorageScreen::t5);
-    ScreenManager.registerFactory(DankStorage.Objects.dank_6_container, DankScreens.DankStorageScreen6::new);
+    ScreenManager.registerFactory(DankStorage.Objects.dank_6_container, DockScreen::t6);
     ScreenManager.registerFactory(DankStorage.Objects.portable_dank_6_container, PortableDankStorageScreen::t6);
-    ScreenManager.registerFactory(DankStorage.Objects.dank_7_container, DankScreens.DankStorageScreen7::new);
+    ScreenManager.registerFactory(DankStorage.Objects.dank_7_container, DockScreen::t7);
     ScreenManager.registerFactory(DankStorage.Objects.portable_dank_7_container, PortableDankStorageScreen::t7);
 
     CONSTRUCTION = new KeyBinding("key.dankstorage.construction", GLFW.GLFW_KEY_I, "key.categories.dankstorage");
