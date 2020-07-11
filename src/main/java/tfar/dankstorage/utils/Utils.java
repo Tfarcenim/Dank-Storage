@@ -3,8 +3,8 @@ package tfar.dankstorage.utils;
 import net.minecraft.item.Items;
 import net.minecraft.tags.ITag;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.block.DankBlock;
-import tfar.dankstorage.DankItemBlock;
+import tfar.dankstorage.block.DockBlock;
+import tfar.dankstorage.DankItem;
 import tfar.dankstorage.container.AbstractAbstractDankContainer;
 import tfar.dankstorage.inventory.DankHandler;
 import tfar.dankstorage.inventory.PortableDankHandler;
@@ -18,7 +18,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -46,7 +45,7 @@ public class Utils {
   }
 
   public static boolean isConstruction(ItemStack bag) {
-    return bag.getItem() instanceof DankItemBlock && bag.hasTag()
+    return bag.getItem() instanceof DankItem && bag.hasTag()
             && bag.getTag().contains("construction")
             && bag.getTag().getInt("construction") == 2;
   }
@@ -133,12 +132,8 @@ public class Utils {
     }
   }
 
-  public static int getStackLimit(ItemStack bag) {
-    return getStackLimit(bag.getItem().getRegistryName());
-  }
-
-  public static int getStackLimit(ResourceLocation registryname) {
-    switch (getTier(registryname)) {
+  public static int getStackLimit(int tier) {
+    switch (tier) {
       case 1:
       default:
         return DankStorage.ServerConfig.stacklimit1.get();
@@ -157,12 +152,12 @@ public class Utils {
     }
   }
 
-  public static int getTier(ItemStack bag) {
-    return getTier(bag.getItem().getRegistryName());
+    public static int getStackLimit(ItemStack bag) {
+    return getStackLimit(getTier(bag));
   }
 
-  public static int getTier(ResourceLocation registryname) {
-    return Integer.parseInt(registryname.getPath().substring(5));
+  public static int getTier(ItemStack bag) {
+    return ((DankItem)bag.getItem()).tier;
   }
 
   public static void changeSlot(ItemStack bag, boolean right) {
@@ -188,7 +183,7 @@ public class Utils {
   }
 
   public static boolean oredict(ItemStack bag) {
-    return bag.getItem() instanceof DankItemBlock && bag.hasTag() && bag.getTag().getBoolean("tag");
+    return bag.getItem() instanceof DankItem && bag.hasTag() && bag.getTag().getBoolean("tag");
   }
 
   public static PortableDankHandler getHandler(ItemStack bag) {
@@ -199,8 +194,8 @@ public class Utils {
     return getNbtSize(stack.getTag());
   }
 
-  public static DankBlock getBlockFromTier(int tier) {
-    return (DankBlock) ForgeRegistries.BLOCKS.getValue(new ResourceLocation(DankStorage.MODID, "dank_" + tier));
+  public static DankItem getItemFromTier(int tier) {
+    return (DankItem) ForgeRegistries.ITEMS.getValue(new ResourceLocation(DankStorage.MODID, "dank_" + tier));
   }
 
   public static int getNbtSize(@Nullable CompoundNBT nbt) {

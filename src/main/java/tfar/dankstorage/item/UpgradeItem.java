@@ -1,8 +1,8 @@
 package tfar.dankstorage.item;
 
 import net.minecraft.util.text.Color;
-import tfar.dankstorage.block.DankBlock;
-import tfar.dankstorage.tile.AbstractDankStorageTile;
+import tfar.dankstorage.block.DockBlock;
+import tfar.dankstorage.tile.DankBlockEntity;
 import tfar.dankstorage.utils.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -14,7 +14,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -42,7 +41,7 @@ public class UpgradeItem extends Item {
     ItemStack upgradeStack = context.getItem();
     BlockState state = world.getBlockState(pos);
 
-    if (player == null || !(state.getBlock() instanceof DankBlock) || !upgradeInfo.canUpgrade((DankBlock) state.getBlock())) {
+    if (player == null || !(state.getBlock() instanceof DockBlock) || !upgradeInfo.canUpgrade(state)) {
       return ActionResultType.FAIL;
     }
     if (world.isRemote)
@@ -57,13 +56,13 @@ public class UpgradeItem extends Item {
     TileEntity oldDank = world.getTileEntity(pos);
 
     //shortcut
-    final List<ItemStack> oldDankContents = new ArrayList<>(((AbstractDankStorageTile) oldDank).getHandler().getContents());
+    final List<ItemStack> oldDankContents = new ArrayList<>(((DankBlockEntity) oldDank).getHandler().getContents());
 
     oldDank.remove();
 
-    Block newBlock = Utils.getBlockFromTier(upgradeInfo.end);
+    int newTier = upgradeInfo.end;
 
-    BlockState newState = newBlock.getDefaultState();
+    BlockState newState = state.with(DockBlock.TIER,newTier);
 
     world.setBlockState(pos, newState, 3);
     TileEntity newBarrel = world.getTileEntity(pos);

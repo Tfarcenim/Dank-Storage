@@ -2,7 +2,14 @@
 package tfar.dankstorage.tile;
 
 import net.minecraft.block.BlockState;
-import tfar.dankstorage.block.DankBlock;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.item.ItemStack;
+import tfar.dankstorage.DankItem;
+import tfar.dankstorage.DankStorage;
+import tfar.dankstorage.block.DockBlock;
+import tfar.dankstorage.container.DankContainers;
 import tfar.dankstorage.inventory.DankHandler;
 import tfar.dankstorage.utils.Utils;
 import net.minecraft.entity.player.PlayerEntity;
@@ -11,7 +18,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.INameable;
 import net.minecraft.util.text.ITextComponent;
@@ -23,26 +29,26 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class AbstractDankStorageTile extends TileEntity implements INameable, INamedContainerProvider {
+public class DankBlockEntity extends TileEntity implements INameable, INamedContainerProvider {
 
   public int numPlayersUsing = 0;
   protected ITextComponent customName;
   public int mode = 0;
   public int selectedSlot;
 
-  private DankHandler handler;
+  private DankHandler handler = new DankHandler(0,0) {
+    @Override
+    public void onContentsChanged(int slot) {
+      super.onContentsChanged(slot);
+      DankBlockEntity.this.world.addBlockEvent(DankBlockEntity.this.pos, DankBlockEntity.this.getBlockState().getBlock(), 1, DankBlockEntity.this.numPlayersUsing);
+      DankBlockEntity.this.markDirty();
+    }
+  };
+
   public LazyOptional<IItemHandler> optional = LazyOptional.of(() -> handler).cast();
 
-  public AbstractDankStorageTile(TileEntityType<?> tile, int rows, int stacksize) {
-    super(tile);
-    this.handler = new DankHandler(rows * 9,stacksize) {
-      @Override
-      public void onContentsChanged(int slot) {
-        super.onContentsChanged(slot);
-        AbstractDankStorageTile.this.world.addBlockEvent(AbstractDankStorageTile.this.pos, AbstractDankStorageTile.this.getBlockState().getBlock(), 1, AbstractDankStorageTile.this.numPlayersUsing);
-        AbstractDankStorageTile.this.markDirty();
-      }
-    };
+  public DankBlockEntity() {
+    super(DankStorage.Objects.dank_tile);
   }
 
   public DankHandler getHandler(){
@@ -78,7 +84,7 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
   }
 
   public void closeInventory(PlayerEntity player) {
-    if (!player.isSpectator() && this.getBlockState().getBlock() instanceof DankBlock) {
+    if (!player.isSpectator() && this.getBlockState().getBlock() instanceof DockBlock) {
       --this.numPlayersUsing;
       this.world.addBlockEvent(this.pos, this.getBlockState().getBlock(), 1, this.numPlayersUsing);
       this.world.notifyNeighborsOfStateChange(this.pos, this.getBlockState().getBlock());
@@ -149,6 +155,11 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
   }
 
   @Override
+  public ITextComponent getName() {
+    return customName != null ? customName : getBlockState().getBlock().getTranslatedName();
+  }
+
+  @Override
   public ITextComponent getDisplayName() {
     return this.getName();
   }
@@ -162,4 +173,43 @@ public abstract class AbstractDankStorageTile extends TileEntity implements INam
   public void setContents(CompoundNBT nbt){
     handler.deserializeNBT(nbt);
   }
+
+  @Nullable
+  @Override
+  public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
+    switch (getBlockState().get(DockBlock.TIER)) {
+      case 1:return new DankContainers.TileDankContainer1(p_createMenu_1_,world,pos,p_createMenu_2_,p_createMenu_3_);
+      case 2:return new DankContainers.TileDankContainer2(p_createMenu_1_,world,pos,p_createMenu_2_,p_createMenu_3_);
+      case 3:return new DankContainers.TileDankContainer3(p_createMenu_1_,world,pos,p_createMenu_2_,p_createMenu_3_);
+      case 4:return new DankContainers.TileDankContainer4(p_createMenu_1_,world,pos,p_createMenu_2_,p_createMenu_3_);
+      case 5:return new DankContainers.TileDankContainer5(p_createMenu_1_,world,pos,p_createMenu_2_,p_createMenu_3_);
+      case 6:return new DankContainers.TileDankContainer6(p_createMenu_1_,world,pos,p_createMenu_2_,p_createMenu_3_);
+      case 7:return new DankContainers.TileDankContainer7(p_createMenu_1_,world,pos,p_createMenu_2_,p_createMenu_3_);
+    }
+    return null;
+  }
+
+  public void removeTank(){
+    int tier = getBlockState().get(DockBlock.TIER);
+    CompoundNBT nbt = handler.serializeNBT();
+    world.setBlockState(pos,getBlockState().with(DockBlock.TIER,0));
+    optional.invalidate();
+    ItemStack stack = new ItemStack(Utils.getItemFromTier(tier));
+    stack.getOrCreateTag().put(Utils.INV,nbt);
+    ItemEntity entity = new ItemEntity(world,pos.getX(),pos.getY(),pos.getZ(),stack);
+    world.addEntity(entity);
+  }
+
+  public void addTank(ItemStack tank){
+    if (tank.getItem() instanceof DankItem) {
+      int tier = ((DankItem)tank.getItem()).tier;
+      world.setBlockState(pos,getBlockState().with(DockBlock.TIER,tier));
+      handler.stacklimit = Utils.getStackLimit(tank);
+      handler.setSize(Utils.getSlotCount(tier));
+      handler.deserializeNBT(tank.getOrCreateTag().getCompound(Utils.INV));
+      optional = LazyOptional.of(() -> handler);
+      tank.shrink(1);
+    }
+  }
+
 }

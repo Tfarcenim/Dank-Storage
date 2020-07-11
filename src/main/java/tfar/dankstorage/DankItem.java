@@ -1,7 +1,17 @@
 package tfar.dankstorage;
 
 import com.google.common.collect.Sets;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.IBlockReader;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import tfar.dankstorage.client.Client;
 import tfar.dankstorage.container.PortableDankProvider;
+import tfar.dankstorage.inventory.DankHandler;
 import tfar.dankstorage.inventory.PortableDankHandler;
 import tfar.dankstorage.network.CMessageTogglePickup;
 import tfar.dankstorage.network.CMessageToggleUseType;
@@ -32,11 +42,16 @@ import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
-public class DankItemBlock extends BlockItem {
-  public DankItemBlock(Block p_i48527_1_, Properties p_i48527_2_) {
-    super(p_i48527_1_, p_i48527_2_);
+public class DankItem extends Item {
+  public final int tier;
+
+  public DankItem(Properties p_i48527_2_, int tier) {
+    super( p_i48527_2_);
+    this.tier = tier;
   }
 
   public static final Rarity GRAY = Rarity.create("dark_gray", TextFormatting.GRAY);
@@ -61,8 +76,7 @@ public class DankItemBlock extends BlockItem {
   @Nonnull
   @Override
   public Rarity getRarity(ItemStack stack) {
-    int type = Utils.getTier(stack);
-    switch (type) {
+    switch (tier) {
       case 1:
         return GRAY;
       case 2:
@@ -182,10 +196,42 @@ public class DankItemBlock extends BlockItem {
     return stack.hasTag() && Utils.getMode(stack) != CMessageTogglePickup.Mode.NORMAL;
   }
 
-  @Nullable
   @Override
-  protected BlockState getStateForPlacement(BlockItemUseContext context) {
-    return null;
+  @OnlyIn(Dist.CLIENT)
+  public void addInformation(ItemStack bag, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    if (bag.hasTag() && Utils.DEV)tooltip.add(new StringTextComponent(bag.getTag().toString()));
+
+    if (!Screen.hasShiftDown()){
+      tooltip.add(new TranslationTextComponent("text.dankstorage.shift",
+              new StringTextComponent("Shift").func_240699_a_(TextFormatting.YELLOW)).func_240699_a_(TextFormatting.GRAY));
+    }
+
+    if (Screen.hasShiftDown()) {
+      tooltip.add(new TranslationTextComponent("text.dankstorage.changemode",new StringTextComponent(Client.CONSTRUCTION.getTranslationKey()).func_240699_a_(TextFormatting.YELLOW)).func_240699_a_(TextFormatting.GRAY));
+      CMessageToggleUseType.UseType mode = Utils.getUseType(bag);
+      tooltip.add(
+              new TranslationTextComponent("text.dankstorage.currentusetype",new TranslationTextComponent(
+                      "dankstorage.usetype."+mode.name().toLowerCase(Locale.ROOT)).func_240699_a_(TextFormatting.YELLOW)).func_240699_a_(TextFormatting.GRAY));
+      tooltip.add(
+              new TranslationTextComponent("text.dankstorage.stacklimit",new StringTextComponent(Utils.getStackLimit(tier)+"").func_240699_a_(TextFormatting.GREEN)).func_240699_a_(TextFormatting.GRAY));
+
+      DankHandler handler = Utils.getHandler(bag);
+
+      if (handler.isEmpty()){
+        tooltip.add(
+                new TranslationTextComponent("text.dankstorage.empty").func_240699_a_(TextFormatting.ITALIC));
+        return;
+      }
+      int count1 = 0;
+      for (int i = 0; i < handler.getSlots(); i++) {
+        if (count1 > 10)break;
+        ItemStack item = handler.getStackInSlot(i);
+        if (item.isEmpty())continue;
+        ITextComponent count = new StringTextComponent(Integer.toString(item.getCount())).func_240699_a_(TextFormatting.AQUA);
+        //tooltip.add(new TranslationTextComponent("text.dankstorage.formatcontaineditems", count, item.getDisplayName().(item.getRarity().color)));
+        count1++;
+      }
+    }
   }
 
   @Nonnull
@@ -267,10 +313,7 @@ public class DankItemBlock extends BlockItem {
     ItemStack bag = ctx.getItem();
     CMessageToggleUseType.UseType useType = Utils.getUseType(bag);
 
-    if (useType == CMessageToggleUseType.UseType.chest)
-      return super.onItemUse(ctx);
-
-    if(useType == CMessageToggleUseType.UseType.bag){
+    if(useType == CMessageToggleUseType.UseType.bag) {
       return ActionResultType.PASS;
     }
 

@@ -1,17 +1,17 @@
 package tfar.dankstorage;
 
 import com.google.common.collect.Lists;
-import tfar.dankstorage.block.DankBlock;
+import net.minecraft.item.BlockItem;
+import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.container.DankContainers;
 import tfar.dankstorage.item.UpgradeInfo;
 import tfar.dankstorage.item.UpgradeItem;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.recipe.Serializer2;
-import tfar.dankstorage.tile.DankTiles;
+import tfar.dankstorage.tile.DankBlockEntity;
 import tfar.dankstorage.utils.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -36,7 +36,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.stream.IntStream;
 
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
@@ -70,7 +69,7 @@ public class DankStorage {
   }
 
   private void drop(final ItemTossEvent event) {
-    if (event.getEntityItem().getItem().getItem() instanceof DankItemBlock) {
+    if (event.getEntityItem().getItem().getItem() instanceof DankItem) {
       //no
       event.getEntityItem().setInvulnerable(true);
     }
@@ -85,16 +84,16 @@ public class DankStorage {
     @SubscribeEvent
     public static void blocks(final RegistryEvent.Register<Block> event) {
       // register a new block here
-
       Block.Properties properties = Block.Properties.create(Material.IRON).hardnessAndResistance(1, 30);
-      IntStream.range(1, 8).forEach(i -> register(new DankBlock(properties), "dank_" + i, event.getRegistry()));
+      register(new DockBlock(properties), "dock", event.getRegistry());
     }
 
     @SubscribeEvent
     public static void items(final RegistryEvent.Register<Item> event) {
       Item.Properties properties = new Item.Properties().group(ItemGroup.DECORATIONS).maxStackSize(1);
-      MOD_BLOCKS.forEach(block -> register(new DankItemBlock(block, properties), block.getRegistryName().getPath(), event.getRegistry()));
+      register(new BlockItem(Objects.dock, properties), Objects.dock.getRegistryName().getPath(), event.getRegistry());
       Item.Properties properties1 = new Item.Properties().group(ItemGroup.DECORATIONS);
+      IntStream.range(1, 8).forEach(i -> register(new DankItem(properties1, i), "dank_" + i, event.getRegistry()));
       IntStream.range(1, 7).forEach(i -> register(new UpgradeItem(properties1, new UpgradeInfo(i, i + 1)), i + "_to_" + (i + 1), event.getRegistry()));
     }
     
@@ -167,14 +166,7 @@ public class DankStorage {
 
     @SubscribeEvent
     public static void tiles(final RegistryEvent.Register<TileEntityType<?>> event) {
-      register(TileEntityType.Builder.create(DankTiles.DankStorageTile1::new, Objects.dank_1).build(null), "dank_1_tile", event.getRegistry());
-      register(TileEntityType.Builder.create(DankTiles.DankStorageTile2::new, Objects.dank_2).build(null), "dank_2_tile", event.getRegistry());
-      register(TileEntityType.Builder.create(DankTiles.DankStorageTile3::new, Objects.dank_3).build(null), "dank_3_tile", event.getRegistry());
-      register(TileEntityType.Builder.create(DankTiles.DankStorageTile4::new, Objects.dank_4).build(null), "dank_4_tile", event.getRegistry());
-      register(TileEntityType.Builder.create(DankTiles.DankStorageTile5::new, Objects.dank_5).build(null), "dank_5_tile", event.getRegistry());
-      register(TileEntityType.Builder.create(DankTiles.DankStorageTile6::new, Objects.dank_6).build(null), "dank_6_tile", event.getRegistry());
-      register(TileEntityType.Builder.create(DankTiles.DankStorageTile7::new, Objects.dank_7).build(null), "dank_7_tile", event.getRegistry());
-
+      register(TileEntityType.Builder.create(DankBlockEntity::new, Objects.dock).build(null), "dank_tile", event.getRegistry());
     }
 
     private static <T extends IForgeRegistryEntry<T>> void register(T obj, String name, IForgeRegistry<T> registry) {
@@ -287,13 +279,7 @@ public class DankStorage {
   @ObjectHolder(MODID)
   public static class Objects {
 
-    public static final Block dank_1 = null;
-    public static final Block dank_2 = null;
-    public static final Block dank_3 = null;
-    public static final Block dank_4 = null;
-    public static final Block dank_5 = null;
-    public static final Block dank_6 = null;
-    public static final Block dank_7 = null;
+    public static final Block dock = null;
 
     public static final ContainerType<DankContainers.TileDankContainer1> dank_1_container = null;
     public static final ContainerType<DankContainers.TileDankContainer2> dank_2_container = null;
@@ -313,13 +299,7 @@ public class DankStorage {
     public static final ContainerType<DankContainers.PortableDankContainer7> portable_dank_7_container = null;
 
 
-    public static final TileEntityType<?> dank_1_tile = null;
-    public static final TileEntityType<DankTiles.DankStorageTile2> dank_2_tile = null;
-    public static final TileEntityType<DankTiles.DankStorageTile3> dank_3_tile = null;
-    public static final TileEntityType<DankTiles.DankStorageTile4> dank_4_tile = null;
-    public static final TileEntityType<DankTiles.DankStorageTile5> dank_5_tile = null;
-    public static final TileEntityType<DankTiles.DankStorageTile6> dank_6_tile = null;
-    public static final TileEntityType<DankTiles.DankStorageTile7> dank_7_tile = null;
+    public static final TileEntityType<?> dank_tile = null;
 
     public static final IRecipeSerializer<?> upgrade = null;
   }

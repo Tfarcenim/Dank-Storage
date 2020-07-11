@@ -3,28 +3,266 @@
   "pools": [
     {
       "rolls": 1,
-      "name" : "dankstorage",
       "entries": [
         {
           "type": "minecraft:item",
-          "functions": [
+          "name": "dankstorage:dock"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "name" : "dankstorage",
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
             {
-              "function": "minecraft:copy_name",
-              "source": "block_entity"
+              "type": "minecraft:item",
+              "functions": [
+                {
+                  "function": "minecraft:copy_name",
+                  "source": "block_entity"
+                },
+                {
+                  "function": "minecraft:copy_nbt",
+                  "source": "block_entity",
+                  "ops": [
+                    {
+                      "source": "inv",
+                      "target": "inv",
+                      "op": "replace"
+                    }
+                  ]
+                }
+              ],
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "dankstorage:dock",
+                  "properties": {
+                    "tier": "7"
+                  }
+                }
+              ],
+              "name": "dankstorage:dank_7"
             },
             {
-              "function": "minecraft:copy_nbt",
-              "source": "block_entity",
-              "ops": [
+              "type": "minecraft:item",
+              "functions": [
                 {
-                  "source": "inv",
-                  "target": "inv",
-                  "op": "replace"
+                  "function": "minecraft:copy_name",
+                  "source": "block_entity"
+                },
+                {
+                  "function": "minecraft:copy_nbt",
+                  "source": "block_entity",
+                  "ops": [
+                    {
+                      "source": "inv",
+                      "target": "inv",
+                      "op": "replace"
+                    }
+                  ]
                 }
-              ]
+              ],
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "dankstorage:dock",
+                  "properties": {
+                    "tier": "7"
+                  }
+                }
+              ],
+              "name": "dankstorage:dank_7"
+            },
+            {
+              "type": "minecraft:item",
+              "functions": [
+                {
+                  "function": "minecraft:copy_name",
+                  "source": "block_entity"
+                },
+                {
+                  "function": "minecraft:copy_nbt",
+                  "source": "block_entity",
+                  "ops": [
+                    {
+                      "source": "inv",
+                      "target": "inv",
+                      "op": "replace"
+                    }
+                  ]
+                }
+              ],
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "dankstorage:dock",
+                  "properties": {
+                    "tier": "6"
+                  }
+                }
+              ],
+              "name": "dankstorage:dank_6"
+            },
+            {
+              "type": "minecraft:item",
+              "functions": [
+                {
+                  "function": "minecraft:copy_name",
+                  "source": "block_entity"
+                },
+                {
+                  "function": "minecraft:copy_nbt",
+                  "source": "block_entity",
+                  "ops": [
+                    {
+                      "source": "inv",
+                      "target": "inv",
+                      "op": "replace"
+                    }
+                  ]
+                }
+              ],
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "dankstorage:dock",
+                  "properties": {
+                    "tier": "5"
+                  }
+                }
+              ],
+              "name": "dankstorage:dank_5"
+            },
+            {
+              "type": "minecraft:item",
+              "functions": [
+                {
+                  "function": "minecraft:copy_name",
+                  "source": "block_entity"
+                },
+                {
+                  "function": "minecraft:copy_nbt",
+                  "source": "block_entity",
+                  "ops": [
+                    {
+                      "source": "inv",
+                      "target": "inv",
+                      "op": "replace"
+                    }
+                  ]
+                }
+              ],
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "dankstorage:dock",
+                  "properties": {
+                    "tier": "4"
+                  }
+                }
+              ],
+              "name": "dankstorage:dank_4"
+            },
+            {
+              "type": "minecraft:item",
+              "functions": [
+                {
+                  "function": "minecraft:copy_name",
+                  "source": "block_entity"
+                },
+                {
+                  "function": "minecraft:copy_nbt",
+                  "source": "block_entity",
+                  "ops": [
+                    {
+                      "source": "inv",
+                      "target": "inv",
+                      "op": "replace"
+                    }
+                  ]
+                }
+              ],
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "dankstorage:dock",
+                  "properties": {
+                    "tier": "3"
+                  }
+                }
+              ],
+              "name": "dankstorage:dank_3"
+            },
+            {
+              "type": "minecraft:item",
+              "functions": [
+                {
+                  "function": "minecraft:copy_name",
+                  "source": "block_entity"
+                },
+                {
+                  "function": "minecraft:copy_nbt",
+                  "source": "block_entity",
+                  "ops": [
+                    {
+                      "source": "inv",
+                      "target": "inv",
+                      "op": "replace"
+                    }
+                  ]
+                }
+              ],
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "dankstorage:dock",
+                  "properties": {
+                    "tier": "2"
+                  }
+                }
+              ],
+              "name": "dankstorage:dank_2"
+            },
+            {
+              "type": "minecraft:item",
+              "functions": [
+                {
+                  "function": "minecraft:copy_name",
+                  "source": "block_entity"
+                },
+                {
+                  "function": "minecraft:copy_nbt",
+                  "source": "block_entity",
+                  "ops": [
+                    {
+                      "source": "inv",
+                      "target": "inv",
+                      "op": "replace"
+                    }
+                  ]
+                }
+              ],
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "dankstorage:dock",
+                  "properties": {
+                    "tier": "1"
+                  }
+                }
+              ],
+              "name": "dankstorage:dank_1"
             }
-          ],
-          "name": "dankstorage:dank_1"
+          ]
         }
       ]
     }

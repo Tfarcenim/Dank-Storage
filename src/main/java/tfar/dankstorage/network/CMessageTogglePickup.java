@@ -1,6 +1,6 @@
 package tfar.dankstorage.network;
 
-import tfar.dankstorage.DankItemBlock;
+import tfar.dankstorage.DankItem;
 import tfar.dankstorage.utils.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -22,9 +22,9 @@ public class CMessageTogglePickup {
 
       ctx.get().enqueueWork(  ()->  {
         ItemStack bag = player.getHeldItemMainhand();
-        if (!(bag.getItem() instanceof DankItemBlock)){
+        if (!(bag.getItem() instanceof DankItem)){
           bag = player.getHeldItemOffhand();
-          if (!(bag.getItem() instanceof DankItemBlock))return;
+          if (!(bag.getItem() instanceof DankItem))return;
         }
           Utils.cycleMode(bag,player);
       });

@@ -2,7 +2,7 @@ package tfar.dankstorage.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.DankItemBlock;
+import tfar.dankstorage.DankItem;
 import tfar.dankstorage.client.screens.DankScreens;
 import tfar.dankstorage.inventory.PortableDankHandler;
 import tfar.dankstorage.network.C2SMessageScrollSlot;
@@ -13,25 +13,18 @@ import tfar.dankstorage.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.glfw.GLFW;
-
-import java.util.Map;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class Client {
@@ -67,7 +60,7 @@ public class Client {
   public static class KeyHandler {
     @SubscribeEvent
     public static void onKeyInput(InputEvent.KeyInputEvent event) {
-      if (mc.player == null || !(mc.player.getHeldItemMainhand().getItem() instanceof DankItemBlock || mc.player.getHeldItemOffhand().getItem() instanceof DankItemBlock))
+      if (mc.player == null || !(mc.player.getHeldItemMainhand().getItem() instanceof DankItem || mc.player.getHeldItemOffhand().getItem() instanceof DankItem))
         return;
       if (CONSTRUCTION.isPressed()) {
         DankPacketHandler.INSTANCE.sendToServer(new CMessageToggleUseType());
@@ -94,9 +87,9 @@ public class Client {
         return;
       if (!(player.openContainer instanceof PlayerContainer)) return;
       ItemStack bag = player.getHeldItemMainhand();
-      if (!(bag.getItem() instanceof DankItemBlock)) {
+      if (!(bag.getItem() instanceof DankItem)) {
         bag = player.getHeldItemOffhand();
-        if (!(bag.getItem() instanceof DankItemBlock))
+        if (!(bag.getItem() instanceof DankItem))
           return;
       }
       int xStart = event.getWindow().getScaledWidth() / 2;

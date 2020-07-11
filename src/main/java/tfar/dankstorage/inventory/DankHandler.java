@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 
 public class DankHandler extends ItemStackHandler {
 
-  public final int stacklimit;
+  public int stacklimit;
   public int[] lockedSlots;
 
   public DankHandler(int size, int stacklimit) {
@@ -127,11 +127,13 @@ public class DankHandler extends ItemStackHandler {
     nbt.put("Items", nbtTagList);
     nbt.putIntArray("LockedSlots",lockedSlots);
     nbt.putInt("Size", getContents().size());
+    nbt.putInt("stacklimit",stacklimit);
     return nbt;
   }
 
   @Override
   public void deserializeNBT(CompoundNBT nbt) {
+    if (stacklimit == 0)this.stacklimit = nbt.getInt("stacklimit");
     setSize(nbt.contains("Size", Constants.NBT.TAG_INT) ? nbt.getInt("Size") : getContents().size());
     ListNBT tagList = nbt.getList("Items", Constants.NBT.TAG_COMPOUND);
     for (int i = 0; i < tagList.size(); i++) {

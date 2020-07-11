@@ -4,12 +4,13 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.IntegerProperty;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -28,12 +29,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.ItemHandlerHelper;
+import tfar.dankstorage.DankItem;
 import tfar.dankstorage.client.Client;
 import tfar.dankstorage.inventory.DankHandler;
 import tfar.dankstorage.inventory.PortableDankHandler;
 import tfar.dankstorage.network.CMessageToggleUseType;
-import tfar.dankstorage.tile.AbstractDankStorageTile;
-import tfar.dankstorage.tile.DankTiles;
+import tfar.dankstorage.tile.DankBlockEntity;
 import tfar.dankstorage.utils.Utils;
 
 import javax.annotation.Nonnull;
@@ -44,8 +45,11 @@ import java.util.Locale;
 
 import static tfar.dankstorage.network.CMessageTogglePickup.Mode;
 
-public class DankBlock extends Block {
-  public DankBlock(Properties p_i48440_1_) {
+public class DockBlock extends Block {
+
+  public static final IntegerProperty TIER = IntegerProperty.create("tier",0,7);
+
+  public DockBlock(Properties p_i48440_1_) {
     super(p_i48440_1_);
   }
 
@@ -54,35 +58,27 @@ public class DankBlock extends Block {
   public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult p_225533_6_) {
     if (!world.isRemote) {
       final TileEntity tile = world.getTileEntity(pos);
-
-      if (player.isCrouching() && player.getHeldItem(hand).getItem().isIn(Utils.WRENCHES)){
-        if (tile instanceof AbstractDankStorageTile){
-          world.destroyBlock(pos,true,player);
+      if (tile instanceof DankBlockEntity) {
+        ItemStack held = player.getHeldItem(hand);
+        if (player.isCrouching() && held.getItem().isIn(Utils.WRENCHES)) {
+          world.destroyBlock(pos, true, player);
           return ActionResultType.SUCCESS;
         }
-      }
 
-      if (tile instanceof INamedContainerProvider) {
+        if (held.getItem() instanceof DankItem) {
+          ((DankBlockEntity)tile).addTank(held);
+          return ActionResultType.SUCCESS;
+        }
+
+        if (held.isEmpty() && player.isSneaking()) {
+          ((DankBlockEntity)tile).removeTank();
+          return ActionResultType.SUCCESS;
+        }
+
         NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
-
       }
     }
     return ActionResultType.SUCCESS;
-  }
-
-  @Override
-  public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity entity, ItemStack stack) {
-    TileEntity te = world.getTileEntity(pos);
-    if (te instanceof AbstractDankStorageTile && !world.isRemote) {
-      if (stack.hasTag()){
-        ((AbstractDankStorageTile) te).setContents(stack.getOrCreateChildTag(Utils.INV));
-        ((AbstractDankStorageTile) te).mode = stack.getTag().getInt("mode");
-        ((AbstractDankStorageTile) te).selectedSlot = stack.getTag().getInt("selectedSlot");
-        if (stack.hasDisplayName()) {
-          ((AbstractDankStorageTile) te).setCustomName(stack.getDisplayName());
-        }
-      }
-    }
   }
 
   @Nullable
@@ -91,7 +87,7 @@ public class DankBlock extends Block {
     ItemStack bag = ctx.getItem();
 
     Block block = Block.getBlockFromItem(bag.getItem());
-    if (block instanceof DankBlock)return block.getDefaultState();
+    if (block instanceof DockBlock)return block.getDefaultState();
     return block.isAir(block.getDefaultState(),null,null) ? null : block.getStateForPlacement(ctx);
   }
 
@@ -100,82 +96,19 @@ public class DankBlock extends Block {
     return true;
   }
 
+
+
   @Nullable
   @Override
   public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-    int type = Utils.getTier(this.getRegistryName());
-    switch (type) {
-      case 1:
-      default:
-        return new DankTiles.DankStorageTile1();
-      case 2:
-        return new DankTiles.DankStorageTile2();
-      case 3:
-        return new DankTiles.DankStorageTile3();
-      case 4:
-        return new DankTiles.DankStorageTile4();
-      case 5:
-        return new DankTiles.DankStorageTile5();
-      case 6:
-        return new DankTiles.DankStorageTile6();
-      case 7:
-        return new DankTiles.DankStorageTile7();
-    }
+    return new DankBlockEntity();
   }
 
   @Override
-  @OnlyIn(Dist.CLIENT)
-  public void addInformation(ItemStack bag, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-    if (bag.hasTag() && Utils.DEV)tooltip.add(new StringTextComponent(bag.getTag().toString()));
-
-    if (!Screen.hasShiftDown()){
-      tooltip.add(new TranslationTextComponent("text.dankstorage.shift",
-              new StringTextComponent("Shift").func_240699_a_(TextFormatting.YELLOW)).func_240699_a_(TextFormatting.GRAY));
-    }
-
-    if (Screen.hasShiftDown()) {
-      tooltip.add(new TranslationTextComponent("text.dankstorage.changemode",new StringTextComponent(Client.CONSTRUCTION.getTranslationKey()).func_240699_a_(TextFormatting.YELLOW)).func_240699_a_(TextFormatting.GRAY));
-      CMessageToggleUseType.UseType mode = Utils.getUseType(bag);
-      tooltip.add(
-              new TranslationTextComponent("text.dankstorage.currentusetype",new TranslationTextComponent(
-                      "dankstorage.usetype."+mode.name().toLowerCase(Locale.ROOT)).func_240699_a_(TextFormatting.YELLOW)).func_240699_a_(TextFormatting.GRAY));
-      tooltip.add(
-              new TranslationTextComponent("text.dankstorage.stacklimit",new StringTextComponent(Utils.getStackLimit(getRegistryName())+"").func_240699_a_(TextFormatting.GREEN)).func_240699_a_(TextFormatting.GRAY));
-
-      DankHandler handler = Utils.getHandler(bag);
-
-      if (handler.isEmpty()){
-        tooltip.add(
-                new TranslationTextComponent("text.dankstorage.empty").func_240699_a_(TextFormatting.ITALIC));
-        return;
-      }
-      int count1 = 0;
-      for (int i = 0; i < handler.getSlots(); i++) {
-        if (count1 > 10)break;
-        ItemStack item = handler.getStackInSlot(i);
-        if (item.isEmpty())continue;
-        ITextComponent count = new StringTextComponent(Integer.toString(item.getCount())).func_240699_a_(TextFormatting.AQUA);
-        //tooltip.add(new TranslationTextComponent("text.dankstorage.formatcontaineditems", count, item.getDisplayName().(item.getRarity().color)));
-        count1++;
-      }
-    }
+  protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    super.fillStateContainer(builder);
+    builder.add(TIER);
   }
-
- /* @Nonnull
-  @Override
-  public ITextComponent getNameTextComponent() {
-    int tier = Utils.getTier(this.getRegistryName());
-    switch (tier){
-      case 1:return super.getNameTextComponent().func_240699_a_(TextFormatting.DARK_GRAY);
-      case 2:return super.getNameTextComponent().func_240699_a_(TextFormatting.RED);
-      case 3:return super.getNameTextComponent().func_240699_a_(TextFormatting.GOLD);
-      case 4:return super.getNameTextComponent().func_240699_a_(TextFormatting.GREEN);
-      case 5:return super.getNameTextComponent().func_240699_a_(TextFormatting.AQUA);
-      case 6:return super.getNameTextComponent().func_240699_a_(TextFormatting.DARK_PURPLE);
-      case 7:return super.getNameTextComponent().func_240699_a_(TextFormatting.WHITE);
-    }
-    return super.getNameTextComponent();
-  }*/
 
   public static boolean onItemPickup(EntityItemPickupEvent event, ItemStack bag) {
 

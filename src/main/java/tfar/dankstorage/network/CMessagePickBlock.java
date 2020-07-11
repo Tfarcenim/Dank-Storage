@@ -1,6 +1,6 @@
 package tfar.dankstorage.network;
 
-import tfar.dankstorage.DankItemBlock;
+import tfar.dankstorage.DankItem;
 import tfar.dankstorage.inventory.PortableDankHandler;
 import tfar.dankstorage.utils.Utils;
 import net.minecraft.block.BlockState;
@@ -32,7 +32,7 @@ public class CMessagePickBlock {
 
     ctx.get().enqueueWork(() -> {
       ItemStack bag = player.getHeldItemMainhand();
-      if (bag.getItem() instanceof DankItemBlock) {
+      if (bag.getItem() instanceof DankItem) {
         PortableDankHandler handler = Utils.getHandler(bag);
         ItemStack pickblock = onPickBlock(Minecraft.getInstance().objectMouseOver,player,player.world);
         int slot = -1;

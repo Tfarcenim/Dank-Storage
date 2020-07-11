@@ -11,8 +11,8 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import tfar.dankstorage.block.DankBlock;
-import tfar.dankstorage.DankItemBlock;
+import tfar.dankstorage.block.DockBlock;
+import tfar.dankstorage.DankItem;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.container.AbstractPortableDankContainer;
 import tfar.dankstorage.utils.Utils;
@@ -31,7 +31,7 @@ public class DankEventHandler {
     PlayerInventory inventory = player.inventory;
     for (int i = 0; i < inventory.getSizeInventory(); i++) {
       ItemStack stack = inventory.getStackInSlot(i);
-      if (stack.getItem() instanceof DankItemBlock && DankBlock.onItemPickup(event, stack)) {
+      if (stack.getItem() instanceof DankItem && DockBlock.onItemPickup(event, stack)) {
         event.setCanceled(true);
         return;
       }
@@ -67,7 +67,7 @@ public class DankEventHandler {
   public static void wrench(PlayerInteractEvent.RightClickBlock event) {
     BlockPos pos = event.getPos();
     BlockState state = event.getWorld().getBlockState(pos);
-    if (!(state.getBlock() instanceof DankBlock)) return;
+    if (!(state.getBlock() instanceof DockBlock)) return;
     PlayerEntity player = event.getPlayer();
     if (!player.getHeldItem(event.getHand()).getItem().isIn(Utils.WRENCHES)) return;
     event.setCanceled(true);

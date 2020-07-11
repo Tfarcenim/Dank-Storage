@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import tfar.dankstorage.DankItemBlock;
+import tfar.dankstorage.DankItem;
 import tfar.dankstorage.mixinhelpers.UseDankStorage;
 
 import java.util.function.Predicate;
@@ -44,7 +44,7 @@ public class MixinBowItem {
   }
 
   private ItemStack getDankStorage(PlayerEntity player){
-    return IntStream.range(0, player.inventory.getSizeInventory()).mapToObj(i -> player.inventory.getStackInSlot(i)).filter(stack -> stack.getItem() instanceof DankItemBlock).findFirst().orElse(ItemStack.EMPTY);
+    return IntStream.range(0, player.inventory.getSizeInventory()).mapToObj(i -> player.inventory.getStackInSlot(i)).filter(stack -> stack.getItem() instanceof DankItem).findFirst().orElse(ItemStack.EMPTY);
   }
 
 }

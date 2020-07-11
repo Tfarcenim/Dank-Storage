@@ -1,6 +1,6 @@
 package tfar.dankstorage.network;
 
-import tfar.dankstorage.DankItemBlock;
+import tfar.dankstorage.DankItem;
 import tfar.dankstorage.utils.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -18,7 +18,7 @@ public class CMessageToggleUseType {
       if (player == null) return;
 
       ctx.get().enqueueWork(() ->  {
-        if (player.getHeldItemMainhand().getItem() instanceof DankItemBlock) {
+        if (player.getHeldItemMainhand().getItem() instanceof DankItem) {
           Utils.cyclePlacement(player.getHeldItemMainhand(),player);
         }
       });
@@ -27,7 +27,7 @@ public class CMessageToggleUseType {
   public static final UseType[] useTypes = UseType.values();
 
     public enum UseType{
-    bag,chest,construction
+    bag,construction
     }
 }
 

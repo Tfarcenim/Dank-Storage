@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "rrr",
+    "r r",
+    "rrr"
+  ],
+  "key": {
+    "r": {
+      "item": "minecraft:black_concrete"
+    }
+  },
+  "result": {
+    "item": "dankstorage:dock"
+  }
+}
