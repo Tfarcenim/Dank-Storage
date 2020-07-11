@@ -47,14 +47,14 @@ public class Utils {
   public static boolean isConstruction(ItemStack bag) {
     return bag.getItem() instanceof DankItem && bag.hasTag()
             && bag.getTag().contains("construction")
-            && bag.getTag().getInt("construction") == 2;
+            && bag.getTag().getInt("construction") == CMessageToggleUseType.UseType.construction.ordinal();
   }
 
   //0,1,2,3
   public static void cycleMode(ItemStack bag, PlayerEntity player) {
     int ordinal = bag.getOrCreateTag().getInt("mode");
     ordinal++;
-    if (ordinal > 3) ordinal = 0;
+    if (ordinal > modes.length - 1) ordinal = 0;
     bag.getOrCreateTag().putInt("mode", ordinal);
     player.sendStatusMessage(
             new TranslationTextComponent("dankstorage.mode." + modes[ordinal].name()), true);

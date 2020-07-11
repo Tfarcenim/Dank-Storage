@@ -48,7 +48,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
     this.background = background;
     this.ySize = 114 + this.container.rows * 18;
     this.ignoreMouseUp = true;
-    this.is7 = this instanceof DankScreens.DankStorageScreen7 || this instanceof DankScreens.PortableDankStorageScreen7;
+    this.is7 = this.container.rows > 6;
   }
 
   @Override
@@ -362,7 +362,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
       Slot slot = getSlotAtPosition(mouseX,mouseY);
       if (slot instanceof DankSlot) {
         DankPacketHandler.INSTANCE.sendToServer(new C2SMessageLockSlot(slot.slotNumber));
-        if (this instanceof AbstractPortableDankStorageScreen)container.getHandler().lockSlot(slot.slotNumber);
+        if (this instanceof PortableDankStorageScreen)container.getHandler().lockSlot(slot.slotNumber);
         return true;
       }
     }

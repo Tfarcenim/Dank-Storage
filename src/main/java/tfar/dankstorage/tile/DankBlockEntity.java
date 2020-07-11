@@ -6,6 +6,7 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TranslationTextComponent;
 import tfar.dankstorage.DankItem;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.block.DockBlock;
@@ -150,13 +151,17 @@ public class DankBlockEntity extends TileEntity implements INameable, INamedCont
     return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? optional.cast() : super.getCapability(capability, facing);
   }
 
-  public void setCustomName(ITextComponent p_190575_1_) {
-    this.customName = p_190575_1_;
+  public void setCustomName(ITextComponent text) {
+    this.customName = text;
   }
 
   @Override
   public ITextComponent getName() {
-    return customName != null ? customName : getBlockState().getBlock().getTranslatedName();
+    return customName != null ? customName : getDefaultName();
+  }
+
+  ITextComponent getDefaultName() {
+    return new TranslationTextComponent("container.dankstorage.dank_"+getBlockState().get(DockBlock.TIER));
   }
 
   @Override
