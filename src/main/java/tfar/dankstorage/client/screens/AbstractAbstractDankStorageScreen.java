@@ -208,7 +208,9 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
       }
     }
     }
-    this.renderTooltip(matrices,tooltip, p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.font : font));
+    //crashes with nosuchmethod for some reason so lets call the forge patch directly instead
+    //super.renderTooltip(matrices,tooltip, p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.font : font));
+    net.minecraftforge.fml.client.gui.GuiUtils.drawHoveringText(matrices, tooltip, p_renderTooltip_2_, p_renderTooltip_2_, width, height, -1,(font == null ? this.font : font));
     net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
   }
 
