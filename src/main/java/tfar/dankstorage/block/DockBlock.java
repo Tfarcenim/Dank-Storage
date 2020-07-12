@@ -96,7 +96,11 @@ public class DockBlock extends Block {
         }
 
         if (held.getItem() instanceof DankItem) {
-          ((DankBlockEntity)tile).addTank(held);
+
+          if (state.get(TIER) > 0) {
+            ((DankBlockEntity) tile).removeTank();
+          }
+          ((DankBlockEntity) tile).addTank(held);
           return ActionResultType.SUCCESS;
         }
 
