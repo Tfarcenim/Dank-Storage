@@ -1,7 +1,6 @@
 package tfar.dankstorage.client.screens;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.inventory.container.PlayerContainer;
 import tfar.dankstorage.client.button.RedGreenToggleButton;
 import tfar.dankstorage.client.button.TripleToggleButton;
 import tfar.dankstorage.container.AbstractPortableDankContainer;
@@ -13,6 +12,8 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
+import static tfar.dankstorage.client.screens.DockScreen.*;
+
 public class PortableDankStorageScreen extends AbstractAbstractDankStorageScreen<AbstractPortableDankContainer> {
 
   public PortableDankStorageScreen(AbstractPortableDankContainer container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background) {
@@ -22,10 +23,10 @@ public class PortableDankStorageScreen extends AbstractAbstractDankStorageScreen
   @Override
   protected void init() {
     super.init();
-    int start = 0;
-    int namelength = font.getStringWidth(getContainerName().getUnformattedComponentText());
+    int start = this.field_238742_p_;
+    int namelength = font.getStringWidth(title.getUnformattedComponentText());
     start += namelength;
-    this.addButton(new RedGreenToggleButton(guiLeft + (start += 16), guiTop + 6 ,8,8, b -> {
+    this.addButton(new RedGreenToggleButton(guiLeft + (start += 20), guiTop + 6 ,8,8, b -> {
       ((RedGreenToggleButton)b).toggle();
       DankPacketHandler.INSTANCE.sendToServer(new C2SMessageTagMode());
     }, Utils.oredict(container.getBag())));
@@ -36,46 +37,43 @@ public class PortableDankStorageScreen extends AbstractAbstractDankStorageScreen
   }
 
   @Override
-  public ITextComponent getContainerName() {
-    return container.getBag().getDisplayName();
-  }
-
-  @Override
   protected void func_230451_b_(MatrixStack stack,int mouseX, int mouseY) {
     super.func_230451_b_(stack,mouseX, mouseY);
-    int namelength = font.getStringWidth(getContainerName().getUnformattedComponentText());
-    this.font.drawString(stack,"Tag", 25 + namelength, 6, 0x404040);
-    this.font.drawString(stack,"Pickup", 56 + namelength, 6 , 0x404040);
+    int namelength = font.getStringWidth(title.getUnformattedComponentText());
+    int start = this.field_238742_p_;
+    start+= namelength;
+    this.font.drawString(stack,"Tag", start += 30, 6, 0x404040);
+    this.font.drawString(stack,"Pickup", start += 30, 6 , 0x404040);
     int color = container.nbtSize > 2000000 ? 0x800000 : 0x008000;
     this.font.drawString(stack,"NBT: " + container.nbtSize,70,this.ySize - 94,color);
   }
 
   public static PortableDankStorageScreen t1(AbstractPortableDankContainer container,PlayerInventory playerinventory, ITextComponent component) {
-    return new PortableDankStorageScreen(container,playerinventory,component,DankScreens.background1);
+    return new PortableDankStorageScreen(container,playerinventory,component,background1);
   }
 
   public static PortableDankStorageScreen t2(AbstractPortableDankContainer container,PlayerInventory playerinventory, ITextComponent component) {
-    return new PortableDankStorageScreen(container,playerinventory,component,DankScreens.background2);
+    return new PortableDankStorageScreen(container,playerinventory,component,background2);
   }
 
   public static PortableDankStorageScreen t3(AbstractPortableDankContainer container,PlayerInventory playerinventory, ITextComponent component) {
-    return new PortableDankStorageScreen(container,playerinventory,component,DankScreens.background3);
+    return new PortableDankStorageScreen(container,playerinventory,component,background3);
   }
 
   public static PortableDankStorageScreen t4(AbstractPortableDankContainer container,PlayerInventory playerinventory, ITextComponent component) {
-    return new PortableDankStorageScreen(container,playerinventory,component,DankScreens.background4);
+    return new PortableDankStorageScreen(container,playerinventory,component,background4);
   }
 
   public static PortableDankStorageScreen t5(AbstractPortableDankContainer container,PlayerInventory playerinventory, ITextComponent component) {
-    return new PortableDankStorageScreen(container,playerinventory,component,DankScreens.background5);
+    return new PortableDankStorageScreen(container,playerinventory,component,background5);
   }
 
   public static PortableDankStorageScreen t6(AbstractPortableDankContainer container,PlayerInventory playerinventory, ITextComponent component) {
-    return new PortableDankStorageScreen(container,playerinventory,component,DankScreens.background6);
+    return new PortableDankStorageScreen(container,playerinventory,component,background6);
   }
 
   public static PortableDankStorageScreen t7(AbstractPortableDankContainer container,PlayerInventory playerinventory, ITextComponent component) {
-    return new PortableDankStorageScreen(container,playerinventory,component,DankScreens.background7);
+    return new PortableDankStorageScreen(container,playerinventory,component,background7);
   }
 
 }

@@ -3,7 +3,6 @@ package tfar.dankstorage.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankItem;
-import tfar.dankstorage.client.screens.DankScreens;
 import tfar.dankstorage.client.screens.DockScreen;
 import tfar.dankstorage.client.screens.PortableDankStorageScreen;
 import tfar.dankstorage.inventory.PortableDankHandler;

@@ -26,7 +26,6 @@ import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.ItemHandlerHelper;
 import tfar.dankstorage.DankItem;
-import tfar.dankstorage.client.screens.DankScreens;
 import tfar.dankstorage.inventory.PortableDankHandler;
 import tfar.dankstorage.tile.DankBlockEntity;
 import tfar.dankstorage.utils.Utils;
