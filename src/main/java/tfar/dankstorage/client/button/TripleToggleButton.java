@@ -2,28 +2,23 @@ package tfar.dankstorage.client.button;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.util.text.StringTextComponent;
+import tfar.dankstorage.utils.Mode;
 
 public class TripleToggleButton extends SmallButton {
 
-  protected int togglestate;
+  protected Mode mode;
 
-  public TripleToggleButton(int x, int y, int widthIn, int heightIn, IPressable callback, int togglestate) {
+  public TripleToggleButton(int x, int y, int widthIn, int heightIn, IPressable callback, Mode mode) {
     super(x, y, widthIn, heightIn, new StringTextComponent(""), callback);
-    this.togglestate = togglestate;
+    this.mode = mode;
   }
 
   @Override
   public void tint() {
-    switch (togglestate){
-      case 0:RenderSystem.color3f(1,1,1);break;
-      case 1:RenderSystem.color3f(1,0,0);break;
-      case 2:RenderSystem.color3f(1,1,0);break;
-      case 3:RenderSystem.color3f(0,1,0);break;
-    }
+      RenderSystem.color4f(mode.r(),mode.g(),mode.b(),1);
   }
 
   public void toggle() {
-    togglestate++;
-    if (togglestate > 3) togglestate = 0;
+    mode = mode.cycle();
   }
 }

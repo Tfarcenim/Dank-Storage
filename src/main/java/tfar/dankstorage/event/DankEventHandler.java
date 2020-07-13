@@ -23,22 +23,6 @@ import static net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel;
 public class DankEventHandler {
 
   @SubscribeEvent
-  public static void handleEntityItemPickup(EntityItemPickupEvent event) {
-    PlayerEntity player = event.getPlayer();
-    if (player.openContainer instanceof AbstractPortableDankContainer) {
-      return;
-    }
-    PlayerInventory inventory = player.inventory;
-    for (int i = 0; i < inventory.getSizeInventory(); i++) {
-      ItemStack stack = inventory.getStackInSlot(i);
-      if (stack.getItem() instanceof DankItem && DockBlock.onItemPickup(event, stack)) {
-        event.setCanceled(true);
-        return;
-      }
-    }
-  }
-
-  @SubscribeEvent
   public static void harvestcheck(PlayerEvent.HarvestCheck e){
     PlayerEntity player = e.getPlayer();
     BlockState state = e.getTargetBlock();

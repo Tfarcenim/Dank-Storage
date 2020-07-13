@@ -6,17 +6,15 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import tfar.dankstorage.client.Client;
 import tfar.dankstorage.container.PortableDankProvider;
 import tfar.dankstorage.inventory.DankHandler;
 import tfar.dankstorage.inventory.PortableDankHandler;
-import tfar.dankstorage.network.CMessageTogglePickup;
 import tfar.dankstorage.network.CMessageToggleUseType;
+import tfar.dankstorage.utils.Mode;
 import tfar.dankstorage.utils.Utils;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -193,7 +191,7 @@ public class DankItem extends Item {
 
   @Override
   public boolean hasEffect(ItemStack stack) {
-    return stack.hasTag() && Utils.getMode(stack) != CMessageTogglePickup.Mode.NORMAL;
+    return stack.hasTag() && Utils.getMode(stack) != Mode.NORMAL;
   }
 
   @Override
@@ -282,7 +280,7 @@ public class DankItem extends Item {
   }
 
   public int getGlintColor(ItemStack stack){
-    CMessageTogglePickup.Mode mode = Utils.getMode(stack);
+    Mode mode = Utils.getMode(stack);
     switch (mode){
       case NORMAL:default:return 0xffffffff;
       case PICKUP_ALL:return 0xff00ff00;

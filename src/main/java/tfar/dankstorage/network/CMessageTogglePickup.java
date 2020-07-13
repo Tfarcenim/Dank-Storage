@@ -1,6 +1,7 @@
 package tfar.dankstorage.network;
 
 import tfar.dankstorage.DankItem;
+import tfar.dankstorage.utils.Mode;
 import tfar.dankstorage.utils.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -30,8 +31,5 @@ public class CMessageTogglePickup {
       });
       ctx.get().setPacketHandled(true);
     }
-public enum Mode {
-    NORMAL,PICKUP_ALL,FILTERED_PICKUP,VOID_PICKUP
-  }
 }
 

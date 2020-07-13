@@ -22,7 +22,6 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.ItemHandlerHelper;
 import tfar.dankstorage.DankItem;
@@ -35,7 +34,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static tfar.dankstorage.network.CMessageTogglePickup.Mode;
+import tfar.dankstorage.utils.Mode;
 
 public class DockBlock extends Block {
 
@@ -143,14 +142,13 @@ public class DockBlock extends Block {
     builder.add(TIER);
   }
 
-  public static boolean onItemPickup(EntityItemPickupEvent event, ItemStack bag) {
+  public static boolean onItemPickup(PlayerEntity player,ItemStack incoming, ItemStack bag) {
 
     Mode mode = Utils.getMode(bag);
     if (mode == Mode.NORMAL)return false;
     PortableDankHandler inv = Utils.getHandler(bag);
-    ItemStack toPickup = event.getItem().getItem();
-    int count = toPickup.getCount();
-    ItemStack rem = toPickup.copy();
+    int count = incoming.getCount();
+    ItemStack rem = incoming.copy();
     boolean oredict = Utils.oredict(bag);
 
         //stack with existing items
@@ -170,14 +168,13 @@ public class DockBlock extends Block {
             if (rem.isEmpty())break;
           }
     //leftovers
-    toPickup.setCount(rem.getCount());
+    incoming.setCount(rem.getCount());
     if (rem.getCount() != count) {
       bag.setAnimationsToGo(5);
-      PlayerEntity player = event.getPlayer();
       player.world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((player.getRNG().nextFloat() - player.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
       inv.writeItemStack();
     }
-    return toPickup.isEmpty();
+    return incoming.isEmpty();
   }
 
 
@@ -185,6 +182,20 @@ public class DockBlock extends Block {
   public static ItemStack insertIntoHandler(Mode mode, PortableDankHandler inv, int slot, ItemStack toInsert, boolean simulate, boolean oredict){
 
     ItemStack existing = inv.getStackInSlot(slot);
+    if (existing.isEmpty()) {
+      int stackLimit = inv.stacklimit;
+      int total = toInsert.getCount() + existing.getCount();
+      int remainder = total - stackLimit;
+      if (remainder <= 0) {
+        if (!simulate) inv.getContents().set(slot, toInsert.copy());
+        return ItemStack.EMPTY;
+      } else {
+        if (!simulate) inv.getContents().set(slot, ItemHandlerHelper.copyStackWithSize(toInsert, stackLimit));
+        if (mode == Mode.VOID_PICKUP) return ItemStack.EMPTY;
+        return ItemHandlerHelper.copyStackWithSize(toInsert, remainder);
+      }
+    }
+
     if (ItemHandlerHelper.canItemStacksStack(toInsert,existing) || (oredict && Utils.areItemStacksConvertible(toInsert,existing))){
       int stackLimit = inv.stacklimit;
       int total = toInsert.getCount() + existing.getCount();
@@ -192,8 +203,7 @@ public class DockBlock extends Block {
       if (remainder <= 0) {
         if (!simulate)inv.getContents().set(slot, ItemHandlerHelper.copyStackWithSize(existing, total));
         return ItemStack.EMPTY;
-      }
-      else {
+      } else {
         if (!simulate) inv.getContents().set(slot, ItemHandlerHelper.copyStackWithSize(toInsert, stackLimit));
         if (mode == Mode.VOID_PICKUP) return ItemStack.EMPTY;
         return ItemHandlerHelper.copyStackWithSize(toInsert, remainder);

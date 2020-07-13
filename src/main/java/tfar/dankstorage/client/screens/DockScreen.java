@@ -6,7 +6,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
-public class DockScreen extends AbstractAbstractDankStorageScreen<AbstractTileDankContainer> {
+public class DockScreen extends AbstractDankStorageScreen<AbstractTileDankContainer> {
 
   public DockScreen(AbstractTileDankContainer container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background) {
     super(container,playerinventory, component,background);

@@ -14,7 +14,7 @@ import net.minecraft.util.text.ITextComponent;
 
 import static tfar.dankstorage.client.screens.DockScreen.*;
 
-public class PortableDankStorageScreen extends AbstractAbstractDankStorageScreen<AbstractPortableDankContainer> {
+public class PortableDankStorageScreen extends AbstractDankStorageScreen<AbstractPortableDankContainer> {
 
   public PortableDankStorageScreen(AbstractPortableDankContainer container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background) {
     super(container,playerinventory, component,background);
@@ -33,7 +33,7 @@ public class PortableDankStorageScreen extends AbstractAbstractDankStorageScreen
     this.addButton(new TripleToggleButton(guiLeft + (start += 30), guiTop + 6 ,8,8, b -> {
       ((TripleToggleButton)b).toggle();
       DankPacketHandler.INSTANCE.sendToServer(new CMessageTogglePickup());
-    }, Utils.getMode(container.getBag()).ordinal()));
+    }, Utils.getMode(container.getBag())));
   }
 
   @Override

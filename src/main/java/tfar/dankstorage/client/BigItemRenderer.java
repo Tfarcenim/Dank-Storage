@@ -19,16 +19,16 @@ import net.minecraft.util.math.MathHelper;
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 
-public class RenderItemExtended extends ItemRenderer {
+public class BigItemRenderer extends ItemRenderer {
 
-  public static final RenderItemExtended INSTANCE = new RenderItemExtended(Minecraft.getInstance().textureManager,Minecraft.getInstance().getModelManager(),Minecraft.getInstance().getItemColors());
+  public static final BigItemRenderer INSTANCE = new BigItemRenderer(Minecraft.getInstance().textureManager,Minecraft.getInstance().getModelManager(),Minecraft.getInstance().getItemColors());
 
-  protected RenderItemExtended(TextureManager textureManagerIn, ModelManager modelManagerIn, ItemColors itemColorsIn) {
+  protected BigItemRenderer(TextureManager textureManagerIn, ModelManager modelManagerIn, ItemColors itemColorsIn) {
     super(textureManagerIn, modelManagerIn, itemColorsIn);
   }
 
-  public void renderItemOverlayIntoGUI(MatrixStack matrices,FontRenderer fr, ItemStack stack, int xPosition, int yPosition,
-                                       @Nullable String text) {
+  @Override
+  public void renderItemOverlayIntoGUI(FontRenderer fr, ItemStack stack, int xPosition, int yPosition, @Nullable String text) {
     if (!stack.isEmpty()) {
       MatrixStack matrixstack = new MatrixStack();
 
@@ -40,8 +40,8 @@ public class RenderItemExtended extends ItemRenderer {
         RenderSystem.pushMatrix();
         float scale = .75f;
         RenderSystem.scalef(scale, scale, 1.0F);
-        fr.drawStringWithShadow(matrices,s, (xPosition + 19 - 2 - (fr.getStringWidth(s)*scale)) /scale,
-                (yPosition + 6 + 3 + (1 / (scale * scale) - 1) ) /scale, 16777215);
+        fr.renderString(s, (xPosition + 19 - 2 - (fr.getStringWidth(s)*scale)) /scale,
+                (yPosition + 6 + 3 + (1 / (scale * scale) - 1) ) /scale, 16777215,true, matrixstack.getLast().getMatrix(), irendertypebuffer$impl, false, 0, 15728880);
                 //true, matrixstack.getLast().getNormal(), irendertypebuffer$impl, false, 0, 15728880);
         irendertypebuffer$impl.finish();
         RenderSystem.popMatrix();

@@ -41,6 +41,7 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
+            arg "-mixin.config="+archivesBaseName+".mixins.json"
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
@@ -53,7 +54,8 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
-            
+            arg "-mixin.config="+archivesBaseName+".mixins.json"
+
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 

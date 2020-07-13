@@ -3,7 +3,7 @@ package tfar.dankstorage.client.screens;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
-import tfar.dankstorage.client.RenderItemExtended;
+import tfar.dankstorage.client.BigItemRenderer;
 import tfar.dankstorage.client.button.SmallButton;
 import tfar.dankstorage.container.AbstractAbstractDankContainer;
 import tfar.dankstorage.container.AbstractTileDankContainer;
@@ -37,13 +37,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstractDankContainer> extends ContainerScreen<T> {
+public abstract class AbstractDankStorageScreen<T extends AbstractAbstractDankContainer> extends ContainerScreen<T> {
 
 	final ResourceLocation background;//= new ResourceLocation("textures/gui/container/shulker_box.png");
 
 	protected final boolean is7;
 
-	public AbstractAbstractDankStorageScreen(T container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background) {
+	public AbstractDankStorageScreen(T container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background) {
 		super(container, playerinventory, component);
 		this.background = background;
 		this.ySize = 114 + this.container.rows * 18;
@@ -217,14 +217,14 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
 		RenderSystem.translatef(0.0F, 0.0F, 32.0F);
 		this.setBlitOffset(200);
 		this.itemRenderer.zLevel = 200.0F;
-		RenderItemExtended.INSTANCE.zLevel = this.itemRenderer.zLevel;
+		BigItemRenderer.INSTANCE.zLevel = this.itemRenderer.zLevel;
 		net.minecraft.client.gui.FontRenderer fonts = stack.getItem().getFontRenderer(stack);
 		if (fonts == null) fonts = font;
 		this.itemRenderer.renderItemAndEffectIntoGUI(stack, x, y);
 		this.itemRenderer.renderItemOverlayIntoGUI(fonts, stack, x, y - (this.draggedStack.isEmpty() ? 0 : 8), altText);
 		this.setBlitOffset(0);
 		this.itemRenderer.zLevel = 0.0F;
-		RenderItemExtended.INSTANCE.zLevel = this.itemRenderer.zLevel;
+		BigItemRenderer.INSTANCE.zLevel = this.itemRenderer.zLevel;
 	}
 
 	private void drawSlot(MatrixStack matrices, Slot slotIn) {
@@ -281,9 +281,9 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
 
 			RenderSystem.enableDepthTest();
 			this.itemRenderer.renderItemAndEffectIntoGUI(this.minecraft.player, itemstack, i, j);
-			RenderItemExtended.INSTANCE.zLevel = this.itemRenderer.zLevel;
+			BigItemRenderer.INSTANCE.zLevel = this.itemRenderer.zLevel;
 			if (slotIn instanceof DankSlot) {
-				RenderItemExtended.INSTANCE.renderItemOverlayIntoGUI(this.font, itemstack, i, j, s);
+				BigItemRenderer.INSTANCE.renderItemOverlayIntoGUI(this.font, itemstack, i, j, s);
 			} else {
 				this.itemRenderer.renderItemOverlayIntoGUI(this.font, itemstack, i, j, s);
 			}
@@ -291,7 +291,7 @@ public abstract class AbstractAbstractDankStorageScreen<T extends AbstractAbstra
 
 		this.itemRenderer.zLevel = 0.0F;
 		this.setBlitOffset(0);
-		RenderItemExtended.INSTANCE.zLevel = itemRenderer.zLevel;
+		BigItemRenderer.INSTANCE.zLevel = itemRenderer.zLevel;
 	}
 
 	private void updateDragSplitting() {

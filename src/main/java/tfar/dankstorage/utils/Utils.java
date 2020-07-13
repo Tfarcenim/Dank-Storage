@@ -3,7 +3,6 @@ package tfar.dankstorage.utils;
 import net.minecraft.item.Items;
 import net.minecraft.tags.ITag;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.DankItem;
 import tfar.dankstorage.container.AbstractAbstractDankContainer;
 import tfar.dankstorage.inventory.DankHandler;
@@ -27,7 +26,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import static tfar.dankstorage.network.CMessageTogglePickup.Mode;
 import static tfar.dankstorage.network.CMessageTogglePickup.modes;
 import static tfar.dankstorage.network.CMessageToggleUseType.useTypes;
 
