@@ -142,60 +142,10 @@ public class DockBlock extends Block {
     builder.add(TIER);
   }
 
-  public static boolean onItemPickup(PlayerEntity player,ItemStack incoming, ItemStack bag) {
-
-    Mode mode = Utils.getMode(bag);
-    if (mode == Mode.NORMAL)return false;
-    PortableDankHandler inv = Utils.getHandler(bag);
-    int count = incoming.getCount();
-    ItemStack rem = incoming.copy();
-    boolean oredict = Utils.oredict(bag);
-
-        //stack with existing items
-        List<Integer> emptyslots = new ArrayList<>();
-        for (int i = 0; i < inv.getSlots(); i++){
-          if (inv.getStackInSlot(i).isEmpty()){
-            emptyslots.add(i);
-            continue;
-          }
-          rem = insertIntoHandler(mode,inv,i,rem,false,oredict);
-          if (rem.isEmpty())break;
-        }
-        //only iterate empty slots
-        if (!rem.isEmpty())
-          for (int slot : emptyslots) {
-            rem = insertIntoHandler(mode,inv,slot,rem,false,oredict);
-            if (rem.isEmpty())break;
-          }
-    //leftovers
-    incoming.setCount(rem.getCount());
-    if (rem.getCount() != count) {
-      bag.setAnimationsToGo(5);
-      player.world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((player.getRNG().nextFloat() - player.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
-      inv.writeItemStack();
-    }
-    return incoming.isEmpty();
-  }
-
-
 
   public static ItemStack insertIntoHandler(Mode mode, PortableDankHandler inv, int slot, ItemStack toInsert, boolean simulate, boolean oredict){
 
     ItemStack existing = inv.getStackInSlot(slot);
-    if (existing.isEmpty()) {
-      int stackLimit = inv.stacklimit;
-      int total = toInsert.getCount() + existing.getCount();
-      int remainder = total - stackLimit;
-      if (remainder <= 0) {
-        if (!simulate) inv.getContents().set(slot, toInsert.copy());
-        return ItemStack.EMPTY;
-      } else {
-        if (!simulate) inv.getContents().set(slot, ItemHandlerHelper.copyStackWithSize(toInsert, stackLimit));
-        if (mode == Mode.VOID_PICKUP) return ItemStack.EMPTY;
-        return ItemHandlerHelper.copyStackWithSize(toInsert, remainder);
-      }
-    }
-
     if (ItemHandlerHelper.canItemStacksStack(toInsert,existing) || (oredict && Utils.areItemStacksConvertible(toInsert,existing))){
       int stackLimit = inv.stacklimit;
       int total = toInsert.getCount() + existing.getCount();
@@ -203,7 +153,8 @@ public class DockBlock extends Block {
       if (remainder <= 0) {
         if (!simulate)inv.getContents().set(slot, ItemHandlerHelper.copyStackWithSize(existing, total));
         return ItemStack.EMPTY;
-      } else {
+      }
+      else {
         if (!simulate) inv.getContents().set(slot, ItemHandlerHelper.copyStackWithSize(toInsert, stackLimit));
         if (mode == Mode.VOID_PICKUP) return ItemStack.EMPTY;
         return ItemHandlerHelper.copyStackWithSize(toInsert, remainder);

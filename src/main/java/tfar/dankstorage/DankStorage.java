@@ -79,7 +79,6 @@ public class DankStorage {
   // Event bus for receiving Registry Events)
   @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
   public static class RegistryEvents {
-    public static final List<Block> MOD_BLOCKS = new LinkedList<>();
 
     @SubscribeEvent
     public static void blocks(final RegistryEvent.Register<Block> event) {
@@ -90,11 +89,10 @@ public class DankStorage {
 
     @SubscribeEvent
     public static void items(final RegistryEvent.Register<Item> event) {
-      Item.Properties properties = new Item.Properties().group(ItemGroup.DECORATIONS).maxStackSize(1);
+      Item.Properties properties = new Item.Properties().group(ItemGroup.DECORATIONS);
       register(new BlockItem(Objects.dock, properties), Objects.dock.getRegistryName().getPath(), event.getRegistry());
-      Item.Properties properties1 = new Item.Properties().group(ItemGroup.DECORATIONS);
-      IntStream.range(1, 8).forEach(i -> register(new DankItem(properties1, i), "dank_" + i, event.getRegistry()));
-      IntStream.range(1, 7).forEach(i -> register(new UpgradeItem(properties1, new UpgradeInfo(i, i + 1)), i + "_to_" + (i + 1), event.getRegistry()));
+      IntStream.range(1, 8).forEach(i -> register(new DankItem(properties.maxStackSize(1), i), "dank_" + i, event.getRegistry()));
+      IntStream.range(1, 7).forEach(i -> register(new UpgradeItem(properties, new UpgradeInfo(i, i + 1)), i + "_to_" + (i + 1), event.getRegistry()));
     }
     
 
@@ -171,7 +169,6 @@ public class DankStorage {
 
     private static <T extends IForgeRegistryEntry<T>> void register(T obj, String name, IForgeRegistry<T> registry) {
       registry.register(obj.setRegistryName(new ResourceLocation(MODID, name)));
-      if (obj instanceof Block) MOD_BLOCKS.add((Block) obj);
     }
   }
 
