@@ -72,6 +72,18 @@ public class Client {
     }
 
     @SubscribeEvent
+    public static void onMouseInput(InputEvent.MouseInputEvent event) {
+      if (mc.player == null || !(mc.player.getHeldItemMainhand().getItem() instanceof DankItem || mc.player.getHeldItemOffhand().getItem() instanceof DankItem))
+        return;
+      if (CONSTRUCTION.isPressed()) {
+        DankPacketHandler.INSTANCE.sendToServer(new CMessageToggleUseType());
+      }
+      if (mc.gameSettings.keyBindPickBlock.isPressed()) {
+        DankPacketHandler.INSTANCE.sendToServer(new CMessagePickBlock());
+      }
+    }
+
+    @SubscribeEvent
     public static void mousewheel(InputEvent.MouseScrollEvent e) {
       PlayerEntity player = Minecraft.getInstance().player;
       if (player != null && player.isCrouching() && (Utils.isConstruction(player.getHeldItemMainhand()) || Utils.isConstruction(player.getHeldItemOffhand()))) {
