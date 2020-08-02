@@ -23,7 +23,7 @@ public class PortableDankStorageScreen extends AbstractDankStorageScreen<Abstrac
   @Override
   protected void init() {
     super.init();
-    int start = this.field_238742_p_;
+    int start = this.titleX;
     int namelength = font.getStringWidth(title.getUnformattedComponentText());
     start += namelength;
     this.addButton(new RedGreenToggleButton(guiLeft + (start += 20), guiTop + 6 ,8,8, b -> {
@@ -37,10 +37,10 @@ public class PortableDankStorageScreen extends AbstractDankStorageScreen<Abstrac
   }
 
   @Override
-  protected void func_230451_b_(MatrixStack stack,int mouseX, int mouseY) {
-    super.func_230451_b_(stack,mouseX, mouseY);
+  protected void drawGuiContainerForegroundLayer(MatrixStack stack,int mouseX, int mouseY) {
+    super.drawGuiContainerForegroundLayer(stack,mouseX, mouseY);
     int namelength = font.getStringWidth(title.getUnformattedComponentText());
-    int start = this.field_238742_p_;
+    int start = this.titleX;
     start+= namelength;
     this.font.drawString(stack,"Tag", start += 30, 6, 0x404040);
     this.font.drawString(stack,"Pickup", start += 30, 6 , 0x404040);

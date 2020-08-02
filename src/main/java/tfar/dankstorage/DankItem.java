@@ -201,23 +201,23 @@ public class DankItem extends Item {
 
     if (!Screen.hasShiftDown()){
       tooltip.add(new TranslationTextComponent("text.dankstorage.shift",
-              new StringTextComponent("Shift").func_240699_a_(TextFormatting.YELLOW)).func_240699_a_(TextFormatting.GRAY));
+              new StringTextComponent("Shift").mergeStyle(TextFormatting.YELLOW)).mergeStyle(TextFormatting.GRAY));
     }
 
     if (Screen.hasShiftDown()) {
-      tooltip.add(new TranslationTextComponent("text.dankstorage.changemode",new StringTextComponent(Client.CONSTRUCTION.getTranslationKey()).func_240699_a_(TextFormatting.YELLOW)).func_240699_a_(TextFormatting.GRAY));
+      tooltip.add(new TranslationTextComponent("text.dankstorage.changemode",new StringTextComponent(Client.CONSTRUCTION.getTranslationKey()).mergeStyle(TextFormatting.YELLOW)).mergeStyle(TextFormatting.GRAY));
       CMessageToggleUseType.UseType mode = Utils.getUseType(bag);
       tooltip.add(
               new TranslationTextComponent("text.dankstorage.currentusetype",new TranslationTextComponent(
-                      "dankstorage.usetype."+mode.name().toLowerCase(Locale.ROOT)).func_240699_a_(TextFormatting.YELLOW)).func_240699_a_(TextFormatting.GRAY));
+                      "dankstorage.usetype."+mode.name().toLowerCase(Locale.ROOT)).mergeStyle(TextFormatting.YELLOW)).mergeStyle(TextFormatting.GRAY));
       tooltip.add(
-              new TranslationTextComponent("text.dankstorage.stacklimit",new StringTextComponent(Utils.getStackLimit(tier)+"").func_240699_a_(TextFormatting.GREEN)).func_240699_a_(TextFormatting.GRAY));
+              new TranslationTextComponent("text.dankstorage.stacklimit",new StringTextComponent(Utils.getStackLimit(tier)+"").mergeStyle(TextFormatting.GREEN)).mergeStyle(TextFormatting.GRAY));
 
       DankHandler handler = Utils.getHandler(bag);
 
       if (handler.isEmpty()){
         tooltip.add(
-                new TranslationTextComponent("text.dankstorage.empty").func_240699_a_(TextFormatting.ITALIC));
+                new TranslationTextComponent("text.dankstorage.empty").mergeStyle(TextFormatting.ITALIC));
         return;
       }
       int count1 = 0;
@@ -225,7 +225,7 @@ public class DankItem extends Item {
         if (count1 > 10)break;
         ItemStack item = handler.getStackInSlot(i);
         if (item.isEmpty())continue;
-        ITextComponent count = new StringTextComponent(Integer.toString(item.getCount())).func_240699_a_(TextFormatting.AQUA);
+        ITextComponent count = new StringTextComponent(Integer.toString(item.getCount())).mergeStyle(TextFormatting.AQUA);
         //tooltip.add(new TranslationTextComponent("text.dankstorage.formatcontaineditems", count, item.getDisplayName().(item.getRarity().color)));
         count1++;
       }

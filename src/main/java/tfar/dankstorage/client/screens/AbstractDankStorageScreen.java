@@ -49,7 +49,7 @@ public abstract class AbstractDankStorageScreen<T extends AbstractAbstractDankCo
 		this.ySize = 114 + this.container.rows * 18;
 		this.ignoreMouseUp = true;
 		this.is7 = this.container.rows > 6;
-		this.field_238745_s_ = this.ySize - 94;
+		this.playerInventoryTitleY = this.ySize - 94;
 	}
 
 	@Override
@@ -61,9 +61,8 @@ public abstract class AbstractDankStorageScreen<T extends AbstractAbstractDankCo
 		}));
 	}
 
-	//drawGuiContainerBackgroundLayer
 	@Override
-	protected void func_230450_a_(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
+	protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
 
 		minecraft.getTextureManager().bindTexture(background);
 		if (is7)
@@ -88,7 +87,7 @@ public abstract class AbstractDankStorageScreen<T extends AbstractAbstractDankCo
 		this.renderBackground(stack);
 		int i = this.guiLeft;
 		int j = this.guiTop;
-		this.func_230450_a_(stack, partialTicks, mouseX, mouseY);
+		this.drawGuiContainerBackgroundLayer(stack, partialTicks, mouseX, mouseY);
 		RenderSystem.disableRescaleNormal();
 		RenderHelper.disableStandardItemLighting();
 		RenderSystem.disableLighting();
@@ -131,7 +130,7 @@ public abstract class AbstractDankStorageScreen<T extends AbstractAbstractDankCo
 		}
 
 		RenderHelper.disableStandardItemLighting();
-		this.func_230451_b_(stack, mouseX, mouseY);
+		this.drawGuiContainerForegroundLayer(stack, mouseX, mouseY);
 		net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawForeground(this, stack, mouseX, mouseY));
 		PlayerInventory inventoryplayer = this.minecraft.player.inventory;
 		ItemStack itemstack = this.draggedStack.isEmpty() ? inventoryplayer.getItemStack() : this.draggedStack;
@@ -192,22 +191,21 @@ public abstract class AbstractDankStorageScreen<T extends AbstractAbstractDankCo
 
 	public void appendDankInfo(List<ITextComponent> tooltip,ItemStack stack) {
 		if (hoveredSlot.getStack().getItem().isIn(Utils.BLACKLISTED_STORAGE)) {
-			ITextComponent component1 = new TranslationTextComponent("text.dankstorage.blacklisted_storage").
-							func_240699_a_(TextFormatting.DARK_RED);
+			ITextComponent component1 = new TranslationTextComponent("text.dankstorage.blacklisted_storage").mergeStyle(TextFormatting.DARK_RED);
 			tooltip.add(component1);
 		}
 		if (hoveredSlot.getStack().getItem().isIn(Utils.BLACKLISTED_USAGE)) {
 			ITextComponent component1 = new TranslationTextComponent("text.dankstorage.blacklisted_usage").
-							func_240699_a_(TextFormatting.DARK_RED);
+							mergeStyle(TextFormatting.DARK_RED);
 			tooltip.add(component1);
 		}
 		if (hoveredSlot instanceof DankSlot) {
 			ITextComponent component2 = new TranslationTextComponent("text.dankstorage.lock",
-							new StringTextComponent("ctrl").func_240699_a_(TextFormatting.YELLOW)).func_240699_a_(TextFormatting.GRAY);
+							new StringTextComponent("ctrl").mergeStyle(TextFormatting.YELLOW)).mergeStyle(TextFormatting.GRAY);
 			tooltip.add(component2);
 			if (hoveredSlot.getStack().getCount() >= 1000) {
 				ITextComponent component3 = new TranslationTextComponent(
-								"text.dankstorage.exact", new StringTextComponent(Integer.toString(hoveredSlot.getStack().getCount())).func_240699_a_(TextFormatting.AQUA)).func_240699_a_(TextFormatting.GRAY);
+								"text.dankstorage.exact", new StringTextComponent(Integer.toString(hoveredSlot.getStack().getCount())).mergeStyle(TextFormatting.AQUA)).mergeStyle(TextFormatting.GRAY);
 				tooltip.add(component3);
 			}
 		}
@@ -264,7 +262,7 @@ public abstract class AbstractDankStorageScreen<T extends AbstractAbstractDankCo
 		this.itemRenderer.zLevel = 100;
 
 		if (itemstack.isEmpty() && slotIn.isEnabled()) {
-			Pair<ResourceLocation, ResourceLocation> pair = slotIn.func_225517_c_();
+			Pair<ResourceLocation, ResourceLocation> pair = slotIn.getBackground();
 
 			if (pair != null) {
 				TextureAtlasSprite textureatlassprite = this.minecraft.getAtlasSpriteGetter(pair.getFirst()).apply(pair.getSecond());
@@ -334,18 +332,18 @@ public abstract class AbstractDankStorageScreen<T extends AbstractAbstractDankCo
 	}
 
 	public boolean mouseclicked(double mouseX, double mouseY, int mouseButton) {
-		Iterator var6 = this.children().iterator();
+		Iterator<IGuiEventListener> var6 = this.children.iterator();
 
-		IGuiEventListener lvt_7_1_;
+		IGuiEventListener iGuiEventListener;
 		do {
 			if (!var6.hasNext()) {
 				return false;
 			}
 
-			lvt_7_1_ = (IGuiEventListener) var6.next();
-		} while (!lvt_7_1_.mouseClicked(mouseX, mouseY, mouseButton));
+			iGuiEventListener = var6.next();
+		} while (!iGuiEventListener.mouseClicked(mouseX, mouseY, mouseButton));
 
-		this.setFocused(lvt_7_1_);
+		this.setListener(iGuiEventListener);
 		if (mouseButton == 0) {
 			this.setDragging(true);
 		}

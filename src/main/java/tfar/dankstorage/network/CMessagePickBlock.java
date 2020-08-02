@@ -34,7 +34,7 @@ public class CMessagePickBlock {
       ItemStack bag = player.getHeldItemMainhand();
       if (bag.getItem() instanceof DankItem) {
         PortableDankHandler handler = Utils.getHandler(bag);
-        ItemStack pickblock = onPickBlock(Minecraft.getInstance().objectMouseOver,player,player.world);
+        ItemStack pickblock = onPickBlock(player.pick(20.0D,0,false),player,player.world);
         int slot = -1;
         if (!pickblock.isEmpty())
         for (int i = 0; i < handler.getSlots(); i++) {
