@@ -194,10 +194,12 @@ public class DankBlockEntity extends TileEntity implements INameable, INamedCont
     return null;
   }
 
-  public void removeTank(){
+  public void removeTank() {
     int tier = getBlockState().get(DockBlock.TIER);
     CompoundNBT nbt = handler.serializeNBT();
     world.setBlockState(pos,getBlockState().with(DockBlock.TIER,0));
+    handler.setSize(0);
+    handler.stacklimit = 0;
     optional.invalidate();
     ItemStack stack = new ItemStack(Utils.getItemFromTier(tier));
     stack.getOrCreateTag().put(Utils.INV,nbt);
@@ -205,7 +207,7 @@ public class DankBlockEntity extends TileEntity implements INameable, INamedCont
     world.addEntity(entity);
   }
 
-  public void addTank(ItemStack tank){
+  public void addTank(ItemStack tank) {
     if (tank.getItem() instanceof DankItem) {
       int tier = ((DankItem)tank.getItem()).tier;
       world.setBlockState(pos,getBlockState().with(DockBlock.TIER,tier));
@@ -217,4 +219,9 @@ public class DankBlockEntity extends TileEntity implements INameable, INamedCont
     }
   }
 
+  public void upgrade(int to) {
+    world.setBlockState(pos,getBlockState().with(DockBlock.TIER,to));
+    handler.stacklimit = Utils.getStackLimit(to);
+    handler.setSize(Utils.getSlotCount(to));
+  }
 }

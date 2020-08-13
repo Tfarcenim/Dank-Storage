@@ -44,8 +44,6 @@ public class UpgradeItem extends Item {
     if (player == null || !(state.getBlock() instanceof DockBlock) || !upgradeInfo.canUpgrade(state)) {
       return ActionResultType.FAIL;
     }
-    if (world.isRemote)
-      return ActionResultType.PASS;
 
       if (false) {
         player.sendStatusMessage(new TranslationTextComponent("metalbarrels.in_use")
@@ -53,22 +51,12 @@ public class UpgradeItem extends Item {
         return ActionResultType.PASS;
   }
 
-    TileEntity oldDank = world.getTileEntity(pos);
+    if (world.isRemote)
+      return ActionResultType.SUCCESS;
 
-    //shortcut
-    final List<ItemStack> oldDankContents = new ArrayList<>(((DankBlockEntity) oldDank).getHandler().getContents());
-
-    oldDank.remove();
-
+    DankBlockEntity oldDank = (DankBlockEntity)world.getTileEntity(pos);
     int newTier = upgradeInfo.end;
-
-    BlockState newState = state.with(DockBlock.TIER,newTier);
-
-    world.setBlockState(pos, newState, 3);
-    TileEntity newBarrel = world.getTileEntity(pos);
-
-    newBarrel.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> IntStream.range(0, oldDankContents.size()).forEach(i -> itemHandler.insertItem(i, oldDankContents.get(i), false)));
-
+    oldDank.upgrade(newTier);
     if (!player.abilities.isCreativeMode)
       upgradeStack.shrink(1);
 

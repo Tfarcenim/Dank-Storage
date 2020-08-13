@@ -24,6 +24,18 @@ public class DankHandler extends ItemStackHandler {
     lockedSlots = new int[size];
   }
 
+  //overridden to prevent voiding
+  @Override
+  public void setSize(int size) {
+    NonNullList<ItemStack> newStacks = NonNullList.withSize(size,ItemStack.EMPTY);
+    for (int i = 0; i < stacks.size(); i++) {
+      ItemStack stack = stacks.get(i);
+      if (i < size)
+      newStacks.set(i, stack);
+    }
+    stacks = newStacks;
+  }
+
   public boolean isEmpty(){
     return IntStream.range(0, this.getSlots()).allMatch(i -> this.getStackInSlot(i).isEmpty());
   }

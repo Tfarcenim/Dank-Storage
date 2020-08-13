@@ -52,17 +52,12 @@ public class CMessagePickBlock {
 
   public static ItemStack onPickBlock(RayTraceResult target, PlayerEntity player, World world) {
     ItemStack result = ItemStack.EMPTY;
-    boolean isCreative = player.abilities.isCreativeMode;
 
     if (target.getType() == RayTraceResult.Type.BLOCK) {
       BlockPos pos = ((BlockRayTraceResult) target).getPos();
       BlockState state = world.getBlockState(pos);
 
-      if (state.isAir(world, pos))
-        return ItemStack.EMPTY;
-
-    //  if (isCreative && Screen.hasControlDown() && state.hasTileEntity())
-
+      if (state.isAir(world, pos)) return ItemStack.EMPTY;
         result = state.getBlock().getPickBlock(state, target, world, pos, player);
 
       if (result.isEmpty())

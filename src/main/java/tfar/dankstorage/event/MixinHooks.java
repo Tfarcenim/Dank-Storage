@@ -3,7 +3,6 @@ package tfar.dankstorage.event;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -99,7 +98,7 @@ public class MixinHooks {
 		if (pickup.getCount() != count) {
 			dank.setAnimationsToGo(5);
 			player.world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((player.getRNG().nextFloat() - player.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
-			inv.writeItemStack();
+			inv.save();
 		}
 		return pickup.isEmpty();
 	}

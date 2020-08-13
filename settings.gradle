@@ -1,0 +1,3 @@
+pluginManagement {
+includeBuild("C:\\Users\\Tfar\\Documents\\MinecraftModdev\\othermods\\yarnforge-plugin")
+}

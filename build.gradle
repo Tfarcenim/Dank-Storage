@@ -4,11 +4,17 @@ buildscript {
         jcenter()
         mavenCentral()
         maven {url='https://dist.creeper.host/Sponge/maven'}
+        maven {
+            url 'https://oss.sonatype.org/content/groups/public/'
+        }
+        maven {
+            url 'https://maven.fabricmc.net/'
+        }
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
-
+        classpath("me.ramidzkh:yarnforge-plugin:1.2.0-SNAPSHOT")
     }
 }
 plugins {
@@ -18,6 +24,7 @@ apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+apply plugin: 'yarnforge-plugin'
 
 version = "${mod_version}"
 group = "tfar.${modid}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -80,8 +87,6 @@ repositories{
         url = "https://modmaven.k-4u.nl"
     }
 
-    maven {url='https://dist.creeper.host/Sponge/maven'}
-
     jcenter()
     mavenCentral()
 
@@ -100,10 +105,6 @@ dependencies {
     // You may put jars on which you depend on in ./libs or you may define them like so..
 
     //compile fg.deobf("curse.maven:building-gadgets:2820989")
-
-
-    compile 'org.spongepowered:mixin:0.8-SNAPSHOT'
-
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"
 
