@@ -1,6 +1,6 @@
 package tfar.dankstorage.network;
 
-import tfar.dankstorage.container.AbstractAbstractDankContainer;
+import tfar.dankstorage.container.AbstractDankContainer;
 import tfar.dankstorage.utils.PacketBufferEX;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -45,7 +45,7 @@ public class S2CSyncExtendedSlotContents {
       if (player == null) return;
 
       ctx.get().enqueueWork(() -> {
-        if (player.openContainer instanceof AbstractAbstractDankContainer && windowId == player.openContainer.windowId) {
+        if (player.openContainer instanceof AbstractDankContainer && windowId == player.openContainer.windowId) {
           player.openContainer.inventorySlots.get(slot).putStack(stack);
         }
       });

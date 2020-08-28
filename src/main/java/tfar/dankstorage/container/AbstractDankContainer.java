@@ -1,5 +1,7 @@
 package tfar.dankstorage.container;
 
+import net.minecraft.util.IIntArray;
+import net.minecraft.util.IntReferenceHolder;
 import tfar.dankstorage.inventory.DankHandler;
 import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.network.DankPacketHandler;
@@ -11,57 +13,63 @@ import net.minecraft.inventory.container.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SSetSlotPacket;
 import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.items.SlotItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import tfar.dankstorage.utils.Utils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class AbstractAbstractDankContainer extends Container {
+public abstract class AbstractDankContainer extends Container {
 
   public final int rows;
+  public final IIntArray propertyDelegate;
+  public final DankHandler dankHandler;
   public final PlayerInventory playerInventory;
 
-  public AbstractAbstractDankContainer(ContainerType<?> type, int p_i50105_2_, PlayerInventory playerInventory, int rows) {
-    super(type, p_i50105_2_);
-    this.rows = rows;
-    this.playerInventory = playerInventory;
+  public AbstractDankContainer(ContainerType<?> type, int id,PlayerInventory playerInv, DankHandler dankHandler,IIntArray propertyDelegate) {
+    super(type, id);
+    this.rows = dankHandler.getSlots() / 9;
+    this.dankHandler = dankHandler;
+    this.propertyDelegate = propertyDelegate;
+    playerInventory = playerInv;
+    trackIntArray(propertyDelegate);
   }
 
-  public void addOwnSlots() {
-    DankHandler handler = getHandler();
+  public void addOwnSlots(boolean portable) {
     int slotIndex = 0;
     for (int row = 0; row < rows; ++row) {
       for (int col = 0; col < 9; ++col) {
         int x = 8 + col * 18;
         int y = row * 18 + 18;
-        this.addSlot(new DankSlot(handler, slotIndex, x, y));
+        if (portable) {
+          this.addSlot(new DankSlot(dankHandler, slotIndex, x, y){
+            @Override
+            public void onSlotChanged() {
+              super.onSlotChanged();
+              propertyDelegate.set(AbstractDankContainer.this.dankHandler.getSlots(), Utils.getNbtSize(playerInventory.player.getHeldItemMainhand()));
+            }
+          });
+        } else {
+          this.addSlot(new DankSlot(dankHandler, slotIndex, x, y));
+        }
         slotIndex++;
       }
     }
   }
 
-  public abstract DankHandler getHandler();
-
-  protected void addPlayerSlots(InvWrapper playerinventory) {
+  protected void addPlayerSlots(PlayerInventory playerinventory) {
     int yStart = 32 + 18 * rows;
     for (int row = 0; row < 3; ++row) {
       for (int col = 0; col < 9; ++col) {
         int x = 8 + col * 18;
         int y = row * 18 + yStart;
-        this.addSlot(new SlotItemHandler(playerinventory, col + row * 9 + 9, x, y) {
-          @Override
-          public int getItemStackLimit(ItemStack stack) {
-            return Math.min(this.getSlotStackLimit(), stack.getMaxStackSize());
-          }
-        });
+        this.addSlot(new Slot(playerinventory, col + row * 9 + 9, x, y));
       }
     }
 
     for (int row = 0; row < 9; ++row) {
       int x = 8 + row * 18;
       int y = yStart + 58;
-      this.addSlot(new SlotItemHandler(playerinventory, row, x, y) {
+      this.addSlot(new Slot(playerinventory, row, x, y) {
         @Override
         public int getItemStackLimit(ItemStack stack) {
           return Math.min(this.getSlotStackLimit(), stack.getMaxStackSize());
@@ -94,13 +102,13 @@ public abstract class AbstractAbstractDankContainer extends Container {
         slot.onSlotChanged();
       }
     }
-
     return itemstack;
   }
 
   @Nonnull
   @Override
   public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+    boolean locked = slotId >= 0 && slotId < (rows * 9) && propertyDelegate.get(slotId) == 1;
     ItemStack itemstack = ItemStack.EMPTY;
     PlayerInventory PlayerInventory = player.inventory;
 
@@ -125,7 +133,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
         Slot slot7 = this.inventorySlots.get(slotId);
         ItemStack mouseStack = PlayerInventory.getItemStack();
 
-        if (slot7 != null && AbstractTileDankContainer.canAddItemToSlot(slot7, mouseStack, true) && slot7.isItemValid(mouseStack) && (this.dragMode == 2 || mouseStack.getCount() > this.dragSlots.size()) && this.canDragIntoSlot(slot7)) {
+        if (slot7 != null && DockContainer.canAddItemToSlot(slot7, mouseStack, true) && slot7.isItemValid(mouseStack) && (this.dragMode == 2 || mouseStack.getCount() > this.dragSlots.size()) && this.canDragIntoSlot(slot7)) {
           this.dragSlots.add(slot7);
         }
       } else if (this.dragEvent == 2) {
@@ -136,7 +144,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
           for (Slot dragSlot : this.dragSlots) {
             ItemStack mouseStack = PlayerInventory.getItemStack();
 
-            if (dragSlot != null && AbstractTileDankContainer.canAddItemToSlot(dragSlot, mouseStack, true) && dragSlot.isItemValid(mouseStack) && (this.dragMode == 2 || mouseStack.getCount() >= this.dragSlots.size()) && this.canDragIntoSlot(dragSlot)) {
+            if (dragSlot != null && DockContainer.canAddItemToSlot(dragSlot, mouseStack, true) && dragSlot.isItemValid(mouseStack) && (this.dragMode == 2 || mouseStack.getCount() >= this.dragSlots.size()) && this.canDragIntoSlot(dragSlot)) {
               ItemStack itemstack14 = mouseStackCopy.copy();
               int j3 = dragSlot.getHasStack() ? dragSlot.getStack().getCount() : 0;
               computeStackSize(this.dragSlots, this.dragMode, itemstack14, j3);
@@ -357,7 +365,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
           for (int l = i; l >= 0 && l < this.inventorySlots.size() && mouseStack.getCount() < mouseStack.getMaxStackSize(); l += j) {
             Slot slot1 = this.inventorySlots.get(l);
 
-            if (slot1.getHasStack() && AbstractTileDankContainer.canAddItemToSlot(slot1, mouseStack, true) && slot1.canTakeStack(player) && this.canMergeSlot(mouseStack, slot1)) {
+            if (slot1.getHasStack() && DockContainer.canAddItemToSlot(slot1, mouseStack, true) && slot1.canTakeStack(player) && this.canMergeSlot(mouseStack, slot1)) {
               ItemStack itemstack2 = slot1.getStack();
 
               if (k != 0 || itemstack2.getCount() < slot1.getItemStackLimit(itemstack2)) {
@@ -476,7 +484,7 @@ public abstract class AbstractAbstractDankContainer extends Container {
     return flag;
   }
 
-  //don't touch this
+  //need to override
   @Override
   public void detectAndSendChanges() {
     for (int i = 0; i < this.inventorySlots.size(); ++i) {
@@ -487,15 +495,23 @@ public abstract class AbstractAbstractDankContainer extends Container {
         itemstack1 = itemstack.isEmpty() ? ItemStack.EMPTY : itemstack.copy();
         this.inventoryItemStacks.set(i, itemstack1);
 
-        for (int j = 0; j < this.listeners.size(); ++j) {
-          IContainerListener listener = this.listeners.get(j);
+        for (IContainerListener listener : this.listeners) {
           if (listener instanceof ServerPlayerEntity) {
             ServerPlayerEntity player = (ServerPlayerEntity) listener;
-
             this.syncSlot(player, i, itemstack1);
           }
         }
       }
+
+      for(int j = 0; j < this.trackedIntReferences.size(); ++j) {
+        IntReferenceHolder intreferenceholder = this.trackedIntReferences.get(j);
+        if (intreferenceholder.isDirty()) {
+          for(IContainerListener icontainerlistener1 : this.listeners) {
+            icontainerlistener1.sendWindowProperty(this, j, intreferenceholder.get());
+          }
+        }
+      }
+
     }
   }
 
@@ -507,7 +523,6 @@ public abstract class AbstractAbstractDankContainer extends Container {
       this.listeners.add(listener);
       if (listener instanceof ServerPlayerEntity) {
         ServerPlayerEntity player = (ServerPlayerEntity) listener;
-
         this.syncInventory(player);
       }
       this.detectAndSendChanges();

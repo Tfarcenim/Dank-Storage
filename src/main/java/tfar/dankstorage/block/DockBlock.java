@@ -12,8 +12,6 @@ import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.IBooleanFunction;
@@ -23,18 +21,12 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
-import net.minecraftforge.items.ItemHandlerHelper;
 import tfar.dankstorage.DankItem;
-import tfar.dankstorage.inventory.PortableDankHandler;
-import tfar.dankstorage.tile.DankBlockEntity;
+import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.utils.Utils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-
-import tfar.dankstorage.utils.Mode;
 
 public class DockBlock extends Block {
 
@@ -86,7 +78,7 @@ public class DockBlock extends Block {
   public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult p_225533_6_) {
     if (!world.isRemote) {
       final TileEntity tile = world.getTileEntity(pos);
-      if (tile instanceof DankBlockEntity) {
+      if (tile instanceof DockBlockEntity) {
         ItemStack held = player.getHeldItem(hand);
         if (player.isCrouching() && held.getItem().isIn(Utils.WRENCHES)) {
           world.destroyBlock(pos, true, player);
@@ -96,14 +88,14 @@ public class DockBlock extends Block {
         if (held.getItem() instanceof DankItem) {
 
           if (state.get(TIER) > 0) {
-            ((DankBlockEntity) tile).removeTank();
+            ((DockBlockEntity) tile).removeTank();
           }
-          ((DankBlockEntity) tile).addTank(held);
+          ((DockBlockEntity) tile).addTank(held);
           return ActionResultType.SUCCESS;
         }
 
         if (held.isEmpty() && player.isSneaking()) {
-          ((DankBlockEntity)tile).removeTank();
+          ((DockBlockEntity)tile).removeTank();
           return ActionResultType.SUCCESS;
         }
 
@@ -133,7 +125,7 @@ public class DockBlock extends Block {
   @Nullable
   @Override
   public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-    return new DankBlockEntity();
+    return new DockBlockEntity();
   }
 
   @Override

@@ -3,6 +3,7 @@ package tfar.dankstorage.inventory;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
+import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
 import net.minecraft.item.ItemStack;
 
@@ -11,11 +12,11 @@ public class PortableDankHandler extends DankHandler {
   public final ItemStack bag;
 
   public PortableDankHandler(ItemStack bag) {
-    this(Utils.getSlotCount(bag),Utils.getStackLimit(bag),bag);
+    this(Utils.getStats(bag),bag);
   }
 
-  protected PortableDankHandler(int size, int stacklimit, ItemStack bag) {
-    super(size,stacklimit);
+  protected PortableDankHandler(DankStats stats, ItemStack bag) {
+    super(stats);
     this.bag = bag;
     load();
   }

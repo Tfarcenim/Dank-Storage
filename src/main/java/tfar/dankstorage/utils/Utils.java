@@ -4,7 +4,7 @@ import net.minecraft.item.Items;
 import net.minecraft.tags.ITag;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankItem;
-import tfar.dankstorage.container.AbstractAbstractDankContainer;
+import tfar.dankstorage.container.AbstractDankContainer;
 import tfar.dankstorage.inventory.DankHandler;
 import tfar.dankstorage.inventory.PortableDankHandler;
 import tfar.dankstorage.network.CMessageToggleUseType;
@@ -81,7 +81,11 @@ public class Utils {
   }
 
   public static int getSlotCount(ItemStack bag) {
-    return getSlotCount(getTier(bag));
+    return getStats(bag).slots;
+  }
+
+  public static DankStats getStats(ItemStack bag) {
+    return ((DankItem)bag.getItem()).tier;
   }
 
   public static int getSlotCount(int tier) {
@@ -95,9 +99,9 @@ public class Utils {
   public static void sort(PlayerEntity player) {
     if (player == null) return;
     Container openContainer = player.openContainer;
-    if (openContainer instanceof AbstractAbstractDankContainer) {
+    if (openContainer instanceof AbstractDankContainer) {
       List<SortingData> itemlist = new ArrayList<>();
-      DankHandler handler = ((AbstractAbstractDankContainer) openContainer).getHandler();
+      DankHandler handler = ((AbstractDankContainer) openContainer).dankHandler;
 
       for (int i = 0; i < handler.getSlots(); i++) {
         ItemStack stack = handler.getStackInSlot(i);
@@ -130,32 +134,12 @@ public class Utils {
     }
   }
 
-  public static int getStackLimit(int tier) {
-    switch (tier) {
-      case 1:
-      default:
-        return DankStorage.ServerConfig.stacklimit1.get();
-      case 2:
-        return DankStorage.ServerConfig.stacklimit2.get();
-      case 3:
-        return DankStorage.ServerConfig.stacklimit3.get();
-      case 4:
-        return DankStorage.ServerConfig.stacklimit4.get();
-      case 5:
-        return DankStorage.ServerConfig.stacklimit5.get();
-      case 6:
-        return DankStorage.ServerConfig.stacklimit6.get();
-      case 7:
-        return DankStorage.ServerConfig.stacklimit7.get();
-    }
-  }
-
     public static int getStackLimit(ItemStack bag) {
-    return getStackLimit(getTier(bag));
+    return getStats(bag).stacklimit;
   }
 
   public static int getTier(ItemStack bag) {
-    return ((DankItem)bag.getItem()).tier;
+    return getStats(bag).ordinal();
   }
 
   public static void changeSlot(ItemStack bag, boolean right) {
@@ -224,6 +208,10 @@ public class Utils {
     return !commontags.isEmpty();
   }
 
+  public static ItemStack getDank(PlayerEntity player) {
+    return ItemStack.EMPTY;
+  }
+
   /**
    * Copies the nbt compound similar to how {@link CompoundNBT#copy()} does, except it just skips the desired key instead of having to copy a potentially large value
    * which may be expensive, and then remove it from the copy.
@@ -257,16 +245,6 @@ public class Utils {
       DEV = false;
     } catch (NoSuchFieldException e) {
       DEV = true;
-    }
-  }
-
-  public static boolean isMixinInClasspath() {
-    try {
-      Class.forName("org.spongepowered.asm.launch.Phases");
-      return true;
-    }
-    catch (ClassNotFoundException e) {
-      return false;
     }
   }
 }

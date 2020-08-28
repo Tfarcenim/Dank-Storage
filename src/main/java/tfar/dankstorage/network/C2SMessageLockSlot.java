@@ -1,6 +1,6 @@
 package tfar.dankstorage.network;
 
-import tfar.dankstorage.container.AbstractAbstractDankContainer;
+import tfar.dankstorage.container.AbstractDankContainer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.network.PacketBuffer;
@@ -31,8 +31,10 @@ public class C2SMessageLockSlot {
       if (player == null) return;
       ctx.get().enqueueWork(  ()->  {
         Container container = player.openContainer;
-        if (container instanceof AbstractAbstractDankContainer) {
-          ((AbstractAbstractDankContainer) container).getHandler().lockSlot(slot);
+        if (container instanceof AbstractDankContainer) {
+          AbstractDankContainer dankContainer = (AbstractDankContainer) container;
+          int i = 1 - dankContainer.propertyDelegate.get(slot);
+          dankContainer.propertyDelegate.set(slot,i);
         }
       });
       ctx.get().setPacketHandled(true);

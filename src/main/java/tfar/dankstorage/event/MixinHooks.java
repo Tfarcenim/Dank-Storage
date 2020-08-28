@@ -9,7 +9,7 @@ import net.minecraft.util.SoundEvents;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import tfar.dankstorage.DankItem;
-import tfar.dankstorage.container.AbstractPortableDankContainer;
+import tfar.dankstorage.container.PortableDankContainer;
 import tfar.dankstorage.inventory.PortableDankHandler;
 import tfar.dankstorage.utils.Mode;
 import tfar.dankstorage.utils.Utils;
@@ -33,7 +33,7 @@ public class MixinHooks {
 	 */
 	public static boolean interceptItem(PlayerInventory inv, ItemStack incoming) {
 		PlayerEntity player = inv.player;
-		if (player.openContainer instanceof AbstractPortableDankContainer) {
+		if (player.openContainer instanceof PortableDankContainer) {
 			return false;
 		}
 		for (int i = 0; i < inv.getSizeInventory(); i++) {

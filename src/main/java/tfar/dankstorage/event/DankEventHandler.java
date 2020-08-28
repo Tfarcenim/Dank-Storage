@@ -3,18 +3,14 @@ package tfar.dankstorage.event;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import tfar.dankstorage.block.DockBlock;
-import tfar.dankstorage.DankItem;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.container.AbstractPortableDankContainer;
 import tfar.dankstorage.utils.Utils;
 
 import static net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel;

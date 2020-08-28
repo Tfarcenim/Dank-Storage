@@ -52,10 +52,5 @@ public class DankPacketHandler {
             S2CSyncExtendedSlotContents::encode,
             S2CSyncExtendedSlotContents::new,
             S2CSyncExtendedSlotContents::handle);
-
-    INSTANCE.registerMessage(id++, S2CSyncNBTSize.class,
-            S2CSyncNBTSize::encode,
-            S2CSyncNBTSize::new,
-            S2CSyncNBTSize::handle);
   }
 }

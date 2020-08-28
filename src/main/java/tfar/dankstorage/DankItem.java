@@ -13,6 +13,7 @@ import tfar.dankstorage.container.PortableDankProvider;
 import tfar.dankstorage.inventory.DankHandler;
 import tfar.dankstorage.inventory.PortableDankHandler;
 import tfar.dankstorage.network.CMessageToggleUseType;
+import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Mode;
 import tfar.dankstorage.utils.Utils;
 import net.minecraft.block.BlockState;
@@ -45,11 +46,11 @@ import java.util.Locale;
 import java.util.Set;
 
 public class DankItem extends Item {
-  public final int tier;
+  public final DankStats tier;
 
-  public DankItem(Properties p_i48527_2_, int tier) {
+  public DankItem(Properties p_i48527_2_, DankStats stats) {
     super( p_i48527_2_);
-    this.tier = tier;
+    this.tier = stats;
   }
 
   public static final Rarity GRAY = Rarity.create("dark_gray", TextFormatting.GRAY);
@@ -75,19 +76,19 @@ public class DankItem extends Item {
   @Override
   public Rarity getRarity(ItemStack stack) {
     switch (tier) {
-      case 1:
+      case one:
         return GRAY;
-      case 2:
+      case two:
         return RED;
-      case 3:
+      case three:
         return GOLD;
-      case 4:
+      case four:
         return GREEN;
-      case 5:
+      case five:
         return BLUE;
-      case 6:
+      case six:
         return PURPLE;
-      case 7:
+      case seven:
         return WHITE;
     }
     return super.getRarity(stack);
@@ -140,7 +141,7 @@ public class DankItem extends Item {
 
       if (Utils.getUseType(bag) == CMessageToggleUseType.UseType.bag) {
         int type = Utils.getTier(player.getHeldItem(hand));
-        NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(type));
+        NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(bag));
         return super.onItemRightClick(world,player,hand);
       } else {
         ItemStack toPlace = Utils.getItemStackInSelectedSlot(bag);
@@ -211,7 +212,8 @@ public class DankItem extends Item {
               new TranslationTextComponent("text.dankstorage.currentusetype",new TranslationTextComponent(
                       "dankstorage.usetype."+mode.name().toLowerCase(Locale.ROOT)).mergeStyle(TextFormatting.YELLOW)).mergeStyle(TextFormatting.GRAY));
       tooltip.add(
-              new TranslationTextComponent("text.dankstorage.stacklimit",new StringTextComponent(Utils.getStackLimit(tier)+"").mergeStyle(TextFormatting.GREEN)).mergeStyle(TextFormatting.GRAY));
+              new TranslationTextComponent("text.dankstorage.stacklimit",new StringTextComponent(Utils.getStackLimit(bag)+"")
+                      .mergeStyle(TextFormatting.GREEN)).mergeStyle(TextFormatting.GRAY));
 
       DankHandler handler = Utils.getHandler(bag);
 

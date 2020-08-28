@@ -1,5 +1,6 @@
 package tfar.dankstorage.inventory;
 
+import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -18,10 +19,10 @@ public class DankHandler extends ItemStackHandler {
   public int stacklimit;
   public int[] lockedSlots;
 
-  public DankHandler(int size, int stacklimit) {
-    super(size);
-    this.stacklimit = stacklimit;
-    lockedSlots = new int[size];
+  public DankHandler(DankStats stats) {
+    super(stats.slots);
+    this.stacklimit = stats.stacklimit;
+    lockedSlots = new int[stats.slots];
   }
 
   //overridden to prevent voiding
