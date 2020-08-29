@@ -3,13 +3,19 @@ package tfar.dankstorage.event;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ArrowItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShootableItem;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.world.World;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import tfar.dankstorage.DankItem;
 import tfar.dankstorage.container.PortableDankContainer;
+import tfar.dankstorage.ducks.UseDankStorage;
+import tfar.dankstorage.inventory.DankHandler;
 import tfar.dankstorage.inventory.PortableDankHandler;
 import tfar.dankstorage.utils.Mode;
 import tfar.dankstorage.utils.Utils;
@@ -17,8 +23,10 @@ import tfar.dankstorage.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
 
-public class MixinHooks {
+public class MixinEvents {
 	public static <T extends LivingEntity> void actuallyBreakItem(int p_222118_1_, T livingEntity, Consumer<T> p_222118_3_, CallbackInfo ci) {
 		ItemStack actualStack = livingEntity.getHeldItemMainhand();
 		if (actualStack.getItem() instanceof DankItem && Utils.isConstruction(actualStack)) {
@@ -43,6 +51,31 @@ public class MixinHooks {
 			}
 		}
 		return false;
+	}
+
+	public static void shrinkAmmo(ItemStack bow, World worldIn, LivingEntity entityLiving, int timeLeft) {
+		if (entityLiving instanceof PlayerEntity && !worldIn.isRemote) {
+			PlayerEntity player = (PlayerEntity) entityLiving;
+			Predicate<ItemStack> predicate = ((ShootableItem) bow.getItem()).getInventoryAmmoPredicate();
+			if (((UseDankStorage) player).useDankStorage() && !player.abilities.isCreativeMode) {
+				ItemStack dank = getDankStorage(player);
+				if (!dank.isEmpty()) {
+					DankHandler handler = Utils.getHandler(dank);
+					for (int i = 0; i < handler.getSlots(); i++) {
+						ItemStack stack = handler.getStackInSlot(i);
+						if (predicate.test(stack) && stack.getItem() instanceof ArrowItem && !((ArrowItem)stack.getItem()).isInfinite(stack,bow,(PlayerEntity)entityLiving)) {
+							handler.extractItem(i, 1, false);
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+	private static ItemStack getDankStorage(PlayerEntity player) {
+		return IntStream.range(0, player.inventory.getSizeInventory()).mapToObj(player.inventory::getStackInSlot).filter(stack -> stack.getItem() instanceof DankItem).findFirst().orElse(ItemStack.EMPTY);
 	}
 
 	public static boolean onItemPickup(PlayerEntity player, ItemStack pickup, ItemStack dank) {
@@ -106,12 +139,12 @@ public class MixinHooks {
 	public static void voidPickup(PortableDankHandler inv, int slot, ItemStack toInsert, boolean simulate, boolean oredict, List<ItemStack> filter) {
 		ItemStack existing = inv.getStackInSlot(slot);
 
-		if (doesItemStackExist(toInsert, filter, oredict) && areItemStacksCompatible(existing,toInsert,oredict)) {
+		if (doesItemStackExist(toInsert, filter, oredict) && areItemStacksCompatible(existing, toInsert, oredict)) {
 			int stackLimit = inv.stacklimit;
 			int total = toInsert.getCount() + existing.getCount();
 			//doesn't matter if it overflows cause it's all gone lmao
 			if (!simulate) {
-				inv.getContents().set(slot, ItemHandlerHelper.copyStackWithSize(existing, Math.min(total,stackLimit)));
+				inv.getContents().set(slot, ItemHandlerHelper.copyStackWithSize(existing, Math.min(total, stackLimit)));
 				toInsert.setCount(0);
 			}
 		}
@@ -153,7 +186,7 @@ public class MixinHooks {
 	public static void filteredPickup(PortableDankHandler inv, int slot, ItemStack toInsert, boolean simulate, boolean oredict, List<ItemStack> filter) {
 		ItemStack existing = inv.getStackInSlot(slot);
 
-		if (existing.isEmpty() && doesItemStackExist(toInsert,filter,oredict)) {
+		if (existing.isEmpty() && doesItemStackExist(toInsert, filter, oredict)) {
 			int stackLimit = inv.stacklimit;
 			int total = toInsert.getCount();
 			int remainder = total - stackLimit;
@@ -168,7 +201,7 @@ public class MixinHooks {
 			return;
 		}
 
-		if (doesItemStackExist(toInsert, filter, oredict) && areItemStacksCompatible(existing,toInsert,oredict)) {
+		if (doesItemStackExist(toInsert, filter, oredict) && areItemStacksCompatible(existing, toInsert, oredict)) {
 			int stackLimit = inv.stacklimit;
 			int total = toInsert.getCount() + existing.getCount();
 			int remainder = total - stackLimit;

@@ -6,13 +6,13 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import tfar.dankstorage.event.MixinHooks;
+import tfar.dankstorage.event.MixinEvents;
 
 @Mixin(PlayerInventory.class)
 public class PlayerInventoryMixin {
 
 	@Inject(method = "addItemStackToInventory",at = @At("HEAD"),cancellable = true)
 	private void interceptItems(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-		if (MixinHooks.interceptItem((PlayerInventory)(Object)this,stack))cir.setReturnValue(true);
+		if (MixinEvents.interceptItem((PlayerInventory)(Object)this,stack))cir.setReturnValue(true);
 	}
 }
