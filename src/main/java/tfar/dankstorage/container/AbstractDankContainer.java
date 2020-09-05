@@ -41,7 +41,7 @@ public abstract class AbstractDankContainer extends Container {
         int x = 8 + col * 18;
         int y = row * 18 + 18;
         if (portable) {
-          this.addSlot(new DankSlot(dankHandler, slotIndex, x, y){
+          this.addSlot(new DankSlot(dankHandler, slotIndex, x, y) {
             @Override
             public void onSlotChanged() {
               super.onSlotChanged();

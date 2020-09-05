@@ -37,7 +37,7 @@ public class DankHandler extends ItemStackHandler {
     stacks = newStacks;
   }
 
-  public boolean isEmpty(){
+  public boolean isEmpty() {
     return IntStream.range(0, this.getSlots()).allMatch(i -> this.getStackInSlot(i).isEmpty());
   }
 

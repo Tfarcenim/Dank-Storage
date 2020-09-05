@@ -4,12 +4,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.utils.Utils;
 
@@ -41,16 +38,5 @@ public class DankEventHandler {
 
   public static int getMaxEfficiencyLevel(ItemStack stack) {
     return getEnchantmentLevel(Enchantments.EFFICIENCY, stack);
-  }
-
-  @SubscribeEvent
-  public static void wrench(PlayerInteractEvent.RightClickBlock event) {
-    BlockPos pos = event.getPos();
-    BlockState state = event.getWorld().getBlockState(pos);
-    if (!(state.getBlock() instanceof DockBlock)) return;
-    PlayerEntity player = event.getPlayer();
-    if (!player.getHeldItem(event.getHand()).getItem().isIn(Utils.WRENCHES)) return;
-    event.setCanceled(true);
-    event.getWorld().getBlockState(pos).onBlockActivated(event.getWorld(),player, event.getHand(),null);
   }
 }

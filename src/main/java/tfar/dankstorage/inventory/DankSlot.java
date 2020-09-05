@@ -26,6 +26,14 @@ public class DankSlot extends SlotItemHandler {
   }
 
   @Override
+  public void onSlotChanged() {
+    super.onSlotChanged();
+    if (getItemHandler() instanceof PortableDankHandler) {
+      ((PortableDankHandler) getItemHandler()).save();
+    }
+  }
+
+  @Override
   public boolean isSameInventory(Slot other) {
     return other instanceof DankSlot && ((DankSlot) other).getItemHandler() == this.getItemHandler();
   }
