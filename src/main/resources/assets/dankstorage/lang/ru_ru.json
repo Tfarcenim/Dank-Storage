@@ -1,0 +1,59 @@
+  
+{
+  "block.dankstorage.dank_1": "Тёмный 1",
+  "block.dankstorage.dank_2": "Тёмный 2",
+  "block.dankstorage.dank_3": "Тёмный 3",
+  "block.dankstorage.dank_4": "Тёмный 4",
+  "block.dankstorage.dank_5": "Тёмный 5",
+  "block.dankstorage.dank_6": "Тёмный 6",
+  "block.dankstorage.dank_7": "Тёмный 7",
+
+  "item.dankstorage.1_to_2": "1 из 2",
+  "item.dankstorage.2_to_3": "2 из 3",
+  "item.dankstorage.3_to_4": "3 из 4",
+  "item.dankstorage.4_to_5": "4 из 5",
+  "item.dankstorage.5_to_6": "5 из 6",
+  "item.dankstorage.6_to_7": "6 из 7",
+
+  "container.dankstorage.dank_1": "Тёмный 1",
+  "container.dankstorage.dank_2": "Тёмный 2",
+  "container.dankstorage.dank_3": "Тёмный 3",
+  "container.dankstorage.dank_4": "Тёмный 4",
+  "container.dankstorage.dank_5": "Тёмный 5",
+  "container.dankstorage.dank_6": "Тёмный 6",
+  "container.dankstorage.dank_7": "Тёмный 7",
+
+  "dankstorage.mode.normal": "Нормальный",
+  "dankstorage.mode.pickup_all": "Подбирать всё",
+  "dankstorage.mode.filtered_pickup": "Фильтровать взятие",
+  "dankstorage.mode.void_pickup": "Пустотное взятие",
+
+  "key.dankstorage.pickup": "Режим переключения",
+  "key.dankstorage.construction": "Режим конструкции",
+
+  "key.categories.dankstorage": "Тёмное хранилище",
+
+  "text.dankstorage.shift": "Нажмите %s для Информации",
+  "text.dankstorage.empty": "Пустой",
+  "text.dankstorage.lock": "Нажмите %s, чтобы Заблокировать",
+
+
+  "text.dankstorage.changemode": "Нажмите %s, чтобы изменить режим",
+  "text.dankstorage.currentmode": "Текущий тип использования: %s",
+
+  "text.dankstorage.changeusetype": "Нажмите %s, чтобы изменить Тип использования",
+  "text.dankstorage.currentusetype": "Текущий тип использования: %s",
+
+  "dankstorage.usetype.bag": "Сумка",
+  "dankstorage.usetype.construction": "Конструкция",
+  "dankstorage.usetype.chest": "Сундук",
+
+  "text.dankstorage.blacklisted_storage": "Этот предмет был занесён в чёрный список из хранилища, т.к переведено сообществом модовестник!",
+  "text.dankstorage.blacklisted_usage": "Этот предмет не может быть использован из хранилища!",
+
+  "text.dankstorage.stacklimit": "Предел стэка: %s",
+
+  "text.dankstorage.exact": "Точный счёт: %s",
+
+  "text.dankstorage.formatcontaineditems" : "%s %s"
+}
