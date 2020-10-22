@@ -50,7 +50,7 @@
   "dankstorage.usetype.construction": "建造",
 
   "text.dankstorage.blacklisted_storage": "这东西已禁止放入！",
-	"text.dankstorage.blacklisted_usage": "这东西不能在储存里用！",
+  "text.dankstorage.blacklisted_usage": "这东西不能在储存里用！",
 
   "text.dankstorage.stacklimit": "叠堆限制：%s",
 
