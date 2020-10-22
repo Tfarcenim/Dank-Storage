@@ -1,0 +1,60 @@
+{
+
+  "block.dankstorage.dock": "坞",
+
+  "item.dankstorage.dank_1": "一级黑盒",
+  "item.dankstorage.dank_2": "二级黑盒",
+  "item.dankstorage.dank_3": "三级黑盒",
+  "item.dankstorage.dank_4": "四级黑盒",
+  "item.dankstorage.dank_5": "五级黑盒",
+  "item.dankstorage.dank_6": "六级黑盒",
+  "item.dankstorage.dank_7": "七级黑盒",
+
+  "item.dankstorage.1_to_2": "二级升级器",
+  "item.dankstorage.2_to_3": "三级升级器",
+  "item.dankstorage.3_to_4": "四级升级器",
+  "item.dankstorage.4_to_5": "五级升级器",
+  "item.dankstorage.5_to_6": "六级升级器",
+  "item.dankstorage.6_to_7": "七级升级器",
+
+  "container.dankstorage.dank_1": "黑盒",
+  "container.dankstorage.dank_2": "黑盒",
+  "container.dankstorage.dank_3": "黑盒",
+  "container.dankstorage.dank_4": "黑盒",
+  "container.dankstorage.dank_5": "黑盒",
+  "container.dankstorage.dank_6": "黑盒",
+  "container.dankstorage.dank_7": "黑盒",
+
+  "dankstorage.mode.NORMAL": "不拾取",
+  "dankstorage.mode.PICKUP_ALL": "全部拾取",
+  "dankstorage.mode.FILTERED_PICKUP": "过滤拾取",
+  "dankstorage.mode.VOID_PICKUP": "销毁过量",
+
+  "key.dankstorage.pickup": "模式切换",
+  "key.dankstorage.construction": "模式切换",
+
+  "key.categories.dankstorage": "储物小黑盒",
+
+  "text.dankstorage.shift": "按 %s 查看信息",
+  "text.dankstorage.empty": "空",
+  "text.dankstorage.lock": "按 %s 锁定",
+
+
+  "text.dankstorage.changemode": "按 %s 切换模式",
+  "text.dankstorage.currentmode": "当前模式：%s",
+
+  "text.dankstorage.changeusetype": "按 %s 切换模式",
+  "text.dankstorage.currentusetype": "当前模式：%s",
+
+  "dankstorage.usetype.bag": "包裹",
+  "dankstorage.usetype.construction": "建造",
+
+  "text.dankstorage.blacklisted_storage": "这东西已禁止放入！",
+	"text.dankstorage.blacklisted_usage": "这东西不能在储存里用！",
+
+  "text.dankstorage.stacklimit": "叠堆限制：%s",
+
+  "text.dankstorage.exact": "准确数量：%s",
+
+  "text.dankstorage.formatcontaineditems" : "%s %s"
+}
