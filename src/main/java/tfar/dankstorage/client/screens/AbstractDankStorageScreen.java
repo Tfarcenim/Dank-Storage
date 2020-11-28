@@ -20,6 +20,7 @@ import tfar.dankstorage.client.BigItemRenderer;
 import tfar.dankstorage.client.button.SmallButton;
 import tfar.dankstorage.container.AbstractDankContainer;
 import tfar.dankstorage.container.DockContainer;
+import tfar.dankstorage.container.PortableDankContainer;
 import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.network.C2SMessageLockSlot;
 import tfar.dankstorage.network.CMessageSort;
@@ -34,12 +35,15 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankContainer>
 
 	protected final boolean is7;
 
+	protected final boolean isPortable;
+
 	public AbstractDankStorageScreen(T container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background) {
 		super(container, playerinventory, component);
 		this.background = background;
 		this.ySize = 114 + this.container.rows * 18;
 		this.is7 = this.container.rows > 6;
 		this.playerInventoryTitleY = this.ySize - 94;
+		this.isPortable = container instanceof PortableDankContainer;
 	}
 
 	@Override
@@ -69,6 +73,12 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankContainer>
 			if (container.propertyDelegate.get(i) == 1)
 				fill(stack, guiLeft + j * 18 + offsetx, guiTop + k * 18 + offsety,
 								guiLeft + j * 18 + offsetx + 16, guiTop + k * 18 + offsety + 16, 0xFFFF0000);
+
+			if (isPortable && container.propertyDelegate.get(container.rows * 9 + 1) == i ) {
+
+				fill(stack, guiLeft + j * 18 + offsetx, guiTop + k * 18 + offsety,
+						guiLeft + j * 18 + offsetx + 16, guiTop + k * 18 + offsety + 16, 0xFF00FF00);
+			}
 		}
 	}
 
@@ -76,7 +86,7 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankContainer>
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
 		this.renderBackground(matrices);
 		super.render(matrices, mouseX, mouseY, partialTicks);
-		this.func_230459_a_(matrices, mouseX, mouseY);	}
+		this.renderHoveredTooltip(matrices, mouseX, mouseY);	}
 
 	@Override
 	public List<ITextComponent> getTooltipFromItem(ItemStack itemStack) {
@@ -86,11 +96,11 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankContainer>
 	}
 
 	public void appendDankInfo(List<ITextComponent> tooltip,ItemStack stack) {
-		if (hoveredSlot.getStack().getItem().isIn(Utils.BLACKLISTED_STORAGE)) {
+		if (stack.getItem().isIn(Utils.BLACKLISTED_STORAGE)) {
 			ITextComponent component1 = new TranslationTextComponent("text.dankstorage.blacklisted_storage").mergeStyle(TextFormatting.DARK_RED);
 			tooltip.add(component1);
 		}
-		if (hoveredSlot.getStack().getItem().isIn(Utils.BLACKLISTED_USAGE)) {
+		if (stack.getItem().isIn(Utils.BLACKLISTED_USAGE)) {
 			ITextComponent component1 = new TranslationTextComponent("text.dankstorage.blacklisted_usage").
 							mergeStyle(TextFormatting.DARK_RED);
 			tooltip.add(component1);
@@ -99,9 +109,10 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankContainer>
 			ITextComponent component2 = new TranslationTextComponent("text.dankstorage.lock",
 							new StringTextComponent("ctrl").mergeStyle(TextFormatting.YELLOW)).mergeStyle(TextFormatting.GRAY);
 			tooltip.add(component2);
-			if (hoveredSlot.getStack().getCount() >= 1000) {
+			if (stack.getCount() >= 1000) {
 				ITextComponent component3 = new TranslationTextComponent(
-								"text.dankstorage.exact", new StringTextComponent(Integer.toString(hoveredSlot.getStack().getCount())).mergeStyle(TextFormatting.AQUA)).mergeStyle(TextFormatting.GRAY);
+								"text.dankstorage.exact", new StringTextComponent(
+										Integer.toString(stack.getCount())).mergeStyle(TextFormatting.AQUA)).mergeStyle(TextFormatting.GRAY);
 				tooltip.add(component3);
 			}
 		}

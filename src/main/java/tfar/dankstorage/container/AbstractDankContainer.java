@@ -2,6 +2,7 @@ package tfar.dankstorage.container;
 
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.IntReferenceHolder;
+import tfar.dankstorage.inventory.CappedSlot;
 import tfar.dankstorage.inventory.DankHandler;
 import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.network.DankPacketHandler;
@@ -62,19 +63,14 @@ public abstract class AbstractDankContainer extends Container {
       for (int col = 0; col < 9; ++col) {
         int x = 8 + col * 18;
         int y = row * 18 + yStart;
-        this.addSlot(new Slot(playerinventory, col + row * 9 + 9, x, y));
+        this.addSlot(new CappedSlot(playerinventory, col + row * 9 + 9, x, y));
       }
     }
 
     for (int row = 0; row < 9; ++row) {
       int x = 8 + row * 18;
       int y = yStart + 58;
-      this.addSlot(new Slot(playerinventory, row, x, y) {
-        @Override
-        public int getItemStackLimit(ItemStack stack) {
-          return Math.min(this.getSlotStackLimit(), stack.getMaxStackSize());
-        }
-      });
+      this.addSlot(new CappedSlot(playerinventory, row, x, y));
     }
   }
 
@@ -192,7 +188,8 @@ public abstract class AbstractDankContainer extends Container {
           return ItemStack.EMPTY;
         }
 
-        for (ItemStack itemstack7 = this.transferStackInSlot(player, slotId); !itemstack7.isEmpty() && ItemStack.areItemsEqual(slot5.getStack(), itemstack7); itemstack7 = this.transferStackInSlot(player, slotId)) {
+        for (ItemStack itemstack7 = this.transferStackInSlot(player, slotId);
+             !itemstack7.isEmpty() && ItemStack.areItemsEqual(slot5.getStack(), itemstack7); itemstack7 = this.transferStackInSlot(player, slotId)) {
           itemstack = itemstack7.copy();
         }
       } else {
@@ -417,20 +414,20 @@ public abstract class AbstractDankContainer extends Container {
       }
 
       Slot slot = this.inventorySlots.get(i);
-      ItemStack itemstack = slot.getStack();
+      ItemStack slotStack = slot.getStack();
 
-      if (!itemstack.isEmpty() && itemstack.getItem() == stack.getItem() && ItemStack.areItemStackTagsEqual(stack, itemstack)) {
-        int j = itemstack.getCount() + stack.getCount();
-        int maxSize = slot.getItemStackLimit(itemstack);
+      if (!slotStack.isEmpty() && slotStack.getItem() == stack.getItem() && ItemStack.areItemStackTagsEqual(stack, slotStack)) {
+        int j = slotStack.getCount() + stack.getCount();
+        int maxSize = slot.getItemStackLimit(slotStack);
 
         if (j <= maxSize) {
           stack.setCount(0);
-          itemstack.setCount(j);
+          slotStack.setCount(j);
           slot.onSlotChanged();
           flag = true;
-        } else if (itemstack.getCount() < maxSize) {
-          stack.shrink(maxSize - itemstack.getCount());
-          itemstack.setCount(maxSize);
+        } else if (slotStack.getCount() < maxSize) {
+          stack.shrink(maxSize - slotStack.getCount());
+          slotStack.setCount(maxSize);
           slot.onSlotChanged();
           flag = true;
         }

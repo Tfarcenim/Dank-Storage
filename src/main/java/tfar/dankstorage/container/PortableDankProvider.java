@@ -7,7 +7,6 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import tfar.dankstorage.inventory.PortableDankHandler;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
@@ -34,7 +33,9 @@ public class PortableDankProvider implements INamedContainerProvider {
 
     DankStats stats = Utils.getStats(bag);
 
-    IIntArray array = new DankContainerData(handler);
+    int selectedSlot = Utils.getSelectedSlot(bag);
+
+    IIntArray array = new PortableDankContainerData(handler,selectedSlot);
 
     switch (stats) {
       case one:

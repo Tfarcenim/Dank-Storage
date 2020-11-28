@@ -4,6 +4,7 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.IntArray;
 import tfar.dankstorage.DankStorage;
+import tfar.dankstorage.inventory.CappedSlot;
 import tfar.dankstorage.inventory.DankHandler;
 import tfar.dankstorage.inventory.LockedSlot;
 import tfar.dankstorage.inventory.PortableDankHandler;
@@ -17,7 +18,7 @@ public class PortableDankContainer extends AbstractDankContainer {
 
   //client
   public PortableDankContainer(ContainerType<?> type, int id, PlayerInventory playerInventory) {
-    this(type, id,playerInventory,new DankHandler(((DankMenuType)type).stats),new IntArray(((DankMenuType)type).stats.slots + 1));
+    this(type, id,playerInventory,new DankHandler(((DankMenuType)type).stats),new IntArray(((DankMenuType)type).stats.slots + 2));
   }
 
   //common
@@ -33,7 +34,7 @@ public class PortableDankContainer extends AbstractDankContainer {
       for (int col = 0; col < 9; ++col) {
         int x = 8 + col * 18;
         int y = row * 18 + yStart;
-        this.addSlot(new Slot(playerinventory, col + row * 9 + 9, x, y));
+        this.addSlot(new CappedSlot(playerinventory, col + row * 9 + 9, x, y));
       }
     }
 
@@ -41,7 +42,7 @@ public class PortableDankContainer extends AbstractDankContainer {
       int x = 8 + row * 18;
       int y = yStart + 58;
       if (row != locked)
-      this.addSlot(new Slot(playerinventory, row, x, y));
+      this.addSlot(new CappedSlot(playerinventory, row, x, y));
       else this.addSlot(new LockedSlot(playerinventory, row, x, y));
     }
   }

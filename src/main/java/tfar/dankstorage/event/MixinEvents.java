@@ -22,6 +22,7 @@ import tfar.dankstorage.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
@@ -227,4 +228,18 @@ public class MixinEvents {
 		}
 		return false;
 	}
+
+    public static ItemStack myFindAmmo(PlayerEntity player, ItemStack bow) {
+      if (bow.getItem() instanceof ShootableItem) {
+        Predicate<ItemStack> predicate = ((ShootableItem) bow.getItem()).getInventoryAmmoPredicate();
+
+        ItemStack dank = getDankStorage(player);
+
+        return dank.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+                .map(iItemHandler -> IntStream.range(0, iItemHandler.getSlots())
+                        .mapToObj(iItemHandler::getStackInSlot)
+                        .filter(predicate).findFirst()).orElse(Optional.of(ItemStack.EMPTY)).orElse(ItemStack.EMPTY);
+      }
+      return ItemStack.EMPTY;
+    }
 }

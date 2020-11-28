@@ -40,7 +40,7 @@ public class UpgradeItem extends Item {
 
       if (false) {
         player.sendStatusMessage(new TranslationTextComponent("metalbarrels.in_use")
-                .setStyle(Style.EMPTY.setColor(Color.func_240743_a_(1))), true);
+                .setStyle(Style.EMPTY.setColor(Color.fromInt(1))), true);
         return ActionResultType.PASS;
   }
 
@@ -54,7 +54,7 @@ public class UpgradeItem extends Item {
       upgradeStack.shrink(1);
 
     player.sendStatusMessage(new TranslationTextComponent("metalbarrels.upgrade_successful")
-            .setStyle(Style.EMPTY.setColor(Color.func_240743_a_(1))), true);
+            .setStyle(Style.EMPTY.setColor(Color.fromInt(1))), true);
     return ActionResultType.SUCCESS;
   }
 }

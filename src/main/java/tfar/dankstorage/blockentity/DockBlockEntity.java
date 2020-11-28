@@ -120,7 +120,7 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
       handler.deserializeNBT(compound.getCompound(Utils.INV));
     }
     if (compound.contains("CustomName", 8)) {
-      this.setCustomName(ITextComponent.Serializer.func_240643_a_(compound.getString("CustomName")));
+      this.setCustomName(ITextComponent.Serializer.getComponentFromJson(compound.getString("CustomName")));
     }
   }
 
