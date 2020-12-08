@@ -115,12 +115,12 @@ public class DankHandler extends ItemStackHandler {
     return stacks;
   }
 
-  public void lockSlot(int slot){
+  public void lockSlot(int slot) {
     lockedSlots[slot] = 1 - lockedSlots[slot];
   }
 
-  public boolean isLocked(int slot){
-    return lockedSlots[slot] == 1;
+  public boolean isLocked(int slot) {
+    return false;//lockedSlots[slot] == 1;
   }
 
   @Override
@@ -183,6 +183,12 @@ public class DankHandler extends ItemStackHandler {
     }
     lockedSlots = nbt.getIntArray("LockedSlots").length == getSlots() ? nbt.getIntArray("LockedSlots") : new int[getSlots()];
     onLoad();
+  }
+
+  @Nonnull
+  @Override
+  public ItemStack getStackInSlot(int slot) {
+    return super.getStackInSlot(slot);
   }
 
   public int calcRedstone() {

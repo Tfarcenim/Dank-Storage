@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import tfar.dankstorage.DankItem;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.container.PortableDankContainer;
 import tfar.dankstorage.ducks.UseDankStorage;
 import tfar.dankstorage.inventory.DankHandler;

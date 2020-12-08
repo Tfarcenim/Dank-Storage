@@ -1,6 +1,6 @@
 package tfar.dankstorage.network;
 
-import tfar.dankstorage.DankItem;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.utils.Mode;
 import tfar.dankstorage.utils.Utils;
 import net.minecraft.entity.player.PlayerEntity;

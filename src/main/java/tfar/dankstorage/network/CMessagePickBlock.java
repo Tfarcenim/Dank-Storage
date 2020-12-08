@@ -1,10 +1,9 @@
 package tfar.dankstorage.network;
 
-import tfar.dankstorage.DankItem;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.inventory.PortableDankHandler;
 import tfar.dankstorage.utils.Utils;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;

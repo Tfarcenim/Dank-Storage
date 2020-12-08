@@ -1,4 +1,4 @@
-package tfar.dankstorage;
+package tfar.dankstorage.item;
 
 import com.google.common.collect.Sets;
 import net.minecraft.client.gui.screen.Screen;
@@ -8,6 +8,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.client.Client;
 import tfar.dankstorage.container.PortableDankProvider;
 import tfar.dankstorage.inventory.DankHandler;
@@ -67,7 +68,7 @@ public class DankItem extends Item {
       @Nonnull
       @Override
       public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? LazyOptional.of(() -> Utils.getHandler(stack)).cast() : LazyOptional.empty();
+        return LazyOptional.empty();//cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? LazyOptional.of(() -> Utils.getHandler(stack)).cast() : LazyOptional.empty();
       }
     };
   }

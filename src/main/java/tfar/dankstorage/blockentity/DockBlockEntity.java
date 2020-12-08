@@ -8,7 +8,7 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.text.TranslationTextComponent;
-import tfar.dankstorage.DankItem;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.container.DockContainer;

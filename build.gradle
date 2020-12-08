@@ -12,7 +12,7 @@ buildscript {
     }
 }
 plugins {
-    id "com.wynprice.cursemaven" version "2.1.0"
+    id "com.wynprice.cursemaven" version "2.1.5"
 }
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
@@ -40,6 +40,7 @@ minecraft {
     // These can be tweaked, removed, or duplicated as needed.
     runs {
         client {
+            property 'mixin.env.disableRefMap', 'true'
             workingDirectory project.file('run')
             arg "-mixin.config="+archivesBaseName+".mixins.json"
 
@@ -82,6 +83,10 @@ repositories{
         name = "ModMaven"
         url = "https://modmaven.k-4u.nl"
     }
+
+    maven {url= "https://maven.blamejared.com/"}
+
+
     jcenter()
     mavenCentral()
 
@@ -98,7 +103,10 @@ dependencies {
     // compile "some.group:artifact:version"
 
 
-    //compile fg.deobf("curse.maven:spark:2876089")
+    compile fg.deobf("vazkii.quark:Quark:${quark_version}")
+
+    compile fg.deobf("vazkii.autoreglib:AutoRegLib:${arl_version}")
+
 
     // Real examples
     // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env

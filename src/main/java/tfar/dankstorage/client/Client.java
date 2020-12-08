@@ -1,8 +1,11 @@
 package tfar.dankstorage.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.eventbus.api.Event;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.DankItem;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.client.screens.DockScreen;
 import tfar.dankstorage.client.screens.PortableDankStorageScreen;
 import tfar.dankstorage.inventory.PortableDankHandler;
@@ -26,6 +29,8 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.glfw.GLFW;
+
+import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class Client {
@@ -53,8 +58,6 @@ public class Client {
     CONSTRUCTION = new KeyBinding("key.dankstorage.construction", GLFW.GLFW_KEY_I, "key.categories.dankstorage");
 
     ClientRegistry.registerKeyBinding(CONSTRUCTION);
-
-
   }
 
   @Mod.EventBusSubscriber(value = Dist.CLIENT)

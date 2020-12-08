@@ -3,7 +3,7 @@ package tfar.dankstorage.utils;
 import net.minecraft.item.Items;
 import net.minecraft.tags.ITag;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.DankItem;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.container.AbstractDankContainer;
 import tfar.dankstorage.inventory.DankHandler;
 import tfar.dankstorage.inventory.PortableDankHandler;
