@@ -213,6 +213,12 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
   }
 
   public void removeTank() {
+    ItemStack stack = removeTankWithoutItemSpawn();
+    ItemEntity entity = new ItemEntity(world,pos.getX(),pos.getY(),pos.getZ(),stack);
+    world.addEntity(entity);
+  }
+
+  public ItemStack removeTankWithoutItemSpawn() {
     int tier = getBlockState().get(DockBlock.TIER);
     CompoundNBT nbt = handler.serializeNBT();
     world.setBlockState(pos,getBlockState().with(DockBlock.TIER,0));
@@ -220,9 +226,10 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
     handler.stacklimit = 0;
     optional.invalidate();
     ItemStack stack = new ItemStack(Utils.getItemFromTier(tier));
+    stack.setDisplayName(getDisplayName());
+    setCustomName(null);
     stack.getOrCreateTag().put(Utils.INV,nbt);
-    ItemEntity entity = new ItemEntity(world,pos.getX(),pos.getY(),pos.getZ(),stack);
-    world.addEntity(entity);
+    return stack;
   }
 
   public void addTank(ItemStack tank) {
@@ -233,6 +240,7 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
       handler.setSize(Utils.getSlotCount(tier));
       handler.deserializeNBT(tank.getOrCreateTag().getCompound(Utils.INV));
       optional = LazyOptional.of(() -> handler);
+      setCustomName(tank.getDisplayName());
       tank.shrink(1);
     }
   }

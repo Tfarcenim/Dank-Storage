@@ -120,7 +120,7 @@ public class DankHandler extends ItemStackHandler {
   }
 
   public boolean isLocked(int slot) {
-    return false;//lockedSlots[slot] == 1;
+    return lockedSlots[slot] == 1;
   }
 
   @Override

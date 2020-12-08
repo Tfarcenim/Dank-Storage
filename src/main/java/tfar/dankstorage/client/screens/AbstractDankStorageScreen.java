@@ -6,6 +6,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -184,6 +185,13 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankContainer>
 		this.itemRenderer.zLevel = 0.0F;
 		this.setBlitOffset(0);
 		BigItemRenderer.INSTANCE.zLevel = itemRenderer.zLevel;
+	}
+
+	@Override
+	protected <W extends Widget> W addButton(W button) {
+		if (!button.getClass().getName().contains("quark"))
+			return super.addButton(button);
+		return button;
 	}
 
 	@Override
