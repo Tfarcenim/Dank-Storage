@@ -59,7 +59,6 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
     @Override
     public void onContentsChanged(int slot) {
       super.onContentsChanged(slot);
-      DockBlockEntity.this.world.addBlockEvent(DockBlockEntity.this.pos, DockBlockEntity.this.getBlockState().getBlock(), 1, DockBlockEntity.this.numPlayersUsing);
       DockBlockEntity.this.markDirty();
     }
   };
@@ -86,28 +85,6 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
       return true;
     } else {
       return super.receiveClientEvent(id, type);
-    }
-  }
-
-  public void openInventory(PlayerEntity player) {
-    if (!player.isSpectator()) {
-      if (this.numPlayersUsing < 0) {
-        this.numPlayersUsing = 0;
-      }
-
-      ++this.numPlayersUsing;
-      this.world.addBlockEvent(this.pos, this.getBlockState().getBlock(), 1, this.numPlayersUsing);
-      this.world.notifyNeighborsOfStateChange(this.pos, this.getBlockState().getBlock());
-      markDirty();
-    }
-  }
-
-  public void closeInventory(PlayerEntity player) {
-    if (!player.isSpectator() && this.getBlockState().getBlock() instanceof DockBlock) {
-      --this.numPlayersUsing;
-      this.world.addBlockEvent(this.pos, this.getBlockState().getBlock(), 1, this.numPlayersUsing);
-      this.world.notifyNeighborsOfStateChange(this.pos, this.getBlockState().getBlock());
-      markDirty();
     }
   }
 
@@ -139,32 +116,6 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
 
   @Nonnull
   @Override
-  public CompoundNBT getUpdateTag() {
-    return write(new CompoundNBT());
-  }
-
-  @Nullable
-  @Override
-  public SUpdateTileEntityPacket getUpdatePacket() {
-    return new SUpdateTileEntityPacket(getPos(), 1, getUpdateTag());
-  }
-
-  @Override
-  public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-    read(null,pkt.getNbtCompound());
-  }
-
-  @Override
-  public void markDirty() {
-    super.markDirty();
-    if (getWorld() != null) {
-      getWorld().notifyBlockUpdate(pos, getWorld().getBlockState(pos), getWorld().getBlockState(pos), 3);
-      this.world.notifyNeighborsOfStateChange(this.pos, this.getBlockState().getBlock());
-    }
-  }
-
-  @Nonnull
-  @Override
   public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
     return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? optional.cast() : super.getCapability(capability, facing);
   }
@@ -191,10 +142,6 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
   @Override
   public ITextComponent getCustomName() {
     return customName;
-  }
-
-  public void setContents(CompoundNBT nbt){
-    handler.deserializeNBT(nbt);
   }
 
   @Nullable
@@ -242,6 +189,7 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
       optional = LazyOptional.of(() -> handler);
       setCustomName(tank.getDisplayName());
       tank.shrink(1);
+      world.notifyNeighborsOfStateChange(pos,getBlockState().getBlock());
     }
   }
 

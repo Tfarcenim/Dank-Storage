@@ -40,7 +40,6 @@ minecraft {
     // These can be tweaked, removed, or duplicated as needed.
     runs {
         client {
-            property 'mixin.env.disableRefMap', 'true'
             workingDirectory project.file('run')
             arg "-mixin.config="+archivesBaseName+".mixins.json"
 
@@ -83,8 +82,11 @@ repositories{
         name = "ModMaven"
         url = "https://modmaven.k-4u.nl"
     }
-
+    maven {
+        url "https://repo.refinedmods.com"
+    }
     maven {url= "https://maven.blamejared.com/"}
+    //compile fg.deobf("vazkii.quark:Quark:${quark_version}")
 
 
     jcenter()
@@ -97,16 +99,14 @@ dependencies {
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}" //21
-
+    compileOnly fg.deobf("com.refinedmods:refinedstorage:1.9.6+80")
+    runtimeOnly fg.deobf("com.refinedmods:refinedstorage:1.9.6+80")
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"
 
 
-    compile fg.deobf("vazkii.quark:Quark:${quark_version}")
-
-    compile fg.deobf("vazkii.autoreglib:AutoRegLib:${arl_version}")
-
+    //compile fg.deobf("curse.maven:refined-storage-243076:3111240")
 
     // Real examples
     // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
