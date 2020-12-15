@@ -98,7 +98,9 @@ public class DockBlock extends Block {
           ((DockBlockEntity)tile).removeTank();
           return ActionResultType.SUCCESS;
         }
-        NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
+        if (state.get(TIER) > 0) {
+          player.openContainer((INamedContainerProvider) tile);
+        }
       }
     }
     return ActionResultType.SUCCESS;

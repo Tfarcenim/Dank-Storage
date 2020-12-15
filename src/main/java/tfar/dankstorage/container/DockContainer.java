@@ -1,10 +1,10 @@
 package tfar.dankstorage.container;
 
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.IntArray;
 import tfar.dankstorage.DankStorage;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.ContainerType;
 import tfar.dankstorage.inventory.DankHandler;
 import tfar.dankstorage.utils.DankMenuType;
 

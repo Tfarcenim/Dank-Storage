@@ -141,8 +141,7 @@ public class DankItem extends Item {
     if (!world.isRemote){
 
       if (Utils.getUseType(bag) == CMessageToggleUseType.UseType.bag) {
-        int type = Utils.getTier(player.getHeldItem(hand));
-        NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(bag));
+        NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(bag,hand));
         return super.onItemRightClick(world,player,hand);
       } else {
         ItemStack toPlace = Utils.getItemStackInSelectedSlot(bag);

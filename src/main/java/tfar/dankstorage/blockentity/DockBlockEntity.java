@@ -61,6 +61,16 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
       super.onContentsChanged(slot);
       DockBlockEntity.this.markDirty();
     }
+
+    @Override
+    public boolean canPlayerUse(PlayerEntity player) {
+      if (DockBlockEntity.this.world.getTileEntity(pos) != DockBlockEntity.this) {
+        return false;
+      } else {
+        return !(player.getDistanceSq(DockBlockEntity.this.pos.getX() + 0.5D, DockBlockEntity.this.pos.getY() + 0.5D,
+                DockBlockEntity.this.pos.getZ() + 0.5D) > 64.0D);
+      }
+    }
   };
 
   public LazyOptional<IItemHandler> optional = LazyOptional.of(() -> handler).cast();

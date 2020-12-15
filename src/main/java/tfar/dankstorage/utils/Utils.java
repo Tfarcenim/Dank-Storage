@@ -2,6 +2,7 @@ package tfar.dankstorage.utils;
 
 import net.minecraft.item.Items;
 import net.minecraft.tags.ITag;
+import net.minecraft.util.Hand;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.container.AbstractDankContainer;
@@ -169,7 +170,11 @@ public class Utils {
   }
 
   public static PortableDankHandler getHandler(ItemStack bag) {
-    return new PortableDankHandler(bag);
+    return getHandler(bag,null);
+  }
+
+  public static PortableDankHandler getHandler(ItemStack bag, Hand hand) {
+    return new PortableDankHandler(bag,hand);
   }
 
   public static int getNbtSize(ItemStack stack) {
@@ -206,10 +211,6 @@ public class Utils {
     commontags.retainAll(taglistofstack2);
     commontags.retainAll(taglist);
     return !commontags.isEmpty();
-  }
-
-  public static ItemStack getDank(PlayerEntity player) {
-    return ItemStack.EMPTY;
   }
 
   /**

@@ -5,6 +5,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.text.ITextComponent;
 import tfar.dankstorage.inventory.PortableDankHandler;
@@ -16,8 +17,11 @@ import javax.annotation.Nullable;
 public class PortableDankProvider implements INamedContainerProvider {
 
   public final ItemStack bag;
-  public PortableDankProvider(ItemStack bag){
+  private final Hand hand;
+
+  public PortableDankProvider(ItemStack bag, Hand hand) {
     this.bag = bag;
+    this.hand = hand;
   }
 
   @Override
@@ -29,7 +33,7 @@ public class PortableDankProvider implements INamedContainerProvider {
   @Override
   public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity player) {
 
-    PortableDankHandler handler = Utils.getHandler(bag);
+    PortableDankHandler handler = Utils.getHandler(bag,hand);
 
     DankStats stats = Utils.getStats(bag);
 

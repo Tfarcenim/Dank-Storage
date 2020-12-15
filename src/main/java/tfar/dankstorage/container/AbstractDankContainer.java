@@ -393,8 +393,8 @@ public abstract class AbstractDankContainer extends Container {
   }
 
   @Override
-  public boolean canInteractWith(@Nonnull PlayerEntity playerIn) {
-    return true;
+  public final boolean canInteractWith(@Nonnull PlayerEntity playerIn) {
+    return dankHandler.canPlayerUse(playerIn);
   }
 
   @Override

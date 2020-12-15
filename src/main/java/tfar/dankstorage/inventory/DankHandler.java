@@ -1,5 +1,6 @@
 package tfar.dankstorage.inventory;
 
+import net.minecraft.entity.player.PlayerEntity;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
 import net.minecraft.item.ItemStack;
@@ -189,6 +190,10 @@ public class DankHandler extends ItemStackHandler {
   @Override
   public ItemStack getStackInSlot(int slot) {
     return super.getStackInSlot(slot);
+  }
+
+  public boolean canPlayerUse(PlayerEntity player) {
+    return false;
   }
 
   public int calcRedstone() {
