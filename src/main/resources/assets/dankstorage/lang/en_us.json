@@ -56,5 +56,7 @@
 
   "text.dankstorage.exact": "Exact Count: %s",
 
-  "text.dankstorage.formatcontaineditems" : "%s %s"
+  "text.dankstorage.formatcontaineditems" : "%s %s",
+
+  "dankstorage.upgrade_successful" : "Upgrade Successful"
 }

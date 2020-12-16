@@ -183,7 +183,9 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
     handler.stacklimit = 0;
     optional.invalidate();
     ItemStack stack = new ItemStack(Utils.getItemFromTier(tier));
-    stack.setDisplayName(getDisplayName());
+    if (hasCustomName()) {
+      stack.setDisplayName(getDisplayName());
+    }
     setCustomName(null);
     stack.getOrCreateTag().put(Utils.INV,nbt);
     return stack;
@@ -197,7 +199,9 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
       handler.setSize(Utils.getSlotCount(tier));
       handler.deserializeNBT(tank.getOrCreateTag().getCompound(Utils.INV));
       optional = LazyOptional.of(() -> handler);
-      setCustomName(tank.getDisplayName());
+      if (tank.hasDisplayName()) {
+        setCustomName(tank.getDisplayName());
+      }
       tank.shrink(1);
       world.notifyNeighborsOfStateChange(pos,getBlockState().getBlock());
     }

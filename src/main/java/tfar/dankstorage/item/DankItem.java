@@ -192,21 +192,23 @@ public class DankItem extends Item {
 
   @Override
   public boolean hasEffect(ItemStack stack) {
-    return stack.hasTag() && Utils.getMode(stack) != Mode.NORMAL;
+    return stack.hasTag() && Utils.getMode(stack) != Mode.normal;
   }
 
   @Override
   @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack bag, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-    if (bag.hasTag() && Utils.DEV)tooltip.add(new StringTextComponent(bag.getTag().toString()));
+    if (bag.hasTag() && Utils.DEV) tooltip.add(new StringTextComponent(bag.getTag().toString()));
 
     if (!Screen.hasShiftDown()){
       tooltip.add(new TranslationTextComponent("text.dankstorage.shift",
               new StringTextComponent("Shift").mergeStyle(TextFormatting.YELLOW)).mergeStyle(TextFormatting.GRAY));
     }
 
+
     if (Screen.hasShiftDown()) {
-      tooltip.add(new TranslationTextComponent("text.dankstorage.changemode",new StringTextComponent(Client.CONSTRUCTION.getTranslationKey()).mergeStyle(TextFormatting.YELLOW)).mergeStyle(TextFormatting.GRAY));
+      tooltip.add(new TranslationTextComponent("text.dankstorage.changemode",
+              Client.CONSTRUCTION.func_238171_j_().copyRaw().mergeStyle(TextFormatting.YELLOW)).mergeStyle(TextFormatting.GRAY));
       CMessageToggleUseType.UseType mode = Utils.getUseType(bag);
       tooltip.add(
               new TranslationTextComponent("text.dankstorage.currentusetype",new TranslationTextComponent(
@@ -284,10 +286,10 @@ public class DankItem extends Item {
   public int getGlintColor(ItemStack stack){
     Mode mode = Utils.getMode(stack);
     switch (mode){
-      case NORMAL:default:return 0xffffffff;
-      case PICKUP_ALL:return 0xff00ff00;
-      case FILTERED_PICKUP:return 0xffffff00;
-      case VOID_PICKUP:return 0xffff0000;
+      case normal:default:return 0xffffffff;
+      case pickup_all:return 0xff00ff00;
+      case filtered_pickup:return 0xffffff00;
+      case void_pickup:return 0xffff0000;
     }
   }
 

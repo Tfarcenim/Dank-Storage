@@ -1,7 +1,7 @@
 package tfar.dankstorage.utils;
 
 public enum Mode {
-	NORMAL (0xffffff), PICKUP_ALL (0x00ff00), FILTERED_PICKUP (0xffff00), VOID_PICKUP (0xff0000);
+	normal(0xffffff), pickup_all(0x00ff00), filtered_pickup(0xffff00), void_pickup(0xff0000);
 
 	private final int color;
 
@@ -24,7 +24,7 @@ public enum Mode {
 	public Mode cycle() {
 		if (ordinal() < values().length -1)
 			return values()[ordinal()+1];
-		return NORMAL;
+		return normal;
 	}
 
 }

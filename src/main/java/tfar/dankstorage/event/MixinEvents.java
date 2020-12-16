@@ -82,7 +82,7 @@ public class MixinEvents {
 	public static boolean onItemPickup(PlayerEntity player, ItemStack pickup, ItemStack dank) {
 
 		Mode mode = Utils.getMode(dank);
-		if (mode == Mode.NORMAL) return false;
+		if (mode == Mode.normal) return false;
 		PortableDankHandler inv = Utils.getHandler(dank);
 		int count = pickup.getCount();
 		boolean oredict = Utils.oredict(dank);
@@ -105,21 +105,21 @@ public class MixinEvents {
 		}
 
 		switch (mode) {
-			case PICKUP_ALL: {
+			case pickup_all: {
 				for (int i = 0; i < inv.getSlots(); i++) {
 					allPickup(inv, i, pickup, false, oredict);
 				}
 			}
 			break;
 
-			case FILTERED_PICKUP: {
+			case filtered_pickup: {
 				for (int i = 0; i < inv.getSlots(); i++) {
 					filteredPickup(inv, i, pickup, false, oredict, existing);
 				}
 			}
 			break;
 
-			case VOID_PICKUP: {
+			case void_pickup: {
 				for (int i = 0; i < inv.getSlots(); i++) {
 					voidPickup(inv, i, pickup, false, oredict, existing);
 				}
