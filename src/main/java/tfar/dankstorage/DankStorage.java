@@ -154,12 +154,18 @@ public class DankStorage {
   public static class ClientConfig {
     public static ForgeConfigSpec.BooleanValue preview;
 
+    public static ForgeConfigSpec.IntValue hudX;
+    public static ForgeConfigSpec.IntValue hudY;
+
     public ClientConfig(ForgeConfigSpec.Builder builder) {
       builder.push("client");
       preview = builder
               .comment("Whether to display the preview of the item in the dank, disable if you have optifine")
               .define("preview", true);
       builder.pop();
+
+      hudX = builder.comment("X position of dank hud element").defineInRange("hudX",-150,Integer.MIN_VALUE,Integer.MAX_VALUE);
+      hudY = builder.comment("Y position of dank hud element").defineInRange("hudY",-25,Integer.MIN_VALUE,Integer.MAX_VALUE);
     }
   }
 

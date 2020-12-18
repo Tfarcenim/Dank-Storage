@@ -87,7 +87,8 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankContainer>
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
 		this.renderBackground(matrices);
 		super.render(matrices, mouseX, mouseY, partialTicks);
-		this.renderHoveredTooltip(matrices, mouseX, mouseY);	}
+		this.renderHoveredTooltip(matrices, mouseX, mouseY);
+	}
 
 	@Override
 	public List<ITextComponent> getTooltipFromItem(ItemStack itemStack) {

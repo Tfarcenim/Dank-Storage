@@ -12,6 +12,7 @@ import tfar.dankstorage.utils.DankMenuType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
+import tfar.dankstorage.utils.Utils;
 
 public class PortableDankContainer extends AbstractDankContainer {
 
@@ -26,6 +27,9 @@ public class PortableDankContainer extends AbstractDankContainer {
     super(type, id,playerInventory,dankHandler,propertyDelegate);
     addOwnSlots(true);
     addPlayerSlots(playerInventory, playerInventory.currentItem);
+    if (!playerInventory.player.world.isRemote) {
+      propertyDelegate.set(dankHandler.getSlots(), Utils.getNbtSize(((PortableDankHandler) dankHandler).bag));
+    }
   }
 
   protected void addPlayerSlots(PlayerInventory playerinventory, int locked) {

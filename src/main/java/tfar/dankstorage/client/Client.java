@@ -121,9 +121,8 @@ public class Client {
 
           int c = color != null ? color : 0xFFFFFF;
 
-
-          final int itemX = xStart - 150;
-          final int itemY = yStart - 25;
+          final int itemX = xStart + DankStorage.ClientConfig.hudX.get();
+          final int itemY = yStart + DankStorage.ClientConfig.hudY.get();
           renderHotbarItem(itemX, itemY, 0, player, toPlace);
         }
       }

@@ -17,12 +17,17 @@ public class DankEventHandler {
 
   @SubscribeEvent
   public static void harvestcheck(PlayerEvent.HarvestCheck e){
-    PlayerEntity player = e.getPlayer();
     BlockState state = e.getTargetBlock();
+    if (!state.getRequiresTool()) {
+      return;
+    }
+    PlayerEntity player = e.getPlayer();
     ItemStack dank = player.getHeldItemMainhand();
     if (!Utils.isConstruction(dank))return;
     ItemStack tool = Utils.getItemStackInSelectedSlot(dank);
-    e.setCanHarvest(tool.canHarvestBlock(state));
+    if (!tool.isEmpty()) {
+      e.setCanHarvest(tool.canHarvestBlock(state));
+    }
   }
 
   @SubscribeEvent

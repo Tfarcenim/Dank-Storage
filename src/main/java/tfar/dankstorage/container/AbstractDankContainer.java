@@ -5,6 +5,7 @@ import net.minecraft.util.IntReferenceHolder;
 import tfar.dankstorage.inventory.CappedSlot;
 import tfar.dankstorage.inventory.DankHandler;
 import tfar.dankstorage.inventory.DankSlot;
+import tfar.dankstorage.inventory.PortableDankHandler;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.S2CSyncExtendedSlotContents;
 import net.minecraft.entity.player.PlayerEntity;
@@ -46,7 +47,9 @@ public abstract class AbstractDankContainer extends Container {
             @Override
             public void onSlotChanged() {
               super.onSlotChanged();
-              propertyDelegate.set(AbstractDankContainer.this.dankHandler.getSlots(), Utils.getNbtSize(playerInventory.player.getHeldItemMainhand()));
+              if (!playerInventory.player.world.isRemote) {
+                propertyDelegate.set(AbstractDankContainer.this.dankHandler.getSlots(), Utils.getNbtSize(((PortableDankHandler) dankHandler).bag));
+              }
             }
           });
         } else {
