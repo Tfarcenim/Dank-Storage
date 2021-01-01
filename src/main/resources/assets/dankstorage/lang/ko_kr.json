@@ -1,0 +1,62 @@
+{
+
+  "block.dankstorage.dock": "댕크 독",
+
+  "item.dankstorage.dank_1": "댕크 1",
+  "item.dankstorage.dank_2": "댕크 2",
+  "item.dankstorage.dank_3": "댕크 3",
+  "item.dankstorage.dank_4": "댕크 4",
+  "item.dankstorage.dank_5": "댕크 5",
+  "item.dankstorage.dank_6": "댕크 6",
+  "item.dankstorage.dank_7": "댕크 7",
+
+  "item.dankstorage.1_to_2": "1에서 2로",
+  "item.dankstorage.2_to_3": "2에서 3으로",
+  "item.dankstorage.3_to_4": "3에서 4로",
+  "item.dankstorage.4_to_5": "4에서 5로",
+  "item.dankstorage.5_to_6": "5에서 6으로",
+  "item.dankstorage.6_to_7": "6에서 7로",
+
+  "container.dankstorage.dank_1": "댕크 1",
+  "container.dankstorage.dank_2": "댕크 2",
+  "container.dankstorage.dank_3": "댕크 3",
+  "container.dankstorage.dank_4": "댕크 4",
+  "container.dankstorage.dank_5": "댕크 5",
+  "container.dankstorage.dank_6": "댕크 6",
+  "container.dankstorage.dank_7": "댕크 7",
+
+  "dankstorage.mode.normal": "기본",
+  "dankstorage.mode.pickup_all": "모두 주움",
+  "dankstorage.mode.filtered_pickup": "이미 든 것만 주움",
+  "dankstorage.mode.void_pickup": "꽉 찰 시 비우면서 주움",
+
+  "key.dankstorage.pickup": "모드 바꾸기",
+  "key.dankstorage.construction": "건설 모드",
+
+  "key.categories.dankstorage": "Dank Storage",
+
+  "text.dankstorage.shift": "자세한 정보를 보려면 %s을(를) 누르세요",
+  "text.dankstorage.empty": "비어 있음",
+  "text.dankstorage.lock": "잠그려면 %s을(를) 누르세요",
+
+
+  "text.dankstorage.changemode": "모드를 변경하려면 %s을(를) 누르세요",
+  "text.dankstorage.currentmode": "현재 사용중인 유형: %s",
+
+  "text.dankstorage.changeusetype": "사용 유형을 변경하려면 %s을(를) 누르세요",
+  "text.dankstorage.currentusetype": "현재 사용중인 유형: %s",
+
+  "dankstorage.usetype.bag": "가방",
+  "dankstorage.usetype.construction": "건설",
+
+  "text.dankstorage.blacklisted_storage": "이 아이템은 블랙리스트에 올라가 있습니다!",
+  "text.dankstorage.blacklisted_usage": 이 아이템은 저장소에서 사용될 수 없습니다!",
+
+  "text.dankstorage.stacklimit": "최대 용량: %s",
+
+  "text.dankstorage.exact": "정확한 수치: %s",
+
+  "text.dankstorage.formatcontaineditems" : "%s %s",
+
+  "dankstorage.upgrade_successful" : "성공적으로 업그레이드됨"
+}
