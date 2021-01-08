@@ -6,7 +6,7 @@ import tfar.dankstorage.utils.Mode;
 
 public class TripleToggleButton extends SmallButton {
 
-  protected Mode mode;
+  public Mode mode;
 
   public TripleToggleButton(int x, int y, int widthIn, int heightIn, IPressable callback, Mode mode) {
     super(x, y, widthIn, heightIn, new StringTextComponent(""), callback);

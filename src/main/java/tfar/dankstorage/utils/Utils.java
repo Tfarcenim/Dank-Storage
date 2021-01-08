@@ -1,9 +1,9 @@
 package tfar.dankstorage.utils;
 
 import net.minecraft.item.Items;
-import net.minecraft.tags.ITag;
 import net.minecraft.util.Hand;
 import tfar.dankstorage.DankStorage;
+import tfar.dankstorage.ModTags;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.container.AbstractDankContainer;
 import tfar.dankstorage.inventory.DankHandler;
@@ -12,12 +12,10 @@ import tfar.dankstorage.network.CMessageToggleUseType;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -31,11 +29,6 @@ import static tfar.dankstorage.network.CMessageTogglePickup.modes;
 import static tfar.dankstorage.network.CMessageToggleUseType.useTypes;
 
 public class Utils {
-
-  public static final ITag.INamedTag<Item> BLACKLISTED_STORAGE = ItemTags.makeWrapperTag(new ResourceLocation(DankStorage.MODID, "blacklisted_storage").toString());
-  public static final ITag.INamedTag<Item> BLACKLISTED_USAGE = ItemTags.makeWrapperTag(new ResourceLocation(DankStorage.MODID, "blacklisted_usage").toString());
-
-  public static final ITag.INamedTag<Item> WRENCHES = ItemTags.makeWrapperTag(new ResourceLocation("forge", "wrenches").toString());
 
   public static final String INV = "inv";
 
@@ -159,7 +152,7 @@ public class Utils {
         selectedSlot--;
         if (selectedSlot < 0) selectedSlot = size - 1;
       }
-      if (!handler.getStackInSlot(selectedSlot).isEmpty() && !handler.getStackInSlot(selectedSlot).getItem().isIn(BLACKLISTED_USAGE))break;
+      if (!handler.getStackInSlot(selectedSlot).isEmpty() && !handler.getStackInSlot(selectedSlot).getItem().isIn(ModTags.BLACKLISTED_USAGE))break;
     }
     setSelectedSlot(bag, selectedSlot);
     });
@@ -196,7 +189,7 @@ public class Utils {
     return bag.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
             .map(iItemHandler -> {
                     ItemStack stack = iItemHandler.getStackInSlot(Utils.getSelectedSlot(bag));
-                    return stack.getItem().isIn(BLACKLISTED_USAGE) ? ItemStack.EMPTY : stack;
+                    return stack.getItem().isIn(ModTags.BLACKLISTED_USAGE) ? ItemStack.EMPTY : stack;
   }).orElse(ItemStack.EMPTY);
   }
 

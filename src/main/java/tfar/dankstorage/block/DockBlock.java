@@ -3,7 +3,6 @@ package tfar.dankstorage.block;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
@@ -20,10 +19,9 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkHooks;
+import tfar.dankstorage.ModTags;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.blockentity.DockBlockEntity;
-import tfar.dankstorage.utils.Utils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -80,7 +78,7 @@ public class DockBlock extends Block {
       final TileEntity tile = world.getTileEntity(pos);
       if (tile instanceof DockBlockEntity) {
         ItemStack held = player.getHeldItem(hand);
-        if (player.isCrouching() && held.getItem().isIn(Utils.WRENCHES)) {
+        if (player.isCrouching() && held.getItem().isIn(ModTags.WRENCHES)) {
           world.destroyBlock(pos, true, player);
           return ActionResultType.SUCCESS;
         }

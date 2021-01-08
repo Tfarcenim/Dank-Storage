@@ -2,6 +2,10 @@
   "replace": false,
   "values": [
     {
+      "id": "#dankstorage:mekanism_cables",
+      "required": false
+    },
+    {
       "id": "pocketstorage:psu_1",
       "required": false
     },

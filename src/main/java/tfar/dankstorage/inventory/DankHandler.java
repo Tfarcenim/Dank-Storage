@@ -1,8 +1,8 @@
 package tfar.dankstorage.inventory;
 
 import net.minecraft.entity.player.PlayerEntity;
+import tfar.dankstorage.ModTags;
 import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.utils.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -45,7 +45,7 @@ public class DankHandler extends ItemStackHandler {
   public boolean noValidSlots(){
     return IntStream.range(0,getSlots())
             .mapToObj(this::getStackInSlot)
-            .allMatch(stack -> stack.isEmpty() || stack.getItem().isIn(Utils.BLACKLISTED_USAGE));
+            .allMatch(stack -> stack.isEmpty() || stack.getItem().isIn(ModTags.BLACKLISTED_USAGE));
   }
 
   @Override
@@ -64,7 +64,7 @@ public class DankHandler extends ItemStackHandler {
 
   @Override
   public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-    return !stack.getItem().isIn(Utils.BLACKLISTED_STORAGE);
+    return !stack.getItem().isIn(ModTags.BLACKLISTED_STORAGE);
   }
 
   @Override

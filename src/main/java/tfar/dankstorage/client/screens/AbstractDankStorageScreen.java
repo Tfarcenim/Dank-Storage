@@ -17,6 +17,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import tfar.dankstorage.ModTags;
 import tfar.dankstorage.client.BigItemRenderer;
 import tfar.dankstorage.client.button.SmallButton;
 import tfar.dankstorage.container.AbstractDankContainer;
@@ -98,11 +99,11 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankContainer>
 	}
 
 	public void appendDankInfo(List<ITextComponent> tooltip,ItemStack stack) {
-		if (stack.getItem().isIn(Utils.BLACKLISTED_STORAGE)) {
+		if (stack.getItem().isIn(ModTags.BLACKLISTED_STORAGE)) {
 			ITextComponent component1 = new TranslationTextComponent("text.dankstorage.blacklisted_storage").mergeStyle(TextFormatting.DARK_RED);
 			tooltip.add(component1);
 		}
-		if (stack.getItem().isIn(Utils.BLACKLISTED_USAGE)) {
+		if (stack.getItem().isIn(ModTags.BLACKLISTED_USAGE)) {
 			ITextComponent component1 = new TranslationTextComponent("text.dankstorage.blacklisted_usage").
 							mergeStyle(TextFormatting.DARK_RED);
 			tooltip.add(component1);

@@ -229,7 +229,7 @@ public class MixinEvents {
 		return false;
 	}
 
-    public static ItemStack myFindAmmo(PlayerEntity player, ItemStack bow) {
+    public static ItemStack findAmmo(PlayerEntity player, ItemStack bow) {
       if (bow.getItem() instanceof ShootableItem) {
         Predicate<ItemStack> predicate = ((ShootableItem) bow.getItem()).getInventoryAmmoPredicate();
 
@@ -237,7 +237,7 @@ public class MixinEvents {
 
         return dank.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
                 .map(iItemHandler -> IntStream.range(0, iItemHandler.getSlots())
-                        .mapToObj(iItemHandler::getStackInSlot)
+                        .mapToObj(slot -> iItemHandler.extractItem(slot,1,true))
                         .filter(predicate).findFirst()).orElse(Optional.of(ItemStack.EMPTY)).orElse(ItemStack.EMPTY);
       }
       return ItemStack.EMPTY;

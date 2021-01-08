@@ -16,7 +16,7 @@ public class MixinPlayerEntity implements UseDankStorage {
 
   @Inject(method = "findAmmo", at = @At("HEAD"), cancellable = true)
   private void findAmmo(ItemStack shootable, CallbackInfoReturnable<ItemStack> cir) {
-    ItemStack ammo = MixinEvents.myFindAmmo((PlayerEntity)(Object)this,shootable);
+    ItemStack ammo = MixinEvents.findAmmo((PlayerEntity)(Object)this,shootable);
     useDankStorage = !ammo.isEmpty();
     if (useDankStorage) {
       cir.setReturnValue(ammo);

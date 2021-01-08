@@ -8,6 +8,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.lwjgl.system.CallbackI;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.client.Client;
 import tfar.dankstorage.container.PortableDankProvider;
@@ -325,6 +326,10 @@ public class DankItem extends Item {
     ItemStack toPlace = handler.getStackInSlot(selectedSlot).copy();
     if (toPlace.getCount() == 1 && handler.isLocked(selectedSlot))
       return ActionResultType.PASS;
+
+    ItemStack safeCopy = bag.copy();
+
+
 
     ItemUseContext ctx2 = new ItemUseContextExt(ctx.getWorld(),ctx.getPlayer(),ctx.getHand(),toPlace,ctx.rayTraceResult);
     ActionResultType actionResultType = toPlace.getItem().onItemUse(ctx2);//ctx2.getItem().onItemUse(ctx);

@@ -68,6 +68,17 @@ minecraft {
                 }
             }
         }
+        data {
+            workingDirectory project.file('run')
+            //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            args '--mod', 'dankstorage', '--all', '--output', file('src/generated/resources/'), '--existing', sourceSets.main.resources.srcDirs[0]
+            mods {
+                nightmarecraft {
+                    source sourceSets.main
+                }
+            }
+        }
     }
 }
 
@@ -94,6 +105,10 @@ repositories{
 
 }
 
+sourceSets {
+    main.resources.srcDirs += 'src/generated/resources'
+}
+
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
@@ -105,6 +120,10 @@ dependencies {
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"
 
+    compile fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
+    compile fg.deobf("mekanism:Mekanism:${mekanism_version}:additions")// Mekanism: Additions
+    compile fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")// Mekanism: Generators
+    compile fg.deobf("mekanism:Mekanism:${mekanism_version}:tools")// Mekanism: Tools
 
     //compile fg.deobf("curse.maven:refined-storage-243076:3111240")
 

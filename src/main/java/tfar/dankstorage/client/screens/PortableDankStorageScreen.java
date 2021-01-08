@@ -1,6 +1,8 @@
 package tfar.dankstorage.client.screens;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import tfar.dankstorage.client.button.RedGreenToggleButton;
 import tfar.dankstorage.client.button.TripleToggleButton;
 import tfar.dankstorage.container.PortableDankContainer;
@@ -12,6 +14,9 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static tfar.dankstorage.client.screens.DockScreen.*;
 
 public class PortableDankStorageScreen extends AbstractDankStorageScreen<PortableDankContainer> {
@@ -19,6 +24,8 @@ public class PortableDankStorageScreen extends AbstractDankStorageScreen<Portabl
   public PortableDankStorageScreen(PortableDankContainer container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background) {
     super(container,playerinventory, component,background);
   }
+
+  private TripleToggleButton tripleToggleButton;
 
   @Override
   protected void init() {
@@ -30,10 +37,21 @@ public class PortableDankStorageScreen extends AbstractDankStorageScreen<Portabl
       ((RedGreenToggleButton)b).toggle();
       DankPacketHandler.INSTANCE.sendToServer(new C2SMessageTagMode());
     }, Utils.oredict(playerInventory.player.getHeldItemMainhand())));
-    this.addButton(new TripleToggleButton(guiLeft + (start += 30), guiTop + 6 ,8,8, b -> {
+    tripleToggleButton = new TripleToggleButton(guiLeft + (start += 30), guiTop + 6 ,8,8, b -> {
       ((TripleToggleButton)b).toggle();
       DankPacketHandler.INSTANCE.sendToServer(new CMessageTogglePickup());
-    }, Utils.getMode(playerInventory.player.getHeldItemMainhand())));
+    }, Utils.getMode(playerInventory.player.getHeldItemMainhand()));
+    this.addButton(tripleToggleButton);
+  }
+
+  @Override
+  protected void renderHoveredTooltip(MatrixStack matrixStack, int x, int y) {
+    super.renderHoveredTooltip(matrixStack, x, y);
+    if (tripleToggleButton.isHovered()) {
+      List<ITextComponent> components = new ArrayList<>();
+      components.add(new TranslationTextComponent("dankstorage.mode."+tripleToggleButton.mode));
+      this.func_243308_b(matrixStack,components,x,y);
+    }
   }
 
   @Override

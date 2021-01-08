@@ -1,0 +1,93 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "mekanism:basic_universal_cable",
+      "required": false
+    },
+    {
+      "id": "mekanism:advanced_universal_cable",
+      "required": false
+    },
+    {
+      "id": "mekanism:elite_universal_cable",
+      "required": false
+    },
+    {
+      "id": "mekanism:ultimate_universal_cable",
+      "required": false
+    },
+    {
+      "id": "mekanism:basic_mechanical_pipe",
+      "required": false
+    },
+    {
+      "id": "mekanism:advanced_mechanical_pipe",
+      "required": false
+    },
+    {
+      "id": "mekanism:elite_mechanical_pipe",
+      "required": false
+    },
+    {
+      "id": "mekanism:ultimate_mechanical_pipe",
+      "required": false
+    },
+    {
+      "id": "mekanism:basic_pressurized_tube",
+      "required": false
+    },
+    {
+      "id": "mekanism:advanced_pressurized_tube",
+      "required": false
+    },
+    {
+      "id": "mekanism:elite_pressurized_tube",
+      "required": false
+    },
+    {
+      "id": "mekanism:ultimate_pressurized_tube",
+      "required": false
+    },
+    {
+      "id": "mekanism:basic_logistical_transporter",
+      "required": false
+    },
+    {
+      "id": "mekanism:advanced_logistical_transporter",
+      "required": false
+    },
+    {
+      "id": "mekanism:elite_logistical_transporter",
+      "required": false
+    },
+    {
+      "id": "mekanism:ultimate_logistical_transporter",
+      "required": false
+    },
+    {
+      "id": "mekanism:restrictive_transporter",
+      "required": false
+    },
+    {
+      "id": "mekanism:diversion_transporter",
+      "required": false
+    },
+    {
+      "id": "mekanism:basic_thermodynamic_conductor",
+      "required": false
+    },
+    {
+      "id": "mekanism:advanced_thermodynamic_conductor",
+      "required": false
+    },
+    {
+      "id": "mekanism:elite_thermodynamic_conductor",
+      "required": false
+    },
+    {
+      "id": "mekanism:ultimate_thermodynamic_conductor",
+      "required": false
+    }
+  ]
+}
