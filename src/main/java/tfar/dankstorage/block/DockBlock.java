@@ -11,12 +11,15 @@ import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import tfar.dankstorage.ModTags;
@@ -74,9 +77,14 @@ public class DockBlock extends Block {
   @Nonnull
   @Override
   public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult p_225533_6_) {
-    if (!world.isRemote) {
-      final TileEntity tile = world.getTileEntity(pos);
-      if (tile instanceof DockBlockEntity) {
+    final TileEntity tile = world.getTileEntity(pos);
+    if (tile instanceof DockBlockEntity) {
+      DockBlockEntity dock = (DockBlockEntity)tile;
+      if (dock.numPlayersUsing > 0) {
+        player.sendStatusMessage(new TranslationTextComponent("text.dankstorage.in_use").mergeStyle(TextFormatting.RED),true);
+        return ActionResultType.FAIL;
+      }
+      if (!world.isRemote) {
         ItemStack held = player.getHeldItem(hand);
         if (player.isCrouching() && held.getItem().isIn(ModTags.WRENCHES)) {
           world.destroyBlock(pos, true, player);
@@ -86,18 +94,18 @@ public class DockBlock extends Block {
         if (held.getItem() instanceof DankItem) {
 
           if (state.get(TIER) > 0) {
-            ((DockBlockEntity) tile).removeTank();
+            dock.removeTank();
           }
-          ((DockBlockEntity) tile).addTank(held);
+          dock.addTank(held);
           return ActionResultType.SUCCESS;
         }
 
         if (held.isEmpty() && player.isSneaking()) {
-          ((DockBlockEntity)tile).removeTank();
+          dock.removeTank();
           return ActionResultType.SUCCESS;
         }
         if (state.get(TIER) > 0) {
-          player.openContainer((INamedContainerProvider) tile);
+          player.openContainer(dock);
         }
       }
     }

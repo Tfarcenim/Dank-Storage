@@ -1,6 +1,7 @@
 package tfar.dankstorage.container;
 
-import net.minecraft.inventory.container.Slot;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.IntArray;
 import tfar.dankstorage.DankStorage;
@@ -9,9 +10,6 @@ import tfar.dankstorage.inventory.DankHandler;
 import tfar.dankstorage.inventory.LockedSlot;
 import tfar.dankstorage.inventory.PortableDankHandler;
 import tfar.dankstorage.utils.DankMenuType;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.ItemStack;
 import tfar.dankstorage.utils.Utils;
 
 public class PortableDankContainer extends AbstractDankContainer {
@@ -19,7 +17,7 @@ public class PortableDankContainer extends AbstractDankContainer {
 
   //client
   public PortableDankContainer(ContainerType<?> type, int id, PlayerInventory playerInventory) {
-    this(type, id,playerInventory,new DankHandler(((DankMenuType)type).stats),new IntArray(((DankMenuType)type).stats.slots + 2));
+    this(type, id,playerInventory,new DankHandler(((DankMenuType<?>)type).stats),new IntArray(((DankMenuType<?>)type).stats.slots + 2));
   }
 
   //common

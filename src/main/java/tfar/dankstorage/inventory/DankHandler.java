@@ -212,4 +212,13 @@ public class DankHandler extends ItemStackHandler {
     f /= this.getSlots();
     return MathHelper.floor(f * 14F) + (numStacks > 0 ? 1 : 0);
   }
+
+  public void onOpen(PlayerEntity player) {
+
+  }
+
+  public void onClose(PlayerEntity player) {
+
+  }
+
 }

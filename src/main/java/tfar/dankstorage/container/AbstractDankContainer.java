@@ -34,6 +34,7 @@ public abstract class AbstractDankContainer extends Container {
     this.propertyDelegate = propertyDelegate;
     playerInventory = playerInv;
     trackIntArray(propertyDelegate);
+    dankHandler.onOpen(playerInv.player);
   }
 
   public void addOwnSlots(boolean portable) {
@@ -527,6 +528,12 @@ public abstract class AbstractDankContainer extends Container {
       }
       this.detectAndSendChanges();
     }
+  }
+
+  @Override
+  public void onContainerClosed(PlayerEntity playerIn) {
+    super.onContainerClosed(playerIn);
+    dankHandler.onClose(playerIn);
   }
 
   public void syncInventory(ServerPlayerEntity player) {

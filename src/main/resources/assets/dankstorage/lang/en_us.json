@@ -56,6 +56,8 @@
 
   "text.dankstorage.exact": "Exact Count: %s",
 
+  "text.dankstorage.in_use": "This Dock is in use!",
+
   "text.dankstorage.formatcontaineditems" : "%s %s",
 
   "dankstorage.upgrade_successful" : "Upgrade Successful"

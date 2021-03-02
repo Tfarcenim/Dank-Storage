@@ -64,11 +64,30 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
 
     @Override
     public boolean canPlayerUse(PlayerEntity player) {
-      if (DockBlockEntity.this.world.getTileEntity(pos) != DockBlockEntity.this) {
+      if (world.getTileEntity(pos) != DockBlockEntity.this) {
         return false;
       } else {
         return !(player.getDistanceSq(DockBlockEntity.this.pos.getX() + 0.5D, DockBlockEntity.this.pos.getY() + 0.5D,
                 DockBlockEntity.this.pos.getZ() + 0.5D) > 64.0D);
+      }
+    }
+
+    @Override
+    public void onOpen(PlayerEntity player) {
+      super.onOpen(player);
+      if (!player.isSpectator()) {
+        if (DockBlockEntity.this.numPlayersUsing < 0) {
+          DockBlockEntity.this.numPlayersUsing = 0;
+        }
+        ++DockBlockEntity.this.numPlayersUsing;
+      }
+    }
+
+    @Override
+    public void onClose(PlayerEntity player) {
+      super.onClose(player);
+      if (!player.isSpectator()) {
+        --DockBlockEntity.this.numPlayersUsing;
       }
     }
   };

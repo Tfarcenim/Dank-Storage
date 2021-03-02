@@ -12,7 +12,7 @@ public class DockContainer extends AbstractDankContainer {
 
 	//client
 	public DockContainer(ContainerType<?> type, int id, PlayerInventory playerInventory) {
-		this(type, id,playerInventory,new DankHandler(((DankMenuType)type).stats),new IntArray(((DankMenuType)type).stats.slots));
+		this(type, id,playerInventory,new DankHandler(((DankMenuType<?>)type).stats),new IntArray(((DankMenuType<?>)type).stats.slots));
 	}
 
 	//common
