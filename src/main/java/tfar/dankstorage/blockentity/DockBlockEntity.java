@@ -123,6 +123,7 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
     this.mode = compound.getInt("mode");
     this.selectedSlot = compound.getInt("selectedSlot");
     if (compound.contains(Utils.INV)) {
+      handler.setStats(DankStats.fromInt(state.get(DockBlock.TIER)));
       handler.deserializeNBT(compound.getCompound(Utils.INV));
     }
     if (compound.contains("CustomName", 8)) {
@@ -198,8 +199,7 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
     int tier = getBlockState().get(DockBlock.TIER);
     CompoundNBT nbt = handler.serializeNBT();
     world.setBlockState(pos,getBlockState().with(DockBlock.TIER,0));
-    handler.setSize(0);
-    handler.stacklimit = 0;
+    handler.setStats(DankStats.zero);
     optional.invalidate();
     ItemStack stack = new ItemStack(Utils.getItemFromTier(tier));
     if (hasCustomName()) {
@@ -212,10 +212,9 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
 
   public void addTank(ItemStack tank) {
     if (tank.getItem() instanceof DankItem) {
-      int tier = ((DankItem)tank.getItem()).tier.ordinal();
-      world.setBlockState(pos,getBlockState().with(DockBlock.TIER,tier));
-      handler.stacklimit = Utils.getStackLimit(tank);
-      handler.setSize(Utils.getSlotCount(tier));
+      DankStats tier = ((DankItem)tank.getItem()).tier;
+      world.setBlockState(pos,getBlockState().with(DockBlock.TIER,tier.ordinal()));
+      handler.setStats(tier);
       handler.deserializeNBT(tank.getOrCreateTag().getCompound(Utils.INV));
       optional = LazyOptional.of(() -> handler);
       if (tank.hasDisplayName()) {
@@ -226,9 +225,8 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
     }
   }
 
-  public void upgrade(int to) {
-    world.setBlockState(pos,getBlockState().with(DockBlock.TIER,to));
-    handler.stacklimit = DankStats.fromInt(to).stacklimit;
-    handler.setSize(Utils.getSlotCount(to));
+  public void upgrade(DankStats to) {
+    world.setBlockState(pos,getBlockState().with(DockBlock.TIER,to.ordinal()));
+    handler.setStats(to);
   }
 }

@@ -17,32 +17,41 @@ import java.util.stream.IntStream;
 
 public class DankHandler extends ItemStackHandler {
 
-  public int stacklimit;
   public int[] lockedSlots;
+  protected DankStats stats;
 
   public DankHandler(DankStats stats) {
     super(stats.slots);
-    this.stacklimit = stats.stacklimit;
     lockedSlots = new int[stats.slots];
+    this.stats = stats;
   }
 
-  //overridden to prevent voiding
+  public void setStats(DankStats stats) {
+    this.stats = stats;
+    setSize(stats.slots);
+  }
+
+  //overridden to prevent voiding, DO NOT CALL FROM THE OUTSIDE
   @Override
   public void setSize(int size) {
     NonNullList<ItemStack> newStacks = NonNullList.withSize(size,ItemStack.EMPTY);
+    int[] newLocked = new int[size];
     for (int i = 0; i < stacks.size(); i++) {
       ItemStack stack = stacks.get(i);
-      if (i < size)
-      newStacks.set(i, stack);
+      if (i < size) {
+        newStacks.set(i, stack);
+        newLocked[i] = lockedSlots[i];
+      }
     }
     stacks = newStacks;
+    lockedSlots = newLocked;
   }
 
   public boolean isEmpty() {
     return IntStream.range(0, this.getSlots()).allMatch(i -> this.getStackInSlot(i).isEmpty());
   }
 
-  public boolean noValidSlots(){
+  public boolean noValidSlots() {
     return IntStream.range(0,getSlots())
             .mapToObj(this::getStackInSlot)
             .allMatch(stack -> stack.isEmpty() || stack.getItem().isIn(ModTags.BLACKLISTED_USAGE));
@@ -54,12 +63,12 @@ public class DankHandler extends ItemStackHandler {
 
   @Override
   public int getSlotLimit(int slot) {
-    return stacklimit;
+    return stats.stacklimit;
   }
 
   @Override
   public int getStackLimit(int slot, @Nonnull ItemStack stack) {
-    return stacklimit;
+    return stats.stacklimit;
   }
 
   @Override
@@ -82,7 +91,7 @@ public class DankHandler extends ItemStackHandler {
     if (existing.isEmpty())
       return ItemStack.EMPTY;
 
-    int toExtract = Math.min(amount, stacklimit);
+    int toExtract = Math.min(amount, stats.stacklimit);
     //attempting to extract equal to or greater than what is present
     if (existing.getCount() <= toExtract) {
       if (!simulate) {
@@ -129,7 +138,7 @@ public class DankHandler extends ItemStackHandler {
     ListNBT nbtTagList = new ListNBT();
     for (int i = 0; i < getContents().size(); i++) {
       if (!getContents().get(i).isEmpty()) {
-        int realCount = Math.min(stacklimit, getContents().get(i).getCount());
+        int realCount = Math.min(stats.stacklimit, getContents().get(i).getCount());
         CompoundNBT itemTag = new CompoundNBT();
         itemTag.putInt("Slot", i);
         getContents().get(i).write(itemTag);
@@ -139,16 +148,17 @@ public class DankHandler extends ItemStackHandler {
     }
     CompoundNBT nbt = new CompoundNBT();
     nbt.put("Items", nbtTagList);
+    if (lockedSlots.length > 0)
     nbt.putIntArray("LockedSlots",lockedSlots);
-    nbt.putInt("Size", getContents().size());
-    nbt.putInt("stacklimit",stacklimit);
     return nbt;
   }
 
   @Override
   public void deserializeNBT(CompoundNBT nbt) {
-    if (stacklimit == 0)this.stacklimit = nbt.getInt("stacklimit");
-    setSize(nbt.contains("Size", Constants.NBT.TAG_INT) ? nbt.getInt("Size") : getContents().size());
+    lockedSlots = nbt.getIntArray("LockedSlots");
+    if (lockedSlots.length < stats.slots) {
+      lockedSlots = new int[stats.slots];
+    }
     ListNBT tagList = nbt.getList("Items", Constants.NBT.TAG_COMPOUND);
     for (int i = 0; i < tagList.size(); i++) {
       CompoundNBT itemTags = tagList.getCompound(i);
@@ -182,7 +192,6 @@ public class DankHandler extends ItemStackHandler {
         }
       }
     }
-    lockedSlots = nbt.getIntArray("LockedSlots").length == getSlots() ? nbt.getIntArray("LockedSlots") : new int[getSlots()];
     onLoad();
   }
 

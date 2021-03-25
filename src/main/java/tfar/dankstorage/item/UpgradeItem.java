@@ -14,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import tfar.dankstorage.utils.DankStats;
 
 import javax.annotation.Nonnull;
 
@@ -48,7 +49,7 @@ public class UpgradeItem extends Item {
       return ActionResultType.SUCCESS;
 
     DockBlockEntity oldDank = (DockBlockEntity)world.getTileEntity(pos);
-    int newTier = upgradeInfo.end;
+    DankStats newTier = upgradeInfo.end;
     oldDank.upgrade(newTier);
     if (!player.abilities.isCreativeMode)
       upgradeStack.shrink(1);

@@ -108,7 +108,7 @@ public class MixinEvents {
 		ItemStack existing = inv.getStackInSlot(slot);
 
 		if (doesItemStackExist(toInsert, filter, oredict) && areItemStacksCompatible(existing, toInsert, oredict)) {
-			int stackLimit = inv.stacklimit;
+			int stackLimit = inv.getSlotLimit(slot);
 			int total = toInsert.getCount() + existing.getCount();
 			//doesn't matter if it overflows cause it's all gone lmao
 			if (!simulate) {
@@ -122,7 +122,7 @@ public class MixinEvents {
 		ItemStack existing = inv.getStackInSlot(slot);
 
 		if (existing.isEmpty()) {
-			int stackLimit = inv.stacklimit;
+			int stackLimit = inv.getSlotLimit(slot);
 			int total = toInsert.getCount();
 			int remainder = total - stackLimit;
 			//no overflow
@@ -137,7 +137,7 @@ public class MixinEvents {
 		}
 
 		if (ItemHandlerHelper.canItemStacksStack(toInsert, existing) || (oredict && Utils.areItemStacksConvertible(toInsert, existing))) {
-			int stackLimit = inv.stacklimit;
+			int stackLimit = inv.getSlotLimit(slot);
 			int total = toInsert.getCount() + existing.getCount();
 			int remainder = total - stackLimit;
 			//no overflow
@@ -155,7 +155,7 @@ public class MixinEvents {
 		ItemStack existing = inv.getStackInSlot(slot);
 
 		if (existing.isEmpty() && doesItemStackExist(toInsert, filter, oredict)) {
-			int stackLimit = inv.stacklimit;
+			int stackLimit = inv.getSlotLimit(slot);
 			int total = toInsert.getCount();
 			int remainder = total - stackLimit;
 			//no overflow
@@ -170,7 +170,7 @@ public class MixinEvents {
 		}
 
 		if (doesItemStackExist(toInsert, filter, oredict) && areItemStacksCompatible(existing, toInsert, oredict)) {
-			int stackLimit = inv.stacklimit;
+			int stackLimit = inv.getSlotLimit(slot);
 			int total = toInsert.getCount() + existing.getCount();
 			int remainder = total - stackLimit;
 			//no overflow

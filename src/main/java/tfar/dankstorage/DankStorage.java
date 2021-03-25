@@ -92,7 +92,7 @@ public class DankStorage {
       Item.Properties properties = new Item.Properties().group(ItemGroup.DECORATIONS);
       register(new BlockItem(Objects.dock, properties), Objects.dock.getRegistryName().getPath(), event.getRegistry());
       IntStream.range(1, 8).forEach(i -> register(new DankItem(properties.maxStackSize(1), DankStats.fromInt(i)), "dank_" + i, event.getRegistry()));
-      IntStream.range(1, 7).forEach(i -> register(new UpgradeItem(properties, new UpgradeInfo(i, i + 1)), i + "_to_" + (i + 1), event.getRegistry()));
+      IntStream.range(1, 7).forEach(i -> register(new UpgradeItem(properties, new UpgradeInfo(i, DankStats.fromInt(i + 1))), i + "_to_" + (i + 1), event.getRegistry()));
     }
     
 

@@ -100,7 +100,7 @@ public class DockBlock extends Block {
           return ActionResultType.SUCCESS;
         }
 
-        if (held.isEmpty() && player.isSneaking()) {
+        if (held.isEmpty() && player.isSneaking() && state.get(TIER) > 0) {
           dock.removeTank();
           return ActionResultType.SUCCESS;
         }

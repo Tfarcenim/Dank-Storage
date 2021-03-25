@@ -2,14 +2,15 @@ package tfar.dankstorage.item;
 
 import net.minecraft.block.BlockState;
 import tfar.dankstorage.block.DockBlock;
+import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
 
 public class UpgradeInfo {
 
   private final int start;
-  public final int end;
+  public final DankStats end;
 
-  public UpgradeInfo(int start,int end) {
+  public UpgradeInfo(int start, DankStats end) {
     this.start = start;
     this.end = end;
   }
