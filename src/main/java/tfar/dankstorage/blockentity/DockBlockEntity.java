@@ -55,7 +55,7 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
     }
   };
 
-  private DankHandler handler = new DankHandler(DankStats.zero) {
+  private final DankHandler handler = new DankHandler(DankStats.zero) {
     @Override
     public void onContentsChanged(int slot) {
       super.onContentsChanged(slot);
