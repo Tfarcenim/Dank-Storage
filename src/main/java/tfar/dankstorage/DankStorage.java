@@ -1,23 +1,10 @@
 package tfar.dankstorage;
 
 import com.google.common.collect.Lists;
-import net.minecraft.item.BlockItem;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import tfar.dankstorage.block.DockBlock;
-import tfar.dankstorage.container.DockContainer;
-import tfar.dankstorage.container.PortableDankContainer;
-import tfar.dankstorage.item.DankItem;
-import tfar.dankstorage.item.UpgradeInfo;
-import tfar.dankstorage.item.UpgradeItem;
-import tfar.dankstorage.network.DankPacketHandler;
-import tfar.dankstorage.recipe.Serializer2;
-import tfar.dankstorage.blockentity.DockBlockEntity;
-import tfar.dankstorage.utils.DankMenuType;
-import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.utils.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.crafting.IRecipeSerializer;
@@ -36,6 +23,18 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.ObjectHolder;
 import org.apache.commons.lang3.tuple.Pair;
+import tfar.dankstorage.block.DockBlock;
+import tfar.dankstorage.blockentity.DockBlockEntity;
+import tfar.dankstorage.container.DockContainer;
+import tfar.dankstorage.container.PortableDankContainer;
+import tfar.dankstorage.item.DankItem;
+import tfar.dankstorage.item.UpgradeInfo;
+import tfar.dankstorage.item.UpgradeItem;
+import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.recipe.Serializer2;
+import tfar.dankstorage.utils.DankMenuType;
+import tfar.dankstorage.utils.DankStats;
+import tfar.dankstorage.utils.Utils;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -83,7 +82,7 @@ public class DankStorage {
     @SubscribeEvent
     public static void blocks(final RegistryEvent.Register<Block> event) {
       // register a new block here
-      Block.Properties properties = Block.Properties.create(Material.IRON).hardnessAndResistance(1, 30);
+      Block.Properties properties = Block.Properties.create(Material.IRON).hardnessAndResistance(1, 60);
       register(new DockBlock(properties), "dock", event.getRegistry());
     }
 

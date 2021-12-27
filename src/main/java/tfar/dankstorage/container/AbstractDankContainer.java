@@ -1,22 +1,20 @@
 package tfar.dankstorage.container;
 
-import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.util.IIntArray;
-import net.minecraft.util.IntReferenceHolder;
-import net.minecraftforge.items.ItemHandlerHelper;
-import tfar.dankstorage.inventory.CappedSlot;
-import tfar.dankstorage.inventory.DankHandler;
-import tfar.dankstorage.inventory.DankSlot;
-import tfar.dankstorage.inventory.PortableDankHandler;
-import tfar.dankstorage.network.DankPacketHandler;
-import tfar.dankstorage.network.S2CSyncExtendedSlotContents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SSetSlotPacket;
+import net.minecraft.util.IIntArray;
+import net.minecraft.util.IntReferenceHolder;
 import net.minecraftforge.fml.network.NetworkDirection;
+import tfar.dankstorage.inventory.CappedSlot;
+import tfar.dankstorage.inventory.DankHandler;
+import tfar.dankstorage.inventory.DankSlot;
+import tfar.dankstorage.inventory.PortableDankHandler;
+import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.S2CSyncExtendedSlotContents;
 import tfar.dankstorage.utils.Utils;
 
 import javax.annotation.Nonnull;

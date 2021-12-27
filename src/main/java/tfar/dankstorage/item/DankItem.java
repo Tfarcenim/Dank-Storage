@@ -69,7 +69,10 @@ public class DankItem extends Item {
       @Nonnull
       @Override
       public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? LazyOptional.of(() -> Utils.getHandler(stack)).cast() : LazyOptional.empty();
+        if (stack.getItem() instanceof DankItem) {//thanks Numina
+          return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? LazyOptional.of(() -> Utils.getHandler(stack)).cast() : LazyOptional.empty();
+        }
+        return LazyOptional.empty();
       }
     };
   }
