@@ -147,7 +147,20 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
   @Nonnull
   @Override
   public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
-    return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? optional.cast() : super.getCapability(capability, facing);
+
+
+    if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+      //Very, VERY dirty fix for Dank-Storage#152
+      if (!world.isRemote) {
+        return optional.cast();
+        //the ticon workbench uses the clientside ItemHandler for displaying side inventory slots,
+        // return a dummy with the correct slot count, ugly but it works until 1.18
+      } else {
+        return LazyOptional.of(() -> new DankHandler(DankStats.values()[getBlockState().get(DockBlock.TIER)])).cast();
+      }
+    }
+
+    return super.getCapability(capability, facing);
   }
 
   public void setCustomName(ITextComponent text) {
@@ -213,7 +226,11 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
   public void addTank(ItemStack tank) {
     if (tank.getItem() instanceof DankItem) {
       DankStats tier = ((DankItem)tank.getItem()).tier;
-      world.setBlockState(pos,getBlockState().with(DockBlock.TIER,tier.ordinal()));
+
+      BlockState oldState = getBlockState();
+      BlockState newState = oldState.with(DockBlock.TIER,tier.ordinal());
+
+      world.setBlockState(pos,newState);
       handler.setStats(tier);
       handler.deserializeNBT(tank.getOrCreateTag().getCompound(Utils.INV));
       optional = LazyOptional.of(() -> handler);
@@ -221,7 +238,8 @@ public class DockBlockEntity extends TileEntity implements INameable, INamedCont
         setCustomName(tank.getDisplayName());
       }
       tank.shrink(1);
-      world.notifyNeighborsOfStateChange(pos,getBlockState().getBlock());
+      world.notifyNeighborsOfStateChange(pos,newState.getBlock());
+      //world.notifyBlockUpdate(pos,);
     }
   }
 
