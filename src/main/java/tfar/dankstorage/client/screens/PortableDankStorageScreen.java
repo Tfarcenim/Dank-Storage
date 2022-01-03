@@ -31,9 +31,9 @@ public class PortableDankStorageScreen extends AbstractDankStorageScreen<Portabl
   protected void init() {
     super.init();
     int start = this.titleX;
-    int namelength = font.getStringWidth(title.getUnformattedComponentText());
+    int namelength = font.getStringPropertyWidth(title);
     start += namelength;
-    this.addButton(new RedGreenToggleButton(guiLeft + (start += 35), guiTop + 6 ,8,8, b -> {
+    this.addButton(new RedGreenToggleButton(guiLeft + (start += 7), guiTop + 6 ,8,8, b -> {
       ((RedGreenToggleButton)b).toggle();
       DankPacketHandler.INSTANCE.sendToServer(new C2SMessageTagMode());
     }, Utils.oredict(playerInventory.player.getHeldItemMainhand())));
@@ -57,10 +57,10 @@ public class PortableDankStorageScreen extends AbstractDankStorageScreen<Portabl
   @Override
   protected void drawGuiContainerForegroundLayer(MatrixStack stack,int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(stack,mouseX, mouseY);
-    int namelength = font.getStringWidth(title.getUnformattedComponentText());
+    int namelength = font.getStringPropertyWidth(title);
     int start = this.titleX;
     start+= namelength;
-    this.font.drawString(stack,"Tag", start += 45, 6, 0x404040);
+    this.font.drawString(stack,"Tag", start += 18, 6, 0x404040);
     this.font.drawString(stack,"Pickup", start += 30, 6 , 0x404040);
     int nbt_size = container.propertyDelegate.get(container.dankHandler.getSlots());
     int color = nbt_size > 1048576 ? 0x800000 : 0x008000;

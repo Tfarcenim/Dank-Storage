@@ -29,8 +29,7 @@ public enum DankStats {
 		return intToStat.get(tier);
 	}
 
-	public void set(int slots, int stacklimit) {
-		this.slots = slots;
+	public void setStacklimit(int stacklimit) {
 		this.stacklimit = stacklimit;
 	}
 }

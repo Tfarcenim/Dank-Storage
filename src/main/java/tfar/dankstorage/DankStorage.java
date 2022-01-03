@@ -60,6 +60,14 @@ public class DankStorage {
     if (e.getConfig().getModId().equals(MODID)){
       Utils.taglist.clear();
       ServerConfig.convertible_tags.get().forEach(s -> Utils.taglist.add(new ResourceLocation(s)));
+
+      DankStats.one.setStacklimit(ServerConfig.stacklimit1.get());
+      DankStats.two.setStacklimit(ServerConfig.stacklimit2.get());
+      DankStats.three.setStacklimit(ServerConfig.stacklimit3.get());
+      DankStats.four.setStacklimit(ServerConfig.stacklimit4.get());
+      DankStats.five.setStacklimit(ServerConfig.stacklimit5.get());
+      DankStats.six.setStacklimit(ServerConfig.stacklimit6.get());
+      DankStats.seven.setStacklimit(ServerConfig.stacklimit7.get());
     }
   }
 
