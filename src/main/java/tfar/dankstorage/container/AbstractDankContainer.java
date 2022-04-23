@@ -108,7 +108,7 @@ public abstract class AbstractDankContainer extends Container {
 
   @Nonnull
   @Override
-  public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+  public ItemStack func_241440_b_(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
     boolean locked = slotId >= 0 && slotId < (rows * 9) && propertyDelegate.get(slotId) == 1;
     ItemStack returnStack = ItemStack.EMPTY;
     PlayerInventory PlayerInventory = player.inventory;
@@ -134,7 +134,7 @@ public abstract class AbstractDankContainer extends Container {
         Slot slot = this.inventorySlots.get(slotId);
         ItemStack mouseStack = PlayerInventory.getItemStack();
 
-        if (slot != null && DockContainer.canAddItemToSlot(slot, mouseStack, true) && slot.isItemValid(mouseStack) && (this.dragMode == 2 || mouseStack.getCount() > this.dragSlots.size()) && this.canDragIntoSlot(slot)) {
+        if (slot != null && canAddItemToSlot(slot, mouseStack, true) && slot.isItemValid(mouseStack) && (this.dragMode == 2 || mouseStack.getCount() > this.dragSlots.size()) && this.canDragIntoSlot(slot)) {
           this.dragSlots.add(slot);
         }
       } else if (this.dragEvent == 2) {
@@ -145,7 +145,7 @@ public abstract class AbstractDankContainer extends Container {
           for (Slot dragSlot : this.dragSlots) {
             ItemStack mouseStack = PlayerInventory.getItemStack();
 
-            if (dragSlot != null && DockContainer.canAddItemToSlot(dragSlot, mouseStack, true) && dragSlot.isItemValid(mouseStack) && (this.dragMode == 2 || mouseStack.getCount() >= this.dragSlots.size()) && this.canDragIntoSlot(dragSlot)) {
+            if (dragSlot != null && canAddItemToSlot(dragSlot, mouseStack, true) && dragSlot.isItemValid(mouseStack) && (this.dragMode == 2 || mouseStack.getCount() >= this.dragSlots.size()) && this.canDragIntoSlot(dragSlot)) {
               ItemStack itemstack14 = mouseStackCopy.copy();
               int j3 = dragSlot.getHasStack() ? dragSlot.getStack().getCount() : 0;
               computeStackSize(this.dragSlots, this.dragMode, itemstack14, j3);
@@ -356,7 +356,7 @@ public abstract class AbstractDankContainer extends Container {
         slot.onTake(player, itemstack4);
         player.dropItem(itemstack4, true);
       }
-    } else if (clickTypeIn == ClickType.PICKUP_ALL && slotId >= 0) {
+    } else if (clickTypeIn == ClickType.PICKUP_ALL && slotId >= 0 && false) {
       Slot slot = this.inventorySlots.get(slotId);
       ItemStack mouseStack = PlayerInventory.getItemStack();
 

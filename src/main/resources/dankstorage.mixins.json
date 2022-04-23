@@ -4,8 +4,6 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "dankstorage.refmap.json",
   "mixins": [
-    "ItemStackMixin",
-    "MixinBlock",
     "PlayerInventoryMixin"
   ],
   "injectors": {
