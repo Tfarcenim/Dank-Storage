@@ -50,7 +50,7 @@
   "dankstorage.usetype.construction": "건설",
 
   "text.dankstorage.blacklisted_storage": "이 아이템은 블랙리스트에 올라가 있습니다!",
-  "text.dankstorage.blacklisted_usage": 이 아이템은 저장소에서 사용될 수 없습니다!",
+  "text.dankstorage.blacklisted_usage": "이 아이템은 저장소에서 사용될 수 없습니다!",
 
   "text.dankstorage.stacklimit": "최대 용량: %s",
 
