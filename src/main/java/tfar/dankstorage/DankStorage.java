@@ -142,7 +142,6 @@ public class DankStorage {
       registry.register(obj.setRegistryName(new ResourceLocation(MODID, name)));
     }
   }
-
   public static final ClientConfig CLIENT;
   public static final ForgeConfigSpec CLIENT_SPEC;
 

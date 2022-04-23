@@ -1,9 +1,5 @@
 package tfar.dankstorage.item;
 
-import net.minecraft.util.text.Color;
-import net.minecraft.util.text.TextFormatting;
-import tfar.dankstorage.block.DockBlock;
-import tfar.dankstorage.blockentity.DockBlockEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -11,9 +7,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import tfar.dankstorage.block.DockBlock;
+import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.utils.DankStats;
 
 import javax.annotation.Nonnull;

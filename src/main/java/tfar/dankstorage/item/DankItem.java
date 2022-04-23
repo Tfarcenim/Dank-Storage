@@ -1,24 +1,7 @@
 package tfar.dankstorage.item;
 
-import com.google.common.collect.Sets;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import org.lwjgl.system.CallbackI;
-import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.client.Client;
-import tfar.dankstorage.container.PortableDankProvider;
-import tfar.dankstorage.inventory.DankHandler;
-import tfar.dankstorage.inventory.PortableDankHandler;
-import tfar.dankstorage.network.CMessageToggleUseType;
-import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.utils.Mode;
-import tfar.dankstorage.utils.Utils;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -29,23 +12,34 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ToolType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
+import tfar.dankstorage.DankStorage;
+import tfar.dankstorage.client.Client;
+import tfar.dankstorage.container.PortableDankProvider;
+import tfar.dankstorage.inventory.DankHandler;
+import tfar.dankstorage.inventory.PortableDankHandler;
+import tfar.dankstorage.network.CMessageToggleUseType;
+import tfar.dankstorage.utils.DankStats;
+import tfar.dankstorage.utils.Mode;
+import tfar.dankstorage.utils.Utils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 public class DankItem extends Item {
     public final DankStats tier;
@@ -104,39 +98,6 @@ public class DankItem extends Item {
         if (!Utils.isConstruction(bag)) return 0;
         ItemStack stack = Utils.getItemStackInSelectedSlot(bag);
         return stack.getItem().getUseDuration(stack);
-    }
-
-    @Override
-    public Set<ToolType> getToolTypes(ItemStack bag) {
-        if (!Utils.isConstruction(bag)) return Sets.newHashSet();
-        ItemStack tool = Utils.getItemStackInSelectedSlot(bag);
-        return tool.getItem().getToolTypes(tool);
-    }
-
-    @Override
-    public int getHarvestLevel(ItemStack bag, ToolType p_getHarvestLevel_2_, @Nullable PlayerEntity p_getHarvestLevel_3_, @Nullable BlockState p_getHarvestLevel_4_) {
-        if (!Utils.isConstruction(bag)) return -1;
-
-        ItemStack tool = Utils.getItemStackInSelectedSlot(bag);
-        return tool.getHarvestLevel(p_getHarvestLevel_2_, p_getHarvestLevel_3_, p_getHarvestLevel_4_);
-    }
-
-    @Override
-    public float getDestroySpeed(ItemStack bag, BlockState p_150893_2_) {
-        if (!Utils.isConstruction(bag)) return 1;
-        ItemStack tool = Utils.getItemStackInSelectedSlot(bag);
-        return tool.getItem().getDestroySpeed(tool, p_150893_2_);
-    }
-
-    //this is used to damage tools and stuff, we use it here to damage the internal item instead
-    @Override
-    public boolean onBlockDestroyed(ItemStack s, World p_179218_2_, BlockState p_179218_3_, BlockPos p_179218_4_, LivingEntity p_179218_5_) {
-        if (!Utils.isConstruction(s))
-            return super.onBlockDestroyed(s, p_179218_2_, p_179218_3_, p_179218_4_, p_179218_5_);
-
-        ItemStack tool = Utils.getItemStackInSelectedSlot(s);
-
-        return tool.getItem().onBlockDestroyed(tool, p_179218_2_, p_179218_3_, p_179218_4_, p_179218_5_);
     }
 
     @Nonnull
@@ -249,16 +210,6 @@ public class DankItem extends Item {
         if (!Utils.isConstruction(stack)) return UseAction.NONE;
         ItemStack internal = Utils.getItemStackInSelectedSlot(stack);
         return internal.getItem().getUseAction(stack);
-    }
-
-    @Override
-    public boolean canContinueUsing(ItemStack oldStack, ItemStack newStack) {
-        return true;
-    }
-
-    @Override
-    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-        return !oldStack.equals(newStack);
     }
 
     //called for stuff like food and potions
