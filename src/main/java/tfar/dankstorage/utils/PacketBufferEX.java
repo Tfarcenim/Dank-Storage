@@ -3,77 +3,91 @@ package tfar.dankstorage.utils;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.handler.codec.EncoderException;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTSizeTracker;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class PacketBufferEX extends PacketBuffer {
-  public PacketBufferEX(PacketBuffer wrapped) {
-    super(wrapped);
-  }
+public class PacketBufferEX {
 
-  public void writeExtendedItemStack(ItemStack stack) {
-    if (stack.isEmpty()) {
-      writeInt(-1);
-    } else {
-      writeInt(Item.getIdFromItem(stack.getItem()));
-      writeInt(stack.getCount());
-      CompoundNBT nbttagcompound = null;
+    public static void writeExtendedItemStack(FriendlyByteBuf buf, ItemStack stack) {
+        if (stack.isEmpty()) {
+            buf.writeInt(-1);
+        } else {
+            buf.writeInt(Item.getId(stack.getItem()));
+            buf.writeInt(stack.getCount());
 
-      if (stack.getItem().getShareTag(stack) != null) {
-        nbttagcompound = stack.getItem().getShareTag(stack);
-      }
+            CompoundTag nbttagcompound = stack.getTag();
 
-      writeNBT(nbttagcompound);
+            writeNBT(buf, nbttagcompound);
+        }
     }
-  }
 
-  public void writeNBT(@Nullable CompoundNBT nbt) {
-    if (nbt == null) {
-      writeByte(0);
-    } else {
-      try {
-        CompressedStreamTools.write(nbt, new ByteBufOutputStream(this.getBuffer()));
-      } catch (IOException ioexception) {
-        throw new EncoderException(ioexception);
-      }
+    public static void writeNBT(FriendlyByteBuf buf, @Nullable CompoundTag nbt) {
+        if (nbt == null) {
+            buf.writeByte(0);
+        } else {
+            try {
+                NbtIo.write(nbt, new ByteBufOutputStream(buf));
+            } catch (IOException ioexception) {
+                throw new EncoderException(ioexception);
+            }
+        }
     }
-  }
 
-  public ItemStack readExtendedItemStack() {
-    int i = readInt();
+    public static ItemStack readExtendedItemStack(FriendlyByteBuf buf) {
+        int i = buf.readInt();
 
-    if (i < 0) {
-      return ItemStack.EMPTY;
-    } else {
-      int j = readInt();
-      ItemStack itemstack = new ItemStack(Item.getItemById(i), j);
-      itemstack.setTag(readNBT());
-      return itemstack;
+        if (i < 0) {
+            return ItemStack.EMPTY;
+        } else {
+            int j = buf.readInt();
+            ItemStack itemstack = new ItemStack(Item.byId(i), j);
+            itemstack.setTag(readNBT(buf));
+            return itemstack;
+        }
     }
-  }
 
-  public CompoundNBT readNBT() {
-    int i = readerIndex();
-    byte b0 = readByte();
+    static final long LIMIT = 2097152L * 4;
 
-    if (b0 == 0) {
-      return null;
-    } else {
-      readerIndex(i);
-      try {
-        return CompressedStreamTools.read(new ByteBufInputStream(getBuffer()), new NBTSizeTracker(2097152L));
-      } catch (IOException ioexception) {
-        throw new EncoderException(ioexception);
-      }
+    public static CompoundTag readNBT(FriendlyByteBuf buf) {
+        int i = buf.readerIndex();
+        byte b0 = buf.readByte();
+
+        if (b0 == 0) {
+            return null;
+        } else {
+            buf.readerIndex(i);
+            try {
+                return NbtIo.read(new ByteBufInputStream(buf), new NbtAccounter(LIMIT));
+            } catch (IOException ioexception) {
+                throw new EncoderException(ioexception);
+            }
+        }
     }
-  }
 
+    public static void writeList(FriendlyByteBuf buf, List<ItemStack> stacks) {
+        buf.writeInt(stacks.size());
+        for (int i = 0; i < stacks.size();i++) {
+            writeExtendedItemStack(buf,stacks.get(i));
+        }
+    }
+
+    public static List<ItemStack> readList(FriendlyByteBuf buf) {
+        List<ItemStack> stacks = new ArrayList<>();
+        int size = buf.readInt();
+        for (int i = 0; i < size;i++) {
+            ItemStack stack = readExtendedItemStack(buf);
+            stacks.add(stack);
+        }
+        return stacks;
+    }
 }
 

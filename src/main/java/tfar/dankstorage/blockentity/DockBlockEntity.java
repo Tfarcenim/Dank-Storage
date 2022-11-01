@@ -1,250 +1,246 @@
 
 package tfar.dankstorage.blockentity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIntArray;
-import net.minecraft.util.text.TranslationTextComponent;
-import tfar.dankstorage.item.DankItem;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.Nameable;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.block.DockBlock;
-import tfar.dankstorage.container.DockContainer;
-import tfar.dankstorage.inventory.DankHandler;
+import tfar.dankstorage.container.DockMenu;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.INameable;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
+import tfar.dankstorage.world.DankInventory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class DockBlockEntity extends TileEntity implements INameable, INamedContainerProvider {
+public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvider {
 
-  public int numPlayersUsing = 0;
-  protected ITextComponent customName;
-  public int mode = 0;
-  public int selectedSlot;
-  public final IIntArray array = new IIntArray() {
-    @Override
-    public int get(int index) {
-      return DockBlockEntity.this.handler.lockedSlots[index];
+    public CompoundTag settings;
+
+    public int numPlayersUsing = 0;
+    protected Component customName;
+    protected boolean originalName;
+
+    public DockBlockEntity(BlockPos blockPos, BlockState blockState) {
+        super(DankStorage.dank_tile, blockPos, blockState);
     }
 
-    @Override
-    public void set(int index, int value) {
-      DockBlockEntity.this.handler.lockedSlots[index] = value;
-    }
+    public void setFrequency(int freq) {
+        if (settings == null) {
 
-    @Override
-    public int size() {
-      return DockBlockEntity.this.handler.lockedSlots.length;
-    }
-  };
-
-  private final DankHandler handler = new DankHandler(DankStats.zero) {
-    @Override
-    public void onContentsChanged(int slot) {
-      super.onContentsChanged(slot);
-      DockBlockEntity.this.markDirty();
-    }
-
-    @Override
-    public boolean canPlayerUse(PlayerEntity player) {
-      if (world.getTileEntity(pos) != DockBlockEntity.this) {
-        return false;
-      } else {
-        return !(player.getDistanceSq(DockBlockEntity.this.pos.getX() + 0.5D, DockBlockEntity.this.pos.getY() + 0.5D,
-                DockBlockEntity.this.pos.getZ() + 0.5D) > 64.0D);
-      }
-    }
-
-    @Override
-    public void onOpen(PlayerEntity player) {
-      super.onOpen(player);
-      if (!player.isSpectator()) {
-        if (DockBlockEntity.this.numPlayersUsing < 0) {
-          DockBlockEntity.this.numPlayersUsing = 0;
+        } else {
+            settings.putInt(Utils.ID,freq);
         }
-        ++DockBlockEntity.this.numPlayersUsing;
-      }
+    }
+
+    public static final DankInventory DUMMY = new DankInventory(DankStats.zero, Utils.INVALID);
+
+    public DankInventory getInventory() {
+        if (settings != null && settings.contains(Utils.ID)) {
+            int id = settings.getInt(Utils.ID);
+            DankInventory dankInventory = DankStorage.instance.data.getInventory(id);
+
+            //if the id is too high
+            if (dankInventory == null) {
+                int next = DankStorage.instance.data.getNextID();
+                dankInventory = DankStorage.instance.data
+                        .getOrCreateInventory(next, DankStats.values()[getBlockState().getValue(DockBlock.TIER)]);
+                settings.putInt(Utils.ID, next);
+            }
+
+            return dankInventory;
+        }
+        return DUMMY;
+    }
+
+    public int getComparatorSignal() {
+        return this.getInventory().calcRedstone();
     }
 
     @Override
-    public void onClose(PlayerEntity player) {
-      super.onClose(player);
-      if (!player.isSpectator()) {
-        --DockBlockEntity.this.numPlayersUsing;
-      }
-    }
-  };
-
-  public LazyOptional<IItemHandler> optional = LazyOptional.of(() -> handler).cast();
-
-  public DockBlockEntity() {
-    super(DankStorage.Objects.dank_tile);
-  }
-
-  public DankHandler getHandler(){
-    return handler;
-  }
-
-  public int getComparatorSignal() {
-    return this.handler.calcRedstone();
-  }
-
-  @Override
-  public boolean receiveClientEvent(int id, int type) {
-    if (id == 1) {
-      this.numPlayersUsing = type;
-      this.markDirty();
-      return true;
-    } else {
-      return super.receiveClientEvent(id, type);
-    }
-  }
-
-  @Override
-  public void read(BlockState state,CompoundNBT compound) {
-    super.read(state,compound);
-    this.mode = compound.getInt("mode");
-    this.selectedSlot = compound.getInt("selectedSlot");
-    if (compound.contains(Utils.INV)) {
-      handler.setStats(DankStats.fromInt(state.get(DockBlock.TIER)));
-      handler.deserializeNBT(compound.getCompound(Utils.INV));
-    }
-    if (compound.contains("CustomName", 8)) {
-      this.setCustomName(ITextComponent.Serializer.getComponentFromJson(compound.getString("CustomName")));
-    }
-  }
-
-  @Nonnull
-  @Override
-  public CompoundNBT write(CompoundNBT tag) {
-    super.write(tag);
-    tag.putInt("mode",mode);
-    tag.putInt("selectedSlot",selectedSlot);
-    tag.put(Utils.INV, handler.serializeNBT());
-    if (this.hasCustomName()) {
-      tag.putString("CustomName", ITextComponent.Serializer.toJson(this.customName));
-    }
-    return tag;
-  }
-
-  @Nonnull
-  @Override
-  public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
-
-
-    if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-      //Very, VERY dirty fix for Dank-Storage#152
-      if (!world.isRemote) {
-        return optional.cast();
-        //the ticon workbench uses the clientside ItemHandler for displaying side inventory slots,
-        // return a dummy with the correct slot count, ugly but it works until 1.18
-      } else {
-        return LazyOptional.of(() -> new DankHandler(DankStats.values()[getBlockState().get(DockBlock.TIER)])).cast();
-      }
+    public boolean triggerEvent(int id, int type) {
+        if (id == 1) {
+            this.numPlayersUsing = type;
+            this.setChanged();
+            return true;
+        } else {
+            return super.triggerEvent(id, type);
+        }
     }
 
-    return super.getCapability(capability, facing);
-  }
-
-  public void setCustomName(ITextComponent text) {
-    this.customName = text;
-  }
-
-  @Override
-  public ITextComponent getName() {
-    return customName != null ? customName : getDefaultName();
-  }
-
-  ITextComponent getDefaultName() {
-    return new TranslationTextComponent("container.dankstorage.dank_"+getBlockState().get(DockBlock.TIER));
-  }
-
-  @Override
-  public ITextComponent getDisplayName() {
-    return this.getName();
-  }
-
-  @Nullable
-  @Override
-  public ITextComponent getCustomName() {
-    return customName;
-  }
-
-  @Nullable
-  @Override
-  public Container createMenu(int id, PlayerInventory inv, PlayerEntity p_createMenu_3_) {
-    switch (getBlockState().get(DockBlock.TIER)) {
-      case 1:return DockContainer.dock1s(id,inv,handler,array);
-      case 2:return DockContainer.dock2s(id,inv,handler,array);
-      case 3:return DockContainer.dock3s(id,inv,handler,array);
-      case 4:return DockContainer.dock4s(id,inv,handler,array);
-      case 5:return DockContainer.dock5s(id,inv,handler,array);
-      case 6:return DockContainer.dock6s(id,inv,handler,array);
-      case 7:return DockContainer.dock7s(id,inv,handler,array);
+    @Override
+    public void load(CompoundTag compound) {
+        super.load(compound);
+        this.settings = compound.getCompound(Utils.SET);
+        if (compound.contains("CustomName", 8)) {
+            this.setCustomName(Component.Serializer.fromJson(compound.getString("CustomName")));
+        }
     }
-    return null;
-  }
 
-  public void removeTank() {
-    ItemStack stack = removeTankWithoutItemSpawn();
-    ItemEntity entity = new ItemEntity(world,pos.getX(),pos.getY(),pos.getZ(),stack);
-    world.addEntity(entity);
-  }
-
-  public ItemStack removeTankWithoutItemSpawn() {
-    int tier = getBlockState().get(DockBlock.TIER);
-    CompoundNBT nbt = handler.serializeNBT();
-    world.setBlockState(pos,getBlockState().with(DockBlock.TIER,0));
-    handler.setStats(DankStats.zero);
-    optional.invalidate();
-    ItemStack stack = new ItemStack(Utils.getItemFromTier(tier));
-    if (hasCustomName()) {
-      stack.setDisplayName(getDisplayName());
+    @Override
+    public void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        if (settings != null) {
+            tag.put(Utils.SET, settings);
+        }
+        if (this.hasCustomName()) {
+            tag.putString("CustomName", Component.Serializer.toJson(this.customName));
+        }
     }
-    setCustomName(null);
-    stack.getOrCreateTag().put(Utils.INV,nbt);
-    return stack;
-  }
 
-  public void addTank(ItemStack tank) {
-    if (tank.getItem() instanceof DankItem) {
-      DankStats tier = ((DankItem)tank.getItem()).tier;
-
-      BlockState oldState = getBlockState();
-      BlockState newState = oldState.with(DockBlock.TIER,tier.ordinal());
-
-      world.setBlockState(pos,newState);
-      handler.setStats(tier);
-      handler.deserializeNBT(tank.getOrCreateTag().getCompound(Utils.INV));
-      optional = LazyOptional.of(() -> handler);
-      if (tank.hasDisplayName()) {
-        setCustomName(tank.getDisplayName());
-      }
-      tank.shrink(1);
-      world.notifyNeighborsOfStateChange(pos,newState.getBlock());
-      //world.notifyBlockUpdate(pos,);
+    @Nonnull
+    @Override
+    public CompoundTag getUpdateTag() {
+        return super.getUpdateTag();//save(new CompoundTag());
     }
-  }
 
-  public void upgrade(DankStats to) {
-    world.setBlockState(pos,getBlockState().with(DockBlock.TIER,to.ordinal()));
-    handler.setStats(to);
-  }
+    @Nullable
+    @Override
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public Component getName() {
+        return customName != null ? customName : getDefaultName();
+    }
+
+    public Component getDefaultName() {
+        return Utils.translatable("container.dankstorage.dank_" + getBlockState().getValue(DockBlock.TIER));
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return this.getName();
+    }
+
+    @Nullable
+    @Override
+    public Component getCustomName() {
+        return customName;
+    }
+
+    public void setCustomName(Component text) {
+        this.customName = text;
+    }
+
+    @Nullable
+    @Override
+    public DockMenu createMenu(int syncId, Inventory inventory, Player player) {
+
+        int tier = getBlockState().getValue(DockBlock.TIER);
+
+        DankInventory dankInventory = getInventory();
+
+        DankStats type = DankStats.values()[tier];
+        if (type != dankInventory.dankStats) {
+            if (type.ordinal() < dankInventory.dankStats.ordinal()) {
+                Utils.warn(player, type, dankInventory.dankStats);
+                return null;
+            }
+            dankInventory.upgradeTo(type);
+        }
+
+        return switch (getBlockState().getValue(DockBlock.TIER)) {
+            case 1 -> DockMenu.t1s(syncId, inventory, dankInventory, this);
+            case 2 -> DockMenu.t2s(syncId, inventory, dankInventory, this);
+            case 3 -> DockMenu.t3s(syncId, inventory, dankInventory, this);
+            case 4 -> DockMenu.t4s(syncId, inventory, dankInventory, this);
+            case 5 -> DockMenu.t5s(syncId, inventory, dankInventory, this);
+            case 6 -> DockMenu.t6s(syncId, inventory, dankInventory, this);
+            case 7 -> DockMenu.t7s(syncId, inventory, dankInventory, this);
+            default -> null;
+        };
+    }
+
+    public void giveToPlayer(Player player) {
+        ItemStack dankInStack = removeDankWithoutItemSpawn();
+
+        if (!player.addItem(dankInStack)) {
+            ItemEntity entity = new ItemEntity(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), dankInStack);
+            level.addFreshEntity(entity);
+        }
+    }
+
+    public void removeDankWithItemSpawn() {
+        ItemStack dankInStack = removeDankWithoutItemSpawn();
+        ItemEntity entity = new ItemEntity(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), dankInStack);
+        level.addFreshEntity(entity);
+    }
+
+    public ItemStack removeDankWithoutItemSpawn() {
+        int tier = getBlockState().getValue(DockBlock.TIER);
+
+        if (tier == 0) {
+            throw new RuntimeException("tried to remove a null dank?");
+        }
+
+        level.setBlockAndUpdate(worldPosition, getBlockState().setValue(DockBlock.TIER, 0));
+        ItemStack stack = new ItemStack(Utils.getItemFromTier(tier));
+
+        if (settings != null) {
+            stack.getOrCreateTag().put(Utils.SET, settings);
+        }
+
+        settings = null;
+
+        if (hasCustomName() && originalName) {
+            stack.setHoverName(getCustomName());
+        }
+
+        setCustomName(null);
+        originalName = false;
+        setChanged();
+        return stack;
+    }
+
+    public void addDank(ItemStack tank) {
+        if (tank.getItem() instanceof DankItem) {
+            DankStats stats = ((DankItem) tank.getItem()).stats;
+            level.setBlockAndUpdate(worldPosition, getBlockState().setValue(DockBlock.TIER, stats.ordinal()));
+            originalName = tank.hasCustomHoverName();
+            if (originalName) {
+                setCustomName(tank.getHoverName());
+            }
+            CompoundTag iSettings = Utils.getSettings(tank);
+            tank.shrink(1);
+
+            DankInventory dankInventory;
+            if (iSettings != null && iSettings.contains(Utils.ID)) {
+                this.settings = iSettings;
+                dankInventory = DankStorage.instance.data.getInventory(iSettings.getInt(Utils.ID));
+            } else {
+                this.settings = new CompoundTag();
+                int newId = DankStorage.instance.data.getNextID();
+                dankInventory = DankStorage.instance.data.getOrCreateInventory(newId, stats);
+                settings.putInt(Utils.ID, newId);
+            }
+            if (stats != dankInventory.dankStats) {
+                dankInventory.upgradeTo(stats);
+            }
+
+            setChanged();
+        }
+    }
+
+    public void upgradeTo(DankStats stats) {
+        level.setBlockAndUpdate(worldPosition, getBlockState().setValue(DockBlock.TIER, stats.ordinal()));
+        DankInventory dankInventory = getInventory();
+        dankInventory.upgradeTo(stats);
+    }
+
+    //item api
+
+
 }

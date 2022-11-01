@@ -1,153 +1,107 @@
 package tfar.dankstorage.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.eventbus.api.Event;
-import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.item.DankItem;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraftforge.client.ClientRegistry;
+import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
+import org.lwjgl.glfw.GLFW;
 import tfar.dankstorage.client.screens.DockScreen;
 import tfar.dankstorage.client.screens.PortableDankStorageScreen;
-import tfar.dankstorage.inventory.PortableDankHandler;
-import tfar.dankstorage.network.C2SMessageScrollSlot;
-import tfar.dankstorage.network.CMessagePickBlock;
-import tfar.dankstorage.network.CMessageToggleUseType;
-import tfar.dankstorage.network.DankPacketHandler;
-import tfar.dankstorage.utils.Utils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import org.lwjgl.glfw.GLFW;
+import tfar.dankstorage.event.ForgeEvents;
+import tfar.dankstorage.init.ModMenuTypes;
+import tfar.dankstorage.network.server.C2SButtonPacket;
 
-import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
-
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class Client {
 
-  public static KeyBinding CONSTRUCTION;
-  public static final Minecraft mc = Minecraft.getInstance();
+    public static final Minecraft mc = Minecraft.getInstance();
+    public static KeyMapping CONSTRUCTION;
+    public static KeyMapping LOCK_SLOT;
+    public static KeyMapping PICKUP_MODE;
 
-  @SubscribeEvent
-  public static void client(FMLClientSetupEvent e) {
-    ScreenManager.registerFactory(DankStorage.Objects.dank_1_container, DockScreen::t1);
-    ScreenManager.registerFactory(DankStorage.Objects.portable_dank_1_container, PortableDankStorageScreen::t1);
-    ScreenManager.registerFactory(DankStorage.Objects.dank_2_container, DockScreen::t2);
-    ScreenManager.registerFactory(DankStorage.Objects.portable_dank_2_container, PortableDankStorageScreen::t2);
-    ScreenManager.registerFactory(DankStorage.Objects.dank_3_container, DockScreen::t3);
-    ScreenManager.registerFactory(DankStorage.Objects.portable_dank_3_container, PortableDankStorageScreen::t3);
-    ScreenManager.registerFactory(DankStorage.Objects.dank_4_container, DockScreen::t4);
-    ScreenManager.registerFactory(DankStorage.Objects.portable_dank_4_container, PortableDankStorageScreen::t4);
-    ScreenManager.registerFactory(DankStorage.Objects.dank_5_container, DockScreen::t5);
-    ScreenManager.registerFactory(DankStorage.Objects.portable_dank_5_container, PortableDankStorageScreen::t5);
-    ScreenManager.registerFactory(DankStorage.Objects.dank_6_container, DockScreen::t6);
-    ScreenManager.registerFactory(DankStorage.Objects.portable_dank_6_container, PortableDankStorageScreen::t6);
-    ScreenManager.registerFactory(DankStorage.Objects.dank_7_container, DockScreen::t7);
-    ScreenManager.registerFactory(DankStorage.Objects.portable_dank_7_container, PortableDankStorageScreen::t7);
+    public static void client() {
 
-    CONSTRUCTION = new KeyBinding("key.dankstorage.construction", GLFW.GLFW_KEY_I, "key.categories.dankstorage");
+        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::renderStack);
+        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::onPickBlock);
+        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::onScroll);
 
-    ClientRegistry.registerKeyBinding(CONSTRUCTION);
-  }
+        MenuScreens.register(ModMenuTypes.dank_1_container, DockScreen::t1);
+        MenuScreens.register(ModMenuTypes.portable_dank_1_container, PortableDankStorageScreen::t1);
+        MenuScreens.register(ModMenuTypes.dank_2_container, DockScreen::t2);
+        MenuScreens.register(ModMenuTypes.portable_dank_2_container, PortableDankStorageScreen::t2);
+        MenuScreens.register(ModMenuTypes.dank_3_container, DockScreen::t3);
+        MenuScreens.register(ModMenuTypes.portable_dank_3_container, PortableDankStorageScreen::t3);
+        MenuScreens.register(ModMenuTypes.dank_4_container, DockScreen::t4);
+        MenuScreens.register(ModMenuTypes.portable_dank_4_container, PortableDankStorageScreen::t4);
+        MenuScreens.register(ModMenuTypes.dank_5_container, DockScreen::t5);
+        MenuScreens.register(ModMenuTypes.portable_dank_5_container, PortableDankStorageScreen::t5);
+        MenuScreens.register(ModMenuTypes.dank_6_container, DockScreen::t6);
+        MenuScreens.register(ModMenuTypes.portable_dank_6_container, PortableDankStorageScreen::t6);
+        MenuScreens.register(ModMenuTypes.dank_7_container, DockScreen::t7);
+        MenuScreens.register(ModMenuTypes.portable_dank_7_container, PortableDankStorageScreen::t7);
 
-  @Mod.EventBusSubscriber(value = Dist.CLIENT)
-  public static class KeyHandler {
-    @SubscribeEvent
+        CONSTRUCTION = new KeyMapping("key.dankstorage.construction", GLFW.GLFW_KEY_I, "key.categories.dankstorage");
+        LOCK_SLOT = new KeyMapping("key.dankstorage.lock_slot", GLFW.GLFW_KEY_LEFT_CONTROL, "key.categories.dankstorage");
+        PICKUP_MODE = new KeyMapping("key.dankstorage.pickup_mode", GLFW.GLFW_KEY_O, "key.categories.dankstorage");
+
+        ClientRegistry.registerKeyBinding(CONSTRUCTION);
+        ClientRegistry.registerKeyBinding(LOCK_SLOT);
+        ClientRegistry.registerKeyBinding(PICKUP_MODE);
+        MinecraftForge.EVENT_BUS.addListener(Client::keyPressed);
+        MinecraftForgeClient.registerTooltipComponentFactory(DankTooltip.class, Client::tooltipImage);
+    }
+
+    public static void keyPressed(TickEvent.ClientTickEvent client) {
+        if (CONSTRUCTION.consumeClick()) {
+            C2SButtonPacket.send(C2SButtonPacket.Action.TOGGLE_USE_TYPE);
+        }
+        if (PICKUP_MODE.consumeClick()) {
+            C2SButtonPacket.send(C2SButtonPacket.Action.TOGGLE_PICKUP);
+        }
+    }
+
+    public static ClientTooltipComponent tooltipImage(TooltipComponent data) {
+        if (data instanceof DankTooltip dankTooltip) {
+            return new ClientDankTooltip(dankTooltip);
+        }
+        return null;
+    }
+
+
+
+  /*public static class KeyHandler {
     public static void onKeyInput(InputEvent.KeyInputEvent event) {
-      if (mc.player == null || !(mc.player.getHeldItemMainhand().getItem() instanceof DankItem || mc.player.getHeldItemOffhand().getItem() instanceof DankItem))
+      if (mc.player == null || !(mc.player.getMainHandStack().getItem() instanceof DankItem || mc.player.getOffHandStack().getItem() instanceof DankItem))
         return;
-      if (CONSTRUCTION.isPressed()) {
+      if (CONSTRUCTION.wasPressed()) {
         DankPacketHandler.INSTANCE.sendToServer(new CMessageToggleUseType());
       }
-      if (mc.gameSettings.keyBindPickBlock.isPressed()) {
+      if (mc.options.keyPickItem.wasPressed()) {
         DankPacketHandler.INSTANCE.sendToServer(new CMessagePickBlock());
       }
     }
 
-    @SubscribeEvent
     public static void onMouseInput(InputEvent.MouseInputEvent event) {
-      if (mc.player == null || !(mc.player.getHeldItemMainhand().getItem() instanceof DankItem || mc.player.getHeldItemOffhand().getItem() instanceof DankItem))
+      if (mc.player == null || !(mc.player.getMainHandStack().getItem() instanceof DankItem || mc.player.getOffHandStack().getItem() instanceof DankItem))
         return;
-      if (CONSTRUCTION.isPressed()) {
+      if (CONSTRUCTION.wasPressed()) {
         DankPacketHandler.INSTANCE.sendToServer(new CMessageToggleUseType());
       }
-      if (mc.gameSettings.keyBindPickBlock.isPressed()) {
+      if (mc.options.keyPickItem.wasPressed()) {
         DankPacketHandler.INSTANCE.sendToServer(new CMessagePickBlock());
       }
     }
 
-    @SubscribeEvent
     public static void mousewheel(InputEvent.MouseScrollEvent e) {
-      PlayerEntity player = Minecraft.getInstance().player;
-      if (player != null && player.isCrouching() && (Utils.isConstruction(player.getHeldItemMainhand()) || Utils.isConstruction(player.getHeldItemOffhand()))) {
+      PlayerEntity player = MinecraftClient.getInstance().player;
+      if (player != null && player.isInSneakingPose() && (Utils.isConstruction(player.getMainHandStack()) || Utils.isConstruction(player.getOffHandStack()))) {
         boolean right = e.getScrollDelta() < 0;
         DankPacketHandler.INSTANCE.sendToServer(new C2SMessageScrollSlot(right));
         e.setCanceled(true);
       }
-    }
-
-    @SubscribeEvent
-    public static void onRenderTick(RenderGameOverlayEvent.Post event) {
-      PlayerEntity player = mc.player;
-      if (event.getType() != RenderGameOverlayEvent.ElementType.HOTBAR || !DankStorage.ClientConfig.preview.get() || player == null)
-        return;
-      if (!(player.openContainer instanceof PlayerContainer)) return;
-      ItemStack bag = player.getHeldItemMainhand();
-      if (!(bag.getItem() instanceof DankItem)) {
-        bag = player.getHeldItemOffhand();
-        if (!(bag.getItem() instanceof DankItem))
-          return;
-      }
-      int xStart = event.getWindow().getScaledWidth() / 2;
-      int yStart = event.getWindow().getScaledHeight();
-      if (Utils.isConstruction(bag)) {
-        PortableDankHandler handler = Utils.getHandler(bag);
-        ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
-
-        if (!toPlace.isEmpty()) {
-
-
-          Integer color = toPlace.getItem().getRarity(toPlace).color.getColor();
-
-          int c = color != null ? color : 0xFFFFFF;
-
-          final int itemX = xStart + DankStorage.ClientConfig.hudX.get();
-          final int itemY = yStart + DankStorage.ClientConfig.hudY.get();
-          renderHotbarItem(itemX, itemY, 0, player, toPlace);
-        }
-      }
-      final int stringX = xStart - 155;
-      final int stringY = yStart - 10;
-      String mode = Utils.getUseType(bag).name();
-      mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(),mode,stringX,stringY,0xffffff);
-      mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
-    }
-  }
-
-  private static void renderHotbarItem(int x, int y, float partialTicks, PlayerEntity player, ItemStack stack) {
-    float f = (float) stack.getAnimationsToGo() - partialTicks;
-    if (f > 0.0F) {
-      RenderSystem.pushMatrix();
-      float f1 = 1.0F + f / 5.0F;
-      RenderSystem.translatef((float) (x + 8), (float) (y + 12), 0.0F);
-      RenderSystem.scalef(1.0F / f1, (f1 + 1.0F) / 2.0F, 1.0F);
-      RenderSystem.translatef((float) (-(x + 8)), (float) (-(y + 12)), 0.0F);
-    }
-
-    mc.getItemRenderer().renderItemAndEffectIntoGUI(player, stack, x, y);
-    if (f > 0.0F) {
-      RenderSystem.popMatrix();
-    }
-    mc.getItemRenderer().renderItemOverlays(mc.fontRenderer, stack, x, y);
-  }
+    }*/
 }

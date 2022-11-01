@@ -1,250 +1,307 @@
 package tfar.dankstorage.item;
 
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.*;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.network.NetworkHooks;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.client.Client;
+import tfar.dankstorage.client.DankTooltip;
 import tfar.dankstorage.container.PortableDankProvider;
-import tfar.dankstorage.inventory.DankHandler;
-import tfar.dankstorage.inventory.PortableDankHandler;
-import tfar.dankstorage.network.CMessageToggleUseType;
+import tfar.dankstorage.mixin.ItemUsageContextAccessor;
+import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.server.C2SRequestContentsPacket;
 import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.utils.Mode;
+import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.Utils;
+import tfar.dankstorage.world.ClientData;
+import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankSavedData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 public class DankItem extends Item {
-    public final DankStats tier;
+    public final DankStats stats;
 
     public DankItem(Properties p_i48527_2_, DankStats stats) {
         super(p_i48527_2_);
-        this.tier = stats;
+        this.stats = stats;
     }
 
-    public static final Rarity GRAY = Rarity.create("dark_gray", TextFormatting.GRAY);
-    public static final Rarity RED = Rarity.create("red", TextFormatting.RED);
-    public static final Rarity GOLD = Rarity.create("gold", TextFormatting.GOLD);
-    public static final Rarity GREEN = Rarity.create("green", TextFormatting.GREEN);
-    public static final Rarity BLUE = Rarity.create("blue", TextFormatting.AQUA);
-    public static final Rarity PURPLE = Rarity.create("purple", TextFormatting.DARK_PURPLE);
-    public static final Rarity WHITE = Rarity.create("white", TextFormatting.WHITE);
+  /*public static final Rarity GRAY = Rarity.create("dark_gray", Formatting.GRAY);
+  public static final Rarity RED = Rarity.create("red", Formatting.RED);
+  public static final Rarity GOLD = Rarity.create("gold", Formatting.GOLD);
+  public static final Rarity GREEN = Rarity.create("green", Formatting.GREEN);
+  public static final Rarity BLUE = Rarity.create("blue", Formatting.AQUA);
+  public static final Rarity PURPLE = Rarity.create("purple", Formatting.DARK_PURPLE);
+  public static final Rarity WHITE = Rarity.create("white", Formatting.WHITE);
 
-    @Override
-    public ICapabilityProvider initCapabilities(final ItemStack stack, final CompoundNBT nbt) {
-        return new ICapabilityProvider() {
-            @Nonnull
-            @Override
-            public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-                if (stack.getItem() instanceof DankItem) {//thanks Numina
-                    return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? LazyOptional.of(() -> Utils.getHandler(stack)).cast() : LazyOptional.empty();
-                }
-                return LazyOptional.empty();
-            }
-        };
+  @Nonnull
+  @Override
+  public Rarity getRarity(ItemStack stack) {
+    switch (tier) {
+      case 1:
+        return GRAY;
+      case 2:
+        return RED;
+      case 3:
+        return GOLD;
+      case 4:
+        return GREEN;
+      case 5:
+        return BLUE;
+      case 6:
+        return PURPLE;
+      case 7:
+        return WHITE;
     }
-
-    @Nonnull
-    @Override
-    public Rarity getRarity(ItemStack stack) {
-        switch (tier) {
-            case one:
-                return GRAY;
-            case two:
-                return RED;
-            case three:
-                return GOLD;
-            case four:
-                return GREEN;
-            case five:
-                return BLUE;
-            case six:
-                return PURPLE;
-            case seven:
-                return WHITE;
-        }
-        return super.getRarity(stack);
-    }
+    return super.getRarity(stack);
+  }*/
 
     @Override
     public int getUseDuration(ItemStack bag) {
         if (!Utils.isConstruction(bag)) return 0;
-        ItemStack stack = Utils.getItemStackInSelectedSlot(bag);
-        return stack.getItem().getUseDuration(stack);
+     //   ItemStack stack = Utils.getItemStackInSelectedSlot(bag);
+        return 0;//stack.getItem().getUseDuration(stack);
+    }
+
+    public static ItemStack getSelected(ItemStack bag) {
+       return ItemStack.EMPTY;
+    }
+
+    @Override
+    public float getDestroySpeed(ItemStack bag, BlockState p_150893_2_) {
+        if (!Utils.isConstruction(bag)) return 1;
+        //ItemStack tool = Utils.getItemStackInSelectedSlot(bag);
+        return 1;//tool.getItem().getDestroySpeed(tool, p_150893_2_);
+    }
+
+    //this is used to damage tools and stuff, we use it here to damage the internal item instead
+    @Override
+    public boolean mineBlock(ItemStack s, Level level, BlockState p_179218_3_, BlockPos p_179218_4_, LivingEntity p_179218_5_) {
+        if (!Utils.isConstruction(s)) return super.mineBlock(s, level, p_179218_3_, p_179218_4_, p_179218_5_);
+
+        ItemStack tool = Utils.getItemStackInSelectedSlot(s, (ServerLevel) level);
+
+        return tool.getItem().mineBlock(tool, level, p_179218_3_, p_179218_4_, p_179218_5_);
     }
 
     @Nonnull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-        ItemStack bag = player.getHeldItem(hand);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack bag = player.getItemInHand(hand);
 
-        if (Utils.getUseType(bag) == CMessageToggleUseType.UseType.bag) {
-            if (!world.isRemote) {
-                NetworkHooks.openGui((ServerPlayerEntity) player, new PortableDankProvider(bag, hand));
-            }
-            return ActionResult.resultSuccess(bag);
-        } else {
-            if (!world.isRemote) {
-                ItemStack toPlace = Utils.getItemStackInSelectedSlot(bag);
-                EquipmentSlotType hand1 = hand == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
-                //handle empty
-                if (toPlace.isEmpty()) {
-                    return ActionResult.resultPass(bag);
+            if (Utils.getUseType(bag) == Utils.UseType.bag) {
+                if (!level.isClientSide) {
+                    assignNextId(bag);
+                    player.openMenu(new PortableDankProvider(bag));
                 }
+                return InteractionResultHolder.success(bag);
+            } else {
+                if (!level.isClientSide) {
+                    ItemStack toPlace = Utils.getItemStackInSelectedSlot(bag, (ServerLevel) level);
+                    EquipmentSlot hand1 = hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+                    //handle empty
+                    if (toPlace.isEmpty()) {
+                        return InteractionResultHolder.pass(bag);
+                    }
 
-                //handle food
-                if (toPlace.getItem().isFood()) {
-                    if (player.canEat(false)) {
-                        player.setActiveHand(hand);
-                        return ActionResult.resultConsume(bag);
+                    //handle food
+                    if (toPlace.getItem().isEdible()) {
+                        if (player.canEat(false)) {
+                            player.startUsingItem(hand);
+                            return InteractionResultHolder.consume(bag);
+                        }
+                    }
+                    //handle potion
+                    else if (toPlace.getItem() instanceof PotionItem) {
+                        player.startUsingItem(hand);
+                        return InteractionResultHolder.success(player.getItemInHand(hand));
+                    }
+
+                    //handle shield
+                    else if (toPlace.getItem() instanceof ShieldItem) {
+                        player.startUsingItem(hand);
+                        return InteractionResultHolder.success(player.getItemInHand(hand));
+                    }
+
+                    //todo support other items?
+                    else {
+                        ItemStack bagCopy = bag.copy();
+                        player.setItemSlot(hand1, toPlace);
+                        InteractionResultHolder<ItemStack> actionResult = toPlace.getItem().use(level, player, hand);
+                        DankInventory handler = Utils.getOrCreateInventory(bagCopy, level);
+                        handler.setItem(Utils.getSelectedSlot(bagCopy), actionResult.getObject());
+                        player.setItemSlot(hand1, bagCopy);
                     }
                 }
-                //handle potion
-                else if (toPlace.getItem() instanceof PotionItem) {
-                    player.setActiveHand(hand);
-                    return new ActionResult<>(ActionResultType.SUCCESS, player.getHeldItem(hand));
-                }
-                //todo support other items?
-                else {
-                    ItemStack newBag = bag.copy();
-                    player.setItemStackToSlot(hand1, toPlace);
-                    ActionResult<ItemStack> actionResult = toPlace.getItem().onItemRightClick(world, player, hand);
-                    PortableDankHandler handler = Utils.getHandler(newBag);
-                    handler.setStackInSlot(Utils.getSelectedSlot(newBag), actionResult.getResult());
-                    player.setItemStackToSlot(hand1, newBag);
-                }
+                return new InteractionResultHolder<>(InteractionResult.PASS, player.getItemInHand(hand));
             }
-        }
-        return new ActionResult<>(ActionResultType.PASS, player.getHeldItem(hand));
     }
 
+    //this is called on the client
     @Override
-    public ActionResultType itemInteractionForEntity(ItemStack bag, PlayerEntity player, LivingEntity entity, Hand hand) {
-        if (!Utils.isConstruction(bag)) return ActionResultType.FAIL;
-        PortableDankHandler handler = Utils.getHandler(bag);
-        ItemStack toPlace = handler.getStackInSlot(Utils.getSelectedSlot(bag));
-        EquipmentSlotType hand1 = hand == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
-        player.setItemStackToSlot(hand1, toPlace);
-        ActionResultType result = toPlace.getItem().itemInteractionForEntity(toPlace, player, entity, hand);
-        handler.setStackInSlot(Utils.getSelectedSlot(bag), toPlace);
-        player.setItemStackToSlot(hand1, bag);
+    public InteractionResult interactLivingEntity(ItemStack bag, Player player, LivingEntity entity, InteractionHand hand) {
+        if (!Utils.isConstruction(bag)) return InteractionResult.PASS;
+
+        ItemStack toUse = Utils.getSelectedItem(bag,player.level);
+        EquipmentSlot hand1 = hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+        player.setItemSlot(hand1, toUse);
+        InteractionResult result = toUse.getItem().interactLivingEntity(toUse, player, entity, hand);
+
+        //the client doesn't have access to the full inventory
+        if (!player.level.isClientSide) {
+            DankInventory handler = Utils.getOrCreateInventory(bag, player.level);
+            handler.setItem(Utils.getSelectedSlot(bag), toUse);
+        }
+
+        player.setItemSlot(hand1, bag);
         return result;
     }
 
     @Override
-    public boolean hasEffect(ItemStack stack) {
-        return stack.hasTag() && Utils.getMode(stack) != Mode.normal;
+    public boolean isFoil(ItemStack stack) {
+        return stack.hasTag() && Utils.getPickupMode(stack) != PickupMode.none;
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void addInformation(ItemStack bag, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-        if (bag.hasTag() && Utils.DEV) tooltip.add(new StringTextComponent(bag.getTag().toString()));
+    public void appendHoverText(ItemStack bag, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+        if (bag.hasTag()) {
 
-        if (!Screen.hasShiftDown()) {
-            tooltip.add(new TranslationTextComponent("text.dankstorage.shift",
-                    new StringTextComponent("Shift").mergeStyle(TextFormatting.YELLOW)).mergeStyle(TextFormatting.GRAY));
+            if (Utils.DEV) {
+                String s = bag.getTag().toString();
+
+                List<String> bits = new ArrayList<>();
+
+                int length = s.length();
+
+                if (s.length() > 10000) return;
+
+                int itr = (int) Math.ceil(length / 40d);
+
+                for (int i = 0; i < itr; i++) {
+
+                    int end = (i + 1) * 40;
+
+                    if ((i + 1) * 40 - 1 >= length) {
+                        end = length;
+                    }
+
+                    String s1 = s.substring(i * 40, end);
+                    bits.add(s1);
+                }
+
+                bits.forEach(s1 -> tooltip.add(Utils.literal(s1)));
+
+            }
         }
 
+        int id = Utils.getFrequency(bag);
+        tooltip.add(Utils.literal("ID: "+id));
 
-        if (Screen.hasShiftDown()) {
-            tooltip.add(new TranslationTextComponent("text.dankstorage.changemode",
-                    Client.CONSTRUCTION.func_238171_j_().copyRaw().mergeStyle(TextFormatting.YELLOW)).mergeStyle(TextFormatting.GRAY));
-            CMessageToggleUseType.UseType mode = Utils.getUseType(bag);
-            tooltip.add(
-                    new TranslationTextComponent("text.dankstorage.currentusetype", new TranslationTextComponent(
-                            "dankstorage.usetype." + mode.name().toLowerCase(Locale.ROOT)).mergeStyle(TextFormatting.YELLOW)).mergeStyle(TextFormatting.GRAY));
-            tooltip.add(
-                    new TranslationTextComponent("text.dankstorage.stacklimit", new StringTextComponent(Utils.getStackLimit(bag) + "")
-                            .mergeStyle(TextFormatting.GREEN)).mergeStyle(TextFormatting.GRAY));
+        if (!Screen.hasShiftDown()) {
+            tooltip.add(Utils.translatable("text.dankstorage.shift",
+                    Utils.literal("Shift").withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
+        } else {
 
-            DankHandler handler = Utils.getHandler(bag);
+            tooltip.add(Utils.translatable("text.dankstorage.change_pickup_mode", Client.PICKUP_MODE.getTranslatedKeyMessage().copy()
+                    .withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
+            PickupMode pickupMode = Utils.getPickupMode(bag);
+            tooltip.add(
+                    Utils.translatable("text.dankstorage.current_pickup_mode", Utils.translatable(
+                            "dankstorage.mode." + pickupMode.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.YELLOW))
+                            .withStyle(ChatFormatting.GRAY));
+
+
+            tooltip.add(Utils.translatable("text.dankstorage.changeusetype", Client.CONSTRUCTION.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
+            Utils.UseType useType = Utils.getUseType(bag);
+            tooltip.add(
+                    Utils.translatable("text.dankstorage.currentusetype", Utils.translatable(
+                            "dankstorage.usetype." + useType.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
+            tooltip.add(
+                    Utils.translatable("text.dankstorage.stacklimit", Utils.literal(stats.stacklimit + "").withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.GRAY));
+
+          /*  DankInventory handler = Utils.getHandler(bag);
 
             if (handler.isEmpty()) {
                 tooltip.add(
-                        new TranslationTextComponent("text.dankstorage.empty").mergeStyle(TextFormatting.ITALIC));
+                        Utils.translatable("text.dankstorage.empty").withStyle(ChatFormatting.ITALIC));
                 return;
             }
             int count1 = 0;
-            for (int i = 0; i < handler.getSlots(); i++) {
+            for (int i = 0; i < handler.getContainerSize(); i++) {
                 if (count1 > 10) break;
-                ItemStack item = handler.getStackInSlot(i);
+                ItemStack item = handler.getItem(i);
                 if (item.isEmpty()) continue;
-                ITextComponent count = new StringTextComponent(Integer.toString(item.getCount())).mergeStyle(TextFormatting.AQUA);
-                //tooltip.add(new TranslationTextComponent("text.dankstorage.formatcontaineditems", count, item.getDisplayName().(item.getRarity().color)));
+                Component count = Utils.literal(Integer.toString(item.getCount())).withStyle(ChatFormatting.AQUA);
+                //tooltip.add(new TranslationUtils.literal("text.dankstorage.formatcontaineditems", count, item.getDisplayName().(item.getRarity().color)));
                 count1++;
-            }
+            }*/
         }
     }
 
     @Nonnull
     @Override
-    public UseAction getUseAction(ItemStack stack) {
-        if (!Utils.isConstruction(stack)) return UseAction.NONE;
-        ItemStack internal = Utils.getItemStackInSelectedSlot(stack);
-        return internal.getItem().getUseAction(stack);
+    public UseAnim getUseAnimation(ItemStack stack) {
+        if (!Utils.isConstruction(stack)) return UseAnim.NONE;
+        //ItemStack internal = Utils.getItemStackInSelectedSlot(stack);
+        return UseAnim.NONE;//internal.getItem().getUseAnimation(stack);
     }
 
     //called for stuff like food and potions
     @Nonnull
     @Override
-    public ItemStack onItemUseFinish(ItemStack stack, World world, LivingEntity entity) {
+    public ItemStack finishUsingItem(ItemStack stack, Level world, LivingEntity entity) {
         if (!Utils.isConstruction(stack)) return stack;
 
-        ItemStack internal = Utils.getItemStackInSelectedSlot(stack);
+     /*   ItemStack internal = Utils.getItemStackInSelectedSlot(stack,world);
 
-        if (internal.getItem().isFood()) {
-            ItemStack food = entity.onFoodEaten(world, internal);
-            PortableDankHandler handler = Utils.getHandler(stack);
-            handler.setStackInSlot(Utils.getSelectedSlot(stack), food);
+        if (internal.getItem().isEdible()) {
+            ItemStack food = entity.eat(world, internal);
+            DankInventory handler = Utils.getHandler(stack,world);
+            handler.setItem(Utils.getSelectedSlot(stack), food);
             return stack;
         }
 
         if (internal.getItem() instanceof PotionItem) {
-            ItemStack potion = internal.onItemUseFinish(world, entity);
-            PortableDankHandler handler = Utils.getHandler(stack);
-            handler.setStackInSlot(Utils.getSelectedSlot(stack), potion);
+            ItemStack potion = internal.finishUsingItem(world, entity);
+            PortableDankInventory handler = Utils.getHandler(stack);
+            handler.setItem(Utils.getSelectedSlot(stack), potion);
             return stack;
         }
 
-        return super.onItemUseFinish(stack, world, entity);
-    }
-
-    @Override
-    public void onUsingTick(ItemStack stack, LivingEntity living, int count) {
+        return super.finishUsingItem(stack, world, entity);*/
+        return stack;
     }
 
     public int getGlintColor(ItemStack stack) {
-        Mode mode = Utils.getMode(stack);
-        switch (mode) {
-            case normal:
+        PickupMode pickupMode = Utils.getPickupMode(stack);
+        switch (pickupMode) {
+            case none:
             default:
                 return 0xffffffff;
             case pickup_all:
@@ -256,51 +313,89 @@ public class DankItem extends Item {
         }
     }
 
-    @Nullable
-    @Override
-    public CompoundNBT getShareTag(ItemStack stack) {
-        if (DankStorage.ServerConfig.useShareTag.get()) {
-            //Double check it is actually a stack of the correct type
-            CompoundNBT nbt = stack.getTag();
-            if (nbt == null || !nbt.contains(Utils.INV, Constants.NBT.TAG_LIST)) {
-                //If we don't have any NBT or already don't have the key just return the NBT as is
-                return nbt;
-            }
-            //Don't sync the list of consumed stacks to the client to make sure it doesn't overflow the packet
-            return Utils.copyNBTSkipKey(nbt, Utils.INV);
-        }
-        return super.getShareTag(stack);
-    }
-
     @Nonnull
     @Override
-    public ActionResultType onItemUse(ItemUseContext ctx) {
-        ItemStack bag = ctx.getItem();
-        CMessageToggleUseType.UseType useType = Utils.getUseType(bag);
+    public InteractionResult useOn(UseOnContext ctx) {
+        ItemStack bag = ctx.getItemInHand();
+        Level level = ctx.getLevel();
+        Utils.UseType useType = Utils.getUseType(bag);
 
-        if (useType == CMessageToggleUseType.UseType.bag) {
-            return ActionResultType.PASS;
+        if (useType == Utils.UseType.bag) {
+            return InteractionResult.PASS;
         }
 
-        PortableDankHandler handler = Utils.getHandler(bag);
         int selectedSlot = Utils.getSelectedSlot(bag);
 
-        ItemStack toPlace = handler.getStackInSlot(selectedSlot).copy();
-        if (toPlace.getCount() == 1 && handler.isLocked(selectedSlot))
-            return ActionResultType.PASS;
+        //invalid slot
+        if (selectedSlot == Utils.INVALID) {
+            return InteractionResult.PASS;
+        }
 
-        ItemStack safeCopy = bag.copy();
+        ItemStack toPlace = Utils.getSelectedItem(bag,level);
+        //todo: sync locked slots to client?
+        if (/*toPlace.getCount() == 1 && handler.isLocked(selectedSlot)*/ false)
+            return InteractionResult.PASS;
 
-
-        ItemUseContext ctx2 = new ItemUseContextExt(ctx.getWorld(), ctx.getPlayer(), ctx.getHand(), toPlace, ctx.rayTraceResult);
-        ActionResultType actionResultType = toPlace.getItem().onItemUse(ctx2);//ctx2.getItem().onItemUse(ctx);
-        handler.setStackInSlot(selectedSlot, ctx2.getItem());
+        UseOnContext ctx2 = new ItemUseContextExt(ctx.getLevel(), ctx.getPlayer(), ctx.getHand(), toPlace, ((ItemUsageContextAccessor) ctx).getHitResult());
+        InteractionResult actionResultType = toPlace.getItem().useOn(ctx2);//ctx2.getItem().onItemUse(ctx);
+        if (!level.isClientSide) {
+            DankInventory dankInventory = Utils.getInventory(bag,level);
+            dankInventory.setItem(selectedSlot, ctx2.getItemInHand());
+        }
         return actionResultType;
     }
 
-    public static class ItemUseContextExt extends ItemUseContext {
-        protected ItemUseContextExt(World p_i50034_1_, @Nullable PlayerEntity p_i50034_2_, Hand p_i50034_3_, ItemStack p_i50034_4_, BlockRayTraceResult p_i50034_5_) {
-            super(p_i50034_1_, p_i50034_2_, p_i50034_3_, p_i50034_4_, p_i50034_5_);
+    @Override
+    public void inventoryTick(ItemStack bag, Level level, Entity entity, int i, boolean equipped) {
+        //there has to be a better way
+        if (entity instanceof ServerPlayer player && equipped) {
+            ItemStack sel = Utils.getSelectedItem(bag,level);
+            DankPacketHandler.sendSelectedItem(player, sel);
         }
+    }
+
+    @Override
+    public boolean canBeHurtBy(DamageSource source) {
+        return source == DamageSource.OUT_OF_WORLD;
+    }
+
+    public static class ItemUseContextExt extends UseOnContext {
+        protected ItemUseContextExt(Level level, @Nullable Player player, InteractionHand hand, ItemStack stack, BlockHitResult result) {
+            super(level, player, hand, stack, result);
+        }
+    }
+
+    public static void assignNextId(ItemStack dank) {
+        CompoundTag settings = Utils.getSettings(dank);
+        if (settings == null || !settings.contains(Utils.ID, Tag.TAG_INT)) {
+            DankSavedData dankSavedData = DankStorage.instance.data;
+            DankStats stats = Utils.getStats(dank);
+            int next = dankSavedData.getNextID();
+            dankSavedData.getOrCreateInventory(next,stats);
+            Utils.getOrCreateSettings(dank).putInt(Utils.ID,next);
+        }
+    }
+
+    private static final ThreadLocal<Integer> cache = ThreadLocal.withInitial(() -> Utils.INVALID);
+
+    @Override
+    public Optional<TooltipComponent> getTooltipImage(ItemStack itemStack) {
+
+        int id = Utils.getFrequency(itemStack);
+
+        if (id > Utils.INVALID) {
+            //don't spam the server with requests
+            if (cache.get() != id || true) {
+                C2SRequestContentsPacket.send(id);
+                cache.set(id);
+            }
+
+            if (ClientData.cachedItems != null) {
+                NonNullList<ItemStack> nonNullList = NonNullList.create();
+                nonNullList.addAll(ClientData.cachedItems);
+                return Optional.of(new DankTooltip(nonNullList,Utils.getSelectedSlot(itemStack)));
+            }
+        }
+        return Optional.empty();
     }
 }

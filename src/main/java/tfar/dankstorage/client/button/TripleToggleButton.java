@@ -1,24 +1,23 @@
 package tfar.dankstorage.client.button;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.util.text.StringTextComponent;
-import tfar.dankstorage.utils.Mode;
+import net.minecraft.network.chat.Component;
+import tfar.dankstorage.client.screens.PortableDankStorageScreen;
+import tfar.dankstorage.utils.PickupMode;
+import tfar.dankstorage.utils.Utils;
 
 public class TripleToggleButton extends SmallButton {
 
-  public Mode mode;
+    protected PortableDankStorageScreen screen;
 
-  public TripleToggleButton(int x, int y, int widthIn, int heightIn, IPressable callback, Mode mode) {
-    super(x, y, widthIn, heightIn, new StringTextComponent(""), callback);
-    this.mode = mode;
-  }
+    public TripleToggleButton(int x, int y, int widthIn, int heightIn, Component component, OnPress callback, OnTooltip tooltip, PortableDankStorageScreen screen) {
+        super(x, y, widthIn, heightIn,component, callback,tooltip);
+        this.screen = screen;
+    }
 
-  @Override
-  public void tint() {
-      RenderSystem.color4f(mode.r(),mode.g(),mode.b(),1);
-  }
-
-  public void toggle() {
-    mode = mode.cycle();
-  }
+    @Override
+    public void tint() {
+        PickupMode mode = Utils.getPickupMode(screen.getMenu().bag);
+        RenderSystem.setShaderColor(mode.r(), mode.g(), mode.b(), 1);
+    }
 }

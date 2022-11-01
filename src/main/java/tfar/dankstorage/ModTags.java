@@ -1,16 +1,15 @@
 package tfar.dankstorage;
 
-import net.minecraft.item.Item;
-import net.minecraft.tags.ITag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.Tags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 
 public class ModTags {
 
-    public static final Tags.IOptionalNamedTag<Item> MEKANISM_CABLES = ItemTags.createOptional(new ResourceLocation("dankstorage","mekanism_cables"));
+   // public static final Tags.IOptionalNamedTag<Item> MEKANISM_CABLES = ItemTags.createOptional(new ResourceLocation("dankstorage","mekanism_cables"));
 
-    public static final ITag.INamedTag<Item> BLACKLISTED_STORAGE = ItemTags.makeWrapperTag(new ResourceLocation(DankStorage.MODID, "blacklisted_storage").toString());
-    public static final ITag.INamedTag<Item> BLACKLISTED_USAGE = ItemTags.makeWrapperTag(new ResourceLocation(DankStorage.MODID, "blacklisted_usage").toString());
-    public static final ITag.INamedTag<Item> WRENCHES = ItemTags.makeWrapperTag(new ResourceLocation("forge", "wrenches").toString());
+    public static final TagKey<Item> BLACKLISTED_STORAGE = ItemTags.create(new ResourceLocation(DankStorage.MODID, "blacklisted_storage"));
+    public static final TagKey<Item> BLACKLISTED_USAGE = ItemTags.create(new ResourceLocation(DankStorage.MODID, "blacklisted_usage"));
+    public static final TagKey<Item> WRENCHES = ItemTags.create(new ResourceLocation("forge", "wrenches"));
 }

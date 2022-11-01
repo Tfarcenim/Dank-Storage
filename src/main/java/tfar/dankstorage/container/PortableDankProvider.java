@@ -1,62 +1,63 @@
 package tfar.dankstorage.container;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.IIntArray;
-import net.minecraft.util.text.ITextComponent;
-import tfar.dankstorage.inventory.PortableDankHandler;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
+import tfar.dankstorage.world.DankInventory;
 
 import javax.annotation.Nullable;
 
-public class PortableDankProvider implements INamedContainerProvider {
+public class PortableDankProvider implements MenuProvider {
 
-  public final ItemStack bag;
-  private final Hand hand;
+    public final ItemStack stack;
 
-  public PortableDankProvider(ItemStack bag, Hand hand) {
-    this.bag = bag;
-    this.hand = hand;
-  }
-
-  @Override
-  public ITextComponent getDisplayName() {
-    return bag.getDisplayName();
-  }
-
-  @Nullable
-  @Override
-  public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity player) {
-
-    PortableDankHandler handler = Utils.getHandler(bag,hand);
-
-    DankStats stats = Utils.getStats(bag);
-
-    int selectedSlot = Utils.getSelectedSlot(bag);
-
-    IIntArray array = new PortableDankContainerData(handler,selectedSlot);
-
-    switch (stats) {
-      case one:
-      default:
-        return PortableDankContainer.dank1s(i, playerInventory,handler,array);
-      case two:
-        return PortableDankContainer.dank2s(i, playerInventory,handler,array);
-      case three:
-        return PortableDankContainer.dank3s(i, playerInventory, handler,array);
-      case four:
-        return PortableDankContainer.dank4s(i, playerInventory,handler,array);
-      case five:
-        return PortableDankContainer.dank5s(i, playerInventory, handler,array);
-      case six:
-        return PortableDankContainer.dank6s(i, playerInventory, handler,array);
-      case seven:
-        return PortableDankContainer.dank7s(i, playerInventory, handler,array);
+    public PortableDankProvider(ItemStack stack) {
+        this.stack = stack;
     }
-  }
+
+    @Override
+    public Component getDisplayName() {
+        return stack.getHoverName();
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int i, Inventory playerInventory, Player player) {
+
+        InteractionHand hand = Utils.getHandWithDank(player);
+        if (hand == null) return null;
+        ItemStack bag = player.getItemInHand(hand);
+        DankInventory dankInventory = Utils.getInventory(bag,player.level);
+        DankStats type = Utils.getStats(bag);
+
+        if (dankInventory == null) {
+                int next = DankStorage.instance.data.getNextID();
+                dankInventory = DankStorage.instance.data
+                        .getOrCreateInventory(next,type);
+                Utils.getSettings(bag).putInt(Utils.ID,next);
+        } else if (type != dankInventory.dankStats) {
+            if (type.ordinal() < dankInventory.dankStats.ordinal()) {
+                Utils.warn(player, type, dankInventory.dankStats);
+                return null;
+            }
+            dankInventory.upgradeTo(type);
+        }
+
+        return switch (type) {
+            default -> DankMenu.t1s(i, playerInventory, dankInventory);
+            case two -> DankMenu.t2s(i, playerInventory, dankInventory);
+            case three -> DankMenu.t3s(i, playerInventory, dankInventory);
+            case four -> DankMenu.t4s(i, playerInventory, dankInventory);
+            case five -> DankMenu.t5s(i, playerInventory, dankInventory);
+            case six -> DankMenu.t6s(i, playerInventory, dankInventory);
+            case seven -> DankMenu.t7s(i, playerInventory, dankInventory);
+        };
+    }
 }

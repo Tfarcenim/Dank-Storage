@@ -1,211 +1,249 @@
 package tfar.dankstorage.client.screens;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.datafixers.util.Pair;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import tfar.dankstorage.ModTags;
-import tfar.dankstorage.client.BigItemRenderer;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import org.lwjgl.glfw.GLFW;
+import tfar.dankstorage.client.Client;
+import tfar.dankstorage.client.NumberEditBox;
 import tfar.dankstorage.client.button.SmallButton;
-import tfar.dankstorage.container.AbstractDankContainer;
-import tfar.dankstorage.container.DockContainer;
-import tfar.dankstorage.container.PortableDankContainer;
+import tfar.dankstorage.container.AbstractDankMenu;
 import tfar.dankstorage.inventory.DankSlot;
-import tfar.dankstorage.network.C2SMessageLockSlot;
-import tfar.dankstorage.network.CMessageSort;
-import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.server.*;
 import tfar.dankstorage.utils.Utils;
+import tfar.dankstorage.world.DankInventory;
 
 import java.util.List;
 
-public abstract class AbstractDankStorageScreen<T extends AbstractDankContainer> extends ContainerScreen<T> {
+public abstract class AbstractDankStorageScreen<T extends AbstractDankMenu> extends AbstractContainerScreen<T> {
 
-	final ResourceLocation background;//= new ResourceLocation("textures/gui/container/shulker_box.png");
-
-	protected final boolean is7;
-
-	protected final boolean isPortable;
-
-	public AbstractDankStorageScreen(T container, PlayerInventory playerinventory, ITextComponent component, ResourceLocation background) {
-		super(container, playerinventory, component);
-		this.background = background;
-		this.ySize = 114 + this.container.rows * 18;
-		this.is7 = this.container.rows > 6;
-		this.playerInventoryTitleY = this.ySize - 94;
-		this.isPortable = container instanceof PortableDankContainer;
-	}
-
-	@Override
-	protected void init() {
-		super.init();
-		this.addButton(new SmallButton(guiLeft + 143, guiTop + 4, 26, 12, new StringTextComponent("Sort"), b -> {
-			DankPacketHandler.INSTANCE.sendToServer(new CMessageSort());
-			Utils.sort(Minecraft.getInstance().player);
-		}));
-	}
-
-	@Override
-	protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
-
-		minecraft.getTextureManager().bindTexture(background);
-		if (is7)
-			blit(stack, guiLeft, guiTop, 0, 0, xSize, ySize, 256, 512);
-		else
-			blit(stack, guiLeft, guiTop, 0, 0, xSize, ySize);
+    protected final boolean is7;
+    final ResourceLocation background;//= new ResourceLocation("textures/gui/container/shulker_box.png");
+    private EditBox frequency;
 
 
-		for (int i = 0; i < (container.rows * 9); i++) {
-			int j = i % 9;
-			int k = i / 9;
-			int offsetx = 8;
-			int offsety = 18;
-			if (container.propertyDelegate.get(i) == 1)
-				fill(stack, guiLeft + j * 18 + offsetx, guiTop + k * 18 + offsety,
-								guiLeft + j * 18 + offsetx + 16, guiTop + k * 18 + offsety + 16, 0xFFFF0000);
+    public AbstractDankStorageScreen(T container, Inventory playerinventory, Component component, ResourceLocation background) {
+        super(container, playerinventory, component);
+        this.background = background;
+        this.imageHeight = 114 + this.menu.rows * 18;
+        this.is7 = this.menu.rows > 6;
+        this.inventoryLabelY = this.imageHeight - 94;
+    }
 
-			if (isPortable && container.propertyDelegate.get(container.rows * 9 + 1) == i ) {
+    @Override
+    protected void init() {
+        super.init();
+        this.addRenderableWidget(new SmallButton(leftPos + 143, topPos + 4, 26, 12, Utils.literal("Sort"), b -> {
+            C2SButtonPacket.send(C2SButtonPacket.Action.SORT);
+        }));
 
-				fill(stack, guiLeft + j * 18 + offsetx, guiTop + k * 18 + offsety,
-						guiLeft + j * 18 + offsetx + 16, guiTop + k * 18 + offsety + 16, 0xFF00FF00);
-			}
-		}
-	}
 
-	@Override
-	public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
-		this.renderBackground(matrices);
-		super.render(matrices, mouseX, mouseY, partialTicks);
-		this.renderHoveredTooltip(matrices, mouseX, mouseY);
-	}
+        this.minecraft.keyboardHandler.setSendRepeatsToGui(true);
+        int i = (this.width - this.imageWidth) / 2;
+        int j = (this.height - this.imageHeight) / 2;
+        this.frequency = new NumberEditBox(this.font, i + 92, j + inventoryLabelY, 56, 12, Utils.translatable("dank"));
+        this.frequency.setCanLoseFocus(true);
+        this.frequency.setTextColor(-1);
+        this.frequency.setTextColorUneditable(-1);
+        this.frequency.setBordered(false);
+        this.frequency.setMaxLength(10);
+        this.frequency.setResponder(this::onNameChanged);
+        this.frequency.setValue("");
+        this.frequency.setTextColor(0xff00ff00);
+        this.addWidget(this.frequency);
+        this.setInitialFocus(this.frequency);
+        frequency.setFocus(false);
 
-	@Override
-	public List<ITextComponent> getTooltipFromItem(ItemStack itemStack) {
-		List<ITextComponent> tooltip = super.getTooltipFromItem(itemStack);
-		appendDankInfo(tooltip,itemStack);
-		return tooltip;
-	}
+        Button.OnTooltip freqTooltip = (button, poseStack, x, y) -> {
 
-	public void appendDankInfo(List<ITextComponent> tooltip,ItemStack stack) {
-		if (stack.getItem().isIn(ModTags.BLACKLISTED_STORAGE)) {
-			ITextComponent component1 = new TranslationTextComponent("text.dankstorage.blacklisted_storage").mergeStyle(TextFormatting.DARK_RED);
-			tooltip.add(component1);
-		}
-		if (stack.getItem().isIn(ModTags.BLACKLISTED_USAGE)) {
-			ITextComponent component1 = new TranslationTextComponent("text.dankstorage.blacklisted_usage").
-							mergeStyle(TextFormatting.DARK_RED);
-			tooltip.add(component1);
-		}
-		if (hoveredSlot instanceof DankSlot) {
-			ITextComponent component2 = new TranslationTextComponent("text.dankstorage.lock",
-							new StringTextComponent("ctrl").mergeStyle(TextFormatting.YELLOW)).mergeStyle(TextFormatting.GRAY);
-			tooltip.add(component2);
-			if (stack.getCount() >= 1000) {
-				ITextComponent component3 = new TranslationTextComponent(
-								"text.dankstorage.exact", new StringTextComponent(
-										Integer.toString(stack.getCount())).mergeStyle(TextFormatting.AQUA)).mergeStyle(TextFormatting.GRAY);
-				tooltip.add(component3);
-			}
-		}
-	}
+            boolean locked = menu.dankInventory.frequencyLocked();
 
-	@Override
-	public void moveItems(MatrixStack matrices, Slot slotIn) {
-		int i = slotIn.xPos;
-		int j = slotIn.yPos;
-		ItemStack itemstack = slotIn.getStack();
-		boolean flag = false;
-		boolean flag1 = slotIn == this.clickedSlot && !this.draggedStack.isEmpty() && !this.isRightMouseClick;
-		ItemStack itemstack1 = this.minecraft.player.inventory.getItemStack();
-		String s = null;
+            this.renderTooltip(poseStack,
+                    this.minecraft.font.split(
+                            Utils.translatable("text.dankstorage." + (locked ? "un" : "") + "lock_button"), Math.max(this.width / 2 - 43, 170)), x, y);
 
-		if (slotIn == this.clickedSlot && !this.draggedStack.isEmpty() && this.isRightMouseClick && !itemstack.isEmpty()) {
-			itemstack = itemstack.copy();
-			itemstack.setCount(itemstack.getCount() / 2);
-		} else if (this.dragSplitting && this.dragSplittingSlots.contains(slotIn) && !itemstack1.isEmpty()) {
-			if (this.dragSplittingSlots.size() == 1) {
-				return;
-			}
+        };
 
-			if (DockContainer.canAddItemToSlot(slotIn, itemstack1, true) && this.container.canDragIntoSlot(slotIn)) {
-				itemstack = itemstack1.copy();
-				flag = true;
-				Container.computeStackSize(this.dragSplittingSlots, this.dragSplittingLimit, itemstack, slotIn.getStack().isEmpty() ? 0 : slotIn.getStack().getCount());
-				int k = slotIn.getItemStackLimit(itemstack);
 
-				if (itemstack.getCount() > k) {
-					s = TextFormatting.YELLOW.toString() + k;
-					itemstack.setCount(k);
-				}
-			} else {
-				this.dragSplittingSlots.remove(slotIn);
-				this.updateDragSplitting();
-			}
-		}
+        this.addRenderableWidget(new SmallButton(leftPos + 115, topPos + 4, 12, 12,
+                Utils.literal(""), button -> C2SButtonPacket.send(C2SButtonPacket.Action.LOCK_FREQUENCY), freqTooltip) {
+            @Override
+            public Component getMessage() {
+                return menu.dankInventory.frequencyLocked() ? Utils.literal("X").withStyle(ChatFormatting.RED) :
+                        Utils.literal("O");
+            }
+        });
 
-		this.setBlitOffset(100);
-		this.itemRenderer.zLevel = 100;
+        Button.OnTooltip saveTooltip = (button, poseStack, x, y) -> {
+//todo make this fancy
+            this.renderTooltip(poseStack,
+                    this.minecraft.font.split(buildSaveComponent()
+                            , Math.max(this.width / 2 - 43, 170)), x, y);
 
-		if (itemstack.isEmpty() && slotIn.isEnabled()) {
-			Pair<ResourceLocation, ResourceLocation> pair = slotIn.getBackground();
+        };
 
-			if (pair != null) {
-				TextureAtlasSprite textureatlassprite = this.minecraft.getAtlasSpriteGetter(pair.getFirst()).apply(pair.getSecond());
-				this.minecraft.getTextureManager().bindTexture(textureatlassprite.getAtlasTexture().getTextureLocation());
-				blit(matrices, i, j, this.getBlitOffset(), 16, 16, textureatlassprite);
-				flag1 = true;
-			}
-		}
+        this.addRenderableWidget(new SmallButton(leftPos + 155, j + inventoryLabelY - 2, 12, 12,
+                Utils.literal("s"), b -> {
+            try {
+                if (menu.dankInventory.frequencyLocked()) return;
+                int id1 = Integer.parseInt(frequency.getValue());
+                C2SSetFrequencyPacket.send(id1, true);
+            } catch (NumberFormatException e) {
 
-		if (!flag1) {
-			if (flag) {
-				fill(matrices, i, j, i + 16, j + 16, 0x80ffffff);
-			}
+            }
+        }, saveTooltip));
 
-			RenderSystem.enableDepthTest();
-			this.itemRenderer.renderItemAndEffectIntoGUI(this.minecraft.player, itemstack, i, j);
-			BigItemRenderer.INSTANCE.zLevel = this.itemRenderer.zLevel;
-			if (slotIn instanceof DankSlot) {
-				BigItemRenderer.INSTANCE.renderItemOverlayIntoGUI(this.font, itemstack, i, j, s);
-			} else {
-				this.itemRenderer.renderItemOverlayIntoGUI(this.font, itemstack, i, j, s);
-			}
-		}
 
-		this.itemRenderer.zLevel = 0.0F;
-		this.setBlitOffset(0);
-		BigItemRenderer.INSTANCE.zLevel = itemRenderer.zLevel;
-	}
 
-	//this exists because quark won't fix it's code
-	@Override
-	protected <W extends Widget> W addButton(W button) {
-		if (!button.getClass().getName().contains("quark"))
-			return super.addButton(button);
-		return button;
-	}
 
-	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-		if (Screen.hasControlDown()) {
-			Slot slot = this.getSelectedSlot(mouseX, mouseY);
-			if (slot instanceof DankSlot) {
-				DankPacketHandler.INSTANCE.sendToServer(new C2SMessageLockSlot(slot.slotNumber));
-				return true;
-			}
-		}
-		return super.mouseClicked(mouseX, mouseY, mouseButton);
-	}
+        Button.OnTooltip compressTooltip = (button, poseStack, x, y) -> {
+
+
+            this.renderTooltip(poseStack,
+                    this.minecraft.font.split(
+                            Utils.translatable("Compresses reversible 3x3 recipes"), Math.max(this.width / 2 - 43, 170)), x, y);
+
+        };
+
+
+        this.addRenderableWidget(new SmallButton(leftPos + 129, topPos + 4, 12, 12,
+                Utils.literal("C"), button -> C2SButtonPacket.send(C2SButtonPacket.Action.COMPRESS), compressTooltip));
+    }
+
+    private static MutableComponent buildSaveComponent() {
+        return Utils.translatable("text.dankstorage.save_frequency_button",
+                Utils.translatable("text.dankstorage.save_frequency_button.invalid",
+                        Utils.translatable("text.dankstorage.save_frequency_button.invalidtxt")
+                                .withStyle(ChatFormatting.GRAY))
+                        .withStyle(Style.EMPTY.withColor(DankInventory.TxtColor.INVALID.color)),
+                Utils.translatable("text.dankstorage.save_frequency_button.too_high",
+                        Utils.translatable("text.dankstorage.save_frequency_button.too_hightxt")
+                                .withStyle(ChatFormatting.GRAY))
+                        .withStyle(Style.EMPTY.withColor(DankInventory.TxtColor.TOO_HIGH.color)),
+                Utils.translatable("text.dankstorage.save_frequency_button.different_tier",
+                        Utils.translatable("text.dankstorage.save_frequency_button.different_tiertxt")
+                                .withStyle(ChatFormatting.GRAY))
+                        .withStyle(Style.EMPTY.withColor(DankInventory.TxtColor.DIFFERENT_TIER.color)),
+                Utils.translatable("text.dankstorage.save_frequency_button.good",
+                        Utils.translatable("text.dankstorage.save_frequency_button.goodtxt")
+                                .withStyle(ChatFormatting.GRAY))
+                        .withStyle(Style.EMPTY.withColor(DankInventory.TxtColor.GOOD.color))
+                , Utils.translatable("text.dankstorage.save_frequency_button.locked_frequency",
+                Utils.translatable("text.dankstorage.save_frequency_button.locked_frequencytxt")
+                        .withStyle(ChatFormatting.GRAY))
+                .withStyle(Style.EMPTY.withColor(DankInventory.TxtColor.LOCKED.color))
+        );
+    }
+
+
+    private void onNameChanged(String string) {
+        try {
+            int i = Integer.parseInt(string);
+            C2SSetFrequencyPacket.send(i, false);
+        } catch (NumberFormatException e) {
+            C2SSetFrequencyPacket.send(-1, false);
+        }
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE || Minecraft.getInstance().options.keyInventory.matches(keyCode, scanCode)) {
+            this.minecraft.player.closeContainer();
+        }
+
+        //slot locking takes priority over frequency changing
+        boolean match = Client.LOCK_SLOT.matches(keyCode, scanCode);
+        if (match) {
+            if (hoveredSlot instanceof DankSlot) {
+                C2SMessageLockSlot.send(hoveredSlot.index);
+                return true;
+            }
+        }
+
+        if (!match && (this.frequency.keyPressed(keyCode, scanCode, modifiers) || this.frequency.canConsumeInput())) {
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    protected void renderBg(PoseStack stack, float partialTicks, int mouseX, int mouseY) {
+
+        RenderSystem.setShaderTexture(0, background);
+        if (is7)
+            blit(stack, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 512);
+        else
+            blit(stack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+
+
+        for (int i = 0; i < (menu.rows * 9); i++) {
+            int j = i % 9;
+            int k = i / 9;
+            int offsetx = 8;
+            int offsety = 18;
+            if (this.menu.dankInventory.get(i) == 1) {
+                fill(stack, leftPos + j * 18 + offsetx, topPos + k * 18 + offsety,
+                        leftPos + j * 18 + offsetx + 16, topPos + k * 18 + offsety + 16, 0xFFFF0000);
+            }
+        }
+    }
+
+    @Override
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(stack);
+        super.render(stack, mouseX, mouseY, partialTicks);
+        RenderSystem.disableBlend();
+
+        int color = menu.dankInventory.getTextColor();
+        this.frequency.setTextColor(color);
+        this.frequency.render(stack, mouseX, mouseY, partialTicks);
+        this.renderTooltip(stack, mouseX, mouseY);
+    }
+
+    @Override
+    public List<Component> getTooltipFromItem(ItemStack itemStack) {
+        List<Component> tooltipFromItem = super.getTooltipFromItem(itemStack);
+        appendDankInfo(tooltipFromItem, itemStack);
+        return tooltipFromItem;
+    }
+
+    public void appendDankInfo(List<Component> tooltip, ItemStack stack) {
+        if (stack.is(Utils.BLACKLISTED_STORAGE)) {
+            Component component = Utils.translatable("text.dankstorage.blacklisted_storage").withStyle(ChatFormatting.DARK_RED);
+            tooltip.add(component);
+        }
+        if (stack.is(Utils.BLACKLISTED_USAGE)) {
+            Component component = Utils.translatable("text.dankstorage.blacklisted_usage").
+                    withStyle(ChatFormatting.DARK_RED);
+            tooltip.add(component);
+        }
+        if (hoveredSlot instanceof DankSlot) {
+            Component component1 = Utils.translatable("text.dankstorage.lock",
+                    Client.LOCK_SLOT.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY);
+            tooltip.add(component1);
+            if (stack.getCount() >= 1000) {
+                Component component2 = Utils.translatable(
+                        "text.dankstorage.exact", Utils.literal(Integer.toString(stack.getCount())).withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.GRAY);
+                tooltip.add(component2);
+            }
+        }
+    }
+
+    @Override
+    protected void renderLabels(PoseStack poseStack, int i, int j) {
+        super.renderLabels(poseStack, i, j);
+        int id = menu.dankInventory.getFrequency();//menu.dankInventory.get(menu.rows * 9);
+        int color = 0x008000;
+        this.font.draw(poseStack, "ID: " + id, 62, inventoryLabelY, color);
+    }
 }

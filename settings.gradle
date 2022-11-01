@@ -1,3 +1,7 @@
 pluginManagement {
-includeBuild("C:\\Users\\Tfar\\Documents\\MinecraftModdev\\othermods\\yarnforge-plugin")
+    repositories {
+        gradlePluginPortal()
+        maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://maven.parchmentmc.org' }
+    }
 }

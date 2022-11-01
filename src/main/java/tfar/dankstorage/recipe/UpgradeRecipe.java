@@ -1,33 +1,32 @@
 package tfar.dankstorage.recipe;
 
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.ShapedRecipe;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.utils.Utils;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.ShapedRecipe;
 
 import javax.annotation.Nonnull;
 
 public class UpgradeRecipe extends ShapedRecipe {
 
-  public UpgradeRecipe(ShapedRecipe recipe){
-    super(recipe.getId(),recipe.getGroup(),recipe.getWidth(),recipe.getHeight(),recipe.getIngredients(),recipe.getRecipeOutput());
-  }
+    public UpgradeRecipe(ShapedRecipe recipe) {
+        super(recipe.getId(), "dank", recipe.getWidth(), recipe.getHeight(), recipe.getIngredients(), recipe.getResultItem());
+    }
 
-  @Nonnull
-  @Override
-  public ItemStack getCraftingResult(CraftingInventory inv) {
-    ItemStack bag = super.getCraftingResult(inv).copy();
-    ItemStack oldBag = inv.getStackInSlot(4).copy();
-    if (!oldBag.hasTag())return bag;
-    bag.setTag(oldBag.getTag());
-    bag.getOrCreateChildTag(Utils.INV).putInt("Size",Utils.getSlotCount(bag));
-    return bag;
-  }
+    @Nonnull
+    @Override
+    public ItemStack assemble(CraftingContainer inv) {
+        ItemStack newBag = super.assemble(inv).copy();
+        ItemStack oldBag = inv.getItem(4);
+        //can't upgrade the backing inventory because there isn't one yet
+        if (!oldBag.hasTag()) return newBag;
+        newBag.setTag(oldBag.getTag());
+        return newBag;
+    }
 
-  @Override
-  public IRecipeSerializer<?> getSerializer() {
-    return DankStorage.Objects.upgrade;
-  }
+    @Override
+    public RecipeSerializer<?> getSerializer() {
+        return DankStorage.upgrade;
+    }
 }

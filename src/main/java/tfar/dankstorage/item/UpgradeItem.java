@@ -1,58 +1,56 @@
 package tfar.dankstorage.item;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.utils.DankStats;
+import tfar.dankstorage.utils.Utils;
 
 import javax.annotation.Nonnull;
 
 public class UpgradeItem extends Item {
 
-  protected final UpgradeInfo upgradeInfo;
+    protected final UpgradeInfo upgradeInfo;
 
-  public UpgradeItem(Properties properties, UpgradeInfo info) {
-    super(properties);
-    this.upgradeInfo = info;
-  }
-
-  @Nonnull
-  @Override
-  public ActionResultType onItemUse(ItemUseContext context) {
-    PlayerEntity player = context.getPlayer();
-    BlockPos pos = context.getPos();
-    World world = context.getWorld();
-    ItemStack upgradeStack = context.getItem();
-    BlockState state = world.getBlockState(pos);
-
-    if (player == null || !(state.getBlock() instanceof DockBlock) || !upgradeInfo.canUpgrade(state)) {
-      return ActionResultType.FAIL;
+    public UpgradeItem(Properties properties, UpgradeInfo info) {
+        super(properties);
+        this.upgradeInfo = info;
     }
 
-      if (false) {
-        player.sendStatusMessage(new TranslationTextComponent("dankstorage.in_use").mergeStyle(TextFormatting.RED), true);
-        return ActionResultType.PASS;
-  }
+    @Nonnull
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
+        Player player = context.getPlayer();
+        BlockPos pos = context.getClickedPos();
+        Level world = context.getLevel();
+        ItemStack upgradeStack = context.getItemInHand();
+        BlockState state = world.getBlockState(pos);
 
-    if (world.isRemote)
-      return ActionResultType.SUCCESS;
+        if (player == null || !(state.getBlock() instanceof DockBlock) || !upgradeInfo.canUpgrade(state)) {
+            return InteractionResult.FAIL;
+        }
+        //else {
+        //    player.displayClientMessage(Utils.translatable("dankstorage.in_use").withStyle(ChatFormatting.RED), true);
+        // }
 
-    DockBlockEntity oldDank = (DockBlockEntity)world.getTileEntity(pos);
-    DankStats newTier = upgradeInfo.end;
-    oldDank.upgrade(newTier);
-    if (!player.abilities.isCreativeMode)
-      upgradeStack.shrink(1);
+        DockBlockEntity oldDank = (DockBlockEntity) world.getBlockEntity(pos);
 
-    player.sendStatusMessage(new TranslationTextComponent("dankstorage.upgrade_successful").mergeStyle(TextFormatting.GREEN), true);
-    return ActionResultType.SUCCESS;
-  }
+        if (!world.isClientSide) {
+            if (oldDank != null) {
+                oldDank.upgradeTo(DankStats.values()[upgradeInfo.end]);
+                if (!player.getAbilities().instabuild)
+                    upgradeStack.shrink(1);
+            }
+            player.displayClientMessage(Utils.translatable("text.dankstorage.upgrade_successful").withStyle(ChatFormatting.GREEN), true);
+        }
+        return InteractionResult.SUCCESS;
+    }
 }

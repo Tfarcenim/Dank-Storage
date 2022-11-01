@@ -1,147 +1,104 @@
 package tfar.dankstorage;
 
 import com.google.common.collect.Lists;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-import net.minecraftforge.registries.ObjectHolder;
 import org.apache.commons.lang3.tuple.Pair;
-import tfar.dankstorage.block.DockBlock;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import tfar.dankstorage.blockentity.DockBlockEntity;
-import tfar.dankstorage.container.DockContainer;
-import tfar.dankstorage.container.PortableDankContainer;
-import tfar.dankstorage.item.DankItem;
-import tfar.dankstorage.item.UpgradeInfo;
-import tfar.dankstorage.item.UpgradeItem;
+import tfar.dankstorage.client.Client;
+import tfar.dankstorage.command.DankCommands;
+import tfar.dankstorage.datagen.DataGenerators;
+import tfar.dankstorage.init.*;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.recipe.Serializer2;
-import tfar.dankstorage.utils.DankMenuType;
-import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.utils.Utils;
+import tfar.dankstorage.world.DankSavedData;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
-import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
-
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod(DankStorage.MODID)
 public class DankStorage {
 
-  public static final String MODID = "dankstorage";
+    public static final String MODID = "dankstorage";
+    public static final Logger LOGGER = LogManager.getLogger(MODID);
 
-  public DankStorage() {
-    // Register the setup method for modloading
-    ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
-    ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
-    FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-    EVENT_BUS.addListener(this::drop);
-    FMLJavaModLoadingContext.get().getModEventBus().addListener(this::sync);
-  }
+    public static Block dock;
+    public static Item red_print;
+    public static BlockEntityType<DockBlockEntity> dank_tile;
+    public static Serializer2 upgrade;
 
-  private void sync(ModConfig.ModConfigEvent e){
-    if (e.getConfig().getModId().equals(MODID)){
-      Utils.taglist.clear();
-      ServerConfig.convertible_tags.get().forEach(s -> Utils.taglist.add(new ResourceLocation(s)));
-
-      DankStats.one.setStacklimit(ServerConfig.stacklimit1.get());
-      DankStats.two.setStacklimit(ServerConfig.stacklimit2.get());
-      DankStats.three.setStacklimit(ServerConfig.stacklimit3.get());
-      DankStats.four.setStacklimit(ServerConfig.stacklimit4.get());
-      DankStats.five.setStacklimit(ServerConfig.stacklimit5.get());
-      DankStats.six.setStacklimit(ServerConfig.stacklimit6.get());
-      DankStats.seven.setStacklimit(ServerConfig.stacklimit7.get());
-    }
-  }
-
-  private void setup(final FMLCommonSetupEvent event) {
-    DankPacketHandler.registerMessages(MODID);
-  }
-
-  private void drop(final ItemTossEvent event) {
-    if (event.getEntityItem().getItem().getItem() instanceof DankItem) {
-      //no
-      event.getEntityItem().setInvulnerable(true);
-    }
-  }
-
-  // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
-  // Event bus for receiving Registry Events)
-  @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-  public static class RegistryEvents {
-
-    @SubscribeEvent
-    public static void blocks(final RegistryEvent.Register<Block> event) {
-      // register a new block here
-      Block.Properties properties = Block.Properties.create(Material.IRON).hardnessAndResistance(1, 60);
-      register(new DockBlock(properties), "dock", event.getRegistry());
+    public static DankStorage instance;
+    public DankStorage() {
+        ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.CLIENT, CLIENT_SPEC);
+        ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.SERVER, SERVER_SPEC);
+        instance = this;
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        MinecraftForge.EVENT_BUS.addListener(this::onServerStarted);
+        MinecraftForge.EVENT_BUS.addListener(this::onServerStopped);
+        MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
+        bus.addListener(DataGenerators::setupDataGenerator);
+        bus.addGenericListener(Block.class, ModBlocks::registerB);
+        bus.addGenericListener(Item.class, ModItems::registerB);
+        bus.addGenericListener(BlockEntityType.class, ModBlockEntityTypes::registerB);
+        bus.addGenericListener(MenuType.class, ModMenuTypes::registerB);
+        bus.addGenericListener(RecipeSerializer.class, ModRecipeSerializers::registerB);
+        bus.addListener(this::onInitialize);
+        if (FMLEnvironment.dist.isClient()) {
+            bus.addListener(this::onInitializeClient);
+        }
     }
 
-    @SubscribeEvent
-    public static void items(final RegistryEvent.Register<Item> event) {
-      Item.Properties properties = new Item.Properties().group(ItemGroup.DECORATIONS);
-      register(new BlockItem(Objects.dock, properties), Objects.dock.getRegistryName().getPath(), event.getRegistry());
-      IntStream.range(1, 8).forEach(i -> register(new DankItem(properties.maxStackSize(1), DankStats.fromInt(i)), "dank_" + i, event.getRegistry()));
-      IntStream.range(1, 7).forEach(i -> register(new UpgradeItem(properties, new UpgradeInfo(i, DankStats.fromInt(i + 1))), i + "_to_" + (i + 1), event.getRegistry()));
-    }
-    
-
-    @SubscribeEvent
-    public static void recipes(final RegistryEvent.Register<IRecipeSerializer<?>> event) {
-      register(new Serializer2(), "upgrade", event.getRegistry());
+    public static <T extends IForgeRegistryEntry<T>>void register(IForgeRegistry<T> registry, String name, T type) {
+        registry.register(type.setRegistryName(new ResourceLocation(MODID,name)));
     }
 
-    @SubscribeEvent
-    public static void containers(final RegistryEvent.Register<ContainerType<?>> event) {
-      register(new DankMenuType<>(DockContainer::dock1c,DankStats.one), "dank_1_container", event.getRegistry());
-      register(new DankMenuType<>(PortableDankContainer::dank1c,DankStats.one), "portable_dank_1_container", event.getRegistry());
+    public void onInitialize(FMLCommonSetupEvent e) {
+        DankPacketHandler.registerMessages();
+    }
 
-      register(new DankMenuType<>(DockContainer::dock2c,DankStats.two), "dank_2_container", event.getRegistry());
-      register(new DankMenuType<>(PortableDankContainer::dank2c,DankStats.two), "portable_dank_2_container", event.getRegistry());
+    public void onInitializeClient(FMLClientSetupEvent e) {
+        Client.client();
+    }
 
-      register(new DankMenuType<>(DockContainer::dock3c,DankStats.three), "dank_3_container", event.getRegistry());
-      register(new DankMenuType<>(PortableDankContainer::dank3c,DankStats.three), "portable_dank_3_container", event.getRegistry());
+    public DankSavedData data;
 
-      register(new DankMenuType<>(DockContainer::dock4c,DankStats.four), "dank_4_container", event.getRegistry());
-      register(new DankMenuType<>(PortableDankContainer::dank4c,DankStats.four), "portable_dank_4_container", event.getRegistry());
+    public void onServerStarted(ServerStartedEvent e) {
+        MinecraftServer server = e.getServer();
+        instance.data = server.getLevel(Level.OVERWORLD).getDataStorage()
+                .computeIfAbsent(DankSavedData::loadStatic, DankSavedData::new,DankStorage.MODID);
+    }
+    public void onServerStopped(ServerStoppedEvent e) {
+        instance.data = null;
+    }
 
-      register(new DankMenuType<>(DockContainer::dock5c,DankStats.five), "dank_5_container", event.getRegistry());
-      register(new DankMenuType<>(PortableDankContainer::dank5c,DankStats.five), "portable_dank_5_container", event.getRegistry());
-
-      register(new DankMenuType<>(DockContainer::dock6c,DankStats.six), "dank_6_container", event.getRegistry());
-      register(new DankMenuType<>(PortableDankContainer::dank6c,DankStats.six), "portable_dank_6_container", event.getRegistry());
-
-      register(new DankMenuType<>(DockContainer::dock7c,DankStats.seven), "dank_7_container", event.getRegistry());
-      register(new DankMenuType<>(PortableDankContainer::dank7c,DankStats.seven), "portable_dank_7_container", event.getRegistry());
+    public void registerCommands(RegisterCommandsEvent e) {
+        DankCommands.register(e.getDispatcher());
     }
 
 
-    @SubscribeEvent
-    public static void tiles(final RegistryEvent.Register<TileEntityType<?>> event) {
-      register(TileEntityType.Builder.create(DockBlockEntity::new, Objects.dock).build(null), "dank_tile", event.getRegistry());
-    }
 
-    private static <T extends IForgeRegistryEntry<T>> void register(T obj, String name, IForgeRegistry<T> registry) {
-      registry.register(obj.setRegistryName(new ResourceLocation(MODID, name)));
-    }
-  }
+
   public static final ClientConfig CLIENT;
   public static final ForgeConfigSpec CLIENT_SPEC;
 
@@ -157,11 +114,9 @@ public class DankStorage {
     SERVER = specPair2.getLeft();
   }
 
+
   public static class ClientConfig {
     public static ForgeConfigSpec.BooleanValue preview;
-
-    public static ForgeConfigSpec.IntValue hudX;
-    public static ForgeConfigSpec.IntValue hudY;
 
     public ClientConfig(ForgeConfigSpec.Builder builder) {
       builder.push("client");
@@ -169,9 +124,6 @@ public class DankStorage {
               .comment("Whether to display the preview of the item in the dank, disable if you have optifine")
               .define("preview", true);
       builder.pop();
-
-      hudX = builder.comment("X position of dank hud element").defineInRange("hudX",-150,Integer.MIN_VALUE,Integer.MAX_VALUE);
-      hudY = builder.comment("Y position of dank hud element").defineInRange("hudY",-25,Integer.MIN_VALUE,Integer.MAX_VALUE);
     }
   }
 
@@ -240,40 +192,7 @@ public class DankStorage {
       convertible_tags = builder.
               comment("Tags that are eligible for conversion, input as a list of resourcelocation, eg 'forge:ingots/iron'")
               .define("convertible tags", defaults);
-
-      useShareTag = builder.
-              comment("Use Share Tag instead of full NBT to reduce the chance of NBT oversending causing clients to be disconnected.  Warning: this will cause the Dank\n" +
-                      "Storage to wipe it's items in Creative Mode.  There is nothing I can do about this as it is a vanilla bug.")
-              .define("useShareTag", false);
       builder.pop();
     }
-  }
-
-  @ObjectHolder(MODID)
-  public static class Objects {
-
-    public static final Block dock = null;
-
-    public static final ContainerType<DockContainer> dank_1_container = null;
-    public static final ContainerType<DockContainer> dank_2_container = null;
-    public static final ContainerType<DockContainer> dank_3_container = null;
-    public static final ContainerType<DockContainer> dank_4_container = null;
-    public static final ContainerType<DockContainer> dank_5_container = null;
-    public static final ContainerType<DockContainer> dank_6_container = null;
-    public static final ContainerType<DockContainer> dank_7_container = null;
-
-
-    public static final ContainerType<PortableDankContainer> portable_dank_1_container = null;
-    public static final ContainerType<PortableDankContainer> portable_dank_2_container = null;
-    public static final ContainerType<PortableDankContainer> portable_dank_3_container = null;
-    public static final ContainerType<PortableDankContainer> portable_dank_4_container = null;
-    public static final ContainerType<PortableDankContainer> portable_dank_5_container = null;
-    public static final ContainerType<PortableDankContainer> portable_dank_6_container = null;
-    public static final ContainerType<PortableDankContainer> portable_dank_7_container = null;
-
-
-    public static final TileEntityType<?> dank_tile = null;
-
-    public static final IRecipeSerializer<?> upgrade = null;
   }
 }

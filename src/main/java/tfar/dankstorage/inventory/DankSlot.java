@@ -1,34 +1,27 @@
 package tfar.dankstorage.inventory;
 
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.SlotItemHandler;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import tfar.dankstorage.world.DankInventory;
 
-import javax.annotation.Nonnull;
+public class DankSlot extends Slot {
 
-public class DankSlot extends SlotItemHandler {
-  private final int index;
+    private final DankInventory itemHandler;
 
-  public DankSlot(DankHandler itemHandler, int index, int xPosition, int yPosition) {
-    super(itemHandler, index, xPosition, yPosition);
-    this.index = index;
-  }
-
-  @Override
-  public int getItemStackLimit(@Nonnull ItemStack stack) {
-    return ((DankHandler)this.getItemHandler()).getStackLimit(this.index, stack);
-  }
-
-  @Override
-  public void onSlotChanged() {
-    super.onSlotChanged();
-    if (getItemHandler() instanceof PortableDankHandler) {
-      ((PortableDankHandler) getItemHandler()).save();
+    public DankSlot(DankInventory itemHandler, int index, int xPosition, int yPosition) {
+        super(itemHandler, index, xPosition, yPosition);
+        this.itemHandler = itemHandler;
     }
-  }
 
-  @Override
-  public boolean isSameInventory(Slot other) {
-    return other instanceof DankSlot && ((DankSlot) other).getItemHandler() == this.getItemHandler();
-  }
+    //need to make the slot respect the inventory
+    @Override
+    public boolean mayPlace(ItemStack itemStack) {
+        return itemHandler.canPlaceItem(index,itemStack) && super.mayPlace(itemStack);
+    }
+
+    //make sure items stack as intended
+    @Override
+    public int getMaxStackSize(ItemStack stack) {
+        return super.getMaxStackSize();
+    }
 }
