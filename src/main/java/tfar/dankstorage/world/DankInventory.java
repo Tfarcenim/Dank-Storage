@@ -262,7 +262,7 @@ public class DankInventory extends SimpleContainer implements ContainerData {
     }
 
     public void toggleFrequencyLock() {
-        boolean loc = get(getFrequencySlot() + 2) == 1;
+        boolean loc = frequencyLocked();
         setFrequencyLock(!loc);
     }
 

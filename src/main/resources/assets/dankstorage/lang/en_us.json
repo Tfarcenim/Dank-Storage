@@ -61,5 +61,6 @@
   "text.dankstorage.red_print.tooltip0" : "Copies frequency to other danks",
   "text.dankstorage.red_print.tooltip1" : "Only works on same tier",
   "dankstorage.command.reset_frequency.not_a_dank": "Not a Dank",
-  "dankstorage.command.set_tier.invalid_id" : "The frequency does not exist"
+  "dankstorage.command.set_tier.invalid_id" : "The frequency does not exist",
+  "text.dankstorage.compress_button" : "Compresses reversible 3x3 and 2x2 recipes"
 }

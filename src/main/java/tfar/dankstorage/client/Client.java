@@ -4,15 +4,18 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraftforge.client.ClientRegistry;
-import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import org.lwjgl.glfw.GLFW;
-import tfar.dankstorage.client.screens.DockScreen;
-import tfar.dankstorage.client.screens.PortableDankStorageScreen;
-import tfar.dankstorage.event.ForgeEvents;
+import tfar.dankstorage.client.screens.DankStorageScreen;
+import tfar.dankstorage.container.DankMenu;
+import tfar.dankstorage.container.DockMenu;
+import tfar.dankstorage.event.ForgeClientEvents;
 import tfar.dankstorage.init.ModMenuTypes;
 import tfar.dankstorage.network.server.C2SButtonPacket;
 
@@ -25,34 +28,39 @@ public class Client {
 
     public static void client() {
 
-        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::renderStack);
-        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::onPickBlock);
-        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::onScroll);
+        MinecraftForge.EVENT_BUS.addListener(ForgeClientEvents::renderStack);
+        MinecraftForge.EVENT_BUS.addListener(ForgeClientEvents::onPickBlock);
+        MinecraftForge.EVENT_BUS.addListener(ForgeClientEvents::onScroll);
 
-        MenuScreens.register(ModMenuTypes.dank_1_container, DockScreen::t1);
-        MenuScreens.register(ModMenuTypes.portable_dank_1_container, PortableDankStorageScreen::t1);
-        MenuScreens.register(ModMenuTypes.dank_2_container, DockScreen::t2);
-        MenuScreens.register(ModMenuTypes.portable_dank_2_container, PortableDankStorageScreen::t2);
-        MenuScreens.register(ModMenuTypes.dank_3_container, DockScreen::t3);
-        MenuScreens.register(ModMenuTypes.portable_dank_3_container, PortableDankStorageScreen::t3);
-        MenuScreens.register(ModMenuTypes.dank_4_container, DockScreen::t4);
-        MenuScreens.register(ModMenuTypes.portable_dank_4_container, PortableDankStorageScreen::t4);
-        MenuScreens.register(ModMenuTypes.dank_5_container, DockScreen::t5);
-        MenuScreens.register(ModMenuTypes.portable_dank_5_container, PortableDankStorageScreen::t5);
-        MenuScreens.register(ModMenuTypes.dank_6_container, DockScreen::t6);
-        MenuScreens.register(ModMenuTypes.portable_dank_6_container, PortableDankStorageScreen::t6);
-        MenuScreens.register(ModMenuTypes.dank_7_container, DockScreen::t7);
-        MenuScreens.register(ModMenuTypes.portable_dank_7_container, PortableDankStorageScreen::t7);
+        MenuScreens.register(ModMenuTypes.dank_1_container, (DockMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t1(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.portable_dank_1_container, (DankMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t1(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.dank_2_container, (DockMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t2(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.portable_dank_2_container, (DankMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t2(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.dank_3_container, (DockMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t3(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.portable_dank_3_container, (DankMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t3(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.dank_4_container, (DockMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t4(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.portable_dank_4_container, (DankMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t4(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.dank_5_container, (DockMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t5(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.portable_dank_5_container, (DankMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t5(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.dank_6_container, (DockMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t6(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.portable_dank_6_container, (DankMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t6(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.dank_7_container, (DockMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t7(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.portable_dank_7_container, (DankMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t7(container, playerinventory, component));
 
+        MinecraftForge.EVENT_BUS.addListener(Client::keyPressed);
+    }
+
+    public static void keybinds(RegisterKeyMappingsEvent e) {
         CONSTRUCTION = new KeyMapping("key.dankstorage.construction", GLFW.GLFW_KEY_I, "key.categories.dankstorage");
         LOCK_SLOT = new KeyMapping("key.dankstorage.lock_slot", GLFW.GLFW_KEY_LEFT_CONTROL, "key.categories.dankstorage");
         PICKUP_MODE = new KeyMapping("key.dankstorage.pickup_mode", GLFW.GLFW_KEY_O, "key.categories.dankstorage");
+        e.register(CONSTRUCTION);
+        e.register(LOCK_SLOT);
+        e.register(PICKUP_MODE);
+    }
 
-        ClientRegistry.registerKeyBinding(CONSTRUCTION);
-        ClientRegistry.registerKeyBinding(LOCK_SLOT);
-        ClientRegistry.registerKeyBinding(PICKUP_MODE);
-        MinecraftForge.EVENT_BUS.addListener(Client::keyPressed);
-        MinecraftForgeClient.registerTooltipComponentFactory(DankTooltip.class, Client::tooltipImage);
+    public static void clientTool(RegisterClientTooltipComponentFactoriesEvent e) {
+        e.register(DankTooltip.class, Client::tooltipImage);
     }
 
     public static void keyPressed(TickEvent.ClientTickEvent client) {

@@ -6,9 +6,8 @@ import net.minecraft.Util;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -74,6 +73,11 @@ public class Utils {
             return PickupMode.PICKUP_MODES[tag.getInt("mode")];
         }
         return PickupMode.none;
+    }
+
+    public static void setPickupMode(ItemStack bag, PickupMode mode) {
+        CompoundTag tag = getOrCreateSettings(bag);
+        tag.putInt("mode",mode.ordinal());
     }
 
     public static boolean isConstruction(ItemStack bag) {
@@ -331,7 +335,7 @@ public class Utils {
     }
 
     public static void warn(Player player, DankStats item, DankStats inventory) {
-        player.sendMessage(Utils.literal("Dank Item Level "+item.ordinal() +" cannot open Dank Inventory Level "+inventory.ordinal()), Util.NIL_UUID);
+        player.sendSystemMessage(Utils.literal("Dank Item Level "+item.ordinal() +" cannot open Dank Inventory Level "+inventory.ordinal()));
     }
 
     @Nullable
@@ -426,6 +430,7 @@ public class Utils {
     }
 
 
+    @SuppressWarnings("ConstantConditions")
     private static final CraftingContainer DUMMY = new CraftingContainer(null,1,1) {
         @Override
         public void setItem(int i, ItemStack itemStack) {
@@ -439,15 +444,15 @@ public class Utils {
     };
 
     public static MutableComponent translatable(String s) {
-        return new TranslatableComponent(s);
+        return Component.translatable(s);
     }
 
     public static MutableComponent translatable(String string, Object... objects) {
-        return new TranslatableComponent(string, objects);
+        return Component.translatable(string, objects);
     }
 
     public static MutableComponent literal(String s) {
-        return new TextComponent(s);
+        return Component.literal(s);
     }
 
     public static void toggleTagMode(ServerPlayer player) {

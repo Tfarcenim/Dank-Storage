@@ -1,10 +1,11 @@
 package tfar.dankstorage.init;
 
+import net.minecraft.core.Registry;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.DispenserBlock;
-import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.registries.RegisterEvent;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.block.DankDispenserBehavior;
 import tfar.dankstorage.item.DankItem;
@@ -13,24 +14,37 @@ import tfar.dankstorage.item.UpgradeInfo;
 import tfar.dankstorage.item.UpgradeItem;
 import tfar.dankstorage.utils.DankStats;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static tfar.dankstorage.DankStorage.register;
-
 public class ModItems {
-    public static void registerB(RegistryEvent.Register<Item> event) {
-        Item.Properties properties = new Item.Properties().tab(CreativeModeTab.TAB_DECORATIONS);
-        register(event.getRegistry(),( "dock"), new BlockItem(DankStorage.dock, properties));
-        register(event.getRegistry(),( "red_print"), DankStorage.red_print = new RedprintItem(properties));
+    static Item.Properties properties = new Item.Properties().tab(CreativeModeTab.TAB_DECORATIONS);
+    public static Item red_print = new RedprintItem(properties);
+    public static final Item DOCK = new BlockItem(ModBlocks.dock, properties);
+    public static final List<Item> DANKS;
+    public static final List<Item> UPGRADES;
 
-        properties.stacksTo(1);
-
-        IntStream.range(1, 8).forEach(i -> {
+    static {
+        DANKS = IntStream.range(1, 8).mapToObj(i -> {
             DankItem dankItem = new DankItem(properties, DankStats.values()[i]);
             DispenserBlock.registerBehavior(dankItem, new DankDispenserBehavior());
-            register(event.getRegistry(),( "dank_" + i), dankItem);
-        });
-        IntStream.range(1, 7).forEach(i -> register(event.getRegistry(),( i + "_to_" + (i + 1)), new UpgradeItem(properties, new UpgradeInfo(i, i + 1))));
+            return dankItem;
+        }).collect(Collectors.toList());
+
+        UPGRADES = IntStream.range(1, DANKS.size()).mapToObj(i -> new UpgradeItem(properties, new UpgradeInfo(i, i + 1))).collect(Collectors.toList());
     }
 
+    public static void registerB(RegisterEvent event) {
+        DankStorage.register(event, Registry.ITEM_REGISTRY,"dock", DOCK);
+        DankStorage.register(event,Registry.ITEM_REGISTRY,"red_print", red_print);
+
+        for (int i = 0; i < DANKS.size();i++) {
+            DankStorage.register(event,Registry.ITEM_REGISTRY,"dank_"+(i+1),DANKS.get(i));
+        }
+
+        for (int i = 0; i < UPGRADES.size();i++) {
+            DankStorage.register(event,Registry.ITEM_REGISTRY,(i+1)+"_to_"+(i+2),UPGRADES.get(i));
+        }
+    }
 }

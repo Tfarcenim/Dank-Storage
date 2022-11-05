@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.container.DockMenu;
+import tfar.dankstorage.init.ModBlockEntityTypes;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
@@ -33,7 +34,7 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
     protected boolean originalName;
 
     public DockBlockEntity(BlockPos blockPos, BlockState blockState) {
-        super(DankStorage.dank_tile, blockPos, blockState);
+        super(ModBlockEntityTypes.dank_tile, blockPos, blockState);
     }
 
     public void setFrequency(int freq) {

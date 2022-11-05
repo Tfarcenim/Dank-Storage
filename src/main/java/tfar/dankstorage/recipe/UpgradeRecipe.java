@@ -4,7 +4,7 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
-import tfar.dankstorage.DankStorage;
+import tfar.dankstorage.init.ModRecipeSerializers;
 
 import javax.annotation.Nonnull;
 
@@ -27,6 +27,6 @@ public class UpgradeRecipe extends ShapedRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return DankStorage.upgrade;
+        return ModRecipeSerializers.upgrade;
     }
 }
