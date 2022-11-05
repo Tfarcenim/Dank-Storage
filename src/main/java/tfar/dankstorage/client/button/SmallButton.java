@@ -26,14 +26,12 @@ public class SmallButton extends Button {
     @Override
     public void renderButton(PoseStack matrices, int mouseX, int mouseY, float partialTicks) {
         RenderSystem.setShaderTexture(0,WIDGETS_LOCATION);
-
         tint();
-
         int c = getYImage(isHovered);
 
         RenderSystem.enableBlend();
-        RenderSystem.blendFuncSeparate(770, 771, 1, 0);
-        RenderSystem.blendFunc(770, 771);
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.enableDepthTest();
 
         int halfwidth1 = this.width / 2;
         int halfwidth2 = this.width - halfwidth1;
@@ -48,14 +46,14 @@ public class SmallButton extends Button {
                 0, 46 + c * 20 + 20 - halfheight2, halfwidth1, halfheight2);
         blit(matrices, x + halfwidth1, y + halfheight1,
                 200 - halfwidth2, 46 + c * 20 + 20 - halfheight2, halfwidth2, halfheight2);
-        if (shouldDrawText()) drawText(matrices, halfwidth2);
+        if (shouldDrawText()) drawTextOnButton(matrices, halfwidth2);
 
         if (this.isHoveredOrFocused()) {
             this.renderToolTip(matrices,mouseX,mouseY);
         }
     }
 
-    public void drawText(PoseStack stack, int halfwidth2) {
+    public void drawTextOnButton(PoseStack stack, int halfwidth2) {
         int textColor = 0xe0e0e0;
 
         if (1 != 0) {
