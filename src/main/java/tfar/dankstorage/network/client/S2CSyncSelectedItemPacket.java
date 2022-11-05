@@ -1,9 +1,9 @@
 package tfar.dankstorage.network.client;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import tfar.dankstorage.client.Client;
 import tfar.dankstorage.network.util.S2CPacketHelper;
 import tfar.dankstorage.utils.PacketBufferEX;
 import tfar.dankstorage.world.ClientData;
@@ -22,7 +22,7 @@ public class S2CSyncSelectedItemPacket implements S2CPacketHelper {
 
     @Override
     public void handleClient() {
-        Player player = Minecraft.getInstance().player;
+        Player player = Client.getLocalPlayer();
         if (player != null) {
             ClientData.setData(stack);
         }
