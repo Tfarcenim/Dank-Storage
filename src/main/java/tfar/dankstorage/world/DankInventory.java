@@ -333,7 +333,7 @@ public class DankInventory extends SimpleContainer implements ContainerData {
         for (Map.Entry<Item, Pair<Integer, Integer>> entry : groups.entrySet()) {
             Item item = entry.getKey();
             Pair<Integer, Integer> pair = entry.getValue();
-            Pair<ItemStack, Integer> stackIntegerPair = Utils.compress(level, new ItemStack(item));
+            Pair<ItemStack, Integer> stackIntegerPair = Utils.compress(new ItemStack(item));
             int count = 0;
 
             for (int i = pair.getFirst(); i < pair.getSecond() + 1; i++) {
@@ -381,7 +381,7 @@ public class DankInventory extends SimpleContainer implements ContainerData {
                     ItemStack stack = getItem(i);
                     if (stack.getItem() == item) {
 
-                        Pair<ItemStack, Integer> stackIntegerPair = Utils.compress(level, new ItemStack(item));
+                        Pair<ItemStack, Integer> stackIntegerPair = Utils.compress(new ItemStack(item));
 
                         ItemStack compressionResult = stackIntegerPair.getFirst();
                         int compressedCount = stack.getCount() / stackIntegerPair.getSecond();

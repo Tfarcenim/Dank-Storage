@@ -52,6 +52,8 @@ public class Utils {
     public static final int INVALID = -1;
 
     public static final String SET = "settings";
+    public static final String SELECTED = "selectedSlot";
+    public static final String CON = "construction";
 
     @Nullable
     public static CompoundTag getSettings(ItemStack bag) {
@@ -81,8 +83,8 @@ public class Utils {
     }
 
     public static boolean isConstruction(ItemStack bag) {
-        CompoundTag settings = Utils.getSettings(bag);
-        return settings != null && settings.getInt("construction") == UseType.construction.ordinal();
+        CompoundTag settings = getSettings(bag);
+        return settings != null && settings.getInt(CON) == UseType.construction.ordinal();
     }
 
     public static DankStats getStatsfromRows(int rows) {
@@ -112,33 +114,33 @@ public class Utils {
         if (ordinal > PickupMode.PICKUP_MODES.length - 1) ordinal = 0;
         getOrCreateSettings(bag).putInt("mode", ordinal);
         player.displayClientMessage(
-                Utils.translatable("dankstorage.mode." + PickupMode.PICKUP_MODES[ordinal].name()), true);
+                translatable("dankstorage.mode." + PickupMode.PICKUP_MODES[ordinal].name()), true);
     }
 
     public static UseType getUseType(ItemStack bag) {
         CompoundTag settings = getSettings(bag);
-        return settings != null ? useTypes[settings.getInt("construction")] : UseType.bag;
+        return settings != null ? useTypes[settings.getInt(CON)] : UseType.bag;
     }
 
     //0,1,2
-    public static void cyclePlacement(ItemStack bag, Player player) {
+    private static void cyclePlacement(ItemStack bag, Player player) {
         CompoundTag tag = getOrCreateSettings(bag);
-        int ordinal = tag.getInt("construction");
+        int ordinal = tag.getInt(CON);
         ordinal++;
         if (ordinal >= useTypes.length) ordinal = 0;
-        tag.putInt("construction", ordinal);
+        tag.putInt(CON, ordinal);
         player.displayClientMessage(
-                Utils.translatable("dankstorage.usetype." + useTypes[ordinal].name()), true);
+                translatable("dankstorage.usetype." + useTypes[ordinal].name()), true);
     }
 
     //this can be 0 - 80
     public static int getSelectedSlot(ItemStack bag) {
-        CompoundTag settings = Utils.getSettings(bag);
-        return settings != null && settings.contains("selectedSlot") ? settings.getInt("selectedSlot") : INVALID;
+        CompoundTag settings = getSettings(bag);
+        return settings != null && settings.contains(SELECTED) ? settings.getInt(SELECTED) : INVALID;
     }
 
     public static void setSelectedSlot(ItemStack bag, int slot) {
-        getOrCreateSettings(bag).putInt("selectedSlot",slot);
+        getOrCreateSettings(bag).putInt(SELECTED,slot);
     }
 
     public static void setPickSlot(Level level,ItemStack bag, ItemStack stack) {
@@ -287,7 +289,7 @@ public class Utils {
     public static ItemStack getItemStackInSelectedSlot(ItemStack bag,ServerLevel level) {
         DankInventory inv = getInventory(bag,level);
         if (inv == null) return ItemStack.EMPTY;
-        ItemStack stack = inv.getItem(Utils.getSelectedSlot(bag));
+        ItemStack stack = inv.getItem(getSelectedSlot(bag));
         return stack.is(BLACKLISTED_USAGE) ? ItemStack.EMPTY : stack;
     }
 
@@ -335,14 +337,19 @@ public class Utils {
     }
 
     public static void warn(Player player, DankStats item, DankStats inventory) {
-        player.sendSystemMessage(Utils.literal("Dank Item Level "+item.ordinal() +" cannot open Dank Inventory Level "+inventory.ordinal()));
+        player.sendSystemMessage(literal("Dank Item Level "+item.ordinal() +" cannot open Dank Inventory Level "+inventory.ordinal()));
     }
 
     @Nullable
-    public static InteractionHand getHandWithDank(Player player) {
+    private static InteractionHand getHandWithDank(Player player) {
         if (player.getMainHandItem().getItem() instanceof DankItem) return InteractionHand.MAIN_HAND;
         else if (player.getOffhandItem().getItem() instanceof DankItem) return InteractionHand.OFF_HAND;
         return null;
+    }
+
+    public static ItemStack getDank(Player player) {
+        InteractionHand hand = getHandWithDank(player);
+        return hand == null ? ItemStack.EMPTY : player.getItemInHand(hand);
     }
 
     private static List<CraftingRecipe> REVERSIBLE3x3 = new ArrayList<>();
@@ -353,7 +360,7 @@ public class Utils {
         cached = false;
     }
 
-    public static Pair<ItemStack,Integer> compress(ServerLevel level, ItemStack stack) {
+    public static Pair<ItemStack,Integer> compress(ItemStack stack) {
 
         for (CraftingRecipe recipe : REVERSIBLE3x3) {
             if (recipe.getIngredients().get(0).test(stack)) {
@@ -416,8 +423,8 @@ public class Utils {
                         if (same && shapedRecipe.getResultItem().getCount() == 1) {
                             DUMMY.setItem(0,shapedRecipe.getResultItem());
 
-                            level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, DUMMY, level).ifPresent(rrecipe -> {
-                                if (rrecipe.getResultItem().getCount() == size * size) {
+                            level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, DUMMY, level).ifPresent(reverseRecipe -> {
+                                if (reverseRecipe.getResultItem().getCount() == size * size) {
                                     compactingRecipes.add(shapedRecipe);
                                 }
                             });
@@ -456,29 +463,25 @@ public class Utils {
     }
 
     public static void toggleTagMode(ServerPlayer player) {
-        if (player.getMainHandItem().getItem() instanceof DankItem) {
-            boolean toggle = Utils.oredict(player.getMainHandItem());
+        ItemStack dank = getDank(player);
+        if (!dank.isEmpty()) {
+            boolean toggle = oredict(dank);
             player.getMainHandItem().getOrCreateTag().putBoolean("tag", !toggle);
-        } else if (player.getOffhandItem().getItem() instanceof DankItem) {
-            boolean toggle = Utils.oredict(player.getOffhandItem());
-            player.getOffhandItem().getOrCreateTag().putBoolean("tag", !toggle);
         }
     }
 
     public static void togglePickupMode(ServerPlayer player) {
-        ItemStack bag = player.getMainHandItem();
-        if (!(bag.getItem() instanceof DankItem)) {
-            bag = player.getOffhandItem();
-            if (!(bag.getItem() instanceof DankItem)) return;
+        ItemStack bag = getDank(player);
+        if (!bag.isEmpty()) {
+            cyclePickupMode(bag, player);
         }
-        cyclePickupMode(bag, player);
     }
 
     public static void toggleUseType(ServerPlayer player) {
-        if (player.getMainHandItem().getItem() instanceof DankItem)
-            Utils.cyclePlacement(player.getMainHandItem(), player);
-        else if (player.getOffhandItem().getItem() instanceof DankItem)
-            Utils.cyclePlacement(player.getOffhandItem(), player);
+        ItemStack dank = getDank(player);
+        if (!dank.isEmpty()) {
+            cyclePlacement(dank,player);
+        }
     }
 
     public static final UseType[] useTypes = UseType.values();

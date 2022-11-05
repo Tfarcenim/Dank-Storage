@@ -29,15 +29,21 @@ public class C2SButtonPacket {
 
     public void handleInternal(ServerPlayer player, Action action) {
         AbstractContainerMenu container = player.containerMenu;
-        if (container instanceof AbstractDankMenu dankContainer) {
-            DankInventory inventory = dankContainer.dankInventory;
+
+        if (action.requiresContainer) {
+            if (container instanceof AbstractDankMenu dankContainer) {
+                DankInventory inventory = dankContainer.dankInventory;
+                switch (action) {
+                    case LOCK_FREQUENCY -> inventory.toggleFrequencyLock();
+                    case SORT -> inventory.sort();
+                    case COMPRESS -> inventory.compress(player.getLevel());
+                }
+            }
+        } else {
             switch (action) {
-                case LOCK_FREQUENCY -> inventory.toggleFrequencyLock();
-                case SORT -> inventory.sort();
                 case TOGGLE_TAG -> Utils.toggleTagMode(player);
                 case TOGGLE_PICKUP -> Utils.togglePickupMode(player);
                 case TOGGLE_USE_TYPE -> Utils.toggleUseType(player);
-                case COMPRESS -> inventory.compress(player.getLevel());
             }
         }
     }
@@ -57,6 +63,11 @@ public class C2SButtonPacket {
     }
 
     public enum Action {
-        LOCK_FREQUENCY,PICK_BLOCK,SORT,TOGGLE_TAG,TOGGLE_PICKUP,TOGGLE_USE_TYPE,COMPRESS
+        LOCK_FREQUENCY(true),PICK_BLOCK(false),SORT(true),
+        TOGGLE_TAG(true),TOGGLE_PICKUP(false),TOGGLE_USE_TYPE(false),COMPRESS(true);
+        private final boolean requiresContainer;
+        Action(boolean requiresContainer) {
+            this.requiresContainer = requiresContainer;
+        }
     }
 }

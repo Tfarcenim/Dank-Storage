@@ -17,7 +17,7 @@ import java.util.Map;
 public class RecipeManagerMixin {
 
     @Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At("RETURN"))
-    public void scrambleRecipes(Map<ResourceLocation, JsonObject> splashList, ResourceManager resourceManagerIn, ProfilerFiller profilerIn, CallbackInfo ci) {
+    public void uncacheCompressionRecipes(Map<ResourceLocation, JsonObject> splashList, ResourceManager resourceManagerIn, ProfilerFiller profilerIn, CallbackInfo ci) {
         Utils.uncacheRecipes((RecipeManager) (Object) this);
     }
 }
