@@ -13,7 +13,7 @@ import net.minecraftforge.event.TickEvent;
 import org.lwjgl.glfw.GLFW;
 import tfar.dankstorage.client.screens.DockScreen;
 import tfar.dankstorage.client.screens.PortableDankStorageScreen;
-import tfar.dankstorage.event.ForgeEvents;
+import tfar.dankstorage.event.ForgeClientEvents;
 import tfar.dankstorage.init.ModMenuTypes;
 import tfar.dankstorage.network.server.C2SButtonPacket;
 
@@ -26,9 +26,9 @@ public class Client {
 
     public static void client() {
 
-        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::renderStack);
-        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::onPickBlock);
-        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::onScroll);
+        MinecraftForge.EVENT_BUS.addListener(ForgeClientEvents::renderStack);
+        MinecraftForge.EVENT_BUS.addListener(ForgeClientEvents::onPickBlock);
+        MinecraftForge.EVENT_BUS.addListener(ForgeClientEvents::onScroll);
 
         MenuScreens.register(ModMenuTypes.dank_1_container, DockScreen::t1);
         MenuScreens.register(ModMenuTypes.portable_dank_1_container, PortableDankStorageScreen::t1);

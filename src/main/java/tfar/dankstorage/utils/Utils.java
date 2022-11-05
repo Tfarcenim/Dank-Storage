@@ -117,7 +117,7 @@ public class Utils {
     }
 
     //0,1,2
-    public static void cyclePlacement(ItemStack bag, Player player) {
+    public static void cycleUsetype(ItemStack bag, Player player) {
         CompoundTag tag = getOrCreateSettings(bag);
         int ordinal = tag.getInt("construction");
         ordinal++;
@@ -471,9 +471,9 @@ public class Utils {
 
     public static void toggleUseType(ServerPlayer player) {
         if (player.getMainHandItem().getItem() instanceof DankItem)
-            Utils.cyclePlacement(player.getMainHandItem(), player);
+            Utils.cycleUsetype(player.getMainHandItem(), player);
         else if (player.getOffhandItem().getItem() instanceof DankItem)
-            Utils.cyclePlacement(player.getOffhandItem(), player);
+            Utils.cycleUsetype(player.getOffhandItem(), player);
     }
 
     public static final UseType[] useTypes = UseType.values();

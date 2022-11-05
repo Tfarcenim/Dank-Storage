@@ -14,7 +14,7 @@ import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.ClientData;
 
-public class ForgeEvents {
+public class ForgeClientEvents {
 
     static Minecraft mc = Minecraft.getInstance();
 

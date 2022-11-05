@@ -32,8 +32,8 @@ public class SmallButton extends Button {
         int c = getYImage(isHovered);
 
         RenderSystem.enableBlend();
-        RenderSystem.blendFuncSeparate(770, 771, 1, 0);
-        RenderSystem.blendFunc(770, 771);
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.enableDepthTest();
 
         int halfwidth1 = this.width / 2;
         int halfwidth2 = this.width - halfwidth1;
