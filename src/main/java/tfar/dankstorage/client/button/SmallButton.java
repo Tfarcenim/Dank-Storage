@@ -54,15 +54,7 @@ public class SmallButton extends Button {
     }
 
     public void drawTextOnButton(PoseStack stack, int halfwidth2) {
-        int textColor = 0xe0e0e0;
-
-        if (1 != 0) {
-            textColor = -1;
-        } else if (!this.visible) {
-            textColor = 0xa0a0a0;
-        } else if (this.isHovered) {
-            textColor = 0xffffa0;
-        }
+        int textColor = getFGColor();
         drawCenteredString(stack, Client.mc.font, getMessage(), x + halfwidth2, y + (this.height - 8) / 2, textColor);
     }
 }

@@ -22,4 +22,7 @@ public enum PickupMode {
         return (color & 0xff) / 255f;
     }
 
+    public int getColor() {
+        return color;
+    }
 }

@@ -13,6 +13,7 @@ public class TripleToggleButton<T extends AbstractDankMenu> extends SmallButton 
     public TripleToggleButton(int x, int y, int widthIn, int heightIn, Component component, OnPress callback, OnTooltip tooltip, DankStorageScreen<T> screen) {
         super(x, y, widthIn, heightIn,component, callback,tooltip);
         this.screen = screen;
+        //setFGColor(screen.getMenu().getMode().getColor());
     }
 
     @Override

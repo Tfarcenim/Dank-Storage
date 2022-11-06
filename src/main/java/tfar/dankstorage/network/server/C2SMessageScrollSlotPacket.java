@@ -7,20 +7,20 @@ import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.util.C2SPacketHelper;
 import tfar.dankstorage.utils.Utils;
 
-public class C2SMessageScrollSlot implements C2SPacketHelper {
+public class C2SMessageScrollSlotPacket implements C2SPacketHelper {
 
     private final boolean right;
 
-    public C2SMessageScrollSlot(boolean right) {
+    public C2SMessageScrollSlotPacket(boolean right) {
         this.right = right;
     }
 
-    public C2SMessageScrollSlot(FriendlyByteBuf buf) {
+    public C2SMessageScrollSlotPacket(FriendlyByteBuf buf) {
         right = buf.readBoolean();
     }
 
     public static void send(boolean right) {
-        DankPacketHandler.sendToServer(new C2SMessageScrollSlot(right));
+        DankPacketHandler.sendToServer(new C2SMessageScrollSlotPacket(right));
     }
 
     public void encode(FriendlyByteBuf buf) {

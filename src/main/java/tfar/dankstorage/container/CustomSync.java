@@ -17,13 +17,12 @@ public class CustomSync implements ContainerSynchronizer {
         this.player = player;
     }
 
-    public void sendInitialData(AbstractContainerMenu abstractContainerMenu, NonNullList<ItemStack> nonNullList, ItemStack carried, int[] is) {
+    public void sendInitialData(AbstractContainerMenu abstractContainerMenu, NonNullList<ItemStack> stacks, ItemStack carried, int[] is) {
         //problem, vanilla containers send itemstack size in bytes
-        DankPacketHandler.sendCustomSyncData(player,abstractContainerMenu.incrementStateId(),abstractContainerMenu.containerId,nonNullList,carried);
+        DankPacketHandler.sendCustomSyncData(player,abstractContainerMenu.incrementStateId(),abstractContainerMenu.containerId,stacks,carried);
         for(int i = 0; i < is.length; ++i) {
             this.broadcastDataValue(abstractContainerMenu, i, is[i]);
         }
-
     }
 
     @Override
