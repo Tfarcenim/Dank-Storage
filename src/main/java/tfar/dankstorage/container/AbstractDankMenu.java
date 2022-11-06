@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.inventory.DankSlot;
+import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.world.DankInventory;
 
 import javax.annotation.Nonnull;
@@ -18,6 +19,7 @@ public abstract class AbstractDankMenu extends AbstractContainerMenu {
     public final int rows;
     public final Inventory playerInventory;
     public DankInventory dankInventory;
+    protected final DataSlot pickup;
 
 
     public AbstractDankMenu(MenuType<?> type, int windowId, Inventory playerInventory, int rows, DankInventory dankInventory) {
@@ -29,6 +31,13 @@ public abstract class AbstractDankMenu extends AbstractContainerMenu {
         if (!playerInventory.player.level.isClientSide) {
             setSynchronizer(new CustomSync((ServerPlayer) playerInventory.player));
         }
+        pickup = playerInventory.player.level.isClientSide ? DataSlot.standalone(): getServerPickupData();
+        addDataSlot(pickup);
+    }
+
+    protected abstract DataSlot getServerPickupData();
+    public PickupMode getMode() {
+        return PickupMode.PICKUP_MODES[pickup.get()];
     }
 
     public static boolean canItemQuickReplace(@Nullable Slot slot, @Nonnull ItemStack stack, boolean stackSizeMatters) {

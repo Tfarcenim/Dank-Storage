@@ -1,6 +1,7 @@
 package tfar.dankstorage.container;
 
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.MenuType;
 import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.init.ModMenuTypes;
@@ -27,6 +28,21 @@ public class DockMenu extends AbstractDankMenu {
     public void setFrequency(int freq) {
         dock.settings.putInt(Utils.ID, freq);
         dock.setChanged();
+    }
+
+    @Override
+    protected DataSlot getServerPickupData() {
+        return new DataSlot() {
+            @Override
+            public int get() {
+                return dock.settings.getInt("mode");
+            }
+
+            @Override
+            public void set(int pValue) {
+                dock.settings.putInt("mode",pValue);
+            }
+        };
     }
 
     public static DockMenu t1(int windowId, Inventory playerInventory) {

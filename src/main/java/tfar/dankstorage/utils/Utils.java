@@ -111,6 +111,10 @@ public class Utils {
                 Utils.translatable("dankstorage.mode." + PickupMode.PICKUP_MODES[ordinal].name()), true);
     }
 
+    public static void setPickupMode(ItemStack bag, PickupMode mode) {
+        getOrCreateSettings(bag).putInt("mode",mode.ordinal());
+    }
+
     public static UseType getUseType(ItemStack bag) {
         CompoundTag settings = getSettings(bag);
         return settings != null ? useTypes[settings.getInt("construction")] : UseType.bag;
@@ -148,8 +152,8 @@ public class Utils {
     }
 
     public static int findSlotMatchingItem(DankInventory dankInventory,ItemStack itemStack) {
-        for (int i = 0; i < dankInventory.getContainerSize(); ++i) {
-            ItemStack stack = dankInventory.getItem(i);
+        for (int i = 0; i < dankInventory.getSlots(); ++i) {
+            ItemStack stack = dankInventory.getStackInSlot(i);
             if (stack.isEmpty() || !ItemStack.isSameItemSameTags(itemStack,stack)) continue;
             return i;
         }
@@ -159,10 +163,11 @@ public class Utils {
     public static ItemStack getSelectedItem(ItemStack bag,Level level) {
         if (bag.hasTag()) {
             int selected = getSelectedSlot(bag);
+            if (selected == INVALID) return ItemStack.EMPTY;
             if (!level.isClientSide) {
                 DankInventory dankInventory = getInventory(bag, level);
                 if (dankInventory != null) {
-                    return dankInventory.getItem(selected);
+                    return dankInventory.getStackInSlot(selected);
                 } else {
                 //    System.out.println("Attempted to access a selected item from a null inventory");
                 }
@@ -201,7 +206,7 @@ public class Utils {
         //don't change slot if empty
         if (handler == null || handler.noValidSlots()) return;
         int selectedSlot = getSelectedSlot(bag);
-        int size = handler.getContainerSize();
+        int size = handler.getSlots();
         //keep iterating until a valid slot is found (not empty and not blacklisted from usage)
         if (right) {
             selectedSlot++;
@@ -210,7 +215,7 @@ public class Utils {
             selectedSlot--;
             if (selectedSlot < 0) selectedSlot = size - 1;
         }
-        ItemStack selected = handler.getItem(selectedSlot);
+        ItemStack selected = handler.getStackInSlot(selectedSlot);
 
         while (selected.isEmpty() || selected.is(BLACKLISTED_USAGE)) {
             if (right) {
@@ -220,7 +225,7 @@ public class Utils {
                 selectedSlot--;
                 if (selectedSlot < 0) selectedSlot = size - 1;
             }
-            selected = handler.getItem(selectedSlot);
+            selected = handler.getStackInSlot(selectedSlot);
         }
         if (selectedSlot != INVALID) {
             setSelectedSlot(bag, selectedSlot);
@@ -283,7 +288,9 @@ public class Utils {
     public static ItemStack getItemStackInSelectedSlot(ItemStack bag,ServerLevel level) {
         DankInventory inv = getInventory(bag,level);
         if (inv == null) return ItemStack.EMPTY;
-        ItemStack stack = inv.getItem(Utils.getSelectedSlot(bag));
+        int slot = getSelectedSlot(bag);
+        if (slot == INVALID) return ItemStack.EMPTY;
+        ItemStack stack = inv.getStackInSlot(slot);
         return stack.is(BLACKLISTED_USAGE) ? ItemStack.EMPTY : stack;
     }
 

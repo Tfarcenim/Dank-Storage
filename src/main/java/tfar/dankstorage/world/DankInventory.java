@@ -8,12 +8,11 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.items.ItemStackHandler;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.mixin.SimpleContainerAccess;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.ItemHandlerHelper;
 import tfar.dankstorage.utils.ItemStackWrapper;
@@ -22,7 +21,7 @@ import tfar.dankstorage.utils.Utils;
 import java.util.*;
 import java.util.stream.IntStream;
 
-public class DankInventory extends SimpleContainer implements ContainerData {
+public class DankInventory extends ItemStackHandler implements ContainerData {
 
     public DankStats dankStats;
     protected int[] lockedSlots;
@@ -55,7 +54,7 @@ public class DankInventory extends SimpleContainer implements ContainerData {
     }
 
     private void fixLockedSlots() {
-        ((SimpleContainerAccess) this).setSize(dankStats.slots);
+        setSize(dankStats.slots);
 
         NonNullList<ItemStack> newStacks = NonNullList.withSize(dankStats.slots, ItemStack.EMPTY);
         int max = Math.min(lockedSlots.length, dankStats.slots);
@@ -64,24 +63,24 @@ public class DankInventory extends SimpleContainer implements ContainerData {
             newStacks.set(i, getContents().get(i));
         }
 
-        ((SimpleContainerAccess) this).setItems(newStacks);
+         stacks = newStacks;
 
         int[] newLockedSlots = new int[dankStats.slots];
         if (max >= 0) System.arraycopy(lockedSlots, 0, newLockedSlots, 0, max);
         lockedSlots = newLockedSlots;
-        setChanged();
+        onContentsChanged(0);
     }
 
     @Override
-    public ItemStack removeItem(int slot, int amount) {
+    public ItemStack extractItem(int slot, int amount,boolean simulate) {
         if (!isLocked(slot)) {
-            return super.removeItem(slot, amount);
+            return super.extractItem(slot, amount,simulate);
         }
 
-        int amountInSlot = getItem(slot).getCount();
+        int amountInSlot = getStackInSlot(slot).getCount();
 
         if (amountInSlot < amount) {
-            return super.removeItem(slot, amount);
+            return super.extractItem(slot, amount,simulate);
         }
 
         amount = Math.min(amount, amountInSlot - 1);
@@ -92,24 +91,24 @@ public class DankInventory extends SimpleContainer implements ContainerData {
 
         ItemStack itemStack = ContainerHelper.removeItem(getContents(), slot, amount);
         if (!itemStack.isEmpty()) {
-            this.setChanged();
+            this.onContentsChanged(slot);
         }
 
         return itemStack;
     }
 
     @Override
-    public int getMaxStackSize() {
+    public int getSlotLimit(int slot) {
         return dankStats.stacklimit;
     }
 
     public NonNullList<ItemStack> getContents() {
-        return ((SimpleContainerAccess) this).getItems();
+        return stacks;
     }
 
     public boolean noValidSlots() {
-        return IntStream.range(0, getContainerSize())
-                .mapToObj(this::getItem)
+        return IntStream.range(0, getSlots())
+                .mapToObj(this::getStackInSlot)
                 .allMatch(stack -> stack.isEmpty() || stack.is(Utils.BLACKLISTED_USAGE));
     }
 
@@ -120,26 +119,16 @@ public class DankInventory extends SimpleContainer implements ContainerData {
     public void toggleSlotLock(int slot) {
         boolean loc = get(slot) == 1;
         set(slot, loc ? 0 : 1);
-        setChanged();
-    }
-
-    @Override
-    public boolean canPlaceItem(int i, ItemStack itemStack) {
-        return !itemStack.is(Utils.BLACKLISTED_STORAGE);
+        onContentsChanged(slot);
     }
 
     //paranoia
     @Override
-    public boolean canAddItem(ItemStack stack) {
-        return !stack.is(Utils.BLACKLISTED_STORAGE) && super.canAddItem(stack);
+    public boolean isItemValid(int slot,ItemStack stack) {
+        return !stack.is(Utils.BLACKLISTED_STORAGE) && super.isItemValid(slot, stack);
     }
 
     //returns the portion of the itemstack that was NOT placed into the storage
-    @Override
-    public ItemStack addItem(ItemStack itemStack) {
-        return itemStack.is(Utils.BLACKLISTED_STORAGE) ? itemStack : super.addItem(itemStack);
-    }
-
     public CompoundTag save() {
         ListTag nbtTagList = new ListTag();
         for (int i = 0; i < this.getContents().size(); i++) {
@@ -170,7 +159,7 @@ public class DankInventory extends SimpleContainer implements ContainerData {
         for (int i = 0; i < tagList.size(); i++) {
             CompoundTag itemTags = tagList.getCompound(i);
             int slot = itemTags.getInt("Slot");
-            if (slot >= 0 && slot < getContainerSize()) {
+            if (slot >= 0 && slot < getSlots()) {
                 if (itemTags.contains("StackList", Tag.TAG_LIST)) {
                     ItemStack stack = ItemStack.EMPTY;
                     ListTag stackTagList = itemTags.getList("StackList", Tag.TAG_COMPOUND);
@@ -184,17 +173,17 @@ public class DankInventory extends SimpleContainer implements ContainerData {
                     }
                     if (!stack.isEmpty()) {
                         int count = stack.getCount();
-                        count = Math.min(count, getMaxStackSize());
+                        count = Math.min(count, getSlotLimit(slot));
                         stack.setCount(count);
 
-                        this.setItem(slot, stack);
+                        this.setStackInSlot(slot, stack);
                     }
                 } else {
                     ItemStack stack = ItemStack.of(itemTags);
                     if (itemTags.contains("ExtendedCount", Tag.TAG_INT)) {
                         stack.setCount(itemTags.getInt("ExtendedCount"));
                     }
-                    this.setItem(slot, stack);
+                    this.setStackInSlot(slot, stack);
                 }
             }
         }
@@ -210,10 +199,10 @@ public class DankInventory extends SimpleContainer implements ContainerData {
     protected void validate() {
         if (dankStats == DankStats.zero) {
             throw new RuntimeException("dank has no stats?");
-        } else if (getContainerSize() == 0) {
+        } else if (getSlots() == 0) {
             throw new RuntimeException("dank is empty?");
         } else {
-            if (lockedSlots.length != getContainerSize()) {
+            if (lockedSlots.length != getSlots()) {
                 throw new RuntimeException("inequal size");
             }
         }
@@ -223,30 +212,28 @@ public class DankInventory extends SimpleContainer implements ContainerData {
         int numStacks = 0;
         float f = 0F;
 
-        for (int slot = 0; slot < this.getContainerSize(); slot++) {
-            ItemStack stack = this.getItem(slot);
+        for (int slot = 0; slot < this.getSlots(); slot++) {
+            ItemStack stack = this.getStackInSlot(slot);
 
             if (!stack.isEmpty()) {
-                f += (float) stack.getCount() / (float) this.getMaxStackSize();
+                f += (float) stack.getCount() / (float) this.getSlotLimit(slot);
                 numStacks++;
             }
         }
 
-        f /= this.getContainerSize();
+        f /= this.getSlots();
         return Mth.floor(f * 14F) + (numStacks > 0 ? 1 : 0);
     }
-
-
     @Override
-    public void setChanged() {
-        super.setChanged();
+    public void onContentsChanged(int slot) {
+        super.onContentsChanged(slot);
         if (DankStorage.instance.data != null) {
             DankStorage.instance.data.setDirty();
         }
     }
 
     public int getFrequencySlot() {
-        return getContainerSize();
+        return getSlots();
     }
 
     public int getTextColor() {
@@ -272,7 +259,7 @@ public class DankInventory extends SimpleContainer implements ContainerData {
 
     @Override
     public int get(int slot) {
-        if (slot < getContainerSize()) {
+        if (slot < getSlots()) {
             return lockedSlots[slot];
         } else if (slot == getFrequencySlot()) {
             return id;
@@ -290,7 +277,7 @@ public class DankInventory extends SimpleContainer implements ContainerData {
 
     @Override
     public void set(int slot, int value) {
-        if (slot < getContainerSize()) {
+        if (slot < getSlots()) {
             lockedSlots[slot] = value;
         } else if (slot == getFrequencySlot()) {
             id = value;
@@ -299,7 +286,7 @@ public class DankInventory extends SimpleContainer implements ContainerData {
         } else if (slot == getFrequencySlot() + 2) {
             locked = value == 1;
         }
-        setChanged();
+        onContentsChanged(slot);
     }
 
     public void compress(ServerLevel level) {
@@ -308,8 +295,8 @@ public class DankInventory extends SimpleContainer implements ContainerData {
 
         Map<Item, Pair<Integer, Integer>> groups = new HashMap<>();
 
-        for (int i = 0; i < getContainerSize(); i++) {
-            ItemStack stack = getItem(i);
+        for (int i = 0; i < getSlots(); i++) {
+            ItemStack stack = getStackInSlot(i);
             if (!stack.isEmpty()) {
 
                 if (Utils.canCompress(level, stack)) {
@@ -324,7 +311,7 @@ public class DankInventory extends SimpleContainer implements ContainerData {
                     groups.put(item, pair);
                 }
             } else {
-                freeSlots = getContainerSize() - i;
+                freeSlots = getSlots() - i;
                 break;
             }
         }
@@ -337,9 +324,9 @@ public class DankInventory extends SimpleContainer implements ContainerData {
             int count = 0;
 
             for (int i = pair.getFirst(); i < pair.getSecond() + 1; i++) {
-                count += getItem(i).getCount();
+                count += getStackInSlot(i).getCount();
             }
-            if (count <= getMaxStackSize() && count % stackIntegerPair.getSecond() != 0) {
+            if (count <= getSlots() && count % stackIntegerPair.getSecond() != 0) {
                 unsafeSlots.add(item);
             } else {
                 ItemStack compressionResult = stackIntegerPair.getFirst();
@@ -349,24 +336,24 @@ public class DankInventory extends SimpleContainer implements ContainerData {
 
                 //clear out old items
                 for (int i = pair.getFirst(); i < pair.getSecond() + 1; i++) {
-                    removeItem(i, getMaxStackSize());
+                    extractItem(i, getSlots(),false);
                 }
-                int fullStacks = compressedCount / getMaxStackSize();
+                int fullStacks = compressedCount / getSlots();
 
-                int partialStack = compressedCount % getMaxStackSize();
+                int partialStack = compressedCount % getSlots();
 
                 //set max stacksize items
                 for (int i = pair.getFirst(); i < pair.getFirst() + fullStacks; i++) {
-                    setItem(i, new ItemStack(compressionResult.getItem(), getMaxStackSize()));
+                    setStackInSlot(i, new ItemStack(compressionResult.getItem(), getSlots()));
                 }
 
                 //set partial stack of compressed items
                 if (partialStack > 0) {
-                    setItem(pair.getFirst() + fullStacks, new ItemStack(compressionResult.getItem(), partialStack));
+                    setStackInSlot(pair.getFirst() + fullStacks, new ItemStack(compressionResult.getItem(), partialStack));
                 }
 
                 if (remainder > 0) {
-                    setItem(pair.getFirst() + fullStacks + 1, new ItemStack(item, partialStack));
+                    setStackInSlot(pair.getFirst() + fullStacks + 1, new ItemStack(item, partialStack));
                 }
             }
         }
@@ -377,8 +364,8 @@ public class DankInventory extends SimpleContainer implements ContainerData {
             if (freeSlots <= 0) {
                 break;
             } else {
-                for (int i = 0; i < getContainerSize(); i++) {
-                    ItemStack stack = getItem(i);
+                for (int i = 0; i < getSlots(); i++) {
+                    ItemStack stack = getStackInSlot(i);
                     if (stack.getItem() == item) {
 
                         Pair<ItemStack, Integer> stackIntegerPair = Utils.compress(level, new ItemStack(item));
@@ -387,8 +374,8 @@ public class DankInventory extends SimpleContainer implements ContainerData {
                         int compressedCount = stack.getCount() / stackIntegerPair.getSecond();
                         int remainder = stack.getCount() % stackIntegerPair.getSecond();
 
-                        setItem(i, new ItemStack(compressionResult.getItem(), compressedCount));
-                        setItem(getContainerSize() - freeSlots, new ItemStack(item, remainder));
+                        setStackInSlot(i, new ItemStack(compressionResult.getItem(), compressedCount));
+                        setStackInSlot(getSlots() - freeSlots, new ItemStack(item, remainder));
                         freeSlots--;
                         break;
                     }
@@ -411,8 +398,7 @@ public class DankInventory extends SimpleContainer implements ContainerData {
 
         Collections.sort(wrappers);
 
-        clearContent();
-
+        this.stacks.clear();
 
         //split up the stacks and add them to the slot
 
@@ -426,19 +412,24 @@ public class DankInventory extends SimpleContainer implements ContainerData {
                 int partialStack = count - fullStacks * dankStats.stacklimit;
 
                 for (int j = 0; j < fullStacks;j++) {
-                    setItem(slotId, ItemHandlerHelper.copyStackWithSize(stack, dankStats.stacklimit));
+                    setStackInSlot(slotId, ItemHandlerHelper.copyStackWithSize(stack, dankStats.stacklimit));
                     slotId++;
                 }
                 if (partialStack > 0) {
-                    setItem(slotId,  ItemHandlerHelper.copyStackWithSize(stack, partialStack));
+                    setStackInSlot(slotId,  ItemHandlerHelper.copyStackWithSize(stack, partialStack));
                     slotId++;
                 }
             } else {
-                setItem(slotId,stack);
+                setStackInSlot(slotId,stack);
                 slotId++;
             }
-            //setItem(i, stack);
+            //setStackInSlot(i, stack);
         }
+    }
+
+    public void clearContent() {
+        stacks.clear();
+        onContentsChanged(0);
     }
 
     public enum TxtColor {
@@ -454,6 +445,6 @@ public class DankInventory extends SimpleContainer implements ContainerData {
 
     @Override
     public int getCount() {
-        return getContainerSize() + 3;
+        return getSlots() + 3;
     }
 }

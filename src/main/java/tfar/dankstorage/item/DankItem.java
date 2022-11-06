@@ -155,7 +155,7 @@ public class DankItem extends Item {
                         player.setItemSlot(hand1, toPlace);
                         InteractionResultHolder<ItemStack> actionResult = toPlace.getItem().use(level, player, hand);
                         DankInventory handler = Utils.getOrCreateInventory(bagCopy, level);
-                        handler.setItem(Utils.getSelectedSlot(bagCopy), actionResult.getObject());
+                        handler.setStackInSlot(Utils.getSelectedSlot(bagCopy), actionResult.getObject());
                         player.setItemSlot(hand1, bagCopy);
                     }
                 }
@@ -176,7 +176,7 @@ public class DankItem extends Item {
         //the client doesn't have access to the full inventory
         if (!player.level.isClientSide) {
             DankInventory handler = Utils.getOrCreateInventory(bag, player.level);
-            handler.setItem(Utils.getSelectedSlot(bag), toUse);
+            handler.setStackInSlot(Utils.getSelectedSlot(bag), toUse);
         }
 
         player.setItemSlot(hand1, bag);
@@ -340,7 +340,7 @@ public class DankItem extends Item {
         InteractionResult actionResultType = toPlace.getItem().useOn(ctx2);//ctx2.getItem().onItemUse(ctx);
         if (!level.isClientSide) {
             DankInventory dankInventory = Utils.getInventory(bag,level);
-            dankInventory.setItem(selectedSlot, ctx2.getItemInHand());
+            dankInventory.setStackInSlot(selectedSlot, ctx2.getItemInHand());
         }
         return actionResultType;
     }

@@ -2,6 +2,7 @@ package tfar.dankstorage.container;
 
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -9,6 +10,7 @@ import tfar.dankstorage.init.ModMenuTypes;
 import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.inventory.LockedSlot;
 import tfar.dankstorage.item.DankItem;
+import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventory;
 
@@ -27,6 +29,21 @@ public class DankMenu extends AbstractDankMenu {
         this.bag = player.getMainHandItem().getItem() instanceof DankItem ? player.getMainHandItem() : player.getOffhandItem();
         addDankSlots();
         addPlayerSlots(inv, inv.selected);
+    }
+
+    @Override
+    protected DataSlot getServerPickupData() {
+        return new DataSlot() {
+            @Override
+            public int get() {
+                return Utils.getPickupMode(bag).ordinal();
+            }
+
+            @Override
+            public void set(int pValue) {
+                Utils.setPickupMode(bag, PickupMode.PICKUP_MODES[pValue]);
+            }
+        };
     }
 
     public static DankMenu t1(int id, Inventory inv) {

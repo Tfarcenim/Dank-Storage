@@ -30,6 +30,7 @@ import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.client.Client;
 import tfar.dankstorage.command.DankCommands;
 import tfar.dankstorage.datagen.DataGenerators;
+import tfar.dankstorage.event.ForgeClientEvents;
 import tfar.dankstorage.init.*;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.recipe.Serializer2;
@@ -66,6 +67,7 @@ public class DankStorage {
         bus.addListener(this::onInitialize);
         if (FMLEnvironment.dist.isClient()) {
             bus.addListener(this::onInitializeClient);
+            bus.addListener(ForgeClientEvents::renderStack);
         }
     }
 
@@ -117,12 +119,19 @@ public class DankStorage {
 
   public static class ClientConfig {
     public static ForgeConfigSpec.BooleanValue preview;
-
+      public static ForgeConfigSpec.IntValue preview_x;
+      public static ForgeConfigSpec.IntValue preview_y;
     public ClientConfig(ForgeConfigSpec.Builder builder) {
       builder.push("client");
       preview = builder
               .comment("Whether to display the preview of the item in the dank, disable if you have optifine")
               .define("preview", true);
+        preview_x = builder
+                .comment("X position of preview")
+                .defineInRange("preview_x", -140,-10000,10000);
+        preview_y = builder
+                .comment("Y position of preview")
+                .defineInRange("preview_y",-25,-10000,10000);
       builder.pop();
     }
   }
@@ -135,8 +144,7 @@ public class DankStorage {
     public static ForgeConfigSpec.IntValue stacklimit5;
     public static ForgeConfigSpec.IntValue stacklimit6;
     public static ForgeConfigSpec.IntValue stacklimit7;
-    public static ForgeConfigSpec.BooleanValue useShareTag;
-    public static ForgeConfigSpec.ConfigValue<List<String>> convertible_tags;
+      public static ForgeConfigSpec.ConfigValue<List<String>> convertible_tags;
 
     public static final List<String> defaults = Lists.newArrayList(
             "forge:ingots/iron",

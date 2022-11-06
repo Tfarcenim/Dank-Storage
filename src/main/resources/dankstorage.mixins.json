@@ -9,7 +9,6 @@
     "ItemUsageContextAccessor",
     "PlayerInventoryMixin",
     "RecipeManagerMixin",
-    "SimpleContainerAccess"
   ],
   "client": [
     "AbstractContainerScreenMixin",
