@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -12,6 +13,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 import tfar.dankstorage.client.Client;
@@ -19,7 +21,10 @@ import tfar.dankstorage.client.NumberEditBox;
 import tfar.dankstorage.client.button.SmallButton;
 import tfar.dankstorage.container.AbstractDankMenu;
 import tfar.dankstorage.inventory.DankSlot;
-import tfar.dankstorage.network.server.*;
+import tfar.dankstorage.network.server.C2SButtonPacket;
+import tfar.dankstorage.network.server.C2SMessageLockSlotPacket;
+import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
+import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventory;
 
@@ -64,15 +69,15 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankMenu> exte
         this.setInitialFocus(this.frequency);
         frequency.setFocus(false);
 
-        Button.OnTooltip freqTooltip = (button, poseStack, x, y) -> {
+        Button.OnTooltip sortTooltip = (button, poseStack, x, y) -> renderTooltip(poseStack, Utils.translatable("text.dankstorage.sort_button"), x, y);
+        this.addRenderableWidget(new SmallButton(leftPos + 143, topPos + 4, 26, 12, Utils.literal("Sort"), b -> C2SButtonPacket.send(C2SButtonPacket.Action.SORT),sortTooltip));
+        Button.OnTooltip freqTooltip = (button, poseStack, x, y) -> renderTooltip(poseStack,
+                Utils.translatable("text.dankstorage." + (menu.dankInventory.frequencyLocked() ? "un" : "") + "lock_button"), x, y);
 
-            boolean locked = menu.dankInventory.frequencyLocked();
-
-            this.renderTooltip(poseStack,
-                    this.minecraft.font.split(
-                            Utils.translatable("text.dankstorage." + (locked ? "un" : "") + "lock_button"), Math.max(this.width / 2 - 43, 170)), x, y);
-
-        };
+        Button.OnTooltip compressTooltip = (button, poseStack, x, y) -> renderTooltip(poseStack, Utils.translatable("text.dankstorage.compress_button"), x, y);
+        Button.OnTooltip saveTooltip = (button, poseStack, x, y) -> renderTooltip(poseStack,
+                this.minecraft.font.split(SAVE_C
+                        , Math.max(this.width / 2 - 43, 170)), x, y);
 
 
         this.addRenderableWidget(new SmallButton(leftPos + 115, topPos + 4, 12, 12,
@@ -84,15 +89,8 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankMenu> exte
             }
         });
 
-        Button.OnTooltip saveTooltip = (button, poseStack, x, y) -> {
-//todo make this fancy
-            this.renderTooltip(poseStack,
-                    this.minecraft.font.split(buildSaveComponent()
-                            , Math.max(this.width / 2 - 43, 170)), x, y);
 
-        };
-
-        this.addRenderableWidget(new SmallButton(leftPos + 155, j + inventoryLabelY - 2, 12, 12,
+        this.addRenderableWidget(new SmallButton(leftPos + 157, topPos + inventoryLabelY - 2, 12, 12,
                 Utils.literal("s"), b -> {
             try {
                 if (menu.dankInventory.frequencyLocked()) return;
@@ -104,22 +102,11 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankMenu> exte
         }, saveTooltip));
 
 
-
-
-        Button.OnTooltip compressTooltip = (button, poseStack, x, y) -> {
-
-
-            this.renderTooltip(poseStack,
-                    this.minecraft.font.split(
-                            Utils.translatable("Compresses reversible 3x3 recipes"), Math.max(this.width / 2 - 43, 170)), x, y);
-
-        };
-
-
         this.addRenderableWidget(new SmallButton(leftPos + 129, topPos + 4, 12, 12,
                 Utils.literal("C"), button -> C2SButtonPacket.send(C2SButtonPacket.Action.COMPRESS), compressTooltip));
     }
-
+    private static final MutableComponent SAVE_C = buildSaveComponent();
+    public static final MutableComponent PICKUP_C = buildPickupComponent();
     private static MutableComponent buildSaveComponent() {
         return Utils.translatable("text.dankstorage.save_frequency_button",
                 Utils.translatable("text.dankstorage.save_frequency_button.invalid",
@@ -145,6 +132,27 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankMenu> exte
         );
     }
 
+    private static MutableComponent buildPickupComponent() {
+        return Utils.translatable("text.dankstorage.pickup_button",
+                Utils.translatable("text.dankstorage.pickup_button.none",
+                                Utils.translatable("text.dankstorage.pickup_button.nonetxt")
+                                        .withStyle(ChatFormatting.GRAY))
+                        .withStyle(Style.EMPTY.withColor(PickupMode.none.getColor())),
+                Utils.translatable("text.dankstorage.pickup_button.all",
+                                Utils.translatable("text.dankstorage.pickup_button.alltxt")
+                                        .withStyle(ChatFormatting.GRAY))
+                        .withStyle(Style.EMPTY.withColor(PickupMode.pickup_all.getColor())),
+                Utils.translatable("text.dankstorage.pickup_button.filtered",
+                                Utils.translatable("text.dankstorage.pickup_button.filteredtxt")
+                                        .withStyle(ChatFormatting.GRAY))
+                        .withStyle(Style.EMPTY.withColor(PickupMode.filtered_pickup.getColor())),
+                Utils.translatable("text.dankstorage.pickup_button.void",
+                                Utils.translatable("text.dankstorage.pickup_button.voidtxt")
+                                        .withStyle(ChatFormatting.GRAY))
+                        .withStyle(Style.EMPTY.withColor(PickupMode.void_pickup.getColor()))
+        );
+    }
+
 
     private void onNameChanged(String string) {
         try {
@@ -165,7 +173,7 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankMenu> exte
         boolean match = Client.LOCK_SLOT.matches(keyCode, scanCode);
         if (match) {
             if (hoveredSlot instanceof DankSlot) {
-                C2SMessageLockSlot.send(hoveredSlot.index);
+                C2SMessageLockSlotPacket.send(hoveredSlot.index);
                 return true;
             }
         }
@@ -176,6 +184,18 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankMenu> exte
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
+    public void renderSlot(PoseStack pPoseStack, Slot pSlot) {
+        super.renderSlot(pPoseStack, pSlot);
+        int i = pSlot.x;
+        int j = pSlot.y;
+        if (!pSlot.hasItem() && pSlot.index < menu.dankInventory.getSlots()  && menu.dankInventory.hasGhostItem(pSlot.index)) {
+            itemRenderer.renderAndDecorateFakeItem(menu.dankInventory.getGhostItem(pSlot.index), i, j);
+            RenderSystem.depthFunc(516);
+            GuiComponent.fill(pPoseStack, i, j, i + 16, j + 16, 0x40ffffff);
+            RenderSystem.depthFunc(515);
+        }
+    }
+
     @Override
     protected void renderBg(PoseStack stack, float partialTicks, int mouseX, int mouseY) {
 
@@ -184,14 +204,16 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankMenu> exte
             blit(stack, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 512);
         else
             blit(stack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        renderLockedSlots(stack);
+    }
 
-
-        for (int i = 0; i < (menu.rows * 9); i++) {
+    protected void renderLockedSlots(PoseStack stack) {
+        for (int i = 0; i < menu.rows * 9; i++) {
             int j = i % 9;
             int k = i / 9;
             int offsetx = 8;
             int offsety = 18;
-            if (this.menu.dankInventory.get(i) == 1) {
+            if (this.menu.dankInventory.hasGhostItem(i)) {
                 fill(stack, leftPos + j * 18 + offsetx, topPos + k * 18 + offsety,
                         leftPos + j * 18 + offsetx + 16, topPos + k * 18 + offsety + 16, 0xFFFF0000);
             }
@@ -217,16 +239,11 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankMenu> exte
         return tooltipFromItem;
     }
 
+    private static final MutableComponent STORAGE_TXT = Utils.translatable("text.dankstorage.blacklisted_storage").withStyle(ChatFormatting.DARK_RED);
+    private static final MutableComponent USAGE_TXT = Utils.translatable("text.dankstorage.blacklisted_usage").withStyle(ChatFormatting.DARK_RED);
     public void appendDankInfo(List<Component> tooltip, ItemStack stack) {
-        if (stack.is(Utils.BLACKLISTED_STORAGE)) {
-            Component component = Utils.translatable("text.dankstorage.blacklisted_storage").withStyle(ChatFormatting.DARK_RED);
-            tooltip.add(component);
-        }
-        if (stack.is(Utils.BLACKLISTED_USAGE)) {
-            Component component = Utils.translatable("text.dankstorage.blacklisted_usage").
-                    withStyle(ChatFormatting.DARK_RED);
-            tooltip.add(component);
-        }
+        if (stack.is(Utils.BLACKLISTED_STORAGE)) tooltip.add(STORAGE_TXT);
+        if (stack.is(Utils.BLACKLISTED_USAGE)) tooltip.add(USAGE_TXT);
         if (hoveredSlot instanceof DankSlot) {
             Component component1 = Utils.translatable("text.dankstorage.lock",
                     Client.LOCK_SLOT.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY);

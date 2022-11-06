@@ -67,7 +67,7 @@ public class DankStorage {
         bus.addListener(this::onInitialize);
         if (FMLEnvironment.dist.isClient()) {
             bus.addListener(this::onInitializeClient);
-            bus.addListener(ForgeClientEvents::renderStack);
+            MinecraftForge.EVENT_BUS.addListener(ForgeClientEvents::renderStack);
         }
     }
 

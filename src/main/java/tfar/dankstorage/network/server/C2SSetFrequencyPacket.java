@@ -46,7 +46,7 @@ public class C2SSetFrequencyPacket implements C2SPacketHelper {
 
                 if (targetInventory != null && targetInventory.dankStats == inventory.dankStats) {
 
-                    if (targetInventory.locked) {
+                    if (targetInventory.frequencyLocked()) {
                      textColor = DankInventory.TxtColor.LOCKED.color;
                     } else {
                         textColor = DankInventory.TxtColor.GOOD.color;

@@ -8,10 +8,7 @@ import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.network.client.S2CContentsForDisplayPacket;
-import tfar.dankstorage.network.client.S2CCustomSyncDataPacket;
-import tfar.dankstorage.network.client.S2CSendCustomSlotChangePacket;
-import tfar.dankstorage.network.client.S2CSyncSelectedItemPacket;
+import tfar.dankstorage.network.client.*;
 import tfar.dankstorage.network.server.*;
 
 import java.util.List;
@@ -27,16 +24,16 @@ public class DankPacketHandler {
         int i = 0;
 
         INSTANCE.registerMessage(i++,
-                C2SMessageScrollSlot.class,
-                C2SMessageScrollSlot::encode,
-                C2SMessageScrollSlot::new,
-                C2SMessageScrollSlot::handle);
+                C2SMessageScrollSlotPacket.class,
+                C2SMessageScrollSlotPacket::encode,
+                C2SMessageScrollSlotPacket::new,
+                C2SMessageScrollSlotPacket::handle);
 
         INSTANCE.registerMessage(i++,
-                C2SMessageLockSlot.class,
-                C2SMessageLockSlot::encode,
-                C2SMessageLockSlot::new,
-                C2SMessageLockSlot::handle);
+                C2SMessageLockSlotPacket.class,
+                C2SMessageLockSlotPacket::encode,
+                C2SMessageLockSlotPacket::new,
+                C2SMessageLockSlotPacket::handle);
 
         INSTANCE.registerMessage(i++,
                 C2SButtonPacket.class,
@@ -71,6 +68,12 @@ public class DankPacketHandler {
                 S2CSendCustomSlotChangePacket::handle);
 
         INSTANCE.registerMessage(i++,
+                S2CSendLockedSlotItemPacket.class,
+                S2CSendLockedSlotItemPacket::encode,
+                S2CSendLockedSlotItemPacket::new,
+                S2CSendLockedSlotItemPacket::handle);
+
+        INSTANCE.registerMessage(i++,
                 S2CSyncSelectedItemPacket.class,
                 S2CSyncSelectedItemPacket::encode,
                 S2CSyncSelectedItemPacket::new,
@@ -92,6 +95,11 @@ public class DankPacketHandler {
     public static void sendCustomSlotChange(ServerPlayer player, int id, int slot, ItemStack stack) {
         sendToClient(new S2CSendCustomSlotChangePacket(id,slot,stack),player);
     }
+
+    public static void sendLockedItemSlot(ServerPlayer player, int id, int slot, ItemStack stack) {
+        sendToClient(new S2CSendLockedSlotItemPacket(id,slot,stack),player);
+    }
+
 
     public static void sendCustomSyncData(ServerPlayer player, int stateID, int containerID, NonNullList<ItemStack> stacks, ItemStack carried) {
         sendToClient(new S2CCustomSyncDataPacket(stateID,containerID,stacks,carried),player);

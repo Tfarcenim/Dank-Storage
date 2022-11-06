@@ -20,11 +20,11 @@ public class DankMenu extends AbstractDankMenu {
 
     //clientside
     public DankMenu(MenuType<?> type, int windowId, Inventory inv, int rows) {
-        this(type, windowId, inv, rows, new DankInventory(Utils.getStatsfromRows(rows), -1));
+        this(type, windowId, inv, new DankInventory(Utils.getStatsfromRows(rows), -1));
     }
 
-    public DankMenu(MenuType<?> type, int windowId, Inventory inv, int rows, DankInventory dankInventory) {
-        super(type, windowId, inv, rows, dankInventory);
+    public DankMenu(MenuType<?> type, int windowId, Inventory inv, DankInventory dankInventory) {
+        super(type, windowId, inv, dankInventory);
         Player player = inv.player;
         this.bag = player.getMainHandItem().getItem() instanceof DankItem ? player.getMainHandItem() : player.getOffhandItem();
         addDankSlots();
@@ -75,31 +75,31 @@ public class DankMenu extends AbstractDankMenu {
     }
 
     public static DankMenu t1s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(ModMenuTypes.portable_dank_1_container, id, inv, 1, dankInventory);
+        return new DankMenu(ModMenuTypes.portable_dank_1_container, id, inv, dankInventory);
     }
 
     public static DankMenu t2s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(ModMenuTypes.portable_dank_2_container, id, inv, 2, dankInventory);
+        return new DankMenu(ModMenuTypes.portable_dank_2_container, id, inv, dankInventory);
     }
 
     public static DankMenu t3s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(ModMenuTypes.portable_dank_3_container, id, inv, 3, dankInventory);
+        return new DankMenu(ModMenuTypes.portable_dank_3_container, id, inv, dankInventory);
     }
 
     public static DankMenu t4s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(ModMenuTypes.portable_dank_4_container, id, inv, 4, dankInventory);
+        return new DankMenu(ModMenuTypes.portable_dank_4_container, id, inv, dankInventory);
     }
 
     public static DankMenu t5s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(ModMenuTypes.portable_dank_5_container, id, inv, 5, dankInventory);
+        return new DankMenu(ModMenuTypes.portable_dank_5_container, id, inv, dankInventory);
     }
 
     public static DankMenu t6s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(ModMenuTypes.portable_dank_6_container, id, inv, 6, dankInventory);
+        return new DankMenu(ModMenuTypes.portable_dank_6_container, id, inv, dankInventory);
     }
 
     public static DankMenu t7s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(ModMenuTypes.portable_dank_7_container, id, inv, 9, dankInventory);
+        return new DankMenu(ModMenuTypes.portable_dank_7_container, id, inv, dankInventory);
     }
 
     @Override

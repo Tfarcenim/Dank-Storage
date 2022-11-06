@@ -55,17 +55,12 @@ public class PortableDankStorageScreen extends AbstractDankStorageScreen<DankMen
     //        C2SMessageTagMode.send();
     //    }, false));
 
-        Button.OnTooltip onTooltip = (button, poseStack, x, y) -> {
-
-            this.renderTooltip(poseStack,
-                    this.minecraft.font.split(
-                            Utils.literal("Pickup"), Math.max(this.width / 2 - 43, 170)), x, y);
-
-        };
+        Button.OnTooltip pickupTooltip = (button, poseStack, x, y) -> renderTooltip(poseStack,
+                this.minecraft.font.split(PICKUP_C, Math.max(this.width / 2 - 43, 170)), x, y);
 
         this.addRenderableWidget(new TripleToggleButton(leftPos + 101, topPos + 4, 12, 12,Utils.literal("P"), b -> {
             Utils.cyclePickupMode(menu.bag, Minecraft.getInstance().player);
             C2SButtonPacket.send(C2SButtonPacket.Action.TOGGLE_PICKUP);
-        },onTooltip,this));
+        },pickupTooltip,this));
     }
 }
