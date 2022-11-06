@@ -29,7 +29,6 @@ public class Client {
 
     public static void client() {
 
-        MinecraftForge.EVENT_BUS.addListener(ForgeClientEvents::renderStack);
         MinecraftForge.EVENT_BUS.addListener(ForgeClientEvents::onPickBlock);
         MinecraftForge.EVENT_BUS.addListener(ForgeClientEvents::onScroll);
 

@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
-import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.client.DankHudOverlay;
@@ -30,7 +29,7 @@ public class ForgeClientEvents {
         }
     }
 
-    public static void onScroll(ScreenEvent.MouseScrolled e) {
+    public static void onScroll(InputEvent.MouseScrollingEvent e) {
         if (ClientMixinEvents.onScroll(e.getScrollDelta()))e.setCanceled(true);
     }
 }

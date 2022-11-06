@@ -27,7 +27,7 @@ public class DankMenu extends AbstractDankMenu {
     }
 
     @Override
-    protected DataSlot getPickupData() {
+    protected DataSlot getServerPickupData() {
         return new DataSlot() {
             @Override
             public int get() {

@@ -31,11 +31,11 @@ public abstract class AbstractDankMenu extends AbstractContainerMenu {
         if (!playerInventory.player.level.isClientSide) {
             setSynchronizer(new CustomSync((ServerPlayer) playerInventory.player));
         }
-        pickup = getPickupData();
+        pickup = playerInventory.player.level.isClientSide ? DataSlot.standalone(): getServerPickupData();
         addDataSlot(pickup);
     }
 
-    protected abstract DataSlot getPickupData();
+    protected abstract DataSlot getServerPickupData();
     public PickupMode getMode() {
         return PickupMode.PICKUP_MODES[pickup.get()];
     }

@@ -48,10 +48,10 @@ public class MixinHooks {
         }
 
         int count = pickup.getCount();
-        boolean oredict = false;//Utils.oredict(dank);
+        boolean oredict = Utils.oredict(dank);
         List<ItemStack> existing = new ArrayList<>();
-        for (int i = 0; i < inv.getContainerSize(); i++) {
-            ItemStack stack = inv.getItem(i);
+        for (int i = 0; i < inv.getSlots(); i++) {
+            ItemStack stack = inv.getStackInSlot(i);
             if (!stack.isEmpty()) {
                 boolean exists = false;
                 for (ItemStack stack1 : existing) {
@@ -67,19 +67,19 @@ public class MixinHooks {
 
         switch (pickupMode) {
             case pickup_all -> {
-                for (int i = 0; i < inv.getContainerSize(); i++) {
+                for (int i = 0; i < inv.getSlots(); i++) {
                     allPickup(inv, i, pickup, oredict);
                     if (pickup.isEmpty()) break;
                 }
             }
             case filtered_pickup -> {
-                for (int i = 0; i < inv.getContainerSize(); i++) {
+                for (int i = 0; i < inv.getSlots(); i++) {
                     filteredPickup(inv, i, pickup, oredict, existing);
                     if (pickup.isEmpty()) break;
                 }
             }
             case void_pickup -> {
-                for (int i = 0; i < inv.getContainerSize(); i++) {
+                for (int i = 0; i < inv.getSlots(); i++) {
                     voidPickup(inv, i, pickup, oredict, existing);
                     if (pickup.isEmpty()) break;
                 }
@@ -95,19 +95,19 @@ public class MixinHooks {
     }
 
     public static void voidPickup(DankInventory inv, int slot, ItemStack toInsert, boolean oredict, List<ItemStack> filter) {
-        ItemStack existing = inv.getItem(slot);
+        ItemStack existing = inv.getStackInSlot(slot);
 
         if (doesItemStackExist(toInsert, filter, oredict) && areItemStacksCompatible(existing, toInsert, oredict)) {
             int stackLimit = inv.dankStats.stacklimit;
             int total = Math.min(toInsert.getCount() + existing.getCount(), stackLimit);
-            //doesn't matter if it overflows cause it's all gone lmao
-            inv.setItem(slot, ItemHandlerHelper.copyStackWithSize(existing, total));
+            //doesn't matter if it overflows because it's all gone lmao
+            inv.setStackInSlot(slot, ItemHandlerHelper.copyStackWithSize(existing, total));
             toInsert.setCount(0);
         }
     }
 
     public static void allPickup(DankInventory inv, int slot, ItemStack pickup, boolean oredict) {
-        ItemStack existing = inv.getItem(slot);
+        ItemStack existing = inv.getStackInSlot(slot);
 
         if (existing.isEmpty()) {
             int stackLimit = inv.dankStats.stacklimit;
@@ -115,10 +115,10 @@ public class MixinHooks {
             int remainder = total - stackLimit;
             //no overflow
             if (remainder <= 0) {
-                inv.setItem(slot, pickup.copy());
+                inv.setStackInSlot(slot, pickup.copy());
                 pickup.setCount(0);
             } else {
-                inv.setItem(slot, ItemHandlerHelper.copyStackWithSize(pickup, stackLimit));
+                inv.setStackInSlot(slot, ItemHandlerHelper.copyStackWithSize(pickup, stackLimit));
                 pickup.setCount(remainder);
             }
             return;
@@ -130,17 +130,17 @@ public class MixinHooks {
             int remainder = total - stackLimit;
             //no overflow
             if (remainder <= 0) {
-                inv.setItem(slot, ItemHandlerHelper.copyStackWithSize(existing, total));
+                inv.setStackInSlot(slot, ItemHandlerHelper.copyStackWithSize(existing, total));
                 pickup.setCount(0);
             } else {
-                inv.setItem(slot, ItemHandlerHelper.copyStackWithSize(pickup, stackLimit));
+                inv.setStackInSlot(slot, ItemHandlerHelper.copyStackWithSize(pickup, stackLimit));
                 pickup.setCount(remainder);
             }
         }
     }
 
     public static void filteredPickup(DankInventory inv, int slot, ItemStack toInsert, boolean oredict, List<ItemStack> filter) {
-        ItemStack existing = inv.getItem(slot);
+        ItemStack existing = inv.getStackInSlot(slot);
 
         if (existing.isEmpty() && doesItemStackExist(toInsert, filter, oredict)) {
             int stackLimit = inv.dankStats.stacklimit;
@@ -148,10 +148,10 @@ public class MixinHooks {
             int remainder = total - stackLimit;
             //no overflow
             if (remainder <= 0) {
-                inv.setItem(slot, toInsert.copy());
+                inv.setStackInSlot(slot, toInsert.copy());
                 toInsert.setCount(0);
             } else {
-                inv.setItem(slot, ItemHandlerHelper.copyStackWithSize(toInsert, stackLimit));
+                inv.setStackInSlot(slot, ItemHandlerHelper.copyStackWithSize(toInsert, stackLimit));
                 toInsert.setCount(remainder);
             }
             return;
@@ -163,10 +163,10 @@ public class MixinHooks {
             int remainder = total - stackLimit;
             //no overflow
             if (remainder <= 0) {
-                inv.setItem(slot, ItemHandlerHelper.copyStackWithSize(existing, total));
+                inv.setStackInSlot(slot, ItemHandlerHelper.copyStackWithSize(existing, total));
                 toInsert.setCount(0);
             } else {
-                inv.setItem(slot, ItemHandlerHelper.copyStackWithSize(toInsert, stackLimit));
+                inv.setStackInSlot(slot, ItemHandlerHelper.copyStackWithSize(toInsert, stackLimit));
                 toInsert.setCount(remainder);
             }
         }

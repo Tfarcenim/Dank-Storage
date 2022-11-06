@@ -2,6 +2,7 @@
 package tfar.dankstorage.blockentity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -13,6 +14,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.container.DockMenu;
@@ -23,7 +29,7 @@ import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
 
 public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvider {
 
@@ -240,8 +246,17 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
         DankInventory dankInventory = getInventory();
         dankInventory.upgradeTo(stats);
     }
-
     //item api
+    protected final LazyOptional<DankInventory> optional = LazyOptional.of(this::getInventory);
 
+    @Override
+    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+        return cap == ForgeCapabilities.ITEM_HANDLER ? optional.cast() : super.getCapability(cap, side);
+    }
 
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        optional.invalidate();
+    }
 }
