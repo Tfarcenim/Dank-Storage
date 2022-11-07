@@ -66,10 +66,10 @@ public class DankPacketHandler {
                 S2CSendCustomSlotChangePacket::handle);
 
         INSTANCE.registerMessage(i++,
-                S2CSendLockedSlotItemPacket.class,
-                S2CSendLockedSlotItemPacket::encode,
-                S2CSendLockedSlotItemPacket::new,
-                S2CSendLockedSlotItemPacket::handle);
+                S2CSyncGhostItemPacket.class,
+                S2CSyncGhostItemPacket::encode,
+                S2CSyncGhostItemPacket::new,
+                S2CSyncGhostItemPacket::handle);
 
         INSTANCE.registerMessage(i++,
                 S2CSyncSelectedItemPacket.class,
@@ -95,7 +95,7 @@ public class DankPacketHandler {
     }
 
     public static void sendGhostItemSlot(ServerPlayer player, int id, int slot, ItemStack stack) {
-        sendToClient(new S2CSendLockedSlotItemPacket(id,slot,stack),player);
+        sendToClient(new S2CSyncGhostItemPacket(id,slot,stack),player);
     }
 
 

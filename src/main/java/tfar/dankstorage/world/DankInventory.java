@@ -77,11 +77,8 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
 
         //caution, will void all current items
         setSize(dankStats.slots);
-
-        for (int i = 0; i < max; i++) {
-            stacks = newStacks;
-            ghostItems = newGhostStacks;
-        }
+        stacks = newStacks;
+        setGhostItems(newGhostStacks);
         onContentsChanged(0);
     }
 
@@ -149,7 +146,6 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
                 && super.isItemValid(slot, stack);
     }
 
-    //returns the portion of the itemstack that was NOT placed into the storage
     public CompoundTag save() {
         ListTag nbtTagList = new ListTag();
         for (int i = 0; i < this.getContents().size(); i++) {

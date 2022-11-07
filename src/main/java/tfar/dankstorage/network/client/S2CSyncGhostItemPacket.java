@@ -9,19 +9,19 @@ import tfar.dankstorage.utils.PacketBufferEX;
 
 import static tfar.dankstorage.client.Client.getLocalPlayer;
 
-public class S2CSendLockedSlotItemPacket implements S2CPacketHelper {
+public class S2CSyncGhostItemPacket implements S2CPacketHelper {
 
     int windowId;
     int slot;
     ItemStack stack;
 
-    public S2CSendLockedSlotItemPacket(int windowId, int slot, ItemStack stack) {
+    public S2CSyncGhostItemPacket(int windowId, int slot, ItemStack stack) {
         this.windowId = windowId;
         this.slot = slot;
         this.stack = stack;
     }
 
-    public S2CSendLockedSlotItemPacket(FriendlyByteBuf buf) {
+    public S2CSyncGhostItemPacket(FriendlyByteBuf buf) {
         windowId = buf.readInt();
         slot = buf.readInt();
         stack = PacketBufferEX.readExtendedItemStack(buf);
