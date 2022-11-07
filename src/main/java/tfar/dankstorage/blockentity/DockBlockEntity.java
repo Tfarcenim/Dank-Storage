@@ -247,7 +247,7 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
         dankInventory.upgradeTo(stats);
     }
     //item api
-    protected final LazyOptional<DankInventory> optional = LazyOptional.of(this::getInventory);
+    protected LazyOptional<DankInventory> optional = LazyOptional.of(this::getInventory);
 
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
@@ -258,5 +258,11 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
     public void invalidateCaps() {
         super.invalidateCaps();
         optional.invalidate();
+    }
+
+    @Override
+    public void reviveCaps() {
+        super.reviveCaps();
+        optional = LazyOptional.of(this::getInventory);
     }
 }

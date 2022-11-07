@@ -410,7 +410,7 @@ public abstract class AbstractDankMenu extends AbstractContainerMenu {
         super.broadcastChanges();
         //the remote inventory needs to know about locked slots
         for (int i = 0; i < dankInventory.dankStats.slots;i++) {
-            DankPacketHandler.sendLockedItemSlot((ServerPlayer) playerInventory.player,containerId,i,dankInventory.getGhostItem(i));
+            DankPacketHandler.sendGhostItemSlot((ServerPlayer) playerInventory.player,containerId,i,dankInventory.getGhostItem(i));
         }
     }
 

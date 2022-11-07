@@ -11,8 +11,6 @@ import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.network.client.*;
 import tfar.dankstorage.network.server.*;
 
-import java.util.List;
-
 public class DankPacketHandler {
 
     public static SimpleChannel INSTANCE;
@@ -96,7 +94,7 @@ public class DankPacketHandler {
         sendToClient(new S2CSendCustomSlotChangePacket(id,slot,stack),player);
     }
 
-    public static void sendLockedItemSlot(ServerPlayer player, int id, int slot, ItemStack stack) {
+    public static void sendGhostItemSlot(ServerPlayer player, int id, int slot, ItemStack stack) {
         sendToClient(new S2CSendLockedSlotItemPacket(id,slot,stack),player);
     }
 
@@ -109,7 +107,7 @@ public class DankPacketHandler {
         sendToClient(new S2CSyncSelectedItemPacket(stack),player);
     }
 
-    public static void sendContentsForDisplay(ServerPlayer player, List<ItemStack> stacks) {
+    public static void sendContentsForDisplay(ServerPlayer player, NonNullList<ItemStack> stacks) {
         sendToClient(new S2CContentsForDisplayPacket(stacks),player);
     }
 
