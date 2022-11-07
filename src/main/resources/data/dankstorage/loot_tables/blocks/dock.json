@@ -17,7 +17,7 @@
     },
     {
       "rolls": 1,
-      "name" : "dankstorage",
+      "name": "dankstorage",
       "entries": [
         {
           "type": "minecraft:alternatives",
@@ -34,8 +34,8 @@
                   "source": "block_entity",
                   "ops": [
                     {
-                      "source": "inv",
-                      "target": "inv",
+                      "source": "settings",
+                      "target": "settings",
                       "op": "replace"
                     }
                   ]
@@ -64,38 +64,8 @@
                   "source": "block_entity",
                   "ops": [
                     {
-                      "source": "inv",
-                      "target": "inv",
-                      "op": "replace"
-                    }
-                  ]
-                }
-              ],
-              "conditions": [
-                {
-                  "condition": "minecraft:block_state_property",
-                  "block": "dankstorage:dock",
-                  "properties": {
-                    "tier": "7"
-                  }
-                }
-              ],
-              "name": "dankstorage:dank_7"
-            },
-            {
-              "type": "minecraft:item",
-              "functions": [
-                {
-                  "function": "minecraft:copy_name",
-                  "source": "block_entity"
-                },
-                {
-                  "function": "minecraft:copy_nbt",
-                  "source": "block_entity",
-                  "ops": [
-                    {
-                      "source": "inv",
-                      "target": "inv",
+                      "source": "settings",
+                      "target": "settings",
                       "op": "replace"
                     }
                   ]
@@ -124,8 +94,8 @@
                   "source": "block_entity",
                   "ops": [
                     {
-                      "source": "inv",
-                      "target": "inv",
+                      "source": "settings",
+                      "target": "settings",
                       "op": "replace"
                     }
                   ]
@@ -154,8 +124,8 @@
                   "source": "block_entity",
                   "ops": [
                     {
-                      "source": "inv",
-                      "target": "inv",
+                      "source": "settings",
+                      "target": "settings",
                       "op": "replace"
                     }
                   ]
@@ -184,8 +154,8 @@
                   "source": "block_entity",
                   "ops": [
                     {
-                      "source": "inv",
-                      "target": "inv",
+                      "source": "settings",
+                      "target": "settings",
                       "op": "replace"
                     }
                   ]
@@ -214,8 +184,8 @@
                   "source": "block_entity",
                   "ops": [
                     {
-                      "source": "inv",
-                      "target": "inv",
+                      "source": "settings",
+                      "target": "settings",
                       "op": "replace"
                     }
                   ]
@@ -244,8 +214,8 @@
                   "source": "block_entity",
                   "ops": [
                     {
-                      "source": "inv",
-                      "target": "inv",
+                      "source": "settings",
+                      "target": "settings",
                       "op": "replace"
                     }
                   ]

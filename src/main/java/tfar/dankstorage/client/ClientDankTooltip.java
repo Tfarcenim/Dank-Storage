@@ -51,10 +51,6 @@ public class ClientDankTooltip implements ClientTooltipComponent {
     }
 
     private void renderSlot(int i, int j, int slot, Font font, PoseStack poseStack, ItemRenderer itemRenderer, int l) {
-        if (slot >= this.items.size()) {
-            this.blit(poseStack, i, j, l, Texture.BLOCKED_SLOT);
-            return;
-        }
         ItemStack itemStack = this.items.get(slot);
         this.blit(poseStack, i, j, l, Texture.SLOT);
         itemRenderer.renderAndDecorateItem(itemStack, i + 1, j + 1, slot);

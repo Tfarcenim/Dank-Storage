@@ -3,7 +3,6 @@ package tfar.dankstorage.item;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -385,15 +384,11 @@ public class DankItem extends Item {
 
         if (id > Utils.INVALID) {
             //don't spam the server with requests
-            if (cache.get() != id || true) {
-                C2SRequestContentsPacket.send(id);
-                cache.set(id);
-            }
+            C2SRequestContentsPacket.send(id);
+            cache.set(id);
 
             if (ClientData.cachedItems != null) {
-                NonNullList<ItemStack> nonNullList = NonNullList.create();
-                nonNullList.addAll(ClientData.cachedItems);
-                return Optional.of(new DankTooltip(nonNullList,Utils.getSelectedSlot(itemStack)));
+                return Optional.of(new DankTooltip(ClientData.cachedItems,Utils.getSelectedSlot(itemStack)));
             }
         }
         return Optional.empty();

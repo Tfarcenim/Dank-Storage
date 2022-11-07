@@ -1,18 +1,17 @@
 package tfar.dankstorage.network.client;
 
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.network.util.S2CPacketHelper;
 import tfar.dankstorage.utils.PacketBufferEX;
 import tfar.dankstorage.world.ClientData;
 
-import java.util.List;
-
 public class S2CContentsForDisplayPacket implements S2CPacketHelper {
+    private int size;
+    private NonNullList<ItemStack> stacks;
 
-    private List<ItemStack> stacks;
-
-    public S2CContentsForDisplayPacket(List<ItemStack> stacks) {
+    public S2CContentsForDisplayPacket(NonNullList<ItemStack> stacks) {
         this.stacks = stacks;
     }
 

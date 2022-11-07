@@ -37,8 +37,13 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
         this.id = id;
     }
 
-    public void upgradeTo(DankStats stats) {
+    @Override
+    public void setSize(int size) {
+        super.setSize(size);
+        ghostItems = NonNullList.withSize(size,ItemStack.EMPTY);
+    }
 
+    public void upgradeTo(DankStats stats) {
         //can't downgrade inventories
         if (stats.ordinal() <= dankStats.ordinal()) {
             return;
@@ -52,22 +57,31 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
             DankStorage.LOGGER.debug("Upgrading dank #{} from tier {} to {}", id, dankStats.name(), stats.name());
         }
         this.dankStats = stats;
-        fixLockedSlots();
+        copyItems();
     }
 
-    private void fixLockedSlots() {
-        setSize(dankStats.slots);
+    private void copyItems() {
 
         NonNullList<ItemStack> newStacks = NonNullList.withSize(dankStats.slots, ItemStack.EMPTY);
-        int max = Math.min(ghostItems.size(), dankStats.slots);
+        NonNullList<ItemStack> newGhostStacks = NonNullList.withSize(dankStats.slots, ItemStack.EMPTY);
 
-        for (int i = 0; i < max; i++) {
-            newStacks.set(i, getContents().get(i));
+        //don't copy nonexistent items
+        int oldSlots = getSlots();
+        int max = Math.min(oldSlots, dankStats.slots);
+        for (int i = 0; i < max;i++) {
+            ItemStack oldStack = getStackInSlot(i);
+            ItemStack oldGhost = getGhostItem(i);
+            newStacks.set(i,oldStack);
+            newGhostStacks.set(i,oldGhost);
         }
 
-         stacks = newStacks;
+        //caution, will void all current items
+        setSize(dankStats.slots);
 
-        ghostItems = NonNullList.withSize(dankStats.slots,ItemStack.EMPTY);
+        for (int i = 0; i < max; i++) {
+            stacks = newStacks;
+            ghostItems = newGhostStacks;
+        }
         onContentsChanged(0);
     }
 
