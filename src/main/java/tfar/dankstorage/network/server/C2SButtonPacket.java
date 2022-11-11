@@ -36,7 +36,7 @@ public class C2SButtonPacket {
                 switch (action) {
                     case LOCK_FREQUENCY -> inventory.toggleFrequencyLock();
                     case SORT -> inventory.sort();
-                    case COMPRESS -> inventory.compress(player.getLevel());
+                    case COMPRESS -> inventory.compress(player);
                 }
             }
         } else {

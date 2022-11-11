@@ -21,6 +21,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.items.ItemHandlerHelper;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.mixin.CraftingContainerAccess;
@@ -376,7 +377,6 @@ public class Utils {
                 return Pair.of(recipe.getResultItem(),4);
             }
         }
-
         return Pair.of(ItemStack.EMPTY,0);
     }
 
@@ -389,13 +389,13 @@ public class Utils {
 
         for (CraftingRecipe recipe : REVERSIBLE3x3) {
             if (recipe.getIngredients().get(0).test(stack)) {
-                return true;
+                return stack.getCount() >=9;
             }
         }
 
         for (CraftingRecipe recipe : REVERSIBLE2x2) {
             if (recipe.getIngredients().get(0).test(stack)) {
-                return true;
+                return stack.getCount()>=4;
             }
         }
 
