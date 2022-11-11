@@ -6,20 +6,23 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.utils.ItemHandlerHelper;
 import tfar.dankstorage.utils.ItemStackWrapper;
 import tfar.dankstorage.utils.Utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.IntStream;
 
 public class DankInventory extends ItemStackHandler implements ContainerData {
@@ -35,6 +38,11 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
         this.dankStats = stats;
         this.ghostItems = NonNullList.withSize(stats.slots,ItemStack.EMPTY);
         this.id = id;
+    }
+
+    public void setDankStats(DankStats dankStats) {
+        this.dankStats = dankStats;
+        setSize(dankStats.slots);
     }
 
     @Override
@@ -80,11 +88,6 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
         stacks = newStacks;
         setGhostItems(newGhostStacks);
         onContentsChanged(0);
-    }
-
-    @Override
-    public ItemStack extractItem(int slot, int amount,boolean simulate) {
-            return super.extractItem(slot, amount,simulate);
     }
 
     @Override
@@ -184,7 +187,7 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
 
     public void read(CompoundTag nbt) {
         DankStats stats = DankStats.valueOf(nbt.getString("DankStats"));
-        upgradeTo(stats);
+        setDankStats(stats);
         ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
         readItems(tagList);
         ListTag ghostItemList = nbt.getList(GHOST,Tag.TAG_COMPOUND);
@@ -343,96 +346,50 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
         onContentsChanged(slot);
     }
 
-    public void compress(ServerLevel level) {
+    public void compress(ServerPlayer player) {
         sort();
-        int freeSlots = 0;
-
-        Map<Item, Pair<Integer, Integer>> groups = new HashMap<>();
-
-        for (int i = 0; i < getSlots(); i++) {
+        ServerLevel level = player.getLevel();
+        List<ItemStack> addLater = new ArrayList<>();
+        int firstAir = Utils.INVALID;
+        for (int i = 0; i < getSlots() ; i++) {
             ItemStack stack = getStackInSlot(i);
-            if (!stack.isEmpty()) {
 
-                if (Utils.canCompress(level, stack)) {
+            if (stack.isEmpty()) {
+                firstAir = i;
+                break;
+            }
 
-                    Item item = stack.getItem();
-                    Pair<Integer, Integer> pair;
-                    if (groups.containsKey(item)) {
-                        pair = Pair.of(groups.get(item).getFirst(), i);
+            if (Utils.canCompress(level,stack)) {
+                Pair<ItemStack,Integer> result = Utils.compress(level,stack);
+                ItemStack resultStack = result.getFirst();
+                if (!resultStack.isEmpty()) {
+                    int division = result.getSecond();
+                    int compressedCount = stack.getCount() / division;
+                    int remainderCount = stack.getCount() % division;
+                    setStackInSlot(i,ItemHandlerHelper.copyStackWithSize(resultStack,compressedCount));
+                    addLater.add(ItemHandlerHelper.copyStackWithSize(stack,remainderCount));
+                }
+            }
+        }
+        int leftoverCount = addLater.size();
+
+        if (leftoverCount > 0) {
+            if (firstAir > Utils.INVALID) {
+                int index = 0;
+                for (int i = 0; i < leftoverCount; i++) {
+                    if (i + firstAir < getSlots()) {
+                        setStackInSlot(i + firstAir, addLater.get(i));
                     } else {
-                        pair = Pair.of(i, i);
-                    }
-                    groups.put(item, pair);
-                }
-            } else {
-                freeSlots = getSlots() - i;
-                break;
-            }
-        }
-
-        List<Item> unsafeSlots = new ArrayList<>();
-        for (Map.Entry<Item, Pair<Integer, Integer>> entry : groups.entrySet()) {
-            Item item = entry.getKey();
-            Pair<Integer, Integer> pair = entry.getValue();
-            Pair<ItemStack, Integer> stackIntegerPair = Utils.compress(level, new ItemStack(item));
-            int count = 0;
-
-            for (int i = pair.getFirst(); i < pair.getSecond() + 1; i++) {
-                count += getStackInSlot(i).getCount();
-            }
-            if (count <= getSlots() && count % stackIntegerPair.getSecond() != 0) {
-                unsafeSlots.add(item);
-            } else {
-                ItemStack compressionResult = stackIntegerPair.getFirst();
-                int compressedCount = count / stackIntegerPair.getSecond();
-                int remainder = count % stackIntegerPair.getSecond();
-
-
-                //clear out old items
-                for (int i = pair.getFirst(); i < pair.getSecond() + 1; i++) {
-                    extractItem(i, getSlots(),false);
-                }
-                int fullStacks = compressedCount / getSlots();
-
-                int partialStack = compressedCount % getSlots();
-
-                //set max stacksize items
-                for (int i = pair.getFirst(); i < pair.getFirst() + fullStacks; i++) {
-                    setStackInSlot(i, new ItemStack(compressionResult.getItem(), getSlots()));
-                }
-
-                //set partial stack of compressed items
-                if (partialStack > 0) {
-                    setStackInSlot(pair.getFirst() + fullStacks, new ItemStack(compressionResult.getItem(), partialStack));
-                }
-
-                if (remainder > 0) {
-                    setStackInSlot(pair.getFirst() + fullStacks + 1, new ItemStack(item, partialStack));
-                }
-            }
-        }
-        sort();
-
-
-        for (Item item : unsafeSlots) {
-            if (freeSlots <= 0) {
-                break;
-            } else {
-                for (int i = 0; i < getSlots(); i++) {
-                    ItemStack stack = getStackInSlot(i);
-                    if (stack.getItem() == item) {
-
-                        Pair<ItemStack, Integer> stackIntegerPair = Utils.compress(level, new ItemStack(item));
-
-                        ItemStack compressionResult = stackIntegerPair.getFirst();
-                        int compressedCount = stack.getCount() / stackIntegerPair.getSecond();
-                        int remainder = stack.getCount() % stackIntegerPair.getSecond();
-
-                        setStackInSlot(i, new ItemStack(compressionResult.getItem(), compressedCount));
-                        setStackInSlot(getSlots() - freeSlots, new ItemStack(item, remainder));
-                        freeSlots--;
+                        index = i;
                         break;
                     }
+                }
+                for (int i = index; i < leftoverCount; i++) {
+                    ItemHandlerHelper.giveItemToPlayer(player, addLater.get(i));
+                }
+            } else {
+                for (ItemStack itemStack : addLater) {
+                    ItemHandlerHelper.giveItemToPlayer(player, itemStack);
                 }
             }
         }

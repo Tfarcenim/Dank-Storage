@@ -35,7 +35,7 @@ public class C2SButtonPacket {
                 case LOCK_FREQUENCY -> inventory.toggleFrequencyLock();
                 case SORT -> inventory.sort();
                 case TOGGLE_TAG -> Utils.toggleTagMode(player);
-                case COMPRESS -> inventory.compress(player.getLevel());
+                case COMPRESS -> inventory.compress(player);
             }
         }
         switch (action) {
