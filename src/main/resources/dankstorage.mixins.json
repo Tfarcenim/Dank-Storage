@@ -8,7 +8,7 @@
     "ItemEntityMixin",
     "ItemUsageContextAccessor",
     "PlayerInventoryMixin",
-    "RecipeManagerMixin",
+    "RecipeManagerMixin"
   ],
   "client": [
     "AbstractContainerScreenMixin",

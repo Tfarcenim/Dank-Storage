@@ -371,26 +371,15 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
                 }
             }
         }
-        int leftoverCount = addLater.size();
 
-        if (leftoverCount > 0) {
-            if (firstAir > Utils.INVALID) {
-                int index = 0;
-                for (int i = 0; i < leftoverCount; i++) {
-                    if (i + firstAir < getSlots()) {
-                        setStackInSlot(i + firstAir, addLater.get(i));
-                    } else {
-                        index = i;
-                        break;
-                    }
-                }
-                for (int i = index; i < leftoverCount; i++) {
-                    ItemHandlerHelper.giveItemToPlayer(player, addLater.get(i));
-                }
-            } else {
-                for (ItemStack itemStack : addLater) {
-                    ItemHandlerHelper.giveItemToPlayer(player, itemStack);
-                }
+        for (ItemStack itemStack : addLater) {
+            ItemStack remainder = itemStack.copy();
+            for (int i = 0; i < getSlots();i++) {
+                remainder = insertItem(i,remainder,false);
+                if (remainder.isEmpty()) break;
+            }
+            if (!remainder.isEmpty()) {
+                ItemHandlerHelper.giveItemToPlayer(player,remainder);
             }
         }
         sort();
