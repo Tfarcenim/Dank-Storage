@@ -5,10 +5,13 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -24,6 +27,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import tfar.dankstorage.client.Client;
 import tfar.dankstorage.command.DankCommands;
+import tfar.dankstorage.container.AbstractDankMenu;
+import tfar.dankstorage.container.CustomSync;
 import tfar.dankstorage.datagen.DataGenerators;
 import tfar.dankstorage.event.ForgeClientEvents;
 import tfar.dankstorage.init.*;
@@ -49,6 +54,7 @@ public class DankStorage {
         MinecraftForge.EVENT_BUS.addListener(this::onServerStarted);
         MinecraftForge.EVENT_BUS.addListener(this::onServerStopped);
         MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
+        MinecraftForge.EVENT_BUS.addListener(this::containerEvent);
         bus.addListener(DataGenerators::setupDataGenerator);
         bus.addListener(this::registerObjs);
         bus.addListener(ModItems::registerB);
@@ -115,6 +121,13 @@ public class DankStorage {
 
     public void registerCommands(RegisterCommandsEvent e) {
         DankCommands.register(e.getDispatcher());
+    }
+
+    private void containerEvent(PlayerContainerEvent.Open e) {
+        AbstractContainerMenu abstractContainerMenu = e.getContainer();
+        if (abstractContainerMenu instanceof AbstractDankMenu dankMenu) {
+            dankMenu.setSynchronizer(new CustomSync((ServerPlayer) e.getEntity()));
+        }
     }
 
 
