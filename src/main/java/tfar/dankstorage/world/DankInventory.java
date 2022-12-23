@@ -427,7 +427,6 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
                 setStackInSlot(slotId,stack);
                 slotId++;
             }
-            //setStackInSlot(i, stack);
         }
     }
 

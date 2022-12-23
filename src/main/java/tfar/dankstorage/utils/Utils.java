@@ -321,7 +321,10 @@ public class Utils {
                 .map(Map.Entry::getKey).collect(Collectors.toList());
     }*/
 
-    public static boolean isHoldingDank(Player player) {
+    public static boolean isHoldingDank(@Nullable Player player) {
+
+        if (player == null) return false;
+
         ItemStack stack = player.getMainHandItem();
         if (stack.getItem() instanceof DankItem) return true;
         stack = player.getOffhandItem();

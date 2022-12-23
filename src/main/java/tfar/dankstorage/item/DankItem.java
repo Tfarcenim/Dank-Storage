@@ -2,7 +2,6 @@ package tfar.dankstorage.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -20,7 +19,6 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.client.Client;
@@ -51,63 +49,28 @@ public class DankItem extends Item {
         this.stats = stats;
     }
 
-  /*public static final Rarity GRAY = Rarity.create("dark_gray", Formatting.GRAY);
-  public static final Rarity RED = Rarity.create("red", Formatting.RED);
-  public static final Rarity GOLD = Rarity.create("gold", Formatting.GOLD);
-  public static final Rarity GREEN = Rarity.create("green", Formatting.GREEN);
-  public static final Rarity BLUE = Rarity.create("blue", Formatting.AQUA);
-  public static final Rarity PURPLE = Rarity.create("purple", Formatting.DARK_PURPLE);
-  public static final Rarity WHITE = Rarity.create("white", Formatting.WHITE);
+  public static final Rarity DARK_GRAY = Rarity.create("dark_gray", ChatFormatting.DARK_GRAY);
+  public static final Rarity DARK_RED = Rarity.create("dark_red", ChatFormatting.DARK_RED);
+  public static final Rarity GOLD = Rarity.create("gold", ChatFormatting.GOLD);
+  public static final Rarity GREEN = Rarity.create("green", ChatFormatting.GREEN);
+  public static final Rarity BLUE = Rarity.create("blue", ChatFormatting.AQUA);
+  public static final Rarity DARK_PURPLE = Rarity.create("dark_purple", ChatFormatting.DARK_PURPLE);
+  public static final Rarity WHITE = Rarity.create("white", ChatFormatting.WHITE);
 
   @Nonnull
   @Override
   public Rarity getRarity(ItemStack stack) {
-    switch (tier) {
-      case 1:
-        return GRAY;
-      case 2:
-        return RED;
-      case 3:
-        return GOLD;
-      case 4:
-        return GREEN;
-      case 5:
-        return BLUE;
-      case 6:
-        return PURPLE;
-      case 7:
-        return WHITE;
-    }
-    return super.getRarity(stack);
-  }*/
-
-    @Override
-    public int getUseDuration(ItemStack bag) {
-        if (!Utils.isConstruction(bag)) return 0;
-     //   ItemStack stack = Utils.getItemStackInSelectedSlot(bag);
-        return 0;//stack.getItem().getUseDuration(stack);
-    }
-
-    public static ItemStack getSelected(ItemStack bag) {
-       return ItemStack.EMPTY;
-    }
-
-    @Override
-    public float getDestroySpeed(ItemStack bag, BlockState p_150893_2_) {
-        if (!Utils.isConstruction(bag)) return 1;
-        //ItemStack tool = Utils.getItemStackInSelectedSlot(bag);
-        return 1;//tool.getItem().getDestroySpeed(tool, p_150893_2_);
-    }
-
-    //this is used to damage tools and stuff, we use it here to damage the internal item instead
-    @Override
-    public boolean mineBlock(ItemStack s, Level level, BlockState p_179218_3_, BlockPos p_179218_4_, LivingEntity p_179218_5_) {
-        if (!Utils.isConstruction(s)) return super.mineBlock(s, level, p_179218_3_, p_179218_4_, p_179218_5_);
-
-        ItemStack tool = Utils.getItemStackInSelectedSlot(s, (ServerLevel) level);
-
-        return tool.getItem().mineBlock(tool, level, p_179218_3_, p_179218_4_, p_179218_5_);
-    }
+      return switch (stats) {
+          case one -> DARK_GRAY;
+          case two -> DARK_RED;
+          case three -> GOLD;
+          case four -> GREEN;
+          case five -> BLUE;
+          case six -> DARK_PURPLE;
+          case seven -> WHITE;
+          default -> super.getRarity(stack);
+      };
+  }
 
     @Nonnull
     @Override
@@ -243,58 +206,7 @@ public class DankItem extends Item {
                             "dankstorage.usetype." + useType.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
             tooltip.add(
                     Utils.translatable("text.dankstorage.stacklimit", Utils.literal(stats.stacklimit + "").withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.GRAY));
-
-          /*  DankInventory handler = Utils.getHandler(bag);
-
-            if (handler.isEmpty()) {
-                tooltip.add(
-                        Utils.translatable("text.dankstorage.empty").withStyle(ChatFormatting.ITALIC));
-                return;
-            }
-            int count1 = 0;
-            for (int i = 0; i < handler.getContainerSize(); i++) {
-                if (count1 > 10) break;
-                ItemStack item = handler.getItem(i);
-                if (item.isEmpty()) continue;
-                Component count = Utils.literal(Integer.toString(item.getCount())).withStyle(ChatFormatting.AQUA);
-                //tooltip.add(new TranslationUtils.literal("text.dankstorage.formatcontaineditems", count, item.getDisplayName().(item.getRarity().color)));
-                count1++;
-            }*/
         }
-    }
-
-    @Nonnull
-    @Override
-    public UseAnim getUseAnimation(ItemStack stack) {
-        if (!Utils.isConstruction(stack)) return UseAnim.NONE;
-        //ItemStack internal = Utils.getItemStackInSelectedSlot(stack);
-        return UseAnim.NONE;//internal.getItem().getUseAnimation(stack);
-    }
-
-    //called for stuff like food and potions
-    @Nonnull
-    @Override
-    public ItemStack finishUsingItem(ItemStack stack, Level world, LivingEntity entity) {
-        if (!Utils.isConstruction(stack)) return stack;
-
-     /*   ItemStack internal = Utils.getItemStackInSelectedSlot(stack,world);
-
-        if (internal.getItem().isEdible()) {
-            ItemStack food = entity.eat(world, internal);
-            DankInventory handler = Utils.getHandler(stack,world);
-            handler.setItem(Utils.getSelectedSlot(stack), food);
-            return stack;
-        }
-
-        if (internal.getItem() instanceof PotionItem) {
-            ItemStack potion = internal.finishUsingItem(world, entity);
-            PortableDankInventory handler = Utils.getHandler(stack);
-            handler.setItem(Utils.getSelectedSlot(stack), potion);
-            return stack;
-        }
-
-        return super.finishUsingItem(stack, world, entity);*/
-        return stack;
     }
 
     public int getGlintColor(ItemStack stack) {
