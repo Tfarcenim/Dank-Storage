@@ -13,6 +13,6 @@ public class DankSlot extends SlotItemHandler {
 
     @Override
     public int getMaxStackSize(@NotNull ItemStack stack) {
-        return getMaxStackSize();
+        return ((DankInventory)getItemHandler()).getStackLimit(getSlotIndex(),stack);
     }
 }

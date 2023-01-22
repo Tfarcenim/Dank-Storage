@@ -46,6 +46,8 @@ public class DankStorage {
     public static final Logger LOGGER = LogManager.getLogger(MODID);
 
     public static DankStorage instance;
+    public MinecraftServer server;
+
     public DankStorage() {
         ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.CLIENT, CLIENT_SPEC);
         ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.SERVER, SERVER_SPEC);
@@ -114,9 +116,11 @@ public class DankStorage {
         MinecraftServer server = e.getServer();
         instance.data = server.getLevel(Level.OVERWORLD).getDataStorage()
                 .computeIfAbsent(DankSavedData::loadStatic, DankSavedData::new,DankStorage.MODID);
+        instance.server = server;
     }
     public void onServerStopped(ServerStoppedEvent e) {
         instance.data = null;
+        instance.server = null;
     }
 
     public void registerCommands(RegisterCommandsEvent e) {

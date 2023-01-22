@@ -111,7 +111,6 @@ public abstract class AbstractDankMenu extends AbstractContainerMenu {
 
     @Override
     public void doClick(int slotId, int dragType, ClickType clickType, Player player) {
-        Inventory inventory = player.getInventory();
         if (clickType == ClickType.QUICK_CRAFT) {
             int i = this.quickcraftStatus;
             this.quickcraftStatus = getQuickcraftHeader(dragType);

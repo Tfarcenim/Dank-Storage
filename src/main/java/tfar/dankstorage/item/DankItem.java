@@ -20,6 +20,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.client.Client;
 import tfar.dankstorage.client.DankTooltip;
@@ -304,5 +305,13 @@ public class DankItem extends Item {
             }
         }
         return Optional.empty();
+    }
+
+    @Override
+    public @org.jetbrains.annotations.Nullable ICapabilityProvider initCapabilities(ItemStack stack, @org.jetbrains.annotations.Nullable CompoundTag nbt) {
+        if (Utils.getFrequency(stack)!= Utils.INVALID) {
+            return new DankItemCapability(stack);
+        }
+        return super.initCapabilities(stack, nbt);
     }
 }

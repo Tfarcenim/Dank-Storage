@@ -18,6 +18,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 import tfar.dankstorage.DankStorage;
+import tfar.dankstorage.ModTags;
 import tfar.dankstorage.client.Client;
 import tfar.dankstorage.client.NumberEditBox;
 import tfar.dankstorage.client.button.SmallButton;
@@ -285,8 +286,8 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends AbstractConta
     private static final MutableComponent STORAGE_TXT = Utils.translatable("text.dankstorage.blacklisted_storage").withStyle(ChatFormatting.DARK_RED);
     private static final MutableComponent USAGE_TXT = Utils.translatable("text.dankstorage.blacklisted_usage").withStyle(ChatFormatting.DARK_RED);
     public void appendDankInfo(List<Component> tooltip, ItemStack stack) {
-        if (stack.is(Utils.BLACKLISTED_STORAGE)) tooltip.add(STORAGE_TXT);
-        if (stack.is(Utils.BLACKLISTED_USAGE)) tooltip.add(USAGE_TXT);
+        if (stack.is(ModTags.BLACKLISTED_STORAGE)) tooltip.add(STORAGE_TXT);
+        if (stack.is(ModTags.BLACKLISTED_USAGE)) tooltip.add(USAGE_TXT);
         if (hoveredSlot instanceof DankSlot) {
             Component component1 = Utils.translatable("text.dankstorage.lock",
                     Client.LOCK_SLOT.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY);

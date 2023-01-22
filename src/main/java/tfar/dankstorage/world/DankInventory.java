@@ -16,6 +16,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import tfar.dankstorage.DankStorage;
+import tfar.dankstorage.ModTags;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.ItemStackWrapper;
 import tfar.dankstorage.utils.Utils;
@@ -107,8 +108,8 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
     }
 
     @Override
-    protected int getStackLimit(int slot, @NotNull ItemStack stack) {
-        return getSlotLimit(slot);
+    public int getStackLimit(int slot, @NotNull ItemStack stack) {
+        return stack.is(ModTags.UNSTACKABLE) ? 1 : getSlotLimit(slot);
     }
 
     public NonNullList<ItemStack> getContents() {
@@ -118,7 +119,7 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
     public boolean noValidSlots() {
         return IntStream.range(0, getSlots())
                 .mapToObj(this::getStackInSlot)
-                .allMatch(stack -> stack.isEmpty() || stack.is(Utils.BLACKLISTED_USAGE));
+                .allMatch(stack -> stack.isEmpty() || stack.is(ModTags.BLACKLISTED_USAGE));
     }
 
     public boolean hasGhostItem(int slot) {
@@ -147,7 +148,7 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
     @Override
     public boolean isItemValid(int slot,ItemStack stack) {
         boolean checkGhostItem = !hasGhostItem(slot) || getGhostItem(slot).getItem() == stack.getItem();
-        return !stack.is(Utils.BLACKLISTED_STORAGE)
+        return !stack.is(ModTags.BLACKLISTED_STORAGE)
                 && checkGhostItem
                 && super.isItemValid(slot, stack);
     }

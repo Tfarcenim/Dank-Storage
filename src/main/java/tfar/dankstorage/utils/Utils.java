@@ -36,13 +36,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static tfar.dankstorage.ModTags.BLACKLISTED_USAGE;
+
 public class Utils {
-
-    public static final TagKey<Item> BLACKLISTED_STORAGE = bind(new ResourceLocation(DankStorage.MODID, "blacklisted_storage"));
-    public static final TagKey<Item> BLACKLISTED_USAGE = bind(new ResourceLocation(DankStorage.MODID, "blacklisted_usage"));
-
-    public static final TagKey<Item> WRENCHES = bind(new ResourceLocation("forge", "wrenches"));
-
     private static TagKey<Item> bind(ResourceLocation string) {
         return TagKey.create(Registry.ITEM_REGISTRY, string);
     }
