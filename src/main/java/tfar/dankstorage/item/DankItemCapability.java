@@ -1,6 +1,7 @@
 package tfar.dankstorage.item;
 
 import net.minecraft.core.Direction;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
@@ -10,6 +11,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tfar.dankstorage.DankStorage;
+import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventory;
 
@@ -27,6 +29,14 @@ public class DankItemCapability implements ICapabilityProvider {
     }
 
     protected DankInventory lookup() {
-        return Utils.getInventory(container, DankStorage.instance.server.getLevel(Level.OVERWORLD));
+        MinecraftServer server = DankStorage.instance.server;
+        //this can be called clientside, functional storage does so for some reason
+        //this should be replaced with a proper inventory at some point
+        if (server != null) {
+            return Utils.getInventory(container, server.getLevel(Level.OVERWORLD));
+        }
+        else {
+            return new DankInventory(DankStats.zero, -1);
+        }
     }
 }
