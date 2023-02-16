@@ -12,6 +12,7 @@
   ],
   "client": [
     "AbstractContainerScreenMixin",
+    "ClientPacketListenerMixin",
     "ItemRendererAccessor",
     "MinecraftClientAccessor"
   ],

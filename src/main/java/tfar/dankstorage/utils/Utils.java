@@ -229,6 +229,7 @@ public class Utils {
         if (selectedSlot != INVALID) {
             setSelectedSlot(bag, selectedSlot);
             DankPacketHandler.sendSelectedItem(player,selected);
+            player.displayClientMessage(selected.getHoverName(),true);
         }
     }
 
