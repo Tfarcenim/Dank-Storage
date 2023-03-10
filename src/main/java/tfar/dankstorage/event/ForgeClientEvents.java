@@ -4,13 +4,17 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import tfar.dankstorage.item.DankItem;
+import tfar.dankstorage.network.server.C2SMessagePickBlock;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.ClientData;
 
@@ -76,8 +80,16 @@ public class ForgeClientEvents {
         if (e.isPickBlock()) {
 
             if (Utils.isHoldingDank(mc.player) && mc.hitResult != null && mc.hitResult.getType() != HitResult.Type.MISS) {
-                //C2SMessagePickBlock.send(mc.picked);
-                e.setCanceled(true);
+
+                HitResult result = mc.player.pick(mc.gameMode.getPickRange(),0,false);
+
+                if (result instanceof BlockHitResult blockHitResult) {
+                    BlockPos pos = blockHitResult.getBlockPos();
+                    BlockState state = mc.player.level.getBlockState(pos);
+
+                    C2SMessagePickBlock.send(state.getCloneItemStack(blockHitResult,mc.player.level,pos, mc.player));
+                    e.setCanceled(true);
+                }
             }
         }
     }

@@ -22,6 +22,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.client.Client;
 import tfar.dankstorage.client.DankTooltip;
@@ -373,6 +374,12 @@ public class DankItem extends Item {
             dankSavedData.getOrCreateInventory(next,stats);
             Utils.getOrCreateSettings(dank).putInt(Utils.ID,next);
         }
+    }
+
+    @Nullable
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
+        return new DankItemCapability(stack);
     }
 
     private static final ThreadLocal<Integer> cache = ThreadLocal.withInitial(() -> Utils.INVALID);
