@@ -51,6 +51,7 @@ public class Utils {
     public static final String SET = "settings";
     public static final String SELECTED = "selectedSlot";
     public static final String CON = "construction";
+    public static final String MODE = "mode";
 
     @Nullable
     public static CompoundTag getSettings(ItemStack bag) {
@@ -69,14 +70,14 @@ public class Utils {
     public static PickupMode getPickupMode(ItemStack bag) {
         CompoundTag tag = getSettings(bag);
         if (tag != null) {
-            return PickupMode.PICKUP_MODES[tag.getInt("mode")];
+            return PickupMode.PICKUP_MODES[tag.getInt(MODE)];
         }
         return PickupMode.none;
     }
 
     public static void setPickupMode(ItemStack bag, PickupMode mode) {
         CompoundTag tag = getOrCreateSettings(bag);
-        tag.putInt("mode",mode.ordinal());
+        tag.putInt(MODE,mode.ordinal());
     }
 
     public static boolean isConstruction(ItemStack bag) {
@@ -106,10 +107,10 @@ public class Utils {
 
     //0,1,2,3
     public static void cyclePickupMode(ItemStack bag, Player player) {
-        int ordinal = getOrCreateSettings(bag).getInt("mode");
+        int ordinal = getOrCreateSettings(bag).getInt(MODE);
         ordinal++;
         if (ordinal > PickupMode.PICKUP_MODES.length - 1) ordinal = 0;
-        getOrCreateSettings(bag).putInt("mode", ordinal);
+        getOrCreateSettings(bag).putInt(MODE, ordinal);
         player.displayClientMessage(
                 translatable("dankstorage.mode." + PickupMode.PICKUP_MODES[ordinal].name()), true);
     }

@@ -31,12 +31,12 @@ public class DockMenu extends AbstractDankMenu {
         return new DataSlot() {
             @Override
             public int get() {
-                return dock.settings.getInt("mode");
+                return dock.settings.getInt(Utils.MODE);
             }
 
             @Override
             public void set(int pValue) {
-                dock.settings.putInt("mode",pValue);
+                dock.settings.putInt(Utils.MODE,pValue);
             }
         };
     }
