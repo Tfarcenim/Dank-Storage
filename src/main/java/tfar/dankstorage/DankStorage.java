@@ -2,6 +2,7 @@ package tfar.dankstorage;
 
 import com.google.common.collect.Lists;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -71,31 +72,31 @@ public class DankStorage {
 
     public void registerObjs(RegisterEvent event) {
 
-        DankStorage.register(event,Registry.BLOCK_REGISTRY, "dock", ModBlocks.dock);
+        DankStorage.register(event, Registries.BLOCK, "dock", ModBlocks.dock);
 
-        DankStorage.register(event, Registry.BLOCK_ENTITY_TYPE_REGISTRY, "dank_tile", ModBlockEntityTypes.dank_tile);
-        DankStorage.register(event, Registry.RECIPE_SERIALIZER_REGISTRY,"upgrade", ModRecipeSerializers.upgrade);
+        DankStorage.register(event, Registries.BLOCK_ENTITY_TYPE, "dank_tile", ModBlockEntityTypes.dank_tile);
+        DankStorage.register(event, Registries.RECIPE_SERIALIZER,"upgrade", ModRecipeSerializers.upgrade);
 
-        register(event, Registry.MENU_REGISTRY, "dank_1", ModMenuTypes.dank_1_container);
-        register(event,Registry.MENU_REGISTRY, "portable_dank_1", ModMenuTypes.portable_dank_1_container);
+        register(event, Registries.MENU, "dank_1", ModMenuTypes.dank_1_container);
+        register(event,Registries.MENU, "portable_dank_1", ModMenuTypes.portable_dank_1_container);
 
-        register(event,Registry.MENU_REGISTRY, "dank_2", ModMenuTypes.dank_2_container);
-        register(event,Registry.MENU_REGISTRY,"portable_dank_2", ModMenuTypes.portable_dank_2_container);
+        register(event,Registries.MENU, "dank_2", ModMenuTypes.dank_2_container);
+        register(event,Registries.MENU,"portable_dank_2", ModMenuTypes.portable_dank_2_container);
 
-        register(event,Registry.MENU_REGISTRY, "dank_3", ModMenuTypes.dank_3_container);
-        register(event,Registry.MENU_REGISTRY, "portable_dank_3", ModMenuTypes.portable_dank_3_container);
+        register(event,Registries.MENU, "dank_3", ModMenuTypes.dank_3_container);
+        register(event,Registries.MENU, "portable_dank_3", ModMenuTypes.portable_dank_3_container);
 
-        register(event,Registry.MENU_REGISTRY, "dank_4", ModMenuTypes.dank_4_container);
-        register(event,Registry.MENU_REGISTRY, "portable_dank_4", ModMenuTypes.portable_dank_4_container);
+        register(event,Registries.MENU, "dank_4", ModMenuTypes.dank_4_container);
+        register(event,Registries.MENU, "portable_dank_4", ModMenuTypes.portable_dank_4_container);
 
-        register(event,Registry.MENU_REGISTRY, "dank_5", ModMenuTypes.dank_5_container);
-        register(event,Registry.MENU_REGISTRY, "portable_dank_5", ModMenuTypes.portable_dank_5_container);
+        register(event,Registries.MENU, "dank_5", ModMenuTypes.dank_5_container);
+        register(event,Registries.MENU, "portable_dank_5", ModMenuTypes.portable_dank_5_container);
 
-        register(event,Registry.MENU_REGISTRY, "dank_6", ModMenuTypes.dank_6_container);
-        register(event,Registry.MENU_REGISTRY, "portable_dank_6", ModMenuTypes.portable_dank_6_container);
+        register(event,Registries.MENU, "dank_6", ModMenuTypes.dank_6_container);
+        register(event,Registries.MENU, "portable_dank_6", ModMenuTypes.portable_dank_6_container);
 
-        register(event,Registry.MENU_REGISTRY, "dank_7", ModMenuTypes.dank_7_container);
-        register(event,Registry.MENU_REGISTRY, "portable_dank_7", portable_dank_7_container);
+        register(event,Registries.MENU, "dank_7", ModMenuTypes.dank_7_container);
+        register(event,Registries.MENU, "portable_dank_7", portable_dank_7_container);
     }
 
     public static <T>void register(RegisterEvent event, ResourceKey<? extends Registry<T>> registry, String name, T type) {

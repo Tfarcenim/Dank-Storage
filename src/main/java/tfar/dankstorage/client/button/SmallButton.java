@@ -7,12 +7,14 @@ import net.minecraft.network.chat.Component;
 import tfar.dankstorage.client.Client;
 
 public class SmallButton extends Button {
-    public SmallButton(int x, int y, int widthIn, int heightIn, Component buttonText, OnPress callback, OnTooltip onTooltip) {
-        super(x, y, widthIn, heightIn, buttonText, callback,onTooltip);
+
+
+    public SmallButton(int pX, int pY, int pWidth, int pHeight, Component pMessage, OnPress pOnPress) {
+        super(pX, pY, pWidth, pHeight, pMessage, pOnPress, Button.DEFAULT_NARRATION);
     }
 
-    public SmallButton(int x, int y, int widthIn, int heightIn, Component buttonText, OnPress callback) {
-        super(x, y, widthIn, heightIn, buttonText, callback);
+    protected SmallButton(Builder builder) {
+        super(builder);
     }
 
     public boolean shouldDrawText() {
@@ -37,24 +39,24 @@ public class SmallButton extends Button {
         int halfwidth2 = this.width - halfwidth1;
         int halfheight1 = this.height / 2;
         int halfheight2 = this.height - halfheight1;
-        blit(matrices, x, y, 0,
+        blit(matrices, getX(), getY(), 0,
                 46 + c * 20, halfwidth1, halfheight1);
-        blit(matrices, x + halfwidth1, y, 200 - halfwidth2,
+        blit(matrices, getX() + halfwidth1, getY(), 200 - halfwidth2,
                 46 + c * 20, halfwidth2, halfheight1);
 
-        blit(matrices, x, y + halfheight1,
+        blit(matrices, getX(), getY() + halfheight1,
                 0, 46 + c * 20 + 20 - halfheight2, halfwidth1, halfheight2);
-        blit(matrices, x + halfwidth1, y + halfheight1,
+        blit(matrices, getX() + halfwidth1, getY() + halfheight1,
                 200 - halfwidth2, 46 + c * 20 + 20 - halfheight2, halfwidth2, halfheight2);
         if (shouldDrawText()) drawTextOnButton(matrices, halfwidth2);
 
         if (this.isHoveredOrFocused()) {
-            this.renderToolTip(matrices,mouseX,mouseY);
+         //   this.renderToolTip(matrices,mouseX,mouseY);
         }
     }
 
     public void drawTextOnButton(PoseStack stack, int halfwidth2) {
         int textColor = getFGColor();
-        drawCenteredString(stack, Client.mc.font, getMessage(), x + halfwidth2, y + (this.height - 8) / 2, textColor);
+        drawCenteredString(stack, Client.mc.font, getMessage(), getX() + halfwidth2, getY() + (this.height - 8) / 2, textColor);
     }
 }

@@ -4,6 +4,8 @@ import com.mojang.datafixers.util.Pair;
 import io.netty.buffer.Unpooled;
 import net.minecraft.Util;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -40,7 +42,7 @@ import static tfar.dankstorage.ModTags.BLACKLISTED_USAGE;
 
 public class Utils {
     private static TagKey<Item> bind(ResourceLocation string) {
-        return TagKey.create(Registry.ITEM_REGISTRY, string);
+        return TagKey.create(Registries.ITEM, string);
     }
 
     public static final String ID = "dankstorage:id";
@@ -276,7 +278,7 @@ public class Utils {
     }
 
     public static DankItem getItemFromTier(int tier) {
-        return (DankItem) Registry.ITEM.get(new ResourceLocation(DankStorage.MODID, "dank_" + tier));
+        return (DankItem) BuiltInRegistries.ITEM.get(new ResourceLocation(DankStorage.MODID, "dank_" + tier));
     }
 
     public static int getNbtSize(@Nullable CompoundTag nbt) {

@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 public class UpgradeRecipe extends ShapedRecipe {
 
     public UpgradeRecipe(ShapedRecipe recipe) {
-        super(recipe.getId(), "dank", recipe.getWidth(), recipe.getHeight(), recipe.getIngredients(), recipe.getResultItem());
+        super(recipe.getId(), "dank",recipe.category(), recipe.getWidth(), recipe.getHeight(), recipe.getIngredients(), recipe.getResultItem());
     }
 
     @Nonnull
