@@ -31,8 +31,8 @@ public class C2SMessagePickBlock implements C2SPacketHelper {
 
     public void handleServer(ServerPlayer player) {
         if (player.getMainHandItem().getItem() instanceof DankItem)
-            Utils.setPickSlot(player.level,player.getMainHandItem(), stack);
+            Utils.setPickSlot(player.level(),player.getMainHandItem(), stack);
         else if (player.getOffhandItem().getItem() instanceof DankItem)
-            Utils.setPickSlot(player.level,player.getOffhandItem(), stack);
+            Utils.setPickSlot(player.level(),player.getOffhandItem(), stack);
     }
 }

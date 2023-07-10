@@ -18,6 +18,7 @@ import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
@@ -25,7 +26,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.items.ItemHandlerHelper;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.item.DankItem;
-import tfar.dankstorage.mixin.CraftingContainerAccess;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.world.ClientData;
 import tfar.dankstorage.world.DankInventory;
@@ -203,7 +203,7 @@ public class Utils {
     }
 
     public static void changeSelectedSlot(ItemStack bag, boolean right, ServerPlayer player) {
-        DankInventory handler = getInventory(bag,player.getLevel());
+        DankInventory handler = getInventory(bag,player.serverLevel());
         //don't change slot if empty
         if (handler == null || handler.noValidSlots()) return;
         int selectedSlot = getSelectedSlot(bag);
@@ -338,7 +338,7 @@ public class Utils {
         } else if (first.getCount() > inventory.getMaxStackSize()) {
             return false;
         } else {
-            return ItemStack.tagMatches(first, second);
+            return false;//ItemStack.tagMatches(first, second);
         }
     }
 
@@ -443,15 +443,15 @@ public class Utils {
 
 
     @SuppressWarnings("ConstantConditions")
-    private static final CraftingContainer DUMMY = new CraftingContainer(null,1,1) {
+    private static final CraftingContainer DUMMY = new TransientCraftingContainer(null,1,1) {
         @Override
         public void setItem(int i, ItemStack itemStack) {
-            ((CraftingContainerAccess)this).getItems().set(i, itemStack);
+            getItems().set(i, itemStack);
         }
 
         @Override
         public ItemStack removeItem(int i, int j) {
-            return ContainerHelper.removeItem(((CraftingContainerAccess)this).getItems(), i, j);
+            return ContainerHelper.removeItem(getItems(), i, j);
         }
     };
 

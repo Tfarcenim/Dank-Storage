@@ -1,6 +1,6 @@
 package tfar.dankstorage.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +15,7 @@ import static tfar.dankstorage.client.Client.mc;
 
 public class DankHudOverlay implements IGuiOverlay {
     @Override
-    public void render(ForgeGui gui, PoseStack poseStack, float partialTick, int screenWidth, int screenHeight) {
+    public void render(ForgeGui gui, GuiGraphics guiGraphics, float partialTick, int screenWidth, int screenHeight) {
         Player player = mc.player;
         if (player == null)
             return;
@@ -34,17 +34,17 @@ public class DankHudOverlay implements IGuiOverlay {
         if (!toPlace.isEmpty() && DankStorage.ClientConfig.preview.get()) {
             Integer color = toPlace.getItem().getRarity(toPlace).color.getColor();
             int c = color != null ? color : 0xFFFFFF;
-            renderHotbarItem(poseStack, xStart, yStart, player, toPlace);
+            renderHotbarItem(guiGraphics, xStart, yStart, player, toPlace);
         }
         String mode = Utils.getUseType(bag).name();
 
         final int stringX = xStart + 8 - mc.font.width(mode) / 2;
         final int stringY = yStart + 16;
-        mc.font.drawShadow(poseStack, mode, stringX, stringY, 0xffffff);
+        guiGraphics.drawString(mc.font,mode, stringX, stringY, 0xffffff);
     }
 
-    private static void renderHotbarItem(PoseStack poses, int x, int y, Player player, ItemStack stack) {
-        mc.getItemRenderer().renderAndDecorateItem(poses,player, stack, x, y,0);
-        mc.getItemRenderer().renderGuiItemDecorations(poses,mc.font, stack, x, y);
+    private static void renderHotbarItem(GuiGraphics poses, int x, int y, Player player, ItemStack stack) {
+        poses.renderFakeItem(stack, x, y);
+        poses.renderItemDecorations(mc.font, stack, x, y);
     }
 }

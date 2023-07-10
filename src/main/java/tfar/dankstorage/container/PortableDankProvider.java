@@ -30,7 +30,7 @@ public class PortableDankProvider implements MenuProvider {
     @Override
     public AbstractContainerMenu createMenu(int i, Inventory playerInventory, Player player) {
 
-        DankInventory dankInventory = Utils.getInventory(stack,player.level);
+        DankInventory dankInventory = Utils.getInventory(stack,player.level());
         DankStats type = Utils.getStats(stack);
 
         if (dankInventory == null) {

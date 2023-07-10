@@ -353,7 +353,7 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
 
     public void compress(ServerPlayer player) {
         sort();
-        ServerLevel level = player.getLevel();
+        ServerLevel level = player.serverLevel();
         List<ItemStack> addLater = new ArrayList<>();
         for (int i = 0; i < getSlots() ; i++) {
             ItemStack stack = getStackInSlot(i);
@@ -361,7 +361,7 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
                 break;
             }
             if (Utils.canCompress(level,stack)) {
-                Pair<ItemStack,Integer> result = Utils.compress(stack,player.getLevel().registryAccess());
+                Pair<ItemStack,Integer> result = Utils.compress(stack,player.serverLevel().registryAccess());
                 ItemStack resultStack = result.getFirst();
                 if (!resultStack.isEmpty()) {
                     int division = result.getSecond();

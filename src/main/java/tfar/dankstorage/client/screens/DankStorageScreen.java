@@ -1,14 +1,12 @@
 package tfar.dankstorage.client.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -240,44 +238,42 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends AbstractConta
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    public void renderSlot(PoseStack pPoseStack, Slot pSlot) {
+    public void renderSlot(GuiGraphics pPoseStack, Slot pSlot) {
         super.renderSlot(pPoseStack, pSlot);
         int i = pSlot.x;
         int j = pSlot.y;
         if (!pSlot.hasItem() && pSlot.index < menu.dankInventory.getSlots()  && menu.dankInventory.hasGhostItem(pSlot.index)) {
-            itemRenderer.renderAndDecorateFakeItem(pPoseStack,menu.dankInventory.getGhostItem(pSlot.index), i, j);
+            //itemRenderer.renderAndDecorateFakeItem(pPoseStack,menu.dankInventory.getGhostItem(pSlot.index), i, j);
             RenderSystem.depthFunc(516);
-            GuiComponent.fill(pPoseStack, i, j, i + 16, j + 16, 0x40ffffff);
+            pPoseStack.fill(i, j, i + 16, j + 16, 0x40ffffff);
             RenderSystem.depthFunc(515);
         }
     }
 
     @Override
-    protected void renderBg(PoseStack stack, float partialTicks, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, background);
+    protected void renderBg(GuiGraphics stack, float partialTicks, int mouseX, int mouseY) {
         if (is7)
-            blit(stack, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 512);
+            stack.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 512);
         else
-            blit(stack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+            stack.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight);
         renderLockedSlots(stack);
     }
 
-    protected void renderLockedSlots(PoseStack stack) {
+    protected void renderLockedSlots(GuiGraphics stack) {
         for (int i = 0; i < menu.rows * 9; i++) {
             int j = i % 9;
             int k = i / 9;
             int offsetx = 8;
             int offsety = 18;
             if (this.menu.dankInventory.hasGhostItem(i)) {
-                fill(stack, leftPos + j * 18 + offsetx, topPos + k * 18 + offsety,
+                stack.fill(leftPos + j * 18 + offsetx, topPos + k * 18 + offsety,
                         leftPos + j * 18 + offsetx + 16, topPos + k * 18 + offsety + 16, 0xFFFF0000);
             }
         }
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         super.render(stack, mouseX, mouseY, partialTicks);
         int color = menu.dankInventory.getTextColor();
@@ -287,8 +283,8 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends AbstractConta
     }
 
     @Override
-    public List<Component> getTooltipFromItem(ItemStack itemStack) {
-        List<Component> tooltipFromItem = super.getTooltipFromItem(itemStack);
+    public List<Component> getTooltipFromContainerItem(ItemStack itemStack) {
+        List<Component> tooltipFromItem = super.getTooltipFromContainerItem(itemStack);
         appendDankInfo(tooltipFromItem, itemStack);
         return tooltipFromItem;
     }
@@ -311,11 +307,11 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends AbstractConta
     }
 
     @Override
-    protected void renderLabels(PoseStack poseStack, int i, int j) {
+    protected void renderLabels(GuiGraphics poseStack, int i, int j) {
         RenderSystem.disableBlend();
         super.renderLabels(poseStack, i, j);
         int id = menu.dankInventory.getFrequency();//menu.dankInventory.get(menu.rows * 9);
         int color = 0x008000;
-        this.font.draw(poseStack, "ID: " + id, 62, inventoryLabelY, color);
+        poseStack.drawString( font,"ID: " + id, 62, inventoryLabelY, color);
     }
 }

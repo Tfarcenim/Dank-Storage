@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
@@ -125,7 +126,7 @@ public class Client {
     private static final DecimalFormat decimalFormat = new DecimalFormat("0.#");
 
 
-    public static void drawSmallItemNumbers(PoseStack matrices, int x, int y, ItemStack stack) {
+    public static void drawSmallItemNumbers(GuiGraphics matrices, int x, int y, ItemStack stack) {
 
         PoseStack viewModelPose = RenderSystem.getModelViewStack();
         viewModelPose.pushPose();
@@ -135,7 +136,7 @@ public class Client {
         viewModelPose.translate(-x, -y, 0);
         RenderSystem.applyModelViewMatrix();
         String amount = (stack.getCount() > 1) ? getStringFromInt(stack.getCount()) : null;
-        Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(matrices,Minecraft.getInstance().font, stack, x, y, amount);
+        matrices.renderItemDecorations(Minecraft.getInstance().font, stack, x, y, amount);
         viewModelPose.popPose();
         RenderSystem.applyModelViewMatrix();
 

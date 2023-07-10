@@ -7,7 +7,7 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath 'org.spongepowered:mixingradle:0.7.+'
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
         classpath 'org.parchmentmc:librarian:1.+'
     }
 }
@@ -19,8 +19,8 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 version = "$mc_version-$mod_version"
-group = "com.tfar.${modid}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "${modid}"
+group = "com.tfar.$modid" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "$modid"
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -30,7 +30,7 @@ minecraft {
     // stable_#            Stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'parchment', version: "1.19.3-"+parch_mapping+"-"+mc_version
+    mappings channel: 'parchment', version: parch_mapping+"-"+mc_version
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -41,6 +41,7 @@ minecraft {
         client {
             workingDirectory project.file('run')
             arg "-mixin.config="+archivesBaseName+".mixins.json"
+            property 'mixin.env.refMapRemappingFile', "$project.projectDir/build/createSrgToMcp/output.srg"
 
 
             // Recommended logging level for the console
@@ -61,6 +62,7 @@ minecraft {
         server {
             workingDirectory project.file('run')
             arg "-mixin.config="+archivesBaseName+".mixins.json"
+            property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
 
 
             // Recommended logging level for the console
@@ -113,7 +115,7 @@ dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}" //21
+    minecraft "net.minecraftforge:forge:$mc_version-$forge_version" //21
 //    compileOnly fg.deobf("com.refinedmods:refinedstorage:1.9.6+80")
 //    runtimeOnly fg.deobf("com.refinedmods:refinedstorage:1.9.6+80")
     // You may put jars on which you depend on in ./libs or you may define them like so..
@@ -134,7 +136,6 @@ dependencies {
 //    implementation fg.deobf ("slimeknights.tconstruct:TConstruct:${mc_version}-${tcon_version}")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-
 
     // Real examples
     // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env

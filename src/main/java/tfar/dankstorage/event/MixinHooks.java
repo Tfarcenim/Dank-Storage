@@ -24,7 +24,7 @@ public class MixinHooks {
      */
     public static boolean interceptItem(Inventory inv, ItemStack incoming) {
         Player player = inv.player;
-        if (player.level.isClientSide || incoming.isEmpty()) {//thanks Hookshot
+        if (player.level().isClientSide || incoming.isEmpty()) {//thanks Hookshot
             return false;
         }
         for (int i = 0; i < inv.getContainerSize(); i++) {
@@ -40,7 +40,7 @@ public class MixinHooks {
 
         PickupMode pickupMode = Utils.getPickupMode(dank);
         if (pickupMode == PickupMode.none) return false;
-        DankInventory inv = Utils.getInventory(dank,player.level);
+        DankInventory inv = Utils.getInventory(dank,player.level());
 
         if (inv == null) {
             DankStorage.LOGGER.warn("That's odd, the player somehow got an unassigned dank to change pickup mode");
@@ -89,7 +89,7 @@ public class MixinHooks {
         //leftovers
         if (pickup.getCount() != count) {
             dank.setPopTime(5);
-            player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, ((player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F);
+            player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, ((player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F);
         }
         return pickup.isEmpty();
     }
@@ -173,8 +173,8 @@ public class MixinHooks {
     }
 
     public static boolean areItemStacksCompatible(ItemStack stackA, ItemStack stackB, boolean oredict) {
-        return oredict ? ItemStack.tagMatches(stackA, stackB) && ItemStack.isSame(stackA, stackB) /*|| Utils.areItemStacksConvertible(stackA, stackB) */:
-                ItemStack.tagMatches(stackA, stackB) && ItemStack.isSame(stackA, stackB);
+        return oredict ? ItemStack.isSameItemSameTags(stackA, stackB) && ItemStack.isSameItem(stackA, stackB) /*|| Utils.areItemStacksConvertible(stackA, stackB) */:
+                ItemStack.isSameItemSameTags(stackA, stackB) && ItemStack.isSameItem(stackA, stackB);
     }
 
     public static boolean doesItemStackExist(ItemStack stack, List<ItemStack> filter, boolean oredict) {

@@ -28,13 +28,13 @@ public class ForgeClientEvents {
 
             if (Utils.isHoldingDank(mc.player) && mc.hitResult != null && mc.hitResult.getType() != HitResult.Type.MISS) {
 
-                HitResult result = mc.player.pick(mc.player.getReachDistance(),0,false);
+                HitResult result = mc.player.pick(mc.player.getBlockReach(),0,false);
 
                 if (result instanceof BlockHitResult blockHitResult) {
                     BlockPos pos = blockHitResult.getBlockPos();
-                    BlockState state = mc.player.level.getBlockState(pos);
+                    BlockState state = mc.player.level().getBlockState(pos);
 
-                    C2SMessagePickBlock.send(state.getCloneItemStack(blockHitResult,mc.player.level,pos, mc.player));
+                    C2SMessagePickBlock.send(state.getCloneItemStack(blockHitResult,mc.player.level(),pos, mc.player));
                     e.setCanceled(true);
                 }
             }

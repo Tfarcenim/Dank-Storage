@@ -16,7 +16,6 @@ public class TripleToggleButton<T extends AbstractDankMenu> extends SmallButton 
         //setFGColor(screen.getMenu().getMode().getColor());
     }
 
-    @Override
     public void tint() {
         PickupMode mode = screen.getMenu().getMode();
         RenderSystem.setShaderColor(mode.r(), mode.g(), mode.b(), 1);
