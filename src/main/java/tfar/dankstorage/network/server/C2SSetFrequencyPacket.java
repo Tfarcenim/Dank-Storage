@@ -44,7 +44,7 @@ public class C2SSetFrequencyPacket implements C2SPacketHelper {
 
             if (frequency > Utils.INVALID) {
                 if (frequency < DankStorage.instance.maxId.getMaxId()) {
-                    DankInventory targetInventory = DankStorage.instance.getData(frequency).createInventory(frequency);
+                    DankInventory targetInventory = DankStorage.instance.getData(frequency,player.server).createInventory(frequency);
 
                     if (targetInventory.valid() && targetInventory.dankStats == inventory.dankStats) {
 

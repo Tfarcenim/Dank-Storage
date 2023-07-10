@@ -269,9 +269,9 @@ public class Utils {
                         .resolve("data/"+MODID+"/"+id+".dat");
 
                 if (path.toFile().isFile()) {
-                    return DankStorage.instance.getData(id).createInventory(id);
+                    return DankStorage.instance.getData(id,level.getServer()).createInventory(id);
                 } else {
-                    return DankStorage.instance.getData(id).createFreshInventory(getDefaultStats(bag),id);
+                    return DankStorage.instance.getData(id,level.getServer()).createFreshInventory(getDefaultStats(bag),id);
                 }
             } else {
                 return null;

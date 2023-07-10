@@ -38,7 +38,7 @@ public class PortableDankProvider implements MenuProvider {
                 int next = DankStorage.instance.maxId.getMaxId();
                 DankStorage.instance.maxId.increment();
                 Utils.getSettings(stack).putInt(Utils.FREQ,next);
-                DankSavedData dankSavedData = DankStorage.instance.getData(next);
+                DankSavedData dankSavedData = DankStorage.instance.getData(next,player.level().getServer());
                 dankSavedData.setStats(defaults,next);
                 dankInventory = dankSavedData.createFreshInventory(defaults,next);
         }

@@ -5,6 +5,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -33,6 +34,8 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
     protected int frequency;
     private boolean locked = true;
     protected int textColor = -1;
+
+    public MinecraftServer server;
 
     public DankInventory(DankStats stats, int frequency) {
         super(stats.slots);
@@ -301,8 +304,8 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
     @Override
     public void onContentsChanged(int slot) {
         super.onContentsChanged(slot);
-        if (DankStorage.instance.server != null) {
-            DankStorage.instance.getData(frequency).write(save());
+        if (server != null) {
+            DankStorage.instance.getData(frequency,server).write(save());
         }
     }
 

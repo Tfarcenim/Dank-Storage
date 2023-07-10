@@ -6,6 +6,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
@@ -36,6 +37,7 @@ import tfar.dankstorage.event.ForgeClientEvents;
 import tfar.dankstorage.init.*;
 import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankSavedData;
 import tfar.dankstorage.world.MaxId;
 
@@ -51,7 +53,6 @@ public class DankStorage {
     public static final Logger LOGGER = LogManager.getLogger(MODID);
 
     public static DankStorage instance;
-    public MinecraftServer server;
     public MaxId maxId;
 
     public DankStorage() {
@@ -123,19 +124,14 @@ public class DankStorage {
                 .resolve("data/"+MODID).toFile();
         file.mkdirs();
 
-        instance.server = server;
         instance.maxId = getMaxId(server);
     }
 
-    public DankSavedData getData(int id) {
-        if (server != null) {
-            return getData(id,server);
-        }
-        throw new RuntimeException("Tried to get data on the client?");
-    }
     public DankSavedData getData(int id,MinecraftServer server) {
-        return server.getLevel(Level.OVERWORLD).getDataStorage()
-                .computeIfAbsent(DankSavedData::loadStatic,DankSavedData::new,
+        if (id == Utils.INVALID) throw new RuntimeException("Invalid frequency");
+        ServerLevel overworld = server.getLevel(Level.OVERWORLD);
+        return overworld.getDataStorage()
+                .computeIfAbsent(compoundTag -> DankSavedData.loadStatic(compoundTag,overworld), () -> new DankSavedData(overworld),
                         MODID+"/"+id);
     }
 
@@ -146,7 +142,6 @@ public class DankStorage {
     }
 
     public void onServerStopped(ServerStoppedEvent e) {
-        instance.server = null;
         instance.maxId = null;
     }
 

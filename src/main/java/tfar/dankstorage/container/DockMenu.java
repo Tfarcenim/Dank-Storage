@@ -70,7 +70,7 @@ public class DockMenu extends AbstractDankMenu {
     }
 
     static DankInventory createDummy(DankStats stats) {
-        return new DankInventory(stats, -1);
+        return new DankInventory(stats, Utils.INVALID);
     }
 
     //server

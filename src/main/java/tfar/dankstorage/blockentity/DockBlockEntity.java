@@ -57,7 +57,7 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
     public DankInventory getInventory() {
         if (settings != null && settings.contains(Utils.FREQ)) {
             int frequency = settings.getInt(Utils.FREQ);
-            DankSavedData savedData = DankStorage.instance.getData(frequency);
+            DankSavedData savedData = DankStorage.instance.getData(frequency,level.getServer());
             DankInventory dankInventory = savedData.createInventory(frequency);
 
             if (!dankInventory.valid()) {
