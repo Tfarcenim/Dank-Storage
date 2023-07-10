@@ -6,6 +6,7 @@
   "mixins": [
     "ItemEntityMixin",
     "ItemUsageContextAccessor",
+    "MinecraftServerAccess",
     "PlayerInventoryMixin",
     "RecipeManagerMixin"
   ],

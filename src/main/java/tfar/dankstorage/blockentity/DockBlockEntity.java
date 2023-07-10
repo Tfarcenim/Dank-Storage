@@ -27,6 +27,7 @@ import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankSavedData;
 
 import javax.annotation.Nonnull;
 
@@ -47,23 +48,21 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
         if (settings == null) {
 
         } else {
-            settings.putInt(Utils.ID,freq);
+            settings.putInt(Utils.FREQ,freq);
         }
     }
 
     public static final DankInventory DUMMY = new DankInventory(DankStats.zero, Utils.INVALID);
 
     public DankInventory getInventory() {
-        if (settings != null && settings.contains(Utils.ID)) {
-            int id = settings.getInt(Utils.ID);
-            DankInventory dankInventory = DankStorage.instance.data.getInventory(id);
+        if (settings != null && settings.contains(Utils.FREQ)) {
+            int frequency = settings.getInt(Utils.FREQ);
+            DankSavedData savedData = DankStorage.instance.getData(frequency);
+            DankInventory dankInventory = savedData.createInventory(frequency);
 
-            //if the id is too high
-            if (dankInventory == null) {
-                int next = DankStorage.instance.data.getNextID();
-                dankInventory = DankStorage.instance.data
-                        .getOrCreateInventory(next, DankStats.values()[getBlockState().getValue(DockBlock.TIER)]);
-                settings.putInt(Utils.ID, next);
+            if (!dankInventory.valid()) {
+                savedData.setStats(DankStats.values()[getBlockState().getValue(DockBlock.TIER)],frequency);
+                dankInventory = savedData.createInventory(frequency);
             }
 
             return dankInventory;
@@ -150,13 +149,13 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
 
         DankInventory dankInventory = getInventory();
 
-        DankStats type = DankStats.values()[tier];
-        if (type != dankInventory.dankStats) {
-            if (type.ordinal() < dankInventory.dankStats.ordinal()) {
-                Utils.warn(player, type, dankInventory.dankStats);
+        DankStats defaults = DankStats.values()[tier];
+        if (defaults != dankInventory.dankStats) {
+            if (defaults.ordinal() < dankInventory.dankStats.ordinal()) {
+                Utils.warn(player, defaults, dankInventory.dankStats);
                 return null;
             }
-            dankInventory.upgradeTo(type);
+            dankInventory.upgradeTo(defaults);
         }
 
         return switch (getBlockState().getValue(DockBlock.TIER)) {
@@ -223,20 +222,14 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
             CompoundTag iSettings = Utils.getSettings(tank);
             tank.shrink(1);
 
-            DankInventory dankInventory;
-            if (iSettings != null && iSettings.contains(Utils.ID)) {
+            if (iSettings != null && iSettings.contains(Utils.FREQ)) {//existing frequency
                 this.settings = iSettings;
-                dankInventory = DankStorage.instance.data.getInventory(iSettings.getInt(Utils.ID));
             } else {
                 this.settings = new CompoundTag();
-                int newId = DankStorage.instance.data.getNextID();
-                dankInventory = DankStorage.instance.data.getOrCreateInventory(newId, stats);
-                settings.putInt(Utils.ID, newId);
+                int newId = DankStorage.instance.maxId.getMaxId();
+                DankStorage.instance.maxId.increment();
+                settings.putInt(Utils.FREQ, newId);
             }
-            if (stats != dankInventory.dankStats) {
-                dankInventory.upgradeTo(stats);
-            }
-
             setChanged();
         }
     }

@@ -30,15 +30,15 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
 
     public DankStats dankStats;
     protected NonNullList<ItemStack> ghostItems;
-    protected int id;
+    protected int frequency;
     private boolean locked = true;
     protected int textColor = -1;
 
-    public DankInventory(DankStats stats, int id) {
+    public DankInventory(DankStats stats, int frequency) {
         super(stats.slots);
         this.dankStats = stats;
         this.ghostItems = NonNullList.withSize(stats.slots,ItemStack.EMPTY);
-        this.id = id;
+        this.frequency = frequency;
     }
 
     public void setDankStats(DankStats dankStats) {
@@ -63,7 +63,7 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
     //like upgradeTo, but can go backwards, should only be used by commands
     public void setTo(DankStats stats) {
         if (stats != dankStats) {
-            DankStorage.LOGGER.debug("Upgrading dank #{} from tier {} to {}", id, dankStats.name(), stats.name());
+            DankStorage.LOGGER.debug("Upgrading dank #{} from tier {} to {}", frequency, dankStats.name(), stats.name());
         }
         this.dankStats = stats;
         copyItems();
@@ -183,7 +183,7 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
         nbt.put("Items", nbtTagList);
         nbt.put(GHOST,ghostItemNBT);
         nbt.putString("DankStats", dankStats.name());
-        nbt.putInt(Utils.ID, id);
+        nbt.putInt(Utils.FREQ, frequency);
         nbt.putBoolean("locked", locked);
         return nbt;
     }
@@ -278,6 +278,10 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
         }
     }
 
+    public boolean valid() {
+        return dankStats != DankStats.zero;
+    }
+
     public int calcRedstone() {
         int numStacks = 0;
         float f = 0F;
@@ -297,8 +301,8 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
     @Override
     public void onContentsChanged(int slot) {
         super.onContentsChanged(slot);
-        if (DankStorage.instance.data != null) {
-            DankStorage.instance.data.setDirty();
+        if (DankStorage.instance.server != null) {
+            DankStorage.instance.getData(frequency).write(save());
         }
     }
 
@@ -330,7 +334,7 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
     @Override
     public int get(int slot) {
         return switch (slot) {
-            case 0 -> id;
+            case 0 -> frequency;
             case 1 -> textColor;
             case 2 -> locked ? 1 : 0;
             default -> AbstractContainerMenu.SLOT_CLICKED_OUTSIDE;
@@ -344,7 +348,7 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
     @Override
     public void set(int slot, int value) {
         switch (slot) {
-            case 0 -> id = value;
+            case 0 -> frequency = value;
             case 1 -> textColor = value;
             case 2 -> locked = value == 1;
         }

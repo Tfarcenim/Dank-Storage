@@ -103,7 +103,7 @@ public class DankMenu extends AbstractDankMenu {
 
     @Override
     public void setFrequency(int freq) {
-        Utils.getOrCreateSettings(bag).putInt(Utils.ID, freq);
+        Utils.getOrCreateSettings(bag).putInt(Utils.FREQ, freq);
     }
 
     protected void addPlayerSlots(Inventory playerinventory, int locked) {

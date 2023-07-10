@@ -26,17 +26,20 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.items.ItemHandlerHelper;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.item.DankItem;
+import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.world.ClientData;
 import tfar.dankstorage.world.DankInventory;
 
 import javax.annotation.Nullable;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static tfar.dankstorage.DankStorage.MODID;
 import static tfar.dankstorage.ModTags.BLACKLISTED_USAGE;
 
 public class Utils {
@@ -44,7 +47,7 @@ public class Utils {
         return TagKey.create(Registries.ITEM, string);
     }
 
-    public static final String ID = "dankstorage:id";
+    public static final String FREQ = "dankstorage:frequency";
     public static final Set<ResourceLocation> taglist = new HashSet<>();
     public static boolean DEV = false;//FabricLoader.getInstance().isDevelopmentEnvironment();
     public static final int INVALID = -1;
@@ -198,7 +201,7 @@ public class Utils {
         return stacks.stream().map(ItemStackWrapper::new).collect(Collectors.toList());
     }
 
-    public static DankStats getStats(ItemStack bag) {
+    public static DankStats getDefaultStats(ItemStack bag) {
         return ((DankItem) bag.getItem()).stats;
     }
 
@@ -238,14 +241,14 @@ public class Utils {
     //make sure to return an invalid ID for unassigned danks
     public static int getFrequency(ItemStack bag) {
         CompoundTag settings = getSettings(bag);
-        if (settings != null && settings.contains(ID)) {
-            return settings.getInt(ID);
+        if (settings != null && settings.contains(FREQ)) {
+            return settings.getInt(FREQ);
         }
         return INVALID;
     }
 
     public static void setFrequency(ItemStack bag,int frequency) {
-        getOrCreateSettings(bag).putInt(ID,frequency);
+        getOrCreateSettings(bag).putInt(FREQ,frequency);
     }
 
     private static boolean hasSettings(ItemStack bag) {
@@ -256,18 +259,23 @@ public class Utils {
         return bag.getItem() instanceof DankItem && bag.hasTag() && getSettings(bag).getBoolean("tag");
     }
 
-    public static DankInventory getOrCreateInventory(ItemStack bag, Level level) {
-        if (!level.isClientSide) {
-            int id = getFrequency(bag);
-            return DankStorage.instance.data.getOrCreateInventory(id,getStats(bag));
-        }
-        throw new RuntimeException("Attempted to get inventory on client");
-    }
-
     public static DankInventory getInventory(ItemStack bag, Level level) {
         if (!level.isClientSide) {
             int id = getFrequency(bag);
-            return DankStorage.instance.data.getInventory(id);
+            if (id != INVALID) {
+
+                Path path = ((MinecraftServerAccess)level.getServer()).getStorageSource()
+                        .getDimensionPath(level.getServer().getLevel(Level.OVERWORLD).dimension())
+                        .resolve("data/"+MODID+"/"+id+".dat");
+
+                if (path.toFile().isFile()) {
+                    return DankStorage.instance.getData(id).createInventory(id);
+                } else {
+                    return DankStorage.instance.getData(id).createFreshInventory(getDefaultStats(bag),id);
+                }
+            } else {
+                return null;
+            }
         }
         throw new RuntimeException("Attempted to get inventory on client");
     }
@@ -277,7 +285,7 @@ public class Utils {
     }
 
     public static DankItem getItemFromTier(int tier) {
-        return (DankItem) BuiltInRegistries.ITEM.get(new ResourceLocation(DankStorage.MODID, "dank_" + tier));
+        return (DankItem) BuiltInRegistries.ITEM.get(new ResourceLocation(MODID, "dank_" + tier));
     }
 
     public static int getNbtSize(@Nullable CompoundTag nbt) {

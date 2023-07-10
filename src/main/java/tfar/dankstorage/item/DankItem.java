@@ -34,7 +34,7 @@ import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.ClientData;
 import tfar.dankstorage.world.DankInventory;
-import tfar.dankstorage.world.DankSavedData;
+import tfar.dankstorage.world.MaxId;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -118,7 +118,7 @@ public class DankItem extends Item {
                         ItemStack bagCopy = bag.copy();
                         player.setItemSlot(hand1, toPlace);
                         InteractionResultHolder<ItemStack> actionResult = toPlace.getItem().use(level, player, hand);
-                        DankInventory handler = Utils.getOrCreateInventory(bagCopy, level);
+                        DankInventory handler = Utils.getInventory(bagCopy, level);
                         handler.setStackInSlot(Utils.getSelectedSlot(bagCopy), actionResult.getObject());
                         player.setItemSlot(hand1, bagCopy);
                     }
@@ -139,7 +139,7 @@ public class DankItem extends Item {
 
         //the client doesn't have access to the full inventory
         if (!player.level().isClientSide) {
-            DankInventory handler = Utils.getOrCreateInventory(bag, player.level());
+            DankInventory handler = Utils.getInventory(bag, player.level());
             handler.setStackInSlot(Utils.getSelectedSlot(bag), toUse);
         }
 
@@ -280,12 +280,11 @@ public class DankItem extends Item {
 
     public static void assignNextId(ItemStack dank) {
         CompoundTag settings = Utils.getSettings(dank);
-        if (settings == null || !settings.contains(Utils.ID, Tag.TAG_INT)) {
-            DankSavedData dankSavedData = DankStorage.instance.data;
-            DankStats stats = Utils.getStats(dank);
-            int next = dankSavedData.getNextID();
-            dankSavedData.getOrCreateInventory(next,stats);
-            Utils.getOrCreateSettings(dank).putInt(Utils.ID,next);
+        if (settings == null || !settings.contains(Utils.FREQ, Tag.TAG_INT)) {
+            MaxId maxId = DankStorage.instance.maxId;
+            int next = maxId.getMaxId()+1;
+            maxId.increment();
+            Utils.getOrCreateSettings(dank).putInt(Utils.FREQ,next);
         }
     }
 

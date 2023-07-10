@@ -7,6 +7,7 @@ import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.container.AbstractDankMenu;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.util.C2SPacketHelper;
+import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventory;
 
 public class C2SSetFrequencyPacket implements C2SPacketHelper {
@@ -31,7 +32,7 @@ public class C2SSetFrequencyPacket implements C2SPacketHelper {
     }
 
     public static void send(int id, boolean set) {
-        DankPacketHandler.sendToServer(new C2SSetFrequencyPacket(id,set));
+        DankPacketHandler.sendToServer(new C2SSetFrequencyPacket(id, set));
     }
 
     public void handleServer(ServerPlayer player) {
@@ -39,30 +40,32 @@ public class C2SSetFrequencyPacket implements C2SPacketHelper {
         if (container instanceof AbstractDankMenu dankMenu) {
             DankInventory inventory = dankMenu.dankInventory;
 
-            int textColor;
+            int textColor = 0;
 
-            if (frequency > -1) {
-                DankInventory targetInventory = DankStorage.instance.data.getInventory(frequency);
+            if (frequency > Utils.INVALID) {
+                if (frequency < DankStorage.instance.maxId.getMaxId()) {
+                    DankInventory targetInventory = DankStorage.instance.getData(frequency).createInventory(frequency);
 
-                if (targetInventory != null && targetInventory.dankStats == inventory.dankStats) {
+                    if (targetInventory.valid() && targetInventory.dankStats == inventory.dankStats) {
 
-                    if (targetInventory.frequencyLocked()) {
-                     textColor = DankInventory.TxtColor.LOCKED.color;
-                    } else {
-                        textColor = DankInventory.TxtColor.GOOD.color;
-                        if (set) {
-                            dankMenu.setFrequency(frequency);
-                            player.closeContainer();
+                        if (targetInventory.frequencyLocked()) {
+                            textColor = DankInventory.TxtColor.LOCKED.color;
+                        } else {
+                            textColor = DankInventory.TxtColor.GOOD.color;
+                            if (set) {
+                                dankMenu.setFrequency(frequency);
+                                player.closeContainer();
+                            }
                         }
                     }
                 } else {
                     //orange if it doesn't exist, yellow if it does but wrong tier
-                    textColor = targetInventory == null ? DankInventory.TxtColor.TOO_HIGH.color : DankInventory.TxtColor.DIFFERENT_TIER.color;
+                    textColor = DankInventory.TxtColor.TOO_HIGH.color ;
                 }
             } else {
                 textColor = DankInventory.TxtColor.INVALID.color;
             }
-             inventory.setTextColor(textColor);
+            inventory.setTextColor(textColor);
         }
     }
 }

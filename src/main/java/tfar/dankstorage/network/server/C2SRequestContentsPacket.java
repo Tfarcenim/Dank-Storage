@@ -32,10 +32,8 @@ public class C2SRequestContentsPacket implements C2SPacketHelper {
     }
 
     public void handleServer(ServerPlayer player) {
-        DankInventory dankInventory = DankStorage.instance.data.getInventory(frequency);
-        if (dankInventory != null) {
+        DankInventory dankInventory = DankStorage.instance.getData(frequency).createInventory(frequency);
             DankPacketHandler.sendContentsForDisplay(player,dankInventory.getContents());
-        }
     }
 }
 

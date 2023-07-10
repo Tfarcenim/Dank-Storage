@@ -9,6 +9,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -33,9 +34,12 @@ import tfar.dankstorage.container.CustomSync;
 import tfar.dankstorage.datagen.DataGenerators;
 import tfar.dankstorage.event.ForgeClientEvents;
 import tfar.dankstorage.init.*;
+import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.world.DankSavedData;
+import tfar.dankstorage.world.MaxId;
 
+import java.io.File;
 import java.util.List;
 
 import static tfar.dankstorage.init.ModMenuTypes.portable_dank_7_container;
@@ -48,6 +52,7 @@ public class DankStorage {
 
     public static DankStorage instance;
     public MinecraftServer server;
+    public MaxId maxId;
 
     public DankStorage() {
         ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.CLIENT, CLIENT_SPEC);
@@ -111,17 +116,38 @@ public class DankStorage {
         Client.client();
     }
 
-    public DankSavedData data;
-
     public void onServerStarted(ServerStartedEvent e) {
         MinecraftServer server = e.getServer();
-        instance.data = server.getLevel(Level.OVERWORLD).getDataStorage()
-                .computeIfAbsent(DankSavedData::loadStatic, DankSavedData::new,DankStorage.MODID);
+        LevelStorageSource.LevelStorageAccess storageSource = ((MinecraftServerAccess)server).getStorageSource();
+        File file = storageSource.getDimensionPath(server.getLevel(Level.OVERWORLD).dimension())
+                .resolve("data/"+MODID).toFile();
+        file.mkdirs();
+
         instance.server = server;
+        instance.maxId = getMaxId(server);
     }
+
+    public DankSavedData getData(int id) {
+        if (server != null) {
+            return getData(id,server);
+        }
+        throw new RuntimeException("Tried to get data on the client?");
+    }
+    public DankSavedData getData(int id,MinecraftServer server) {
+        return server.getLevel(Level.OVERWORLD).getDataStorage()
+                .computeIfAbsent(DankSavedData::loadStatic,DankSavedData::new,
+                        MODID+"/"+id);
+    }
+
+    public MaxId getMaxId(MinecraftServer server) {
+        return server.getLevel(Level.OVERWORLD).getDataStorage()
+                .computeIfAbsent(MaxId::loadStatic,MaxId::new,
+                        MODID+":max_id");
+    }
+
     public void onServerStopped(ServerStoppedEvent e) {
-        instance.data = null;
         instance.server = null;
+        instance.maxId = null;
     }
 
     public void registerCommands(RegisterCommandsEvent e) {

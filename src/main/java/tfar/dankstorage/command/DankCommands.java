@@ -7,7 +7,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.DankStorage;
@@ -23,13 +22,13 @@ public class DankCommands {
                         .then(Commands.literal("all")
                                 .executes(DankCommands::clearAll))
 
-                        .then(Commands.argument("id", IntegerArgumentType.integer(0))
+                        .then(Commands.argument(Utils.FREQ, IntegerArgumentType.integer(0))
                                 .executes(DankCommands::clearID))
                 )
 
                 .then(Commands.literal("set_tier")
                         .requires(commandSourceStack -> commandSourceStack.hasPermission(3))
-                        .then(Commands.argument("id", IntegerArgumentType.integer(0))
+                        .then(Commands.argument(Utils.FREQ, IntegerArgumentType.integer(0))
                                 .then(Commands.argument("tier", IntegerArgumentType.integer(1,7))
                                         .executes(DankCommands::setTier)
                                 )
@@ -39,14 +38,14 @@ public class DankCommands {
 
                 .then(Commands.literal("lock")
                         .requires(commandSourceStack -> commandSourceStack.hasPermission(3))
-                        .then(Commands.argument("id", IntegerArgumentType.integer(0))
+                        .then(Commands.argument(Utils.FREQ, IntegerArgumentType.integer(0))
                                 .executes(DankCommands::lock)
                         )
                 )
 
                 .then(Commands.literal("unlock")
                         .requires(commandSourceStack -> commandSourceStack.hasPermission(3))
-                        .then(Commands.argument("id", IntegerArgumentType.integer(0))
+                        .then(Commands.argument(Utils.FREQ, IntegerArgumentType.integer(0))
                                 .executes(DankCommands::unlock)
                         )
                 )
@@ -57,13 +56,13 @@ public class DankCommands {
     }
 
     private static int clearAll(CommandContext<CommandSourceStack> context) {
-        DankStorage.instance.data.clearAll();
+        //DankStorage.instance.data.clearAll();
         return 1;
     }
 
     private static int clearID(CommandContext<CommandSourceStack> context) {
-        int id = IntegerArgumentType.getInteger(context, "id");
-        boolean success = DankStorage.instance.data.clearId(id);
+        int id = IntegerArgumentType.getInteger(context, Utils.FREQ);
+        boolean success = DankStorage.instance.getData(id,context.getSource().getServer()).clear();
         if (!success) {
             throw new CommandRuntimeException(Utils.translatable("dankstorage.command.clear_id.invalid_id"));
         }
@@ -71,9 +70,9 @@ public class DankCommands {
     }
 
     private static int setTier(CommandContext<CommandSourceStack> context) {
-        int id = IntegerArgumentType.getInteger(context, "id");
+        int id = IntegerArgumentType.getInteger(context, Utils.FREQ);
         int tier = IntegerArgumentType.getInteger(context, "tier");
-        boolean success = DankStorage.instance.data.setTier(id, tier);
+        boolean success = false;//DankStorage.instance.data.setTier(id, tier);
         if (!success) {
             throw new CommandRuntimeException(Utils.translatable("dankstorage.command.set_tier.invalid_id"));
         }
@@ -95,8 +94,8 @@ public class DankCommands {
     }
 
     private static int lock(CommandContext<CommandSourceStack> context) {
-        int id = IntegerArgumentType.getInteger(context, "id");
-        boolean success = DankStorage.instance.data.lock(id);
+        int id = IntegerArgumentType.getInteger(context, Utils.FREQ);
+        boolean success = false;//DankStorage.instance.data.lock(id);
         if (!success) {
             throw new CommandRuntimeException(Utils.translatable("dankstorage.command.lock.invalid_id"));
         }
@@ -104,8 +103,8 @@ public class DankCommands {
     }
 
     private static int unlock(CommandContext<CommandSourceStack> context) {
-        int id = IntegerArgumentType.getInteger(context, "id");
-        boolean success = DankStorage.instance.data.unlock(id);
+        int id = IntegerArgumentType.getInteger(context, Utils.FREQ);
+        boolean success = false;//DankStorage.instance.data.unlock(id);
         if (!success) {
             throw new CommandRuntimeException(Utils.translatable("dankstorage.command.unlock.invalid_id"));
         }

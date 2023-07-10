@@ -10,6 +10,7 @@ import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankSavedData;
 
 import javax.annotation.Nullable;
 
@@ -31,22 +32,28 @@ public class PortableDankProvider implements MenuProvider {
     public AbstractContainerMenu createMenu(int i, Inventory playerInventory, Player player) {
 
         DankInventory dankInventory = Utils.getInventory(stack,player.level());
-        DankStats type = Utils.getStats(stack);
+        DankStats defaults = Utils.getDefaultStats(stack);
 
-        if (dankInventory == null) {
-                int next = DankStorage.instance.data.getNextID();
-                dankInventory = DankStorage.instance.data
-                        .getOrCreateInventory(next,type);
-                Utils.getSettings(stack).putInt(Utils.ID,next);
-        } else if (type != dankInventory.dankStats) {
-            if (type.ordinal() < dankInventory.dankStats.ordinal()) {
-                Utils.warn(player, type, dankInventory.dankStats);
-                return null;
-            }
-            dankInventory.upgradeTo(type);
+        if (dankInventory == null) {//create a new one
+                int next = DankStorage.instance.maxId.getMaxId();
+                DankStorage.instance.maxId.increment();
+                Utils.getSettings(stack).putInt(Utils.FREQ,next);
+                DankSavedData dankSavedData = DankStorage.instance.getData(next);
+                dankSavedData.setStats(defaults,next);
+                dankInventory = dankSavedData.createFreshInventory(defaults,next);
         }
 
-        return switch (type) {
+        DankStats type = dankInventory.dankStats;
+
+        if (defaults != type) {
+            if (defaults.ordinal() < type.ordinal()) {//if the default stats are lower than what saveddata reports, abort opening
+                Utils.warn(player, defaults, type);
+                return null;
+            }
+            dankInventory.upgradeTo(defaults);
+        }
+
+        return switch (defaults) {
             default -> DankMenu.t1s(i, playerInventory, dankInventory);
             case two -> DankMenu.t2s(i, playerInventory, dankInventory);
             case three -> DankMenu.t3s(i, playerInventory, dankInventory);
