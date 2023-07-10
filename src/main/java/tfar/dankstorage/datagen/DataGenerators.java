@@ -25,7 +25,7 @@ public class DataGenerators {
         PackOutput packOutput = generator.getPackOutput();
         if (e.includeServer()) {
             BlockTagsProvider blockTagsProvider = new ModBlockTagsProvider(packOutput,lookupProvider,helper);
-            generator.addProvider(true,new ModItemTagsProvider(packOutput,lookupProvider,blockTagsProvider,helper));
+            generator.addProvider(true,new ModItemTagsProvider(packOutput,lookupProvider,blockTagsProvider.contentsGetter(),helper));
         }
         if (e.includeClient()) {
         }

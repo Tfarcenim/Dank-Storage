@@ -26,10 +26,10 @@ public class SmallButton extends Button {
     }
 
     @Override
-    public void renderButton(PoseStack matrices, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(PoseStack matrices, int mouseX, int mouseY, float partialTicks) {
         RenderSystem.setShaderTexture(0,WIDGETS_LOCATION);
         tint();
-        int c = getYImage(isHovered);
+        int c = 0;//getYImage(isHovered);
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();

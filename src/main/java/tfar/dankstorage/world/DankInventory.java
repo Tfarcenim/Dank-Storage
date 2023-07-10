@@ -361,7 +361,7 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
                 break;
             }
             if (Utils.canCompress(level,stack)) {
-                Pair<ItemStack,Integer> result = Utils.compress(stack);
+                Pair<ItemStack,Integer> result = Utils.compress(stack,player.getLevel().registryAccess());
                 ItemStack resultStack = result.getFirst();
                 if (!resultStack.isEmpty()) {
                     int division = result.getSecond();

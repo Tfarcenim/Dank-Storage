@@ -6,7 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.common.data.BlockTagsProvider;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 public class ModItemTagsProvider extends ItemTagsProvider {
 
 
-    public ModItemTagsProvider(PackOutput dataGenerator, CompletableFuture<HolderLookup.Provider> pLookupProvider, BlockTagsProvider blockTagProvider, @Nullable ExistingFileHelper existingFileHelper) {
+    public ModItemTagsProvider(PackOutput dataGenerator, CompletableFuture<HolderLookup.Provider> pLookupProvider, CompletableFuture<TagLookup<Block>> blockTagProvider, @Nullable ExistingFileHelper existingFileHelper) {
         super(dataGenerator, pLookupProvider,blockTagProvider, DankStorage.MODID, existingFileHelper);
     }
     @Override

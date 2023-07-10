@@ -7,6 +7,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -268,7 +269,7 @@ public class DankItem extends Item {
 
     @Override
     public boolean canBeHurtBy(DamageSource source) {
-        return source == DamageSource.OUT_OF_WORLD;
+        return source.is(DamageTypeTags.BYPASSES_INVULNERABILITY);
     }
 
     public static class ItemUseContextExt extends UseOnContext {

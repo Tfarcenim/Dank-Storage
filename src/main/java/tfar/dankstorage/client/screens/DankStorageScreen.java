@@ -245,7 +245,7 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends AbstractConta
         int i = pSlot.x;
         int j = pSlot.y;
         if (!pSlot.hasItem() && pSlot.index < menu.dankInventory.getSlots()  && menu.dankInventory.hasGhostItem(pSlot.index)) {
-            itemRenderer.renderAndDecorateFakeItem(menu.dankInventory.getGhostItem(pSlot.index), i, j);
+            itemRenderer.renderAndDecorateFakeItem(pPoseStack,menu.dankInventory.getGhostItem(pSlot.index), i, j);
             RenderSystem.depthFunc(516);
             GuiComponent.fill(pPoseStack, i, j, i + 16, j + 16, 0x40ffffff);
             RenderSystem.depthFunc(515);

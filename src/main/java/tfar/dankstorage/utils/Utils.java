@@ -2,8 +2,7 @@ package tfar.dankstorage.utils;
 
 import com.mojang.datafixers.util.Pair;
 import io.netty.buffer.Unpooled;
-import net.minecraft.Util;
-import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -367,17 +366,17 @@ public class Utils {
         cached = false;
     }
 
-    public static Pair<ItemStack,Integer> compress(ItemStack stack) {
+    public static Pair<ItemStack,Integer> compress(ItemStack stack, RegistryAccess registryAccess) {
 
         for (CraftingRecipe recipe : REVERSIBLE3x3) {
             if (recipe.getIngredients().get(0).test(stack)) {
-                return Pair.of(recipe.getResultItem(),9);
+                return Pair.of(recipe.getResultItem(registryAccess),9);
             }
         }
 
         for (CraftingRecipe recipe : REVERSIBLE2x2) {
             if (recipe.getIngredients().get(0).test(stack)) {
-                return Pair.of(recipe.getResultItem(),4);
+                return Pair.of(recipe.getResultItem(registryAccess),4);
             }
         }
         return Pair.of(ItemStack.EMPTY,0);
@@ -426,11 +425,11 @@ public class Utils {
                                 break;
                             }
                         }
-                        if (same && shapedRecipe.getResultItem().getCount() == 1) {
-                            DUMMY.setItem(0,shapedRecipe.getResultItem());
+                        if (same && shapedRecipe.getResultItem(level.registryAccess()).getCount() == 1) {
+                            DUMMY.setItem(0,shapedRecipe.getResultItem(level.registryAccess()));
 
                             level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, DUMMY, level).ifPresent(reverseRecipe -> {
-                                if (reverseRecipe.getResultItem().getCount() == size * size) {
+                                if (reverseRecipe.getResultItem(level.registryAccess()).getCount() == size * size) {
                                     compactingRecipes.add(shapedRecipe);
                                 }
                             });

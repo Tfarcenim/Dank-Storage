@@ -1,5 +1,7 @@
 package tfar.dankstorage.client;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -8,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -19,6 +22,8 @@ import tfar.dankstorage.container.DockMenu;
 import tfar.dankstorage.event.ForgeClientEvents;
 import tfar.dankstorage.init.ModMenuTypes;
 import tfar.dankstorage.network.server.C2SButtonPacket;
+
+import java.text.DecimalFormat;
 
 public class Client {
 
@@ -117,4 +122,31 @@ public class Client {
         return mc.player;
     }
 
+    private static final DecimalFormat decimalFormat = new DecimalFormat("0.#");
+
+
+    public static void drawSmallItemNumbers(PoseStack matrices, int x, int y, ItemStack stack) {
+
+        PoseStack viewModelPose = RenderSystem.getModelViewStack();
+        viewModelPose.pushPose();
+        viewModelPose.translate(x + 8, y + 8, 100);
+        float scale = .5f;
+        viewModelPose.scale(scale, scale, scale);
+        viewModelPose.translate(-x, -y, 0);
+        RenderSystem.applyModelViewMatrix();
+        String amount = (stack.getCount() > 1) ? getStringFromInt(stack.getCount()) : null;
+        Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(matrices,Minecraft.getInstance().font, stack, x, y, amount);
+        viewModelPose.popPose();
+        RenderSystem.applyModelViewMatrix();
+
+    }
+
+    public static String getStringFromInt(int number) {
+
+        if (number >= 1000000000) return decimalFormat.format(number / 1000000000f) + "b";
+        if (number >= 1000000) return decimalFormat.format(number / 1000000f) + "m";
+        if (number >= 1000) return decimalFormat.format(number / 1000f) + "k";
+
+        return Float.toString(number).replaceAll("\\.?0*$", "");
+    }
 }

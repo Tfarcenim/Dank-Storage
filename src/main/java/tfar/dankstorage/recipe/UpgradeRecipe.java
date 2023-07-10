@@ -1,5 +1,6 @@
 package tfar.dankstorage.recipe;
 
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -11,13 +12,13 @@ import javax.annotation.Nonnull;
 public class UpgradeRecipe extends ShapedRecipe {
 
     public UpgradeRecipe(ShapedRecipe recipe) {
-        super(recipe.getId(), "dank",recipe.category(), recipe.getWidth(), recipe.getHeight(), recipe.getIngredients(), recipe.getResultItem());
+        super(recipe.getId(), "dank",recipe.category(), recipe.getWidth(), recipe.getHeight(), recipe.getIngredients(), recipe.getResultItem(null));
     }
 
     @Nonnull
     @Override
-    public ItemStack assemble(CraftingContainer inv) {
-        ItemStack newBag = super.assemble(inv).copy();
+    public ItemStack assemble(CraftingContainer inv, RegistryAccess access) {
+        ItemStack newBag = super.assemble(inv,access).copy();
         ItemStack oldBag = inv.getItem(4);
         //can't upgrade the backing inventory because there isn't one yet
         if (!oldBag.hasTag()) return newBag;

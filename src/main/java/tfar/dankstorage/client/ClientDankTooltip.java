@@ -37,7 +37,7 @@ public class ClientDankTooltip implements ClientTooltipComponent {
     }
 
     @Override
-    public void renderImage(Font font, int i, int j, PoseStack poseStack, ItemRenderer itemRenderer, int k) {
+    public void renderImage(Font font, int i, int j, PoseStack poseStack, ItemRenderer itemRenderer) {
         int gridSizeX = this.gridSizeX();
         int gridSizeY = this.gridSizeY();
         int slot = 0;
@@ -45,7 +45,7 @@ public class ClientDankTooltip implements ClientTooltipComponent {
             for (int x1 = 0; x1 < gridSizeX; ++x1) {
                 int q = i + x1 * 18;
                 int r = j + y1 * 18;
-                this.renderSlot(q, r, slot++, font, poseStack, itemRenderer, k);
+                this.renderSlot(q, r, slot++, font, poseStack, itemRenderer, 0);
             }
         }
     }
@@ -53,8 +53,8 @@ public class ClientDankTooltip implements ClientTooltipComponent {
     private void renderSlot(int i, int j, int slot, Font font, PoseStack poseStack, ItemRenderer itemRenderer, int l) {
         ItemStack itemStack = this.items.get(slot);
         this.blit(poseStack, i, j, l, Texture.SLOT);
-        itemRenderer.renderAndDecorateItem(itemStack, i + 1, j + 1, slot);
-        itemRenderer.renderGuiItemDecorations(font, itemStack, i + 1, j + 1);
+        itemRenderer.renderAndDecorateItem(poseStack,itemStack, i + 1, j + 1, slot);
+        itemRenderer.renderGuiItemDecorations(poseStack,font, itemStack, i + 1, j + 1);
         if (slot == selected) {
             AbstractContainerScreen.renderSlotHighlight(poseStack, i + 1, j + 1, l);
         }

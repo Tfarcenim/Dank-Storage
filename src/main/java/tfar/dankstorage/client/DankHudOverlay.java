@@ -44,7 +44,7 @@ public class DankHudOverlay implements IGuiOverlay {
     }
 
     private static void renderHotbarItem(PoseStack poses, int x, int y, Player player, ItemStack stack) {
-        mc.getItemRenderer().renderAndDecorateItem(player, stack, x, y,0);
-        mc.getItemRenderer().renderGuiItemDecorations(mc.font, stack, x, y);
+        mc.getItemRenderer().renderAndDecorateItem(poses,player, stack, x, y,0);
+        mc.getItemRenderer().renderGuiItemDecorations(poses,mc.font, stack, x, y);
     }
 }
