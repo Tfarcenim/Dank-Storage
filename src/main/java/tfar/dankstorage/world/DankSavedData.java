@@ -12,21 +12,26 @@ public class DankSavedData extends SavedData {
     private final ServerLevel level;
 
     CompoundTag storage = new CompoundTag();
+
+    DankInventory dankInventory;
     public DankSavedData(ServerLevel level) {
         this.level = level;
     }
 
     public DankInventory createInventory(int frequency) {
-        DankInventory dankInventory = new DankInventory(DankStats.zero, frequency);
-        dankInventory.read(storage);
-        dankInventory.server = level.getServer();
+        if (dankInventory == null) {
+            dankInventory = new DankInventory(DankStats.zero, frequency);
+            dankInventory.read(storage);
+            dankInventory.server = level.getServer();
+        }
         return dankInventory;
     }
 
     public DankInventory createFreshInventory(DankStats defaults,int frequency) {
-        DankInventory dankInventory = new DankInventory(defaults, frequency);
-        write(dankInventory.save());
-        dankInventory.server = level.getServer();
+        if (dankInventory == null) {
+            dankInventory = new DankInventory(defaults, frequency);
+            dankInventory.server = level.getServer();
+        }
         return dankInventory;
     }
 
