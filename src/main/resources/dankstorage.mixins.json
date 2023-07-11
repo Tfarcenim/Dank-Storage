@@ -11,9 +11,7 @@
     "RecipeManagerMixin"
   ],
   "client": [
-    "ClientPacketListenerMixin",
-    "ItemRendererAccessor",
-    "MinecraftClientAccessor"
+    "ClientPacketListenerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

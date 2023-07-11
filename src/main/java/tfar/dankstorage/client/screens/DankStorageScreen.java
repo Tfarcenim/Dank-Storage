@@ -294,11 +294,7 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends AbstractConta
                 }
 
                 pGuiGraphics.renderItem(itemstack, i, j, pSlot.x + pSlot.y * this.imageWidth);
-
-                int i1 = i+76;
-                int j1 = j + 34 - this.menu.rows * 4;//30, 24
-                Client.drawSmallItemNumbers(pGuiGraphics,i+76,j1,itemstack);
-                pGuiGraphics.renderItemDecorations(this.font, itemstack, i, j, "");
+                pGuiGraphics.renderItemDecorations(this.font, itemstack, i, j, Client.getStringFromInt(itemstack.getCount()));
             }
 
             pGuiGraphics.pose().popPose();
