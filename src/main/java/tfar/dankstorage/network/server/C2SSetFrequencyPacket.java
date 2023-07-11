@@ -57,6 +57,8 @@ public class C2SSetFrequencyPacket implements C2SPacketHelper {
                                 player.closeContainer();
                             }
                         }
+                    } else {
+                        textColor = DankInventory.TxtColor.DIFFERENT_TIER.color;
                     }
                 } else {
                     //orange if it doesn't exist, yellow if it does but wrong tier

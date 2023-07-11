@@ -62,7 +62,7 @@ minecraft {
         server {
             workingDirectory project.file('run')
             arg "-mixin.config="+archivesBaseName+".mixins.json"
-            property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
+            property 'mixin.env.refMapRemappingFile', "$project.projectDir/build/createSrgToMcp/output.srg"
 
 
             // Recommended logging level for the console

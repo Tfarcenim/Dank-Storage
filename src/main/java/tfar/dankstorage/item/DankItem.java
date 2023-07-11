@@ -282,7 +282,7 @@ public class DankItem extends Item {
         CompoundTag settings = Utils.getSettings(dank);
         if (settings == null || !settings.contains(Utils.FREQ, Tag.TAG_INT)) {
             MaxId maxId = DankStorage.instance.maxId;
-            int next = maxId.getMaxId()+1;
+            int next = maxId.getMaxId();
             maxId.increment();
             Utils.getOrCreateSettings(dank).putInt(Utils.FREQ,next);
         }

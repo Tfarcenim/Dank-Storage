@@ -110,7 +110,8 @@ public abstract class AbstractDankMenu extends AbstractContainerMenu {
 
     @Override
     public void doClick(int pSlotId, int pButton, ClickType pClickType, Player pPlayer) {
-        super.doClick(pSlotId, pButton, pClickType, pPlayer);
+        if (pClickType != ClickType.SWAP)
+            super.doClick(pSlotId, pButton, pClickType, pPlayer);
     }
 
     private SlotAccess createCarriedSlotAccess() {

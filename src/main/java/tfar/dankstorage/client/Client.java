@@ -130,7 +130,7 @@ public class Client {
 
         PoseStack viewModelPose = RenderSystem.getModelViewStack();
         viewModelPose.pushPose();
-        viewModelPose.translate(x + 8, y + 8, 100);
+        viewModelPose.translate(x + 8, y + 8, 200);
         float scale = .5f;
         viewModelPose.scale(scale, scale, scale);
         viewModelPose.translate(-x, -y, 0);
