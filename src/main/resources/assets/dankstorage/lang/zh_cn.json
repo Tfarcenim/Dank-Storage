@@ -1,7 +1,5 @@
 {
-
   "block.dankstorage.dock": "坞",
-
   "item.dankstorage.dank_1": "黑盒 Lv1",
   "item.dankstorage.dank_2": "黑盒 Lv2",
   "item.dankstorage.dank_3": "黑盒 Lv3",
@@ -9,14 +7,13 @@
   "item.dankstorage.dank_5": "黑盒 Lv5",
   "item.dankstorage.dank_6": "黑盒 Lv6",
   "item.dankstorage.dank_7": "黑盒 Lv7",
-
   "item.dankstorage.1_to_2": "Lv1升级至Lv2",
   "item.dankstorage.2_to_3": "Lv2升级至Lv3",
   "item.dankstorage.3_to_4": "Lv3升级至Lv4",
   "item.dankstorage.4_to_5": "Lv4升级至Lv5",
   "item.dankstorage.5_to_6": "Lv5升级至Lv6",
   "item.dankstorage.6_to_7": "Lv6升级至Lv7",
-
+  "item.dankstorage.red_print": "红色印刷",
   "container.dankstorage.dank_1": "黑盒 Lv1",
   "container.dankstorage.dank_2": "黑盒 Lv2",
   "container.dankstorage.dank_3": "黑盒 Lv3",
@@ -24,41 +21,59 @@
   "container.dankstorage.dank_5": "黑盒 Lv5",
   "container.dankstorage.dank_6": "黑盒 Lv6",
   "container.dankstorage.dank_7": "黑盒 Lv7",
-
-  "dankstorage.mode.normal": "正常",
+  "dankstorage.mode.none": "不拾取",
   "dankstorage.mode.pickup_all": "全部拾取",
   "dankstorage.mode.filtered_pickup": "过滤拾取",
   "dankstorage.mode.void_pickup": "销毁拾取",
-
-  "key.dankstorage.pickup": "模式切换",
+  "key.dankstorage.pickup": "切换模式",
   "key.dankstorage.construction": "建造模式",
-
+  "key.dankstorage.lock_slot": "锁定插槽",
+  "key.dankstorage.pickup_mode": "拾取模式",
   "key.categories.dankstorage": "储物小黑盒",
-
-  "text.dankstorage.shift": "按%s查看信息",
+  "text.dankstorage.shift": "按 %s 查看信息",
   "text.dankstorage.empty": "空",
-  "text.dankstorage.lock": "按%s锁定",
-
-
-  "text.dankstorage.changemode": "按%s切换模式",
-  "text.dankstorage.currentmode": "当前模式：%s",
-
-  "text.dankstorage.changeusetype": "按%s切换模式",
-  "text.dankstorage.currentusetype": "当前模式：%s",
-
+  "text.dankstorage.lock": "按 %s 锁定",
+  "text.dankstorage.change_pickup_mode": "按 %s 更改拾取模式",
+  "text.dankstorage.current_pickup_mode": "当前拾取模式: %s",
+  "text.dankstorage.changeusetype": "按 %s 更改使用类型",
+  "text.dankstorage.currentusetype": "当前使用类型: %s",
   "dankstorage.usetype.bag": "包裹",
   "dankstorage.usetype.construction": "建造",
-
   "text.dankstorage.blacklisted_storage": "该物品已被列入存储黑名单！",
   "text.dankstorage.blacklisted_usage": "该物品不能通过存储空间使用！",
-
   "text.dankstorage.stacklimit": "叠堆上限：%s",
-
   "text.dankstorage.exact": "准确数量：%s",
-
-  "text.dankstorage.in_use":  "该坞正在使用中！"
-
   "text.dankstorage.formatcontaineditems": "%s %s",
+  "text.dankstorage.upgrade_successful": "升级成功",
+  "text.dankstorage.lock_button": "按下以锁定频率",
+  "text.dankstorage.unlock_button": "按下以解锁频率",
+  "text.dankstorage.save_frequency_button": "保存新频率 \n%s \n%s \n%s \n%s \n%s",
+  "text.dankstorage.save_frequency_button.invalid": "红色: %s",
+  "text.dankstorage.save_frequency_button.invalidtxt": "此频率无效",
+  "text.dankstorage.save_frequency_button.too_high": "橙色: %s",
+  "text.dankstorage.save_frequency_button.too_hightxt": "此频率尚不存在",
+  "text.dankstorage.save_frequency_button.different_tier": "黄色: %s",
+  "text.dankstorage.save_frequency_button.different_tiertxt": "此频率具有不同的等级",
+  "text.dankstorage.save_frequency_button.good": "绿色: %s",
+  "text.dankstorage.save_frequency_button.goodtxt": "此频率可以更改为",
+  "text.dankstorage.save_frequency_button.locked_frequency": "蓝色: %s",
+  "text.dankstorage.save_frequency_button.locked_frequencytxt": "此频率已锁定",
+  "text.dankstorage.red_print.tooltip0": "将频率复制到其他黑盒",
+  "text.dankstorage.red_print.tooltip1": "仅适用于相同等级",
+  "dankstorage.command.reset_frequency.not_a_dank": "不是黑盒",
+  "dankstorage.command.set_tier.invalid_id": "该频率不存在",
+  "text.dankstorage.compress_button": "压缩可逆3x3和2x2配方",
 
-  "dankstorage.upgrade_successful" : "升级成功"
+  "text.dankstorage.pickup_button": "拾取模式 \n%s \n%s \n%s \n%s",
+  "text.dankstorage.pickup_button.none": "灰色: %s",
+  "text.dankstorage.pickup_button.nonetxt": "不拾取任何东西",
+  "text.dankstorage.pickup_button.all": "绿色: %s",
+  "text.dankstorage.pickup_button.alltxt": "拾取玩家触摸的所有物品",
+  "text.dankstorage.pickup_button.filtered": "黄色: %s",
+  "text.dankstorage.pickup_button.filteredtxt": "仅拾取已存在于黑盒中的物品",
+  "text.dankstorage.pickup_button.void": "红色: %s",
+  "text.dankstorage.pickup_button.voidtxt": "将清空所有插槽溢出，与过滤后的拾取限制相同",
+
+  "text.dankstorage.sort_button": "从大到小排序"
+
 }
