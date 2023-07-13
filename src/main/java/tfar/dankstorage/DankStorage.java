@@ -103,6 +103,7 @@ public class DankStorage {
 
         register(event,Registries.MENU, "dank_7", ModMenuTypes.dank_7_container);
         register(event,Registries.MENU, "portable_dank_7", portable_dank_7_container);
+        register(event,Registries.CREATIVE_MODE_TAB,MODID,ModItems.tab);
     }
 
     public static <T>void register(RegisterEvent event, ResourceKey<? extends Registry<T>> registry, String name, T type) {

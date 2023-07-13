@@ -1,8 +1,11 @@
 package tfar.dankstorage.init;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraftforge.registries.RegisterEvent;
 import tfar.dankstorage.DankStorage;
@@ -24,6 +27,8 @@ public class ModItems {
     public static final List<Item> DANKS;
     public static final List<Item> UPGRADES;
 
+    public static CreativeModeTab tab;
+
     static {
         DANKS = IntStream.range(1, 8).mapToObj(i -> {
             DankItem dankItem = new DankItem(properties, DankStats.values()[i]);
@@ -32,6 +37,16 @@ public class ModItems {
         }).collect(Collectors.toList());
 
         UPGRADES = IntStream.range(1, DANKS.size()).mapToObj(i -> new UpgradeItem(properties, new UpgradeInfo(i, i + 1))).collect(Collectors.toList());
+
+        tab = CreativeModeTab.builder()
+                .icon(() -> new ItemStack(DOCK))
+                .title(Component.translatable("itemGroup."+DankStorage.MODID))
+                .displayItems((features, output) -> {
+                    DANKS.forEach(output::accept);
+                    UPGRADES.forEach(output::accept);
+                    output.accept(DOCK);
+                    output.accept(red_print);
+                }).build();
     }
 
     public static void registerB(RegisterEvent event) {

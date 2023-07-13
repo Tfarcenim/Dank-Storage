@@ -74,6 +74,7 @@
   "text.dankstorage.pickup_button.void" : "Red: %s",
   "text.dankstorage.pickup_button.voidtxt" : "Will void all slot overflow, has same pickup restrictions as filtered",
 
-  "text.dankstorage.sort_button" : "Sorts from greatest to least"
+  "text.dankstorage.sort_button" : "Sorts from greatest to least",
+  "itemGroup.dankstorage" : "Dank Storage"
 
 }
