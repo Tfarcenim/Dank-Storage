@@ -28,7 +28,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.client.Client;
-import tfar.dankstorage.client.DankTooltip;
 import tfar.dankstorage.container.PortableDankProvider;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.server.C2SRequestContentsPacket;

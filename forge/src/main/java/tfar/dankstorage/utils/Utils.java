@@ -25,6 +25,7 @@ import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.items.ItemHandlerHelper;
 import tfar.dankstorage.DankStorageForge;
+import tfar.dankstorage.ModTags;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.network.DankPacketHandler;
@@ -40,7 +41,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static tfar.dankstorage.DankStorage.MODID;
-import static tfar.dankstorage.ModTags.BLACKLISTED_USAGE;
 
 public class Utils {
     private static TagKey<Item> bind(ResourceLocation string) {
@@ -155,7 +155,7 @@ public class Utils {
         }
     }
 
-    public static int findSlotMatchingItem(DankInventory dankInventory,ItemStack itemStack) {
+    public static int findSlotMatchingItem(DankInventory dankInventory, ItemStack itemStack) {
         for (int i = 0; i < dankInventory.getSlots(); ++i) {
             ItemStack stack = dankInventory.getStackInSlot(i);
             if (stack.isEmpty() || !ItemStack.isSameItemSameTags(itemStack,stack)) continue;
@@ -221,7 +221,7 @@ public class Utils {
         }
         ItemStack selected = handler.getStackInSlot(selectedSlot);
 
-        while (selected.isEmpty() || selected.is(BLACKLISTED_USAGE)) {
+        while (selected.isEmpty() || selected.is(ModTags.BLACKLISTED_USAGE)) {
             if (right) {
                 selectedSlot++;
                 if (selectedSlot >= size) selectedSlot = 0;
@@ -301,7 +301,7 @@ public class Utils {
         int slot = getSelectedSlot(bag);
         if (slot == INVALID) return ItemStack.EMPTY;
         ItemStack stack = inv.getStackInSlot(slot);
-        return stack.is(BLACKLISTED_USAGE) ? ItemStack.EMPTY : stack;
+        return stack.is(ModTags.BLACKLISTED_USAGE) ? ItemStack.EMPTY : stack;
     }
 
     /*public static boolean areItemStacksConvertible(final ItemStack stack1, final ItemStack stack2) {

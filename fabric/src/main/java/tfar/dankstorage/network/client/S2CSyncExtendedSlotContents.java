@@ -9,6 +9,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import tfar.dankstorage.container.AbstractDankMenu;
+import tfar.dankstorage.utils.PacketBufferEX;
 
 public class S2CSyncExtendedSlotContents implements ClientPlayNetworking.PlayChannelHandler {
 

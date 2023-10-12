@@ -34,7 +34,7 @@ public abstract class AbstractDankMenu extends AbstractContainerMenu {
         if (slot != null) {
             ItemStack slotStack = slot.getItem();
 
-            if (!flag && stack.sameItem(slotStack) && ItemStack.tagMatches(slotStack, stack)) {
+            if (!flag && ItemStack.isSameItemSameTags(slotStack,stack)) {
                 return slotStack.getCount() + (stackSizeMatters ? 0 : stack.getCount()) <= slot.getMaxStackSize(slotStack);
             }
         }

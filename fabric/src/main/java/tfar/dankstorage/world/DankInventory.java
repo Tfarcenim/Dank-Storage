@@ -12,11 +12,11 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.mixin.SimpleContainerAccess;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.ItemHandlerHelper;
-import tfar.dankstorage.utils.ItemStackWrapper;
 import tfar.dankstorage.utils.Utils;
 
 import java.util.*;
@@ -44,7 +44,7 @@ public class DankInventory extends SimpleContainer implements ContainerData {
         if (stats.ordinal() <= dankStats.ordinal()) {
             return;
         }
-        DankStorageFabric.LOGGER.debug("Upgrading dank #{} from tier {} to {}", id, dankStats.name(), stats.name());
+        DankStorage.LOGGER.debug("Upgrading dank #{} from tier {} to {}", id, dankStats.name(), stats.name());
         setTo(stats);
     }
 

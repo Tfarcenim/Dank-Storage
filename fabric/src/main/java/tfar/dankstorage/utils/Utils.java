@@ -21,24 +21,29 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.mixin.CraftingContainerAccess;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.server.C2SMessageToggleUseType;
+import tfar.dankstorage.world.ClientData;
 import tfar.dankstorage.world.DankInventory;
 
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static tfar.dankstorage.network.server.C2SMessageToggleUseType.useTypes;
 
 public class Utils {
 
-    public static final TagKey<Item> BLACKLISTED_STORAGE = bind(new ResourceLocation(DankStorageFabric.MODID, "blacklisted_storage"));
-    public static final TagKey<Item> BLACKLISTED_USAGE = bind(new ResourceLocation(DankStorageFabric.MODID, "blacklisted_usage"));
+    public static final TagKey<Item> BLACKLISTED_STORAGE = bind(new ResourceLocation(DankStorage.MODID, "blacklisted_storage"));
+    public static final TagKey<Item> BLACKLISTED_USAGE = bind(new ResourceLocation(DankStorage.MODID, "blacklisted_usage"));
 
     public static final TagKey<Item> WRENCHES = bind(new ResourceLocation("forge", "wrenches"));
 
@@ -196,7 +201,7 @@ public class Utils {
     }
 
     public static void changeSelectedSlot(ItemStack bag, boolean right, ServerPlayer player) {
-        DankInventory handler = getInventory(bag,player.getLevel());
+        DankInventory handler = getInventory(bag,player.serverLevel());
         //don't change slot if empty
         if (handler == null || handler.noValidSlots()) return;
         int selectedSlot = getSelectedSlot(bag);
@@ -270,7 +275,7 @@ public class Utils {
     }
 
     public static DankItem getItemFromTier(int tier) {
-        return (DankItem) BuiltInRegistries.ITEM.get(new ResourceLocation(DankStorageFabric.MODID, "dank_" + tier));
+        return (DankItem) BuiltInRegistries.ITEM.get(new ResourceLocation(DankStorage.MODID, "dank_" + tier));
     }
 
     public static int getNbtSize(@Nullable CompoundTag nbt) {
@@ -326,7 +331,7 @@ public class Utils {
         } else if (first.getCount() > inventory.getMaxStackSize()) {
             return false;
         } else {
-            return ItemStack.tagMatches(first, second);
+            return ItemStack.isSameItemSameTags(first, second);
         }
     }
 
