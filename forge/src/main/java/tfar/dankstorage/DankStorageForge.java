@@ -31,7 +31,7 @@ import org.apache.logging.log4j.Logger;
 import tfar.dankstorage.client.Client;
 import tfar.dankstorage.command.DankCommands;
 import tfar.dankstorage.container.AbstractDankMenu;
-import tfar.dankstorage.container.CustomSync;
+import tfar.dankstorage.menu.CustomSync;
 import tfar.dankstorage.datagen.DataGenerators;
 import tfar.dankstorage.event.ForgeClientEvents;
 import tfar.dankstorage.init.*;

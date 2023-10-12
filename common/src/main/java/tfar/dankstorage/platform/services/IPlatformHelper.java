@@ -1,5 +1,8 @@
 package tfar.dankstorage.platform.services;
 
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+
 public interface IPlatformHelper {
 
     /**
@@ -33,4 +36,7 @@ public interface IPlatformHelper {
 
         return isDevelopmentEnvironment() ? "development" : "production";
     }
+
+    void sendGhostItemSlot(ServerPlayer player, int id, int slot, ItemStack stack);
+
 }

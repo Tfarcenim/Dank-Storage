@@ -10,13 +10,14 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.item.DankItem;
 
 public class DankCommands {
 
     public static void register(CommandDispatcher<CommandSourceStack> commandDispatcher) {
-        commandDispatcher.register(Commands.literal(DankStorageFabric.MODID)
+        commandDispatcher.register(Commands.literal(DankStorage.MODID)
                 .then(Commands.literal("clear")
                         .requires(commandSourceStack -> commandSourceStack.hasPermission(3))
                         .then(Commands.literal("all")

@@ -1,20 +1,14 @@
 package tfar.dankstorage.utils;
 
-import io.netty.buffer.Unpooled;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import tfar.dankstorage.DankStorage;
@@ -28,54 +22,14 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import static tfar.dankstorage.utils.UseType.useTypes;
+public class Utils extends CommonUtils{
 
-public class Utils {
 
-    public static final TagKey<Item> BLACKLISTED_STORAGE = bind(new ResourceLocation(DankStorage.MODID, "blacklisted_storage"));
-    public static final TagKey<Item> BLACKLISTED_USAGE = bind(new ResourceLocation(DankStorage.MODID, "blacklisted_usage"));
 
-    public static final TagKey<Item> WRENCHES = bind(new ResourceLocation("forge", "wrenches"));
-
-    private static TagKey<Item> bind(ResourceLocation string) {
-        return TagKey.create(Registries.ITEM, string);
-    }
-
-    public static final String ID = "dankstorage:id";
     public static final Set<ResourceLocation> taglist = new HashSet<>();
     public static boolean DEV = FabricLoader.getInstance().isDevelopmentEnvironment();
-    public static final int INVALID = -1;
 
-    public static final String SET = "settings";
-
-    @Nullable
-    public static CompoundTag getSettings(ItemStack bag) {
-        return hasSettings(bag) ? bag.getTag().getCompound(SET) : null;
-    }
-
-    public static CompoundTag getOrCreateSettings(ItemStack bag) {
-        if (hasSettings(bag)) {
-            return bag.getTag().getCompound(SET);
-        } else {
-            bag.getOrCreateTag().put(SET, new CompoundTag());
-            return getSettings(bag);
-        }
-    }
-
-    public static PickupMode getPickupMode(ItemStack bag) {
-        CompoundTag tag = getSettings(bag);
-        if (tag != null) {
-            return PickupMode.PICKUP_MODES[tag.getInt("mode")];
-        }
-        return PickupMode.NONE;
-    }
-
-    public static boolean isConstruction(ItemStack bag) {
-        CompoundTag settings = Utils.getSettings(bag);
-        return settings != null && settings.getInt("construction") == UseType.construction.ordinal();
-    }
 
     public static DankStats getStatsfromRows(int rows) {
         switch (rows) {
@@ -107,21 +61,6 @@ public class Utils {
                 Component.translatable("dankstorage.mode." + PickupMode.PICKUP_MODES[ordinal].name()), true);
     }
 
-    public static UseType getUseType(ItemStack bag) {
-        CompoundTag settings = getSettings(bag);
-        return settings != null ? useTypes[settings.getInt("construction")] : UseType.bag;
-    }
-
-    //0,1,2
-    public static void cyclePlacement(ItemStack bag, Player player) {
-        CompoundTag tag = getOrCreateSettings(bag);
-        int ordinal = tag.getInt("construction");
-        ordinal++;
-        if (ordinal >= useTypes.length) ordinal = 0;
-        tag.putInt("construction", ordinal);
-        player.displayClientMessage(
-                Component.translatable("dankstorage.usetype." + useTypes[ordinal].name()), true);
-    }
 
     //this can be 0 - 80
     public static int getSelectedSlot(ItemStack bag) {
@@ -184,10 +123,6 @@ public class Utils {
         }
     }
 
-    public static List<ItemStackWrapper> wrap(List<ItemStack> stacks) {
-        return stacks.stream().map(ItemStackWrapper::new).collect(Collectors.toList());
-    }
-
     public static DankStats getStats(ItemStack bag) {
         return ((DankItem) bag.getItem()).stats;
     }
@@ -225,27 +160,6 @@ public class Utils {
         }
     }
 
-    //make sure to return an invalid ID for unassigned danks
-    public static int getFrequency(ItemStack bag) {
-        CompoundTag settings = getSettings(bag);
-        if (settings != null && settings.contains(ID)) {
-            return settings.getInt(ID);
-        }
-        return INVALID;
-    }
-
-    public static void setFrequency(ItemStack bag,int frequency) {
-        getOrCreateSettings(bag).putInt(ID,frequency);
-    }
-
-    private static boolean hasSettings(ItemStack bag) {
-        return bag.hasTag() && bag.getTag().contains(SET);
-    }
-
-    public static boolean oredict(ItemStack bag) {
-        return bag.getItem() instanceof DankItem && bag.hasTag() && getSettings(bag).getBoolean("tag");
-    }
-
     public static DankInventory getOrCreateInventory(ItemStack bag, Level level) {
         if (!level.isClientSide) {
             int id = getFrequency(bag);
@@ -262,20 +176,11 @@ public class Utils {
         throw new RuntimeException("Attempted to get inventory on client");
     }
 
-    public static int getNbtSize(ItemStack stack) {
-        return getNbtSize(stack.getTag());
-    }
-
     public static DankItem getItemFromTier(int tier) {
         return (DankItem) BuiltInRegistries.ITEM.get(new ResourceLocation(DankStorage.MODID, "dank_" + tier));
     }
 
-    public static int getNbtSize(@Nullable CompoundTag nbt) {
-        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
-        buffer.writeNbt(nbt);
-        buffer.release();
-        return buffer.writerIndex();
-    }
+
 
     public static ItemStack getItemStackInSelectedSlot(ItemStack bag,ServerLevel level) {
         DankInventory inv = getInventory(bag,level);
@@ -313,22 +218,6 @@ public class Utils {
         if (stack.getItem() instanceof DankItem) return true;
         stack = player.getOffhandItem();
         return stack.getItem() instanceof DankItem;
-    }
-
-    public static boolean canMerge(ItemStack first, ItemStack second, Container inventory) {
-        if (first.getItem() != second.getItem()) {
-            return false;
-        } else if (first.getDamageValue() != second.getDamageValue()) {
-            return false;
-        } else if (first.getCount() > inventory.getMaxStackSize()) {
-            return false;
-        } else {
-            return ItemStack.isSameItemSameTags(first, second);
-        }
-    }
-
-    public static void warn(Player player, DankStats item, DankStats inventory) {
-        player.sendSystemMessage(Component.literal("Dank Item Level "+item.ordinal() +" cannot open Dank Inventory Level "+inventory.ordinal()));
     }
 
     @Nullable

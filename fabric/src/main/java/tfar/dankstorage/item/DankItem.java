@@ -34,7 +34,6 @@ import tfar.dankstorage.mixin.ItemUsageContextAccessor;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.server.C2SRequestContentsPacket;
 import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.UseType;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.ClientData;

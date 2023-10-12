@@ -7,13 +7,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.inventory.DankSlot;
-import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.world.DankInventory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Optional;
 
 public abstract class AbstractDankMenu extends AbstractContainerMenu {
     public final int rows;
@@ -213,7 +212,7 @@ public abstract class AbstractDankMenu extends AbstractContainerMenu {
         super.broadcastChanges();
         //the remote inventory needs to know about locked slots
         for (int i = 0; i < dankInventory.dankStats.slots;i++) {
-            DankPacketHandler.sendGhostItemSlot((ServerPlayer) playerInventory.player,containerId,i,dankInventory.getGhostItem(i));
+            Services.PLATFORM.sendGhostItemSlot((ServerPlayer) playerInventory.player,containerId,i,dankInventory.getGhostItem(i));
         }
     }
 

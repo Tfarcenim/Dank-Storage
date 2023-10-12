@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -18,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 import tfar.dankstorage.client.Client;
 import tfar.dankstorage.client.DualTooltip;
+import tfar.dankstorage.client.NumberEditBox;
 import tfar.dankstorage.client.button.SmallButton;
 import tfar.dankstorage.container.AbstractDankMenu;
 import tfar.dankstorage.inventory.DankSlot;
@@ -141,7 +142,7 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankMenu> exte
         }
     }
 
-    public void renderSlot(PoseStack pPoseStack, Slot pSlot) {
+    public void renderSlot(GuiGraphics pPoseStack, Slot pSlot) {
         if (pSlot instanceof DankSlot) {
             itemRenderer = BigItemRenderer.INSTANCE;
         }
@@ -179,7 +180,7 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankMenu> exte
     }
 
     @Override
-    protected void renderBg(PoseStack stack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphics stack, float partialTicks, int mouseX, int mouseY) {
 
         RenderSystem.setShaderTexture(0, background);
         if (is7)

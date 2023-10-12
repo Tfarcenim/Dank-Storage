@@ -21,6 +21,7 @@ import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.container.DockMenu;
 import tfar.dankstorage.inventory.api.DankInventorySlotWrapper;
 import tfar.dankstorage.item.DankItem;
+import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventory;
@@ -46,15 +47,15 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
         if (settings == null) {
 
         } else {
-            settings.putInt(Utils.ID,freq);
+            settings.putInt(CommonUtils.FREQ,freq);
         }
     }
 
-    public static final DankInventory DUMMY = new DankInventory(DankStats.zero, Utils.INVALID);
+    public static final DankInventory DUMMY = new DankInventory(DankStats.zero, CommonUtils.INVALID);
 
     public DankInventory getInventory() {
-        if (settings != null && settings.contains(Utils.ID)) {
-            int id = settings.getInt(Utils.ID);
+        if (settings != null && settings.contains(CommonUtils.FREQ)) {
+            int id = settings.getInt(CommonUtils.FREQ);
             DankInventory dankInventory = DankStorageFabric.instance.data.getInventory(id);
 
             //if the id is too high
@@ -62,7 +63,7 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
                 int next = DankStorageFabric.instance.data.getNextID();
                 dankInventory = DankStorageFabric.instance.data
                         .getOrCreateInventory(next, DankStats.values()[getBlockState().getValue(DockBlock.TIER)]);
-                settings.putInt(Utils.ID, next);
+                settings.putInt(CommonUtils.FREQ, next);
             }
 
             return dankInventory;
@@ -88,7 +89,7 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
     @Override
     public void load(CompoundTag compound) {
         super.load(compound);
-        this.settings = compound.getCompound(Utils.SET);
+        this.settings = compound.getCompound(CommonUtils.SET);
         if (compound.contains("CustomName", 8)) {
             this.setCustomName(Component.Serializer.fromJson(compound.getString("CustomName")));
         }
@@ -98,7 +99,7 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         if (settings != null) {
-            tag.put(Utils.SET, settings);
+            tag.put(CommonUtils.SET, settings);
         }
         if (this.hasCustomName()) {
             tag.putString("CustomName", Component.Serializer.toJson(this.customName));
@@ -196,7 +197,7 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
         ItemStack stack = new ItemStack(Utils.getItemFromTier(tier));
 
         if (settings != null) {
-            stack.getOrCreateTag().put(Utils.SET, settings);
+            stack.getOrCreateTag().put(CommonUtils.SET, settings);
         }
 
         settings = null;
@@ -223,14 +224,14 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
             tank.shrink(1);
 
             DankInventory dankInventory;
-            if (iSettings != null && iSettings.contains(Utils.ID)) {
+            if (iSettings != null && iSettings.contains(CommonUtils.FREQ)) {
                 this.settings = iSettings;
-                dankInventory = DankStorageFabric.instance.data.getInventory(iSettings.getInt(Utils.ID));
+                dankInventory = DankStorageFabric.instance.data.getInventory(iSettings.getInt(CommonUtils.FREQ));
             } else {
                 this.settings = new CompoundTag();
                 int newId = DankStorageFabric.instance.data.getNextID();
                 dankInventory = DankStorageFabric.instance.data.getOrCreateInventory(newId, stats);
-                settings.putInt(Utils.ID, newId);
+                settings.putInt(CommonUtils.FREQ, newId);
             }
             if (stats != dankInventory.dankStats) {
                 dankInventory.upgradeTo(stats);

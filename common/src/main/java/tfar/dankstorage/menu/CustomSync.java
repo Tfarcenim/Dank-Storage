@@ -1,4 +1,4 @@
-package tfar.dankstorage.container;
+package tfar.dankstorage.menu;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.protocol.game.ClientboundContainerSetDataPacket;
