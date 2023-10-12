@@ -18,6 +18,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.ModTags;
+import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.ItemStackWrapper;
 import tfar.dankstorage.utils.Utils;
@@ -367,8 +368,8 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
             if (stack.isEmpty()) {
                 break;
             }
-            if (Utils.canCompress(level,stack)) {
-                Pair<ItemStack,Integer> result = Utils.compress(stack,player.serverLevel().registryAccess());
+            if (CommonUtils.canCompress(level,stack)) {
+                Pair<ItemStack,Integer> result = CommonUtils.compress(stack,player.serverLevel().registryAccess());
                 ItemStack resultStack = result.getFirst();
                 if (!resultStack.isEmpty()) {
                     int division = result.getSecond();

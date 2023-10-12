@@ -7,31 +7,30 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import tfar.dankstorage.DankStorageFabric;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.network.server.*;
-
-import java.util.List;
+import tfar.dankstorage.utils.PacketBufferEX;
 
 public class DankPacketHandler {
 
-    public static final ResourceLocation toggle_pickup = new ResourceLocation(DankStorageFabric.MODID, "toggle_pickup");
-    public static final ResourceLocation tag_mode = new ResourceLocation(DankStorageFabric.MODID, "tag_mode");
-    public static final ResourceLocation sort = new ResourceLocation(DankStorageFabric.MODID, "sort");
-    public static final ResourceLocation lock_slot = new ResourceLocation(DankStorageFabric.MODID, "lock_slot");
+    public static final ResourceLocation toggle_pickup = new ResourceLocation(DankStorage.MODID, "toggle_pickup");
+    public static final ResourceLocation tag_mode = new ResourceLocation(DankStorage.MODID, "tag_mode");
+    public static final ResourceLocation sort = new ResourceLocation(DankStorage.MODID, "sort");
+    public static final ResourceLocation lock_slot = new ResourceLocation(DankStorage.MODID, "lock_slot");
 
-    public static final ResourceLocation pick_block = new ResourceLocation(DankStorageFabric.MODID, "pick_block");
-    public static final ResourceLocation toggle_use = new ResourceLocation(DankStorageFabric.MODID, "toggle_use");
-    public static final ResourceLocation scroll = new ResourceLocation(DankStorageFabric.MODID, "scroll");
-    public static final ResourceLocation set_id = new ResourceLocation(DankStorageFabric.MODID, "set_id");
-    public static final ResourceLocation lock_id = new ResourceLocation(DankStorageFabric.MODID, "lock_id");
-    public static final ResourceLocation request_contents = new ResourceLocation(DankStorageFabric.MODID, "request_contents");
+    public static final ResourceLocation pick_block = new ResourceLocation(DankStorage.MODID, "pick_block");
+    public static final ResourceLocation toggle_use = new ResourceLocation(DankStorage.MODID, "toggle_use");
+    public static final ResourceLocation scroll = new ResourceLocation(DankStorage.MODID, "scroll");
+    public static final ResourceLocation set_id = new ResourceLocation(DankStorage.MODID, "set_id");
+    public static final ResourceLocation lock_id = new ResourceLocation(DankStorage.MODID, "lock_id");
+    public static final ResourceLocation request_contents = new ResourceLocation(DankStorage.MODID, "request_contents");
 
-    public static final ResourceLocation sync_slot = new ResourceLocation(DankStorageFabric.MODID, "sync_slot");
-    public static final ResourceLocation sync_ghost = new ResourceLocation(DankStorageFabric.MODID, "sync_ghost");
-    public static final ResourceLocation sync_container = new ResourceLocation(DankStorageFabric.MODID, "sync_container");
-    public static final ResourceLocation sync_data = new ResourceLocation(DankStorageFabric.MODID, "sync_data");
-    public static final ResourceLocation sync_inventory = new ResourceLocation(DankStorageFabric.MODID, "sync_inventory");
-    public static final ResourceLocation compress = new ResourceLocation(DankStorageFabric.MODID, "compress");
+    public static final ResourceLocation sync_slot = new ResourceLocation(DankStorage.MODID, "sync_slot");
+    public static final ResourceLocation sync_ghost = new ResourceLocation(DankStorage.MODID, "sync_ghost");
+    public static final ResourceLocation sync_container = new ResourceLocation(DankStorage.MODID, "sync_container");
+    public static final ResourceLocation sync_data = new ResourceLocation(DankStorage.MODID, "sync_data");
+    public static final ResourceLocation sync_inventory = new ResourceLocation(DankStorage.MODID, "sync_inventory");
+    public static final ResourceLocation compress = new ResourceLocation(DankStorage.MODID, "compress");
 
     public static void registerMessages() {
         ServerPlayNetworking.registerGlobalReceiver(scroll, new C2SMessageScrollSlot());
@@ -85,7 +84,7 @@ public class DankPacketHandler {
         ServerPlayNetworking.send(player, DankPacketHandler.sync_data, buf);
     }
 
-    public static void sendList(ServerPlayer player, List<ItemStack> stacks) {
+    public static void sendList(ServerPlayer player, NonNullList<ItemStack> stacks) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         PacketBufferEX.writeList(buf, stacks);
         ServerPlayNetworking.send(player, DankPacketHandler.sync_inventory, buf);

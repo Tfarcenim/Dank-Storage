@@ -28,15 +28,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.client.Client;
+import tfar.dankstorage.client.DankTooltip;
 import tfar.dankstorage.container.PortableDankProvider;
+import tfar.dankstorage.mixin.ItemUsageContextAccessor;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.server.C2SRequestContentsPacket;
-import tfar.dankstorage.world.DankInventory;
-import tfar.dankstorage.mixin.ItemUsageContextAccessor;
-import tfar.dankstorage.network.server.C2SMessageToggleUseType;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.PickupMode;
+import tfar.dankstorage.utils.UseType;
 import tfar.dankstorage.utils.Utils;
+import tfar.dankstorage.world.ClientData;
+import tfar.dankstorage.world.DankInventory;
 import tfar.dankstorage.world.DankSavedData;
 
 import javax.annotation.Nonnull;
@@ -117,7 +119,7 @@ public class DankItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack bag = player.getItemInHand(hand);
 
-            if (Utils.getUseType(bag) == C2SMessageToggleUseType.UseType.bag) {
+            if (Utils.getUseType(bag) == UseType.bag) {
                 if (!level.isClientSide) {
                     assignNextId(bag);
                     player.openMenu(new PortableDankProvider(bag));
@@ -170,14 +172,14 @@ public class DankItem extends Item {
     public InteractionResult interactLivingEntity(ItemStack bag, Player player, LivingEntity entity, InteractionHand hand) {
         if (!Utils.isConstruction(bag)) return InteractionResult.PASS;
 
-        ItemStack toUse = Utils.getSelectedItem(bag,player.level);
+        ItemStack toUse = Utils.getSelectedItem(bag,player.level());
         EquipmentSlot hand1 = hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
         player.setItemSlot(hand1, toUse);
         InteractionResult result = toUse.getItem().interactLivingEntity(toUse, player, entity, hand);
 
         //the client doesn't have access to the full inventory
-        if (!player.level.isClientSide) {
-            DankInventory handler = Utils.getOrCreateInventory(bag, player.level);
+        if (!player.level().isClientSide) {
+            DankInventory handler = Utils.getOrCreateInventory(bag, player.level());
             handler.setItem(Utils.getSelectedSlot(bag), toUse);
         }
 
@@ -241,7 +243,7 @@ public class DankItem extends Item {
 
 
             tooltip.add(Component.translatable("text.dankstorage.changeusetype", Client.CONSTRUCTION.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
-            C2SMessageToggleUseType.UseType useType = Utils.getUseType(bag);
+            UseType useType = Utils.getUseType(bag);
             tooltip.add(
                     Component.translatable("text.dankstorage.currentusetype", Component.translatable(
                             "dankstorage.usetype." + useType.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
@@ -321,9 +323,9 @@ public class DankItem extends Item {
     public InteractionResult useOn(UseOnContext ctx) {
         ItemStack bag = ctx.getItemInHand();
         Level level = ctx.getLevel();
-        C2SMessageToggleUseType.UseType useType = Utils.getUseType(bag);
+        UseType useType = Utils.getUseType(bag);
 
-        if (useType == C2SMessageToggleUseType.UseType.bag) {
+        if (useType == UseType.bag) {
             return InteractionResult.PASS;
         }
 

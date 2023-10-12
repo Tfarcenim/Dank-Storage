@@ -1,9 +1,9 @@
 package tfar.dankstorage.event;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
@@ -46,26 +46,28 @@ public class FabricEvents {
         final int stringX = xStart - 155;
         final int stringY = yStart - 10;
         String mode = Utils.getUseType(bag).name();
-        mc.font.drawShadow(matrixStack, mode, stringX, stringY, 0xffffff);
-        RenderSystem.setShaderTexture(0, GuiComponent.GUI_ICONS_LOCATION);
-
+        matrixStack.drawString(mc.font, mode, stringX, stringY, 0xffffff);
+        RenderSystem.setShaderTexture(0, GUI_ICONS_LOCATION);
         }
+
+    private static final ResourceLocation GUI_ICONS_LOCATION = new ResourceLocation("textures/gui/icons.png");
+
 
     private static void renderHotbarItem(GuiGraphics guiGraphics,int x, int y, float partialTicks, Player player, ItemStack stack) {
         float f = (float) stack.getPopTime() - partialTicks;
         if (f > 0.0F) {
-            guiGraphics.pushPose();
+            guiGraphics.pose().pushPose();
             float f1 = 1.0F + f / 5.0F;
-            guiGraphics.translate((float) (x + 8), (float) (y + 12), 0.0F);
-            guiGraphics.scale(1.0F / f1, (f1 + 1.0F) / 2.0F, 1.0F);
-            guiGraphics.translate((float) (-(x + 8)), (float) (-(y + 12)), 0.0F);
+            guiGraphics.pose().translate((float) (x + 8), (float) (y + 12), 0.0F);
+            guiGraphics.pose().scale(1.0F / f1, (f1 + 1.0F) / 2.0F, 1.0F);
+            guiGraphics.pose().translate((float) (-(x + 8)), (float) (-(y + 12)), 0.0F);
         }
 
-        mc.getItemRenderer().renderAndDecorateItem(guiGraphics,player, stack, x, y,0);
+        guiGraphics.renderItemDecorations(mc.font,stack, x, y);
         if (f > 0.0F) {
-            guiGraphics.popPose();
+            guiGraphics.pose().popPose();
         }
-        mc.getItemRenderer().renderGuiItemDecorations(guiGraphics,mc.font, stack, x, y);
+        guiGraphics.renderItemDecorations(mc.font,stack, x, y);
     }
 
 }

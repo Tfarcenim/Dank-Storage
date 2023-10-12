@@ -16,7 +16,6 @@ import tfar.dankstorage.utils.Utils;
 
 public class C2SMessageToggleUseType implements ServerPlayNetworking.PlayChannelHandler {
 
-    public static final UseType[] useTypes = UseType.values();
 
     public static void send() {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
@@ -33,10 +32,6 @@ public class C2SMessageToggleUseType implements ServerPlayNetworking.PlayChannel
     @Override
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         server.execute(() -> handle(player));
-    }
-
-    public enum UseType {
-        bag, construction
     }
 }
 

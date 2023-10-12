@@ -7,7 +7,6 @@
     "ItemEntityMixin",
     "ItemUsageContextAccessor",
     "PlayerInventoryMixin",
-    "RecipeManagerMixin",
     "ServerPlayerMixin",
     "SimpleContainerAccess"
   ],

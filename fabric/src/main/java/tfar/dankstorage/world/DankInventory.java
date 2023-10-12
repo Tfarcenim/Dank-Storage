@@ -6,18 +6,17 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import tfar.dankstorage.DankStorage;
+import tfar.dankstorage.Constants;
 import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.mixin.SimpleContainerAccess;
-import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.utils.ItemHandlerHelper;
-import tfar.dankstorage.utils.Utils;
+import tfar.dankstorage.utils.*;
 
 import java.util.*;
 import java.util.stream.IntStream;
@@ -44,7 +43,7 @@ public class DankInventory extends SimpleContainer implements ContainerData {
         if (stats.ordinal() <= dankStats.ordinal()) {
             return;
         }
-        DankStorage.LOGGER.debug("Upgrading dank #{} from tier {} to {}", id, dankStats.name(), stats.name());
+        Constants.LOG.debug("Upgrading dank #{} from tier {} to {}", id, dankStats.name(), stats.name());
         setTo(stats);
     }
 
@@ -327,97 +326,38 @@ public class DankInventory extends SimpleContainer implements ContainerData {
         setChanged();
     }
 
-    public void compress(ServerLevel level) {
+    public void compress(ServerPlayer player) {
         sort();
-        int freeSlots = 0;
-
-        Map<Item, Pair<Integer, Integer>> groups = new HashMap<>();
-
-        for (int i = 0; i < getContainerSize(); i++) {
+        ServerLevel level = player.serverLevel();
+        List<ItemStack> addLater = new ArrayList<>();
+        for (int i = 0; i < this.items.size() ; i++) {
             ItemStack stack = getItem(i);
-            if (!stack.isEmpty()) {
-
-                if (Utils.canCompress(level, stack)) {
-
-                    Item item = stack.getItem();
-                    Pair<Integer, Integer> pair;
-                    if (groups.containsKey(item)) {
-                        pair = Pair.of(groups.get(item).getFirst(), i);
-                    } else {
-                        pair = Pair.of(i, i);
-                    }
-                    groups.put(item, pair);
-                }
-            } else {
-                freeSlots = getContainerSize() - i;
+            if (stack.isEmpty()) {
                 break;
             }
-        }
-
-        List<Item> unsafeSlots = new ArrayList<>();
-        for (Map.Entry<Item, Pair<Integer, Integer>> entry : groups.entrySet()) {
-            Item item = entry.getKey();
-            Pair<Integer, Integer> pair = entry.getValue();
-            Pair<ItemStack, Integer> stackIntegerPair = Utils.compress(level, new ItemStack(item));
-            int count = 0;
-
-            for (int i = pair.getFirst(); i < pair.getSecond() + 1; i++) {
-                count += getItem(i).getCount();
-            }
-            if (count <= getMaxStackSize() && count % stackIntegerPair.getSecond() != 0) {
-                unsafeSlots.add(item);
-            } else {
-                ItemStack compressionResult = stackIntegerPair.getFirst();
-                int compressedCount = count / stackIntegerPair.getSecond();
-                int remainder = count % stackIntegerPair.getSecond();
-
-
-                //clear out old items
-                for (int i = pair.getFirst(); i < pair.getSecond() + 1; i++) {
-                    removeItem(i, getMaxStackSize());
-                }
-                int fullStacks = compressedCount / getMaxStackSize();
-
-                int partialStack = compressedCount % getMaxStackSize();
-
-                //set max stacksize items
-                for (int i = pair.getFirst(); i < pair.getFirst() + fullStacks; i++) {
-                    setItem(i, new ItemStack(compressionResult.getItem(), getMaxStackSize()));
-                }
-
-                //set partial stack of compressed items
-                if (partialStack > 0) {
-                    setItem(pair.getFirst() + fullStacks, new ItemStack(compressionResult.getItem(), partialStack));
-                }
-
-                if (remainder > 0) {
-                    setItem(pair.getFirst() + fullStacks + 1, new ItemStack(item, partialStack));
+            if (CommonUtils.canCompress(level,stack)) {
+                Pair<ItemStack,Integer> result = CommonUtils.compress(stack,player.serverLevel().registryAccess());
+                ItemStack resultStack = result.getFirst();
+                if (!resultStack.isEmpty()) {
+                    int division = result.getSecond();
+                    int compressedCount = stack.getCount() / division;
+                    int remainderCount = stack.getCount() % division;
+                    setItem(i,ItemHandlerHelper.copyStackWithSize(resultStack,compressedCount));
+                    addLater.add(ItemHandlerHelper.copyStackWithSize(stack,remainderCount));
                 }
             }
         }
         sort();
 
-
-        for (Item item : unsafeSlots) {
-            if (freeSlots <= 0) {
-                break;
-            } else {
-                for (int i = 0; i < getContainerSize(); i++) {
-                    ItemStack stack = getItem(i);
-                    if (stack.getItem() == item) {
-
-                        Pair<ItemStack, Integer> stackIntegerPair = Utils.compress(level, new ItemStack(item));
-
-                        ItemStack compressionResult = stackIntegerPair.getFirst();
-                        int compressedCount = stack.getCount() / stackIntegerPair.getSecond();
-                        int remainder = stack.getCount() % stackIntegerPair.getSecond();
-
-                        setItem(i, new ItemStack(compressionResult.getItem(), compressedCount));
-                        setItem(getContainerSize() - freeSlots, new ItemStack(item, remainder));
-                        freeSlots--;
-                        break;
-                    }
-                }
+        for (ItemStack itemStack : addLater) {
+            ItemStack remainder = itemStack.copy();
+            for (int i = 0; i < items.size();i++) {
+                remainder = addItem(remainder);
+                if (remainder.isEmpty()) break;
+            }
+            if (!remainder.isEmpty()) {
+                player.addItem(remainder);
+               // ItemHandlerHelper.giveItemToPlayer(player,remainder);
             }
         }
         sort();

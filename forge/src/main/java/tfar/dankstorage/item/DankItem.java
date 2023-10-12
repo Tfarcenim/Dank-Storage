@@ -31,6 +31,7 @@ import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.server.C2SRequestContentsPacket;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.PickupMode;
+import tfar.dankstorage.utils.UseType;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.ClientData;
 import tfar.dankstorage.world.DankInventory;
@@ -79,7 +80,7 @@ public class DankItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack bag = player.getItemInHand(hand);
 
-            if (Utils.getUseType(bag) == Utils.UseType.bag) {
+            if (Utils.getUseType(bag) == UseType.bag) {
                 if (!level.isClientSide) {
                     assignNextId(bag);
                     player.openMenu(new PortableDankProvider(bag));
@@ -202,7 +203,7 @@ public class DankItem extends Item {
 
 
             tooltip.add(Utils.translatable("text.dankstorage.changeusetype", Client.CONSTRUCTION.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
-            Utils.UseType useType = Utils.getUseType(bag);
+            UseType useType = Utils.getUseType(bag);
             tooltip.add(
                     Utils.translatable("text.dankstorage.currentusetype", Utils.translatable(
                             "dankstorage.usetype." + useType.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
@@ -231,9 +232,9 @@ public class DankItem extends Item {
     public InteractionResult useOn(UseOnContext ctx) {
         ItemStack bag = ctx.getItemInHand();
         Level level = ctx.getLevel();
-        Utils.UseType useType = Utils.getUseType(bag);
+        UseType useType = Utils.getUseType(bag);
 
-        if (useType == Utils.UseType.bag) {
+        if (useType == UseType.bag) {
             return InteractionResult.PASS;
         }
 
