@@ -1,46 +1,25 @@
 package tfar.dankstorage.utils;
 
-import io.netty.buffer.Unpooled;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.items.ItemHandlerHelper;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageForge;
-import tfar.dankstorage.ModTags;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.world.ClientData;
 import tfar.dankstorage.world.DankInventory;
 
-import javax.annotation.Nullable;
 import java.nio.file.Path;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 
 public class Utils extends CommonUtils{
-    private static TagKey<Item> bind(ResourceLocation string) {
-        return TagKey.create(Registries.ITEM, string);
-    }
-
-    public static final Set<ResourceLocation> taglist = new HashSet<>();
-    public static boolean DEV = false;//FabricLoader.getInstance().isDevelopmentEnvironment();
-
-
+    
     public static void setPickSlot(Level level,ItemStack bag, ItemStack stack) {
 
         DankInventory dankInventory = getInventory(bag,level);
@@ -117,7 +96,7 @@ public class Utils extends CommonUtils{
         }
         ItemStack selected = handler.getStackInSlot(selectedSlot);
 
-        while (selected.isEmpty() || selected.is(ModTags.BLACKLISTED_USAGE)) {
+        while (selected.isEmpty() || selected.is(CommonUtils.BLACKLISTED_USAGE)) {
             if (right) {
                 selectedSlot++;
                 if (selectedSlot >= size) selectedSlot = 0;
@@ -146,9 +125,9 @@ public class Utils extends CommonUtils{
                         .resolve("data/"+DankStorage.MODID+"/"+id+".dat");
 
                 if (path.toFile().isFile()) {
-                    return DankStorageForge.instance.getData(id,level.getServer()).createInventory(id);
+                    return DankStorageForge.getData(id,level.getServer()).createInventory(id);
                 } else {
-                    return DankStorageForge.instance.getData(id,level.getServer()).createFreshInventory(getDefaultStats(bag),id);
+                    return DankStorageForge.getData(id,level.getServer()).createFreshInventory(getDefaultStats(bag),id);
                 }
             } else {
                 return null;
@@ -157,28 +136,13 @@ public class Utils extends CommonUtils{
         throw new RuntimeException("Attempted to get inventory on client");
     }
 
-    public static int getNbtSize(ItemStack stack) {
-        return getNbtSize(stack.getTag());
-    }
-
-    public static DankItem getItemFromTier(int tier) {
-        return (DankItem) BuiltInRegistries.ITEM.get(new ResourceLocation(DankStorage.MODID, "dank_" + tier));
-    }
-
-    public static int getNbtSize(@Nullable CompoundTag nbt) {
-        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
-        buffer.writeNbt(nbt);
-        buffer.release();
-        return buffer.writerIndex();
-    }
-
     public static ItemStack getItemStackInSelectedSlot(ItemStack bag,ServerLevel level) {
         DankInventory inv = getInventory(bag,level);
         if (inv == null) return ItemStack.EMPTY;
         int slot = getSelectedSlot(bag);
         if (slot == INVALID) return ItemStack.EMPTY;
         ItemStack stack = inv.getStackInSlot(slot);
-        return stack.is(ModTags.BLACKLISTED_USAGE) ? ItemStack.EMPTY : stack;
+        return stack.is(CommonUtils.BLACKLISTED_USAGE) ? ItemStack.EMPTY : stack;
     }
 
     /*public static boolean areItemStacksConvertible(final ItemStack stack1, final ItemStack stack2) {
@@ -205,47 +169,5 @@ public class Utils extends CommonUtils{
                 .map(Map.Entry::getKey).collect(Collectors.toList());
     }*/
 
-    public static boolean isHoldingDank(@Nullable Player player) {
 
-        if (player == null) return false;
-
-        ItemStack stack = player.getMainHandItem();
-        if (stack.getItem() instanceof DankItem) return true;
-        stack = player.getOffhandItem();
-        return stack.getItem() instanceof DankItem;
-    }
-
-    @Nullable
-    private static InteractionHand getHandWithDank(Player player) {
-        if (player.getMainHandItem().getItem() instanceof DankItem) return InteractionHand.MAIN_HAND;
-        else if (player.getOffhandItem().getItem() instanceof DankItem) return InteractionHand.OFF_HAND;
-        return null;
-    }
-
-    public static ItemStack getDank(Player player) {
-        InteractionHand hand = getHandWithDank(player);
-        return hand == null ? ItemStack.EMPTY : player.getItemInHand(hand);
-    }
-
-    public static void toggleTagMode(ServerPlayer player) {
-        ItemStack dank = getDank(player);
-        if (!dank.isEmpty()) {
-            boolean toggle = oredict(dank);
-            player.getMainHandItem().getOrCreateTag().putBoolean("tag", !toggle);
-        }
-    }
-
-    public static void togglePickupMode(ServerPlayer player) {
-        ItemStack bag = getDank(player);
-        if (!bag.isEmpty()) {
-            cyclePickupMode(bag, player);
-        }
-    }
-
-    public static void toggleUseType(ServerPlayer player) {
-        ItemStack dank = getDank(player);
-        if (!dank.isEmpty()) {
-            cyclePlacement(dank,player);
-        }
-    }
 }

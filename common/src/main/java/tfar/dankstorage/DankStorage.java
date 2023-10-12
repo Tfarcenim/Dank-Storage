@@ -3,6 +3,7 @@ package tfar.dankstorage;
 import tfar.dankstorage.platform.Services;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Items;
+import tfar.dankstorage.world.MaxId;
 
 // This class is part of the common project meaning it is shared between all supported loaders. Code written here can only
 // import and access the vanilla codebase, libraries used by vanilla, and optionally third party libraries that provide
@@ -11,6 +12,7 @@ import net.minecraft.world.item.Items;
 public class DankStorage {
 
     public static final String MODID = "dankstorage";
+    public static MaxId maxId;
 
     // The loader specific projects are able to import and use any code from the common project. This allows you to
     // write the majority of your code here and load it from your loader specific projects. This example has some

@@ -63,7 +63,7 @@ public class DankCommands {
 
     private static int clearID(CommandContext<CommandSourceStack> context) {
         int id = IntegerArgumentType.getInteger(context, Utils.FREQ);
-        boolean success = DankStorageForge.instance.getData(id,context.getSource().getServer()).clear();
+        boolean success = DankStorageForge.getData(id,context.getSource().getServer()).clear();
         if (!success) {
             throw new CommandRuntimeException(Utils.translatable("dankstorage.command.clear_id.invalid_id"));
         }

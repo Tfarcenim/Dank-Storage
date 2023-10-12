@@ -3,6 +3,8 @@ package tfar.dankstorage.Item;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
@@ -11,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.client.DankKeybinds;
 import tfar.dankstorage.client.DankTooltip;
 import tfar.dankstorage.platform.Services;
@@ -19,6 +22,7 @@ import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.UseType;
 import tfar.dankstorage.world.ClientData;
+import tfar.dankstorage.world.MaxId;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -140,4 +144,16 @@ public abstract class CommonDankItem extends Item {
         }
         return Optional.empty();
     }
+
+    public static void assignNextId(ItemStack dank) {
+        CompoundTag settings = CommonUtils.getSettings(dank);
+        if (settings == null || !settings.contains(CommonUtils.FREQ, Tag.TAG_INT)) {
+            MaxId maxId = DankStorage.maxId;
+            int next = maxId.getMaxId();
+            maxId.increment();
+            CommonUtils.getOrCreateSettings(dank).putInt(CommonUtils.FREQ,next);
+        }
+    }
+
+
 }

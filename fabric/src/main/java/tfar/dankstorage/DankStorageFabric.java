@@ -41,7 +41,6 @@ import tfar.dankstorage.item.UpgradeInfo;
 import tfar.dankstorage.item.UpgradeItem;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.world.DankSavedData;
 
 import java.util.stream.IntStream;
 

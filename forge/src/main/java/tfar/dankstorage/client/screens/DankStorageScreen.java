@@ -30,6 +30,7 @@ import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.network.server.C2SButtonPacket;
 import tfar.dankstorage.network.server.C2SMessageLockSlotPacket;
 import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
+import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.utils.TxtColor;
@@ -353,8 +354,8 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends AbstractConta
     private static final MutableComponent STORAGE_TXT = Utils.translatable("text.dankstorage.blacklisted_storage").withStyle(ChatFormatting.DARK_RED);
     private static final MutableComponent USAGE_TXT = Utils.translatable("text.dankstorage.blacklisted_usage").withStyle(ChatFormatting.DARK_RED);
     public void appendDankInfo(List<Component> tooltip, ItemStack stack) {
-        if (stack.is(ModTags.BLACKLISTED_STORAGE)) tooltip.add(STORAGE_TXT);
-        if (stack.is(ModTags.BLACKLISTED_USAGE)) tooltip.add(USAGE_TXT);
+        if (stack.is(CommonUtils.BLACKLISTED_STORAGE)) tooltip.add(STORAGE_TXT);
+        if (stack.is(CommonUtils.BLACKLISTED_USAGE)) tooltip.add(USAGE_TXT);
         if (hoveredSlot instanceof DankSlot) {
             Component component1 = Utils.translatable("text.dankstorage.lock",
                     DankKeybinds.LOCK_SLOT.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY);

@@ -6,7 +6,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.network.NetworkEvent;
 import tfar.dankstorage.container.AbstractDankMenu;
 import tfar.dankstorage.network.DankPacketHandler;
-import tfar.dankstorage.utils.Utils;
+import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.world.DankInventory;
 
 import java.util.function.Supplier;
@@ -41,9 +41,9 @@ public class C2SButtonPacket {
             }
         } else {
             switch (action) {
-                case TOGGLE_TAG -> Utils.toggleTagMode(player);
-                case TOGGLE_PICKUP -> Utils.togglePickupMode(player);
-                case TOGGLE_USE_TYPE -> Utils.toggleUseType(player);
+                case TOGGLE_TAG -> CommonUtils.toggleTagMode(player);
+                case TOGGLE_PICKUP -> CommonUtils.togglePickupMode(player);
+                case TOGGLE_USE_TYPE -> CommonUtils.toggleUseType(player);
             }
         }
     }

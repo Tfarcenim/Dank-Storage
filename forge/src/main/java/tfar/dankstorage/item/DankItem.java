@@ -19,6 +19,7 @@ import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.Item.CommonDankItem;
 import tfar.dankstorage.container.PortableDankProvider;
@@ -173,15 +174,6 @@ public class DankItem extends CommonDankItem {
         }
     }
 
-    public static void assignNextId(ItemStack dank) {
-        CompoundTag settings = Utils.getSettings(dank);
-        if (settings == null || !settings.contains(Utils.FREQ, Tag.TAG_INT)) {
-            MaxId maxId = DankStorageForge.instance.maxId;
-            int next = maxId.getMaxId();
-            maxId.increment();
-            Utils.getOrCreateSettings(dank).putInt(Utils.FREQ,next);
-        }
-    }
 
     @Override
     public @org.jetbrains.annotations.Nullable ICapabilityProvider initCapabilities(ItemStack stack, @org.jetbrains.annotations.Nullable CompoundTag nbt) {

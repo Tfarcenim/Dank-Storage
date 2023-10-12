@@ -19,6 +19,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.container.DockMenu;
@@ -57,7 +58,7 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
     public DankInventory getInventory() {
         if (settings != null && settings.contains(Utils.FREQ)) {
             int frequency = settings.getInt(Utils.FREQ);
-            DankSavedData savedData = DankStorageForge.instance.getData(frequency,level.getServer());
+            DankSavedData savedData = DankStorageForge.getData(frequency,level.getServer());
             DankInventory dankInventory = savedData.createInventory(frequency);
 
             if (!dankInventory.valid()) {
@@ -226,8 +227,8 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
                 this.settings = iSettings;
             } else {
                 this.settings = new CompoundTag();
-                int newId = DankStorageForge.instance.maxId.getMaxId();
-                DankStorageForge.instance.maxId.increment();
+                int newId = DankStorage.maxId.getMaxId();
+                DankStorage.maxId.increment();
                 settings.putInt(Utils.FREQ, newId);
             }
             setChanged();

@@ -51,13 +51,9 @@ public class DankStorageForge {
 
     public static final Logger LOGGER = LogManager.getLogger(DankStorage.MODID);
 
-    public static DankStorageForge instance;
-    public MaxId maxId;
-
     public DankStorageForge() {
         ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.CLIENT, CLIENT_SPEC);
         ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.SERVER, SERVER_SPEC);
-        instance = this;
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         MinecraftForge.EVENT_BUS.addListener(this::onServerStarted);
         MinecraftForge.EVENT_BUS.addListener(this::onServerStopped);
@@ -125,10 +121,10 @@ public class DankStorageForge {
                 .resolve("data/"+ DankStorage.MODID).toFile();
         file.mkdirs();
 
-        instance.maxId = getMaxId(server);
+        DankStorage.maxId = getMaxId(server);
     }
 
-    public DankSavedData getData(int id,MinecraftServer server) {
+    public static DankSavedData getData(int id, MinecraftServer server) {
         if (id == Utils.INVALID) throw new RuntimeException("Invalid frequency");
         ServerLevel overworld = server.getLevel(Level.OVERWORLD);
         return overworld.getDataStorage()
@@ -143,7 +139,7 @@ public class DankStorageForge {
     }
 
     public void onServerStopped(ServerStoppedEvent e) {
-        instance.maxId = null;
+        DankStorage.maxId = null;
     }
 
     public void registerCommands(RegisterCommandsEvent e) {

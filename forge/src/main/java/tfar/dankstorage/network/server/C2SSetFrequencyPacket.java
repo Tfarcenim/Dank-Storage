@@ -3,6 +3,7 @@ package tfar.dankstorage.network.server;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.container.AbstractDankMenu;
 import tfar.dankstorage.network.DankPacketHandler;
@@ -44,8 +45,8 @@ public class C2SSetFrequencyPacket implements C2SPacketHelper {
             int textColor = 0;
 
             if (frequency > Utils.INVALID) {
-                if (frequency < DankStorageForge.instance.maxId.getMaxId()) {
-                    DankInventory targetInventory = DankStorageForge.instance.getData(frequency,player.server).createInventory(frequency);
+                if (frequency < DankStorage.maxId.getMaxId()) {
+                    DankInventory targetInventory = DankStorageForge.getData(frequency,player.server).createInventory(frequency);
 
                     if (targetInventory.valid() && targetInventory.dankStats == inventory.dankStats) {
 

@@ -1,12 +1,9 @@
 package tfar.dankstorage.utils;
 
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -16,38 +13,11 @@ import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.world.ClientData;
 import tfar.dankstorage.world.DankInventory;
 
-import javax.annotation.Nullable;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-public class Utils extends CommonUtils{
-
+public class Utils extends CommonUtils {
 
 
-    public static final Set<ResourceLocation> taglist = new HashSet<>();
-    public static boolean DEV = FabricLoader.getInstance().isDevelopmentEnvironment();
-
-
-    public static DankStats getStatsfromRows(int rows) {
-        switch (rows) {
-            case 1:
-                return DankStats.one;
-            case 2:
-                return DankStats.two;
-            case 3:
-                return DankStats.three;
-            case 4:
-                return DankStats.four;
-            case 5:
-                return DankStats.five;
-            case 6:
-                return DankStats.six;
-            case 9:
-                return DankStats.seven;
-        }
-        throw new IllegalStateException(String.valueOf(rows));
-    }
 
     //0,1,2,3
     public static void cyclePickupMode(ItemStack bag, Player player) {
@@ -58,7 +28,6 @@ public class Utils extends CommonUtils{
         player.displayClientMessage(
                 Component.translatable("dankstorage.mode." + PickupMode.PICKUP_MODES[ordinal].name()), true);
     }
-
 
     //this can be 0 - 80
     public static int getSelectedSlot(ItemStack bag) {
@@ -174,10 +143,6 @@ public class Utils extends CommonUtils{
         throw new RuntimeException("Attempted to get inventory on client");
     }
 
-
-
-
-
     public static ItemStack getItemStackInSelectedSlot(ItemStack bag,ServerLevel level) {
         DankInventory inv = getInventory(bag,level);
         if (inv == null) return ItemStack.EMPTY;
@@ -208,47 +173,4 @@ public class Utils extends CommonUtils{
                 .filter(identifierTagEntry -> identifierTagEntry.getValue().contains(item))
                 .map(Map.Entry::getKey).collect(Collectors.toList());
     }*/
-
-    public static boolean isHoldingDank(Player player) {
-        ItemStack stack = player.getMainHandItem();
-        if (stack.getItem() instanceof DankItem) return true;
-        stack = player.getOffhandItem();
-        return stack.getItem() instanceof DankItem;
-    }
-
-    @Nullable
-    public static InteractionHand getHandWithDank(Player player) {
-        if (player.getMainHandItem().getItem() instanceof DankItem) return InteractionHand.MAIN_HAND;
-        else if (player.getOffhandItem().getItem() instanceof DankItem) return InteractionHand.OFF_HAND;
-        return null;
-    }
-
-
-    public static void toggleTagMode(ServerPlayer player) {
-        ItemStack dank = getDank(player);
-        if (!dank.isEmpty()) {
-            boolean toggle = oredict(dank);
-            player.getMainHandItem().getOrCreateTag().putBoolean("tag", !toggle);
-        }
-    }
-
-    public static void togglePickupMode(ServerPlayer player) {
-        ItemStack bag = getDank(player);
-        if (!bag.isEmpty()) {
-            cyclePickupMode(bag, player);
-        }
-    }
-
-    public static void toggleUseType(ServerPlayer player) {
-        ItemStack dank = getDank(player);
-        if (!dank.isEmpty()) {
-            cyclePlacement(dank,player);
-        }
-    }
-
-    public static ItemStack getDank(Player player) {
-        InteractionHand hand = getHandWithDank(player);
-        return hand == null ? ItemStack.EMPTY : player.getItemInHand(hand);
-    }
-
 }

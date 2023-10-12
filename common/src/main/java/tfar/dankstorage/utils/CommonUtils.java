@@ -11,8 +11,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.TransientCraftingContainer;
@@ -58,6 +60,26 @@ public class CommonUtils {
         if (number >= 1000) return decimalFormat.format(number / 1000f) + "k";
 
         return Float.toString(number).replaceAll("\\.?0*$", "");
+    }
+
+    public static DankStats getStatsfromRows(int rows) {
+        switch (rows) {
+            case 1:
+                return DankStats.one;
+            case 2:
+                return DankStats.two;
+            case 3:
+                return DankStats.three;
+            case 4:
+                return DankStats.four;
+            case 5:
+                return DankStats.five;
+            case 6:
+                return DankStats.six;
+            case 9:
+                return DankStats.seven;
+        }
+        throw new IllegalStateException(String.valueOf(rows));
     }
 
     private static List<CraftingRecipe> REVERSIBLE3x3 = new ArrayList<>();
@@ -272,5 +294,50 @@ public class CommonUtils {
 
     public static CommonDankItem getItemFromTier(int tier) {
         return (CommonDankItem) BuiltInRegistries.ITEM.get(new ResourceLocation(DankStorage.MODID, "dank_" + tier));
+    }
+
+    public static boolean isHoldingDank(@Nullable Player player) {
+
+        if (player == null) return false;
+
+        ItemStack stack = player.getMainHandItem();
+        if (stack.getItem() instanceof CommonDankItem) return true;
+        stack = player.getOffhandItem();
+        return stack.getItem() instanceof CommonDankItem;
+    }
+
+
+    @Nullable
+    private static InteractionHand getHandWithDank(Player player) {
+        if (player.getMainHandItem().getItem() instanceof CommonDankItem) return InteractionHand.MAIN_HAND;
+        else if (player.getOffhandItem().getItem() instanceof CommonDankItem) return InteractionHand.OFF_HAND;
+        return null;
+    }
+
+    public static ItemStack getDank(Player player) {
+        InteractionHand hand = getHandWithDank(player);
+        return hand == null ? ItemStack.EMPTY : player.getItemInHand(hand);
+    }
+
+    public static void toggleTagMode(ServerPlayer player) {
+        ItemStack dank = getDank(player);
+        if (!dank.isEmpty()) {
+            boolean toggle = oredict(dank);
+            player.getMainHandItem().getOrCreateTag().putBoolean("tag", !toggle);
+        }
+    }
+
+    public static void togglePickupMode(ServerPlayer player) {
+        ItemStack bag = getDank(player);
+        if (!bag.isEmpty()) {
+            cyclePickupMode(bag, player);
+        }
+    }
+
+    public static void toggleUseType(ServerPlayer player) {
+        ItemStack dank = getDank(player);
+        if (!dank.isEmpty()) {
+            cyclePlacement(dank,player);
+        }
     }
 }
