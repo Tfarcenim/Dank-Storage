@@ -161,7 +161,7 @@ public class DankInventory extends SimpleContainer implements ContainerData {
         nbt.put("Items", nbtTagList);
         nbt.put(GHOST, ghostItemNBT);
         nbt.putString("DankStats", dankStats.name());
-        nbt.putInt(Utils.ID, id);
+        nbt.putInt(Utils.FREQ, id);
         nbt.putBoolean("locked", frequencyLocked);
         return nbt;
     }

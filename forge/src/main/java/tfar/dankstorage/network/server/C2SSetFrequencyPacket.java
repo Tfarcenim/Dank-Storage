@@ -9,6 +9,7 @@ import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.util.C2SPacketHelper;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.utils.TxtColor;
 
 public class C2SSetFrequencyPacket implements C2SPacketHelper {
 
@@ -49,23 +50,23 @@ public class C2SSetFrequencyPacket implements C2SPacketHelper {
                     if (targetInventory.valid() && targetInventory.dankStats == inventory.dankStats) {
 
                         if (targetInventory.frequencyLocked()) {
-                            textColor = DankInventory.TxtColor.LOCKED.color;
+                            textColor = TxtColor.LOCKED.color;
                         } else {
-                            textColor = DankInventory.TxtColor.GOOD.color;
+                            textColor = TxtColor.GOOD.color;
                             if (set) {
                                 dankMenu.setFrequency(frequency);
                                 player.closeContainer();
                             }
                         }
                     } else {
-                        textColor = DankInventory.TxtColor.DIFFERENT_TIER.color;
+                        textColor = TxtColor.DIFFERENT_TIER.color;
                     }
                 } else {
                     //orange if it doesn't exist, yellow if it does but wrong tier
-                    textColor = DankInventory.TxtColor.TOO_HIGH.color ;
+                    textColor = TxtColor.TOO_HIGH.color ;
                 }
             } else {
-                textColor = DankInventory.TxtColor.INVALID.color;
+                textColor = TxtColor.INVALID.color;
             }
             inventory.setTextColor(textColor);
         }

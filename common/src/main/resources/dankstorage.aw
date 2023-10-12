@@ -14,3 +14,9 @@ extendable method net/minecraft/world/inventory/AbstractContainerMenu doClick (I
 extendable method net/minecraft/client/gui/components/Tooltip <init> (Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/Component;)V
 accessible field net/minecraft/client/gui/components/Tooltip cachedTooltip Ljava/util/List;
 accessible field net/minecraft/client/gui/components/Tooltip message Lnet/minecraft/network/chat/Component;
+
+public net.minecraft.client.gui.screens.inventory.AbstractContainerScreen f_97706_ # clickedSlot
+public net.minecraft.client.gui.screens.inventory.AbstractContainerScreen f_97711_ # draggingItem
+public net.minecraft.client.gui.screens.inventory.AbstractContainerScreen f_97710_ # isSplittingStack
+public net.minecraft.client.gui.screens.inventory.AbstractContainerScreen f_97717_ # quickcraftype
+public net.minecraft.client.gui.screens.inventory.AbstractContainerScreen m_97818_()V

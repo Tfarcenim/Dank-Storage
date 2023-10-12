@@ -29,9 +29,6 @@ import java.text.DecimalFormat;
 public class Client {
 
     public static final Minecraft mc = Minecraft.getInstance();
-    public static KeyMapping CONSTRUCTION;
-    public static KeyMapping LOCK_SLOT;
-    public static KeyMapping PICKUP_MODE;
 
     public static void client() {
 
@@ -57,12 +54,12 @@ public class Client {
     }
 
     public static void keybinds(RegisterKeyMappingsEvent e) {
-        CONSTRUCTION = new KeyMapping("key.dankstorage.construction", GLFW.GLFW_KEY_I, "key.categories.dankstorage");
-        LOCK_SLOT = new KeyMapping("key.dankstorage.lock_slot", GLFW.GLFW_KEY_LEFT_CONTROL, "key.categories.dankstorage");
-        PICKUP_MODE = new KeyMapping("key.dankstorage.pickup_mode", GLFW.GLFW_KEY_O, "key.categories.dankstorage");
-        e.register(CONSTRUCTION);
-        e.register(LOCK_SLOT);
-        e.register(PICKUP_MODE);
+        DankKeybinds.CONSTRUCTION = new KeyMapping("key.dankstorage.construction", GLFW.GLFW_KEY_I, "key.categories.dankstorage");
+        DankKeybinds.LOCK_SLOT = new KeyMapping("key.dankstorage.lock_slot", GLFW.GLFW_KEY_LEFT_CONTROL, "key.categories.dankstorage");
+        DankKeybinds.PICKUP_MODE = new KeyMapping("key.dankstorage.pickup_mode", GLFW.GLFW_KEY_O, "key.categories.dankstorage");
+        e.register(DankKeybinds.CONSTRUCTION);
+        e.register(DankKeybinds.LOCK_SLOT);
+        e.register(DankKeybinds.PICKUP_MODE);
     }
 
     public static void clientTool(RegisterClientTooltipComponentFactoriesEvent e) {
@@ -70,10 +67,10 @@ public class Client {
     }
 
     public static void keyPressed(TickEvent.ClientTickEvent client) {
-        if (CONSTRUCTION.consumeClick()) {
+        if (DankKeybinds.CONSTRUCTION.consumeClick()) {
             C2SButtonPacket.send(C2SButtonPacket.Action.TOGGLE_USE_TYPE);
         }
-        if (PICKUP_MODE.consumeClick()) {
+        if (DankKeybinds.PICKUP_MODE.consumeClick()) {
             C2SButtonPacket.send(C2SButtonPacket.Action.TOGGLE_PICKUP);
         }
     }

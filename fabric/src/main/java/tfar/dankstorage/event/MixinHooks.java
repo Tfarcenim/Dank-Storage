@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.item.DankItem;
+import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventory;
 
@@ -34,7 +35,7 @@ public class MixinHooks {
     public static boolean onItemPickup(Player player, ItemStack original, ItemStack dank) {
 
         PickupMode pickupMode = Utils.getPickupMode(dank);
-        if (pickupMode == PickupMode.NONE) return false;
+        if (pickupMode == PickupMode.none) return false;
         DankInventory inv = Utils.getInventory(dank,player.level());
 
         if (inv == null) {
@@ -67,7 +68,7 @@ public class MixinHooks {
                 //this slot isn't locked
                 if (ghost.isEmpty()) {
                     //only add items if on pickup all mode, filtered and void can't add to completely empty slots
-                    if  (mode == PickupMode.ALL) {
+                    if  (mode == PickupMode.pickup_all) {
                         inv.setItem(i,toInsert);
                         //we are done
                         return ItemStack.EMPTY;
@@ -88,7 +89,7 @@ public class MixinHooks {
                     boolean full = limit <= existing.getCount();
 
                     if (full) {
-                        if (mode == PickupMode.ALL || mode == PickupMode.FILTERED) {
+                        if (mode == PickupMode.pickup_all || mode == PickupMode.filtered_pickup) {
                             //move to the next slot, nothing should be done
                             continue;
                         } else {
@@ -103,7 +104,7 @@ public class MixinHooks {
                         //set the existing item to the max size
                         existing.setCount(limit);
                         int remainder = toInsert.getCount() + existingCount - limit;
-                        if (mode == PickupMode.VOID) {
+                        if (mode == PickupMode.void_pickup) {
                             //void overflow and return
                             return ItemStack.EMPTY;
                         } else {

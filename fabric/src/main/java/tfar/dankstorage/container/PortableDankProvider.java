@@ -41,7 +41,7 @@ public class PortableDankProvider implements MenuProvider {
                 int next = DankStorageFabric.instance.data.getNextID();
                 dankInventory = DankStorageFabric.instance.data
                         .getOrCreateInventory(next,type);
-                Utils.getSettings(bag).putInt(Utils.ID,next);
+                Utils.getSettings(bag).putInt(Utils.FREQ,next);
         } else if (type != dankInventory.dankStats) {
             if (type.ordinal() < dankInventory.dankStats.ordinal()) {
                 Utils.warn(player, type, dankInventory.dankStats);

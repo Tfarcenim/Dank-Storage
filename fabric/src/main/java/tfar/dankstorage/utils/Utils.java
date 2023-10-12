@@ -1,7 +1,6 @@
 package tfar.dankstorage.utils;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -11,7 +10,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.network.DankPacketHandler;
@@ -176,9 +174,7 @@ public class Utils extends CommonUtils{
         throw new RuntimeException("Attempted to get inventory on client");
     }
 
-    public static DankItem getItemFromTier(int tier) {
-        return (DankItem) BuiltInRegistries.ITEM.get(new ResourceLocation(DankStorage.MODID, "dank_" + tier));
-    }
+
 
 
 
@@ -226,4 +222,33 @@ public class Utils extends CommonUtils{
         else if (player.getOffhandItem().getItem() instanceof DankItem) return InteractionHand.OFF_HAND;
         return null;
     }
+
+
+    public static void toggleTagMode(ServerPlayer player) {
+        ItemStack dank = getDank(player);
+        if (!dank.isEmpty()) {
+            boolean toggle = oredict(dank);
+            player.getMainHandItem().getOrCreateTag().putBoolean("tag", !toggle);
+        }
+    }
+
+    public static void togglePickupMode(ServerPlayer player) {
+        ItemStack bag = getDank(player);
+        if (!bag.isEmpty()) {
+            cyclePickupMode(bag, player);
+        }
+    }
+
+    public static void toggleUseType(ServerPlayer player) {
+        ItemStack dank = getDank(player);
+        if (!dank.isEmpty()) {
+            cyclePlacement(dank,player);
+        }
+    }
+
+    public static ItemStack getDank(Player player) {
+        InteractionHand hand = getHandWithDank(player);
+        return hand == null ? ItemStack.EMPTY : player.getItemInHand(hand);
+    }
+
 }

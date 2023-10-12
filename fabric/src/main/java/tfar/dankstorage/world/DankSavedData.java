@@ -60,7 +60,7 @@ public class DankSavedData extends SavedData {
         ListTag invs = compoundTag.getList("contents", Tag.TAG_COMPOUND);
         for (Tag tag : invs) {
             CompoundTag compoundTag1 = (CompoundTag) tag;
-            int id = compoundTag1.getInt(Utils.ID);
+            int id = compoundTag1.getInt(Utils.FREQ);
             DankInventory dankInventory = readItems(compoundTag1, id);
             storage.add(id, dankInventory);
         }

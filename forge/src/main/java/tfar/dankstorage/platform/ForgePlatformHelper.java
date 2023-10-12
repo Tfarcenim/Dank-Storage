@@ -4,6 +4,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.server.C2SRequestContentsPacket;
 import tfar.dankstorage.platform.services.IPlatformHelper;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -41,5 +42,10 @@ public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public void sendCustomSlotChange(ServerPlayer player, int id, int slot, ItemStack stack) {
         DankPacketHandler.sendCustomSlotChange(player, id, slot, stack);
+    }
+
+    @Override
+    public void sendRequestContentsPacket(int frequency) {
+        C2SRequestContentsPacket.send(frequency);
     }
 }

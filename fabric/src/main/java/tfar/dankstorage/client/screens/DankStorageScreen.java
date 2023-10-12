@@ -19,8 +19,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.ModTags;
-import tfar.dankstorage.client.Client;
 import tfar.dankstorage.client.DankKeybinds;
 import tfar.dankstorage.client.DualTooltip;
 import tfar.dankstorage.client.NumberEditBox;
@@ -28,11 +26,12 @@ import tfar.dankstorage.client.button.SmallButton;
 import tfar.dankstorage.container.AbstractDankMenu;
 import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.network.server.C2SButtonPacket;
-import tfar.dankstorage.network.server.C2SMessageLockSlotPacket;
+import tfar.dankstorage.network.server.C2SMessageLockSlot;
 import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
+import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.Utils;
-import tfar.dankstorage.utils.TxtColor;
+import tfar.dankstorage.world.DankInventory;
 
 import java.util.List;
 
@@ -170,23 +169,23 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends AbstractConta
                 Utils.translatable("text.dankstorage.save_frequency_button.invalid",
                                 Utils.translatable("text.dankstorage.save_frequency_button.invalidtxt")
                                         .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(TxtColor.INVALID.color)),
+                        .withStyle(Style.EMPTY.withColor(DankInventory.TxtColor.INVALID.color)),
                 Utils.translatable("text.dankstorage.save_frequency_button.too_high",
                                 Utils.translatable("text.dankstorage.save_frequency_button.too_hightxt")
                                         .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(TxtColor.TOO_HIGH.color)),
+                        .withStyle(Style.EMPTY.withColor(DankInventory.TxtColor.TOO_HIGH.color)),
                 Utils.translatable("text.dankstorage.save_frequency_button.different_tier",
                                 Utils.translatable("text.dankstorage.save_frequency_button.different_tiertxt")
                                         .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(TxtColor.DIFFERENT_TIER.color)),
+                        .withStyle(Style.EMPTY.withColor(DankInventory.TxtColor.DIFFERENT_TIER.color)),
                 Utils.translatable("text.dankstorage.save_frequency_button.good",
                                 Utils.translatable("text.dankstorage.save_frequency_button.goodtxt")
                                         .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(TxtColor.GOOD.color))
+                        .withStyle(Style.EMPTY.withColor(DankInventory.TxtColor.GOOD.color))
                 , Utils.translatable("text.dankstorage.save_frequency_button.locked_frequency",
                                 Utils.translatable("text.dankstorage.save_frequency_button.locked_frequencytxt")
                                         .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(TxtColor.LOCKED.color))
+                        .withStyle(Style.EMPTY.withColor(DankInventory.TxtColor.LOCKED.color))
         );
     }
 
@@ -231,7 +230,7 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends AbstractConta
         boolean match = DankKeybinds.LOCK_SLOT.matches(keyCode, scanCode);
         if (match) {
             if (hoveredSlot instanceof DankSlot) {
-                C2SMessageLockSlotPacket.send(hoveredSlot.index);
+                C2SMessageLockSlot.send(hoveredSlot.index);
                 return true;
             }
         }
@@ -295,14 +294,14 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends AbstractConta
                 }
 
                 pGuiGraphics.renderItem(itemstack, i, j, pSlot.x + pSlot.y * this.imageWidth);
-                pGuiGraphics.renderItemDecorations(this.font, itemstack, i, j, Client.getStringFromInt(itemstack.getCount()));
+                pGuiGraphics.renderItemDecorations(this.font, itemstack, i, j, CommonUtils.formatLargeNumber(itemstack.getCount()));
             }
 
             pGuiGraphics.pose().popPose();
 
             int i1 = pSlot.x;
             int j1 = pSlot.y;
-            if (!pSlot.hasItem() && pSlot.index < menu.dankInventory.getSlots() && menu.dankInventory.hasGhostItem(pSlot.index)) {
+            if (!pSlot.hasItem() && pSlot.index < menu.dankInventory.dankStats.slots && menu.dankInventory.hasGhostItem(pSlot.index)) {
                 pGuiGraphics.renderFakeItem(menu.dankInventory.getGhostItem(pSlot.index), i1, j1);
                 RenderSystem.depthFunc(516);
                 pGuiGraphics.fill(i1, j1, i1 + 16, j1 + 16, 0x40ffffff);
@@ -353,8 +352,8 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends AbstractConta
     private static final MutableComponent STORAGE_TXT = Utils.translatable("text.dankstorage.blacklisted_storage").withStyle(ChatFormatting.DARK_RED);
     private static final MutableComponent USAGE_TXT = Utils.translatable("text.dankstorage.blacklisted_usage").withStyle(ChatFormatting.DARK_RED);
     public void appendDankInfo(List<Component> tooltip, ItemStack stack) {
-        if (stack.is(ModTags.BLACKLISTED_STORAGE)) tooltip.add(STORAGE_TXT);
-        if (stack.is(ModTags.BLACKLISTED_USAGE)) tooltip.add(USAGE_TXT);
+        if (stack.is(CommonUtils.BLACKLISTED_STORAGE)) tooltip.add(STORAGE_TXT);
+        if (stack.is(CommonUtils.BLACKLISTED_USAGE)) tooltip.add(USAGE_TXT);
         if (hoveredSlot instanceof DankSlot) {
             Component component1 = Utils.translatable("text.dankstorage.lock",
                     DankKeybinds.LOCK_SLOT.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY);

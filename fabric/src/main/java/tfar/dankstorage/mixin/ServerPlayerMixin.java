@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import tfar.dankstorage.container.AbstractDankMenu;
+import tfar.dankstorage.menu.CustomSync;
 
 @Mixin(ServerPlayer.class)
 public class ServerPlayerMixin {

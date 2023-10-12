@@ -194,7 +194,7 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
         }
 
         level.setBlockAndUpdate(worldPosition, getBlockState().setValue(DockBlock.TIER, 0));
-        ItemStack stack = new ItemStack(Utils.getItemFromTier(tier));
+        ItemStack stack = new ItemStack(CommonUtils.getItemFromTier(tier));
 
         if (settings != null) {
             stack.getOrCreateTag().put(CommonUtils.SET, settings);

@@ -41,5 +41,6 @@ public interface IPlatformHelper {
     void sendGhostItemSlot(ServerPlayer player, int id, int slot, ItemStack stack);
     void sendCustomSyncData(ServerPlayer player, int stateID, int containerID, NonNullList<ItemStack> stacks, ItemStack carried);
     void sendCustomSlotChange(ServerPlayer player, int id, int slot, ItemStack stack);
+    void sendRequestContentsPacket(int frequency);
 
 }

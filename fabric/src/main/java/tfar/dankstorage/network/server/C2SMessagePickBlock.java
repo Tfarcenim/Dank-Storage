@@ -9,7 +9,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.HitResult;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.Utils;
@@ -25,9 +24,9 @@ public class C2SMessagePickBlock implements ServerPlayNetworking.PlayChannelHand
 
     public void handle(ServerPlayer player, ItemStack stack) {
         if (player.getMainHandItem().getItem() instanceof DankItem)
-            Utils.setPickSlot(player.level,player.getMainHandItem(), stack);
+            Utils.setPickSlot(player.level(),player.getMainHandItem(), stack);
         else if (player.getOffhandItem().getItem() instanceof DankItem)
-            Utils.setPickSlot(player.level,player.getOffhandItem(), stack);
+            Utils.setPickSlot(player.level(),player.getOffhandItem(), stack);
     }
 
     @Override

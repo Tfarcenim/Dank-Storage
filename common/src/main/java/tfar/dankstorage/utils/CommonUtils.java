@@ -3,6 +3,7 @@ package tfar.dankstorage.utils;
 import com.mojang.datafixers.util.Pair;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -19,6 +20,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import tfar.dankstorage.DankStorage;
+import tfar.dankstorage.Item.CommonDankItem;
 
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
@@ -205,7 +207,7 @@ public class CommonUtils {
     }
 
     //0,1,2
-    protected static void cyclePlacement(ItemStack bag, Player player) {
+    public static void cyclePlacement(ItemStack bag, Player player) {
         CompoundTag tag = getOrCreateSettings(bag);
         int ordinal = tag.getInt(CON);
         ordinal++;
@@ -268,4 +270,7 @@ public class CommonUtils {
         return stacks.stream().map(ItemStackWrapper::new).collect(Collectors.toList());
     }
 
+    public static CommonDankItem getItemFromTier(int tier) {
+        return (CommonDankItem) BuiltInRegistries.ITEM.get(new ResourceLocation(DankStorage.MODID, "dank_" + tier));
+    }
 }
