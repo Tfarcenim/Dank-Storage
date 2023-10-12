@@ -1,0 +1,24 @@
+{
+  "required": true,
+  "package": "tfar.dankstorage.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "CraftingContainerAccess",
+    "ItemEntityMixin",
+    "ItemUsageContextAccessor",
+    "PlayerInventoryMixin",
+    "RecipeManagerMixin",
+    "ServerPlayerMixin",
+    "SimpleContainerAccess"
+  ],
+  "client": [
+    "ItemRendererAccessor",
+    "MinecraftClientAccessor",
+    "MinecraftClientMixin",
+    "MouseMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

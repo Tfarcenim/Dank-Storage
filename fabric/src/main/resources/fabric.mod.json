@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "dankstorage",
+  "version": "${version}",
+  "accessWidener": "dankstorage.aw",
+  "name": "Dank Storage",
+  "description": "It's a backpack, no it's a chest, no it's dank storage",
+  "authors": [
+    "Tfarcenim"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/Tfarcenim/DankStorageFabric"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/dankstorage/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "tfar.dankstorage.DankStorageFabric"
+    ],
+    "client": [
+      "tfar.dankstorage.DankStorageFabric"
+    ]
+  },
+  "mixins": [
+    "dankstorage.fabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": ">=1.18.2"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}
