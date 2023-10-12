@@ -1,5 +1,6 @@
 package tfar.dankstorage.platform.services;
 
+import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
@@ -38,5 +39,7 @@ public interface IPlatformHelper {
     }
 
     void sendGhostItemSlot(ServerPlayer player, int id, int slot, ItemStack stack);
+    void sendCustomSyncData(ServerPlayer player, int stateID, int containerID, NonNullList<ItemStack> stacks, ItemStack carried);
+    void sendCustomSlotChange(ServerPlayer player, int id, int slot, ItemStack stack);
 
 }

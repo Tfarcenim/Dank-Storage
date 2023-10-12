@@ -1,5 +1,6 @@
 package tfar.dankstorage.platform;
 
+import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.network.DankPacketHandler;
@@ -30,5 +31,15 @@ public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public void sendGhostItemSlot(ServerPlayer player, int id, int slot, ItemStack stack) {
         DankPacketHandler.sendGhostItemSlot(player, id, slot, stack);
+    }
+
+    @Override
+    public void sendCustomSyncData(ServerPlayer player, int stateID, int containerID, NonNullList<ItemStack> stacks, ItemStack carried) {
+        DankPacketHandler.sendCustomSyncData(player, stateID, containerID, stacks, carried);
+    }
+
+    @Override
+    public void sendCustomSlotChange(ServerPlayer player, int id, int slot, ItemStack stack) {
+        DankPacketHandler.sendCustomSlotChange(player, id, slot, stack);
     }
 }

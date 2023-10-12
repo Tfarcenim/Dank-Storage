@@ -34,12 +34,12 @@ import tfar.dankstorage.client.Client;
 import tfar.dankstorage.command.DankCommands;
 import tfar.dankstorage.container.DankMenu;
 import tfar.dankstorage.container.DockMenu;
+import tfar.dankstorage.init.ModRecipeSerializers;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.item.RedprintItem;
 import tfar.dankstorage.item.UpgradeInfo;
 import tfar.dankstorage.item.UpgradeItem;
 import tfar.dankstorage.network.DankPacketHandler;
-import tfar.dankstorage.recipe.Serializer2;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.world.DankSavedData;
 
@@ -69,7 +69,6 @@ public class DankStorageFabric implements ModInitializer, ClientModInitializer,
     public static MenuType<DankMenu> portable_dank_6_container;
     public static MenuType<DankMenu> portable_dank_7_container;
     public static BlockEntityType<DockBlockEntity> dank_tile;
-    public static Serializer2 upgrade;
 
     public static DankStorageFabric instance;
     public DankStorageFabric() {
@@ -97,7 +96,7 @@ public class DankStorageFabric implements ModInitializer, ClientModInitializer,
             Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "dank_" + i), dankItem);
         });
         IntStream.range(1, 7).forEach(i -> Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, i + "_to_" + (i + 1)), new UpgradeItem(properties, new UpgradeInfo(i, i + 1))));
-        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(MODID, "upgrade"), upgrade = new Serializer2());
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(MODID, "upgrade"), ModRecipeSerializers.upgrade);
 
         Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "dank_1"), dank_1_container = new MenuType<>(DockMenu::t1, FeatureFlagSet.of(FeatureFlags.VANILLA)));
         Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "portable_dank_1"), portable_dank_1_container = new MenuType<>(DankMenu::t1, FeatureFlagSet.of(FeatureFlags.VANILLA)));

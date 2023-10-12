@@ -243,7 +243,7 @@ public abstract class AbstractDankStorageScreen<T extends AbstractDankMenu> exte
     }
 
     @Override
-    protected void renderLabels(PoseStack poseStack, int i, int j) {
+    protected void renderLabels(GuiGraphics poseStack, int i, int j) {
         super.renderLabels(poseStack, i, j);
         int id = menu.dankInventory.getFrequency();//menu.dankInventory.get(menu.rows * 9);
         int color = 0x008000;
