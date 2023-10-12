@@ -26,7 +26,6 @@ import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.mixin.CraftingContainerAccess;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.server.C2SMessageToggleUseType;
-import tfar.dankstorage.world.ClientData;
 import tfar.dankstorage.world.DankInventory;
 
 import javax.annotation.Nullable;

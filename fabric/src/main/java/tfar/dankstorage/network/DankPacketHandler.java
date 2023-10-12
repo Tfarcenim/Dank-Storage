@@ -9,7 +9,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.network.server.*;
-import tfar.dankstorage.utils.PacketBufferEX;
 
 import java.util.List;
 

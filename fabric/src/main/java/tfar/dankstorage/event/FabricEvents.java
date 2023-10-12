@@ -9,7 +9,6 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.utils.Utils;
-import tfar.dankstorage.world.ClientData;
 
 public class FabricEvents {
 

@@ -32,7 +32,6 @@ import tfar.dankstorage.client.DankTooltip;
 import tfar.dankstorage.container.PortableDankProvider;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.server.C2SRequestContentsPacket;
-import tfar.dankstorage.world.ClientData;
 import tfar.dankstorage.world.DankInventory;
 import tfar.dankstorage.mixin.ItemUsageContextAccessor;
 import tfar.dankstorage.network.server.C2SMessageToggleUseType;

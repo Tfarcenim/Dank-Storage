@@ -8,9 +8,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
-import tfar.dankstorage.network.server.C2SMessageToggleUseType;
-import tfar.dankstorage.utils.PacketBufferEX;
-import tfar.dankstorage.world.ClientData;
 
 public class S2CSyncSelected implements ClientPlayNetworking.PlayChannelHandler {
 
