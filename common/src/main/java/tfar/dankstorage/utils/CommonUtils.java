@@ -43,16 +43,6 @@ public class CommonUtils {
     public static final String MODE = "mode";
     public static final String FREQ = "dankstorage:frequency";
 
-    public static final TagKey<Item> BLACKLISTED_STORAGE = bind(new ResourceLocation(DankStorage.MODID, "blacklisted_storage"));
-    public static final TagKey<Item> BLACKLISTED_USAGE = bind(new ResourceLocation(DankStorage.MODID, "blacklisted_usage"));
-
-    public static final TagKey<Item> WRENCHES = bind(new ResourceLocation("forge", "wrenches"));
-
-    private static TagKey<Item> bind(ResourceLocation string) {
-        return TagKey.create(Registries.ITEM, string);
-    }
-
-
     public static String formatLargeNumber(int number) {
 
         if (number >= 1000000000) return decimalFormat.format(number / 1000000000f) + "b";

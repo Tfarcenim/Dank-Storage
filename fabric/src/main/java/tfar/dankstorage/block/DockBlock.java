@@ -20,9 +20,9 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import tfar.dankstorage.ModTags;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.blockentity.DockBlockEntity;
-import tfar.dankstorage.utils.Utils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -74,7 +74,7 @@ public class DockBlock extends Block implements EntityBlock {
             final BlockEntity tile = world.getBlockEntity(pos);
             if (tile instanceof DockBlockEntity dockBlockEntity) {
                 ItemStack held = player.getItemInHand(hand);
-                if (player.isCrouching() && held.is(Utils.WRENCHES)) {
+                if (player.isCrouching() && held.is(ModTags.WRENCHES)) {
                     world.destroyBlock(pos, true, player);
                     return InteractionResult.SUCCESS;
                 }

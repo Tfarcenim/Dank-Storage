@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import tfar.dankstorage.DankStorageFabric;
+import tfar.dankstorage.ModTags;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.world.ClientData;
@@ -110,7 +111,7 @@ public class Utils extends CommonUtils {
         }
         ItemStack selected = handler.getItem(selectedSlot);
 
-        while (selected.isEmpty() || selected.is(BLACKLISTED_USAGE)) {
+        while (selected.isEmpty() || selected.is(ModTags.BLACKLISTED_USAGE)) {
             if (right) {
                 selectedSlot++;
                 if (selectedSlot >= size) selectedSlot = 0;
@@ -147,7 +148,7 @@ public class Utils extends CommonUtils {
         DankInventory inv = getInventory(bag,level);
         if (inv == null) return ItemStack.EMPTY;
         ItemStack stack = inv.getItem(Utils.getSelectedSlot(bag));
-        return stack.is(BLACKLISTED_USAGE) ? ItemStack.EMPTY : stack;
+        return stack.is(ModTags.BLACKLISTED_USAGE) ? ItemStack.EMPTY : stack;
     }
 
     /*public static boolean areItemStacksConvertible(final ItemStack stack1, final ItemStack stack2) {

@@ -123,7 +123,7 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
     public boolean noValidSlots() {
         return IntStream.range(0, getSlots())
                 .mapToObj(this::getStackInSlot)
-                .allMatch(stack -> stack.isEmpty() || stack.is(CommonUtils.BLACKLISTED_USAGE));
+                .allMatch(stack -> stack.isEmpty() || stack.is(ModTags.BLACKLISTED_USAGE));
     }
 
     public boolean hasGhostItem(int slot) {
@@ -152,7 +152,7 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
     @Override
     public boolean isItemValid(int slot,ItemStack stack) {
         boolean checkGhostItem = !hasGhostItem(slot) || getGhostItem(slot).getItem() == stack.getItem();
-        return !stack.is(CommonUtils.BLACKLISTED_STORAGE)
+        return !stack.is(ModTags.BLACKLISTED_STORAGE)
                 && checkGhostItem
                 && super.isItemValid(slot, stack);
     }

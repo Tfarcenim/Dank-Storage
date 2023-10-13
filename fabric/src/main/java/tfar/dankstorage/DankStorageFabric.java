@@ -41,6 +41,7 @@ import tfar.dankstorage.item.UpgradeInfo;
 import tfar.dankstorage.item.UpgradeItem;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.DankStats;
+import tfar.dankstorage.world.DankSavedData;
 
 import java.util.stream.IntStream;
 
@@ -68,11 +69,6 @@ public class DankStorageFabric implements ModInitializer, ClientModInitializer,
     public static MenuType<DankMenu> portable_dank_6_container;
     public static MenuType<DankMenu> portable_dank_7_container;
     public static BlockEntityType<DockBlockEntity> dank_tile;
-
-    public static DankStorageFabric instance;
-    public DankStorageFabric() {
-        instance = this;
-    }
 
     @Override
     public void onInitialize() {
@@ -133,17 +129,17 @@ public class DankStorageFabric implements ModInitializer, ClientModInitializer,
         Client.client();
     }
 
-    public DankSavedData data;
+    public static DankSavedData data;
 
     @Override
     public void onServerStarted(MinecraftServer server) {
-        instance.data = server.getLevel(Level.OVERWORLD).getDataStorage()
+        data = server.getLevel(Level.OVERWORLD).getDataStorage()
                 .computeIfAbsent(DankSavedData::loadStatic, DankSavedData::new, DankStorage.MODID);
     }
 
     @Override
     public void onServerStopped(MinecraftServer server) {
-        instance.data = null;
+        data = null;
     }
 
     @Override

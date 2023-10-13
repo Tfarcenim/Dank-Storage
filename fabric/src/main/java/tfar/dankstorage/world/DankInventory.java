@@ -16,6 +16,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.Constants;
 import tfar.dankstorage.DankStorageFabric;
+import tfar.dankstorage.ModTags;
 import tfar.dankstorage.mixin.SimpleContainerAccess;
 import tfar.dankstorage.utils.*;
 
@@ -107,13 +108,13 @@ public class DankInventory extends SimpleContainer implements ContainerData {
     public boolean noValidSlots() {
         return IntStream.range(0, getContainerSize())
                 .mapToObj(this::getItem)
-                .allMatch(stack -> stack.isEmpty() || stack.is(Utils.BLACKLISTED_USAGE));
+                .allMatch(stack -> stack.isEmpty() || stack.is(ModTags.BLACKLISTED_USAGE));
     }
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
         boolean checkGhostItem = !hasGhostItem(slot) || getGhostItem(slot).getItem() == stack.getItem();
-        return !stack.is(Utils.BLACKLISTED_STORAGE)
+        return !stack.is(ModTags.BLACKLISTED_STORAGE)
                 && checkGhostItem;
     }
 

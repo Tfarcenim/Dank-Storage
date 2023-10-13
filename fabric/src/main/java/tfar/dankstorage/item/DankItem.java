@@ -27,6 +27,7 @@ import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.UseType;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankSavedData;
 
 import javax.annotation.Nonnull;
 
@@ -187,17 +188,6 @@ public class DankItem extends CommonDankItem {
         if (entity instanceof ServerPlayer player && equipped) {
             ItemStack sel = Utils.getSelectedItem(bag,level);
             DankPacketHandler.sendSelectedItem(player, sel);
-        }
-    }
-
-    public static void assignNextId(ItemStack dank) {
-        CompoundTag settings = Utils.getSettings(dank);
-        if (settings == null || !settings.contains(Utils.FREQ, Tag.TAG_INT)) {
-            DankSavedData dankSavedData = DankStorageFabric.instance.data;
-            DankStats stats = Utils.getStats(dank);
-            int next = dankSavedData.getNextID();
-            dankSavedData.getOrCreateInventory(next,stats);
-            Utils.getOrCreateSettings(dank).putInt(Utils.FREQ,next);
         }
     }
 }

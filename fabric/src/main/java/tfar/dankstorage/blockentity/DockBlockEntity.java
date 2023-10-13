@@ -16,6 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.container.DockMenu;
@@ -56,12 +57,12 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
     public DankInventory getInventory() {
         if (settings != null && settings.contains(CommonUtils.FREQ)) {
             int id = settings.getInt(CommonUtils.FREQ);
-            DankInventory dankInventory = DankStorageFabric.instance.data.getInventory(id);
+            DankInventory dankInventory = DankStorageFabric.data.getInventory(id);
 
             //if the id is too high
             if (dankInventory == null) {
-                int next = DankStorageFabric.instance.data.getNextID();
-                dankInventory = DankStorageFabric.instance.data
+                int next = DankStorage.maxId.getMaxId();
+                dankInventory = DankStorageFabric.data
                         .getOrCreateInventory(next, DankStats.values()[getBlockState().getValue(DockBlock.TIER)]);
                 settings.putInt(CommonUtils.FREQ, next);
             }
@@ -226,11 +227,11 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
             DankInventory dankInventory;
             if (iSettings != null && iSettings.contains(CommonUtils.FREQ)) {
                 this.settings = iSettings;
-                dankInventory = DankStorageFabric.instance.data.getInventory(iSettings.getInt(CommonUtils.FREQ));
+                dankInventory = DankStorageFabric.data.getInventory(iSettings.getInt(CommonUtils.FREQ));
             } else {
                 this.settings = new CompoundTag();
-                int newId = DankStorageFabric.instance.data.getNextID();
-                dankInventory = DankStorageFabric.instance.data.getOrCreateInventory(newId, stats);
+                int newId = DankStorage.maxId.getMaxId();
+                dankInventory = DankStorageFabric.data.getOrCreateInventory(newId, stats);
                 settings.putInt(CommonUtils.FREQ, newId);
             }
             if (stats != dankInventory.dankStats) {
