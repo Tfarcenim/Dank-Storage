@@ -3,6 +3,7 @@ package tfar.dankstorage.platform;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.server.C2SScrollSlotPacket;
 import tfar.dankstorage.network.server.C2SRequestContentsPacket;
@@ -59,5 +60,20 @@ public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public void sendFrequencyPacket(int frequency, boolean set) {
         C2SSetFrequencyPacket.send(frequency,set);
+    }
+
+    @Override
+    public boolean showPreview() {
+        return DankStorageForge.ClientConfig.preview.get();
+    }
+
+    @Override
+    public int previewX() {
+        return DankStorageForge.ClientConfig.preview_x.get();
+    }
+
+    @Override
+    public int previewY() {
+        return DankStorageForge.ClientConfig.preview_y.get();
     }
 }

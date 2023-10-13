@@ -7,10 +7,8 @@ import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import org.lwjgl.glfw.GLFW;
 import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.client.screens.DankStorageScreen;
@@ -23,9 +21,7 @@ import tfar.dankstorage.network.server.C2SButtonPacket;
 public class Client {
 
     public static void client() {
-
         HudRenderCallback.EVENT.register(FabricEvents::renderStack);
-
         ClientDankPacketHandler.registerClientMessages();
         MenuScreens.register(DankStorageFabric.dank_1_container, (DockMenu container1, Inventory playerinventory1, Component component1) -> DankStorageScreen.t1(container1, playerinventory1, component1));
         MenuScreens.register(DankStorageFabric.portable_dank_1_container, (DankMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t1(container, playerinventory, component));
@@ -50,7 +46,7 @@ public class Client {
         KeyBindingHelper.registerKeyBinding(DankKeybinds.LOCK_SLOT);
         KeyBindingHelper.registerKeyBinding(DankKeybinds.PICKUP_MODE);
         ClientTickEvents.START_CLIENT_TICK.register(Client::keyPressed);
-        TooltipComponentCallback.EVENT.register(Client::tooltipImage);
+        TooltipComponentCallback.EVENT.register(CommonClient::tooltipImage);
     }
 
     public static void keyPressed(Minecraft client) {
@@ -60,12 +56,5 @@ public class Client {
         if (DankKeybinds.PICKUP_MODE.consumeClick()) {
             C2SButtonPacket.send(C2SButtonPacket.Action.TOGGLE_PICKUP);
         }
-    }
-
-    public static ClientTooltipComponent tooltipImage(TooltipComponent data) {
-        if (data instanceof DankTooltip dankTooltip) {
-            return new ClientDankTooltip(dankTooltip);
-        }
-        return null;
     }
 }

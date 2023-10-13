@@ -58,4 +58,21 @@ public class FabricPlatformHelper implements IPlatformHelper {
     public void sendFrequencyPacket(int frequency, boolean set) {
         C2SSetFrequencyPacket.send(frequency, set);
     }
+
+    @Override
+    public boolean showPreview() {
+        return true;
+    }
+
+    //hardcoded for now
+
+    @Override
+    public int previewX() {
+        return -140;
+    }
+
+    @Override
+    public int previewY() {
+        return -25;
+    }
 }

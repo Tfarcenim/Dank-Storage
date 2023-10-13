@@ -1,17 +1,13 @@
 package tfar.dankstorage.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -23,8 +19,6 @@ import tfar.dankstorage.container.DockMenu;
 import tfar.dankstorage.event.ForgeClientEvents;
 import tfar.dankstorage.init.ModMenuTypes;
 import tfar.dankstorage.network.server.C2SButtonPacket;
-
-import java.text.DecimalFormat;
 
 public class Client {
 
@@ -63,7 +57,7 @@ public class Client {
     }
 
     public static void clientTool(RegisterClientTooltipComponentFactoriesEvent e) {
-        e.register(DankTooltip.class, Client::tooltipImage);
+        e.register(DankTooltip.class, CommonClient::tooltipImage);
     }
 
     public static void keyPressed(TickEvent.ClientTickEvent client) {
@@ -74,15 +68,6 @@ public class Client {
             C2SButtonPacket.send(C2SButtonPacket.Action.TOGGLE_PICKUP);
         }
     }
-
-    public static ClientTooltipComponent tooltipImage(TooltipComponent data) {
-        if (data instanceof DankTooltip dankTooltip) {
-            return new ClientDankTooltip(dankTooltip);
-        }
-        return null;
-    }
-
-
 
   /*public static class KeyHandler {
     public static void onKeyInput(InputEvent.KeyInputEvent event) {

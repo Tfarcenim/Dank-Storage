@@ -93,7 +93,7 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends CDankStorageS
 
         this.addRenderableWidget(l);
 
-        Tooltip saveTooltip = Tooltip.create(buildSaveComponent());
+        Tooltip saveTooltip = Tooltip.create(SAVE_C);
 
         SmallButton s = new SmallButton(leftPos + 155, j + inventoryLabelY - 2, 12, 12,
                 Component.literal("s"), b -> {
@@ -118,57 +118,6 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends CDankStorageS
 
         this.addRenderableWidget(c);
         initEditbox();
-    }
-
-
-
-    private static final MutableComponent SAVE_C = buildSaveComponent();
-    private static final MutableComponent PICKUP_C = buildPickupComponent();
-
-    static MutableComponent buildSaveComponent() {
-        return Utils.translatable("text.dankstorage.save_frequency_button",
-                Utils.translatable("text.dankstorage.save_frequency_button.invalid",
-                                Utils.translatable("text.dankstorage.save_frequency_button.invalidtxt")
-                                        .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(TxtColor.INVALID.color)),
-                Utils.translatable("text.dankstorage.save_frequency_button.too_high",
-                                Utils.translatable("text.dankstorage.save_frequency_button.too_hightxt")
-                                        .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(TxtColor.TOO_HIGH.color)),
-                Utils.translatable("text.dankstorage.save_frequency_button.different_tier",
-                                Utils.translatable("text.dankstorage.save_frequency_button.different_tiertxt")
-                                        .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(TxtColor.DIFFERENT_TIER.color)),
-                Utils.translatable("text.dankstorage.save_frequency_button.good",
-                                Utils.translatable("text.dankstorage.save_frequency_button.goodtxt")
-                                        .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(TxtColor.GOOD.color))
-                , Utils.translatable("text.dankstorage.save_frequency_button.locked_frequency",
-                                Utils.translatable("text.dankstorage.save_frequency_button.locked_frequencytxt")
-                                        .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(TxtColor.LOCKED.color))
-        );
-    }
-
-    static MutableComponent buildPickupComponent() {
-        return Utils.translatable("text.dankstorage.pickup_button",
-                Utils.translatable("text.dankstorage.pickup_button.none",
-                                Utils.translatable("text.dankstorage.pickup_button.nonetxt")
-                                        .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(PickupMode.none.getColor())),
-                Utils.translatable("text.dankstorage.pickup_button.all",
-                                Utils.translatable("text.dankstorage.pickup_button.alltxt")
-                                        .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(PickupMode.pickup_all.getColor())),
-                Utils.translatable("text.dankstorage.pickup_button.filtered",
-                                Utils.translatable("text.dankstorage.pickup_button.filteredtxt")
-                                        .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(PickupMode.filtered_pickup.getColor())),
-                Utils.translatable("text.dankstorage.pickup_button.void",
-                                Utils.translatable("text.dankstorage.pickup_button.voidtxt")
-                                        .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(PickupMode.void_pickup.getColor()))
-        );
     }
 
     @Override

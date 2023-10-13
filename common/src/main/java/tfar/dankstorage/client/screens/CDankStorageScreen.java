@@ -6,6 +6,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import tfar.dankstorage.DankStorage;
@@ -13,8 +14,10 @@ import tfar.dankstorage.client.NumberEditBox;
 import tfar.dankstorage.menu.CAbstractDankMenu;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
+import tfar.dankstorage.utils.PickupMode;
+import tfar.dankstorage.utils.TxtColor;
 
-public abstract class CDankStorageScreen< T extends CAbstractDankMenu> extends AbstractContainerScreen<T> {
+public abstract class CDankStorageScreen<T extends CAbstractDankMenu> extends AbstractContainerScreen<T> {
 
     static final ResourceLocation background1 = new ResourceLocation(DankStorage.MODID,
             "textures/container/gui/dank1.png");
@@ -73,6 +76,56 @@ public abstract class CDankStorageScreen< T extends CAbstractDankMenu> extends A
             stack.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 512);
         else
             stack.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+    }
+
+
+    static final MutableComponent SAVE_C = buildSaveComponent();
+    static final MutableComponent PICKUP_C = buildPickupComponent();
+
+    private static MutableComponent buildSaveComponent() {
+        return CommonUtils.translatable("text.dankstorage.save_frequency_button",
+                CommonUtils.translatable("text.dankstorage.save_frequency_button.invalid",
+                                CommonUtils.translatable("text.dankstorage.save_frequency_button.invalidtxt")
+                                        .withStyle(ChatFormatting.GRAY))
+                        .withStyle(Style.EMPTY.withColor(TxtColor.INVALID.color)),
+                CommonUtils.translatable("text.dankstorage.save_frequency_button.too_high",
+                                CommonUtils.translatable("text.dankstorage.save_frequency_button.too_hightxt")
+                                        .withStyle(ChatFormatting.GRAY))
+                        .withStyle(Style.EMPTY.withColor(TxtColor.TOO_HIGH.color)),
+                CommonUtils.translatable("text.dankstorage.save_frequency_button.different_tier",
+                                CommonUtils.translatable("text.dankstorage.save_frequency_button.different_tiertxt")
+                                        .withStyle(ChatFormatting.GRAY))
+                        .withStyle(Style.EMPTY.withColor(TxtColor.DIFFERENT_TIER.color)),
+                CommonUtils.translatable("text.dankstorage.save_frequency_button.good",
+                                CommonUtils.translatable("text.dankstorage.save_frequency_button.goodtxt")
+                                        .withStyle(ChatFormatting.GRAY))
+                        .withStyle(Style.EMPTY.withColor(TxtColor.GOOD.color))
+                , CommonUtils.translatable("text.dankstorage.save_frequency_button.locked_frequency",
+                                CommonUtils.translatable("text.dankstorage.save_frequency_button.locked_frequencytxt")
+                                        .withStyle(ChatFormatting.GRAY))
+                        .withStyle(Style.EMPTY.withColor(TxtColor.LOCKED.color))
+        );
+    }
+
+    private static MutableComponent buildPickupComponent() {
+        return CommonUtils.translatable("text.dankstorage.pickup_button",
+                CommonUtils.translatable("text.dankstorage.pickup_button.none",
+                                CommonUtils.translatable("text.dankstorage.pickup_button.nonetxt")
+                                        .withStyle(ChatFormatting.GRAY))
+                        .withStyle(Style.EMPTY.withColor(PickupMode.none.getColor())),
+                CommonUtils.translatable("text.dankstorage.pickup_button.all",
+                                CommonUtils.translatable("text.dankstorage.pickup_button.alltxt")
+                                        .withStyle(ChatFormatting.GRAY))
+                        .withStyle(Style.EMPTY.withColor(PickupMode.pickup_all.getColor())),
+                CommonUtils.translatable("text.dankstorage.pickup_button.filtered",
+                                CommonUtils.translatable("text.dankstorage.pickup_button.filteredtxt")
+                                        .withStyle(ChatFormatting.GRAY))
+                        .withStyle(Style.EMPTY.withColor(PickupMode.filtered_pickup.getColor())),
+                CommonUtils.translatable("text.dankstorage.pickup_button.void",
+                                CommonUtils.translatable("text.dankstorage.pickup_button.voidtxt")
+                                        .withStyle(ChatFormatting.GRAY))
+                        .withStyle(Style.EMPTY.withColor(PickupMode.void_pickup.getColor()))
+        );
     }
 
     static final MutableComponent STORAGE_TXT = CommonUtils.translatable("text.dankstorage.blacklisted_storage").withStyle(ChatFormatting.DARK_RED);
