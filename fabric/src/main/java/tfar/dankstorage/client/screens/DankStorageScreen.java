@@ -17,6 +17,7 @@ import org.lwjgl.glfw.GLFW;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.client.DankKeybinds;
 import tfar.dankstorage.client.DualTooltip;
+import tfar.dankstorage.client.StackSizeRenderer;
 import tfar.dankstorage.client.button.SmallButton;
 import tfar.dankstorage.container.AbstractDankMenu;
 import tfar.dankstorage.inventory.DankSlot;
@@ -145,7 +146,7 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends CDankStorageS
             boolean flag = false;
             boolean flag1 = pSlot == this.clickedSlot && !this.draggingItem.isEmpty() && !this.isSplittingStack;
             ItemStack itemstack1 = this.menu.getCarried();
-            String s = null;
+            String s = "";
             if (pSlot == this.clickedSlot && !this.draggingItem.isEmpty() && this.isSplittingStack && !itemstack.isEmpty()) {
                 itemstack = itemstack.copyWithCount(itemstack.getCount() / 2);
             } else if (this.isQuickCrafting && this.quickCraftSlots.contains(pSlot) && !itemstack1.isEmpty()) {
@@ -187,7 +188,13 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends CDankStorageS
                 }
 
                 pGuiGraphics.renderItem(itemstack, i, j, pSlot.x + pSlot.y * this.imageWidth);
-                pGuiGraphics.renderItemDecorations(this.font, itemstack, i, j, CommonUtils.formatLargeNumber(itemstack.getCount()));
+                pGuiGraphics.renderItemDecorations(this.font, itemstack, i, j,"");
+
+                int count = itemstack.getCount();
+                if (count > 1 || !s.isEmpty()) {
+                    StackSizeRenderer.renderSizeLabel(pGuiGraphics, Minecraft.getInstance().font, i, j, s + CommonUtils.formatLargeNumber(itemstack.getCount()));
+                }
+
             }
 
             pGuiGraphics.pose().popPose();
