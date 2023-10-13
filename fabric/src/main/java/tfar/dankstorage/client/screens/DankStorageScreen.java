@@ -5,12 +5,9 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -27,15 +24,11 @@ import tfar.dankstorage.network.server.C2SButtonPacket;
 import tfar.dankstorage.network.server.C2SMessageLockSlot;
 import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
 import tfar.dankstorage.utils.CommonUtils;
-import tfar.dankstorage.utils.PickupMode;
-import tfar.dankstorage.utils.TxtColor;
 import tfar.dankstorage.utils.Utils;
 
 import java.util.List;
 
 public class DankStorageScreen<T extends AbstractDankMenu> extends CDankStorageScreen<T> {
-    private EditBox frequency;
-
 
     public DankStorageScreen(T container, Inventory playerinventory, Component component, ResourceLocation background) {
         super(container, playerinventory, component,background);

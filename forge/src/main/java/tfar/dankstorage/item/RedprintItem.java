@@ -100,6 +100,6 @@ public class RedprintItem extends Item {
         if (itemStack.hasTag() && itemStack.getTag().contains(CommonUtils.FREQ)) {
             component.append(" ("+itemStack.getTag().getInt(CommonUtils.FREQ)+")");
         }
-        return (Component) component;
+        return component;
     }
 }

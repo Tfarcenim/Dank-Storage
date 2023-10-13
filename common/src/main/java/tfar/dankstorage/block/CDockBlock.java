@@ -21,7 +21,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
-import tfar.dankstorage.item.CDankItem;
+import tfar.dankstorage.item.CoDankItem;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.blockentity.CommonDockBlockEntity;
 
@@ -104,7 +104,7 @@ public class CDockBlock extends Block implements EntityBlock {
                     return InteractionResult.SUCCESS;
                 }
 
-                if (held.getItem() instanceof CDankItem) {
+                if (held.getItem() instanceof CoDankItem) {
 
                     if (state.getValue(TIER) > 0) {
                         dockBlockEntity.giveToPlayer(player);

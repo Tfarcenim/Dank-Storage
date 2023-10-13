@@ -26,7 +26,7 @@ import tfar.dankstorage.world.DankInventory;
 
 import javax.annotation.Nonnull;
 
-public class DankItem extends CDankItem {
+public class DankItem extends CoDankItem {
 
     public DankItem(Properties p_i48527_2_, DankStats stats) {
         super(p_i48527_2_,stats);

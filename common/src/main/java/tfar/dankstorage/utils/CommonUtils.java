@@ -19,7 +19,7 @@ import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.item.CDankItem;
+import tfar.dankstorage.item.CoDankItem;
 
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
@@ -295,8 +295,8 @@ public class CommonUtils {
         return stacks.stream().map(ItemStackWrapper::new).collect(Collectors.toList());
     }
 
-    public static CDankItem getItemFromTier(int tier) {
-        return (CDankItem) BuiltInRegistries.ITEM.get(new ResourceLocation(DankStorage.MODID, "dank_" + tier));
+    public static CoDankItem getItemFromTier(int tier) {
+        return (CoDankItem) BuiltInRegistries.ITEM.get(new ResourceLocation(DankStorage.MODID, "dank_" + tier));
     }
 
     public static boolean isHoldingDank(@Nullable Player player) {
@@ -304,16 +304,16 @@ public class CommonUtils {
         if (player == null) return false;
 
         ItemStack stack = player.getMainHandItem();
-        if (stack.getItem() instanceof CDankItem) return true;
+        if (stack.getItem() instanceof CoDankItem) return true;
         stack = player.getOffhandItem();
-        return stack.getItem() instanceof CDankItem;
+        return stack.getItem() instanceof CoDankItem;
     }
 
 
     @Nullable
     public static InteractionHand getHandWithDank(Player player) {
-        if (player.getMainHandItem().getItem() instanceof CDankItem) return InteractionHand.MAIN_HAND;
-        else if (player.getOffhandItem().getItem() instanceof CDankItem) return InteractionHand.OFF_HAND;
+        if (player.getMainHandItem().getItem() instanceof CoDankItem) return InteractionHand.MAIN_HAND;
+        else if (player.getOffhandItem().getItem() instanceof CoDankItem) return InteractionHand.OFF_HAND;
         return null;
     }
 
@@ -345,6 +345,6 @@ public class CommonUtils {
     }
 
     public static DankStats getDefaultStats(ItemStack bag) {
-        return ((CDankItem) bag.getItem()).stats;
+        return ((CoDankItem) bag.getItem()).stats;
     }
 }

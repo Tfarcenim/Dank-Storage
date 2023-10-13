@@ -27,7 +27,7 @@ import tfar.dankstorage.world.DankInventory;
 
 import javax.annotation.Nonnull;
 
-public class DankItem extends CDankItem {
+public class DankItem extends CoDankItem {
 
   public static final Rarity DARK_GRAY = Rarity.create("dark_gray", ChatFormatting.DARK_GRAY);
   public static final Rarity DARK_RED = Rarity.create("dark_red", ChatFormatting.DARK_RED);
