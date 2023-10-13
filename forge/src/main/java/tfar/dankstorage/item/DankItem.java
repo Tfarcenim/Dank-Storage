@@ -2,7 +2,6 @@ package tfar.dankstorage.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -19,19 +18,15 @@ import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.DankStorageForge;
-import tfar.dankstorage.Item.CommonDankItem;
 import tfar.dankstorage.container.PortableDankProvider;
 import tfar.dankstorage.mixin.ItemUsageContextAccessor;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.*;
 import tfar.dankstorage.world.DankInventory;
-import tfar.dankstorage.world.MaxId;
 
 import javax.annotation.Nonnull;
 
-public class DankItem extends CommonDankItem {
+public class DankItem extends CDankItem {
 
   public static final Rarity DARK_GRAY = Rarity.create("dark_gray", ChatFormatting.DARK_GRAY);
   public static final Rarity DARK_RED = Rarity.create("dark_red", ChatFormatting.DARK_RED);

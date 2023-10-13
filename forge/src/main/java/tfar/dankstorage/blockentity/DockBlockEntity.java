@@ -13,7 +13,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tfar.dankstorage.DankStorageForge;
-import tfar.dankstorage.block.CommonDockBlock;
+import tfar.dankstorage.block.CDockBlock;
 import tfar.dankstorage.container.DockMenu;
 import tfar.dankstorage.init.ModBlockEntityTypes;
 import tfar.dankstorage.utils.DankStats;
@@ -37,7 +37,7 @@ public class DockBlockEntity extends CommonDockBlockEntity implements MenuProvid
             DankInventory dankInventory = savedData.createInventory(frequency);
 
             if (!dankInventory.valid()) {
-                savedData.setStats(DankStats.values()[getBlockState().getValue(CommonDockBlock.TIER)],frequency);
+                savedData.setStats(DankStats.values()[getBlockState().getValue(CDockBlock.TIER)],frequency);
                 dankInventory = savedData.createInventory(frequency);
             }
 
@@ -54,7 +54,7 @@ public class DockBlockEntity extends CommonDockBlockEntity implements MenuProvid
     @Override
     public DockMenu createMenu(int syncId, Inventory inventory, Player player) {
 
-        int tier = getBlockState().getValue(CommonDockBlock.TIER);
+        int tier = getBlockState().getValue(CDockBlock.TIER);
 
         DankInventory dankInventory = getInventory();
 
@@ -67,7 +67,7 @@ public class DockBlockEntity extends CommonDockBlockEntity implements MenuProvid
             dankInventory.upgradeTo(defaults);
         }
 
-        return switch (getBlockState().getValue(CommonDockBlock.TIER)) {
+        return switch (getBlockState().getValue(CDockBlock.TIER)) {
             case 1 -> DockMenu.t1s(syncId, inventory, dankInventory, this);
             case 2 -> DockMenu.t2s(syncId, inventory, dankInventory, this);
             case 3 -> DockMenu.t3s(syncId, inventory, dankInventory, this);
@@ -82,7 +82,7 @@ public class DockBlockEntity extends CommonDockBlockEntity implements MenuProvid
 
 
     public void upgradeTo(DankStats stats) {
-        level.setBlockAndUpdate(worldPosition, getBlockState().setValue(CommonDockBlock.TIER, stats.ordinal()));
+        level.setBlockAndUpdate(worldPosition, getBlockState().setValue(CDockBlock.TIER, stats.ordinal()));
         DankInventory dankInventory = getInventory();
         dankInventory.upgradeTo(stats);
     }

@@ -82,7 +82,6 @@ public class RedprintItem extends Item {
 
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack stack, ItemStack otherStack, Slot slot, ClickAction clickAction, Player player, SlotAccess slotAccess) {
-
         if (otherStack.getItem() instanceof DankItem) {
             int freq = Utils.getFrequency(otherStack);
             if (freq > Utils.INVALID) {
@@ -99,6 +98,6 @@ public class RedprintItem extends Item {
         if (itemStack.hasTag() && itemStack.getTag().contains("frequency")) {
             component.append(" ("+itemStack.getTag().getInt("frequency")+")");
         }
-        return (Component) component;
+        return component;
     }
 }

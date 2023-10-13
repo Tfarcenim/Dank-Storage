@@ -5,7 +5,6 @@
   "refmap": "dankstorage.refmap.json",
   "mixins": [
     "ItemEntityMixin",
-    "ItemUsageContextAccessor",
     "PlayerInventoryMixin"
   ],
   "client": [

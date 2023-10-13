@@ -1,4 +1,4 @@
-package tfar.dankstorage.Item;
+package tfar.dankstorage.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
@@ -30,10 +30,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-public abstract class CommonDankItem extends Item {
+public abstract class CDankItem extends Item {
 
     public final DankStats stats;
-    public CommonDankItem(Properties $$0, DankStats stats) {
+    public CDankItem(Properties $$0, DankStats stats) {
         super($$0);
         this.stats = stats;
     }

@@ -21,17 +21,17 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
-import tfar.dankstorage.Item.CommonDankItem;
+import tfar.dankstorage.item.CDankItem;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.blockentity.CommonDockBlockEntity;
 
 import javax.annotation.Nonnull;
 import java.util.function.BiFunction;
 
-public class CommonDockBlock extends Block implements EntityBlock {
+public class CDockBlock extends Block implements EntityBlock {
 
     private final BiFunction<BlockPos,BlockState,BlockEntity> function;
-    public CommonDockBlock(Properties $$0, BiFunction<BlockPos, BlockState, BlockEntity> function) {
+    public CDockBlock(Properties $$0, BiFunction<BlockPos, BlockState, BlockEntity> function) {
         super($$0);
         this.function = function;
     }
@@ -82,7 +82,7 @@ public class CommonDockBlock extends Block implements EntityBlock {
         ItemStack bag = ctx.getItemInHand();
 
         Block block = Block.byItem(bag.getItem());
-        if (block instanceof CommonDockBlock) return block.defaultBlockState();
+        if (block instanceof CDockBlock) return block.defaultBlockState();
         return block.getStateForPlacement(ctx);
     }
 
@@ -104,7 +104,7 @@ public class CommonDockBlock extends Block implements EntityBlock {
                     return InteractionResult.SUCCESS;
                 }
 
-                if (held.getItem() instanceof CommonDankItem) {
+                if (held.getItem() instanceof CDankItem) {
 
                     if (state.getValue(TIER) > 0) {
                         dockBlockEntity.giveToPlayer(player);

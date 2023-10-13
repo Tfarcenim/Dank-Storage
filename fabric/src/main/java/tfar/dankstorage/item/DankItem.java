@@ -1,8 +1,6 @@
 package tfar.dankstorage.item;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -18,20 +16,16 @@ import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import tfar.dankstorage.DankStorageFabric;
-import tfar.dankstorage.Item.CommonDankItem;
 import tfar.dankstorage.container.PortableDankProvider;
-import tfar.dankstorage.mixin.ItemUsageContextAccessor;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.UseType;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventory;
-import tfar.dankstorage.world.DankSavedData;
 
 import javax.annotation.Nonnull;
 
-public class DankItem extends CommonDankItem {
+public class DankItem extends CDankItem {
 
     public DankItem(Properties p_i48527_2_, DankStats stats) {
         super(p_i48527_2_,stats);

@@ -1,7 +1,7 @@
 package tfar.dankstorage.item;
 
 import net.minecraft.world.level.block.state.BlockState;
-import tfar.dankstorage.block.CommonDockBlock;
+import tfar.dankstorage.block.CDockBlock;
 
 public class UpgradeInfo {
 
@@ -14,6 +14,6 @@ public class UpgradeInfo {
     }
 
     public boolean canUpgrade(BlockState dank) {
-        return dank.getValue(CommonDockBlock.TIER) == start;
+        return dank.getValue(CDockBlock.TIER) == start;
     }
 }

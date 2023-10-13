@@ -1,23 +1,18 @@
 package tfar.dankstorage.utils;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.ModTags;
-import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.world.ClientData;
 import tfar.dankstorage.world.DankInventory;
 
 import java.nio.file.Path;
-import java.util.List;
 
 public class Utils extends CommonUtils {
     public static void setPickSlot(Level level,ItemStack bag, ItemStack stack) {

@@ -1,7 +1,13 @@
 package tfar.dankstorage.item;
 
 import net.minecraft.ChatFormatting;
+import tfar.dankstorage.block.CDockBlock;
+import tfar.dankstorage.blockentity.CommonDockBlockEntity;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -9,12 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import tfar.dankstorage.block.CommonDockBlock;
-import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.utils.Utils;
-
-import javax.annotation.Nonnull;
 
 public class UpgradeItem extends Item {
 
@@ -34,14 +35,14 @@ public class UpgradeItem extends Item {
         ItemStack upgradeStack = context.getItemInHand();
         BlockState state = world.getBlockState(pos);
 
-        if (player == null || !(state.getBlock() instanceof CommonDockBlock) || !upgradeInfo.canUpgrade(state)) {
+        if (player == null || !(state.getBlock() instanceof CDockBlock) || !upgradeInfo.canUpgrade(state)) {
             return InteractionResult.FAIL;
         }
         //else {
-        //    player.displayClientMessage(Utils.translatable("dankstorage.in_use").withStyle(ChatFormatting.RED), true);
+        //    player.displayClientMessage(Component.translatable("dankstorage.in_use").withStyle(ChatFormatting.RED), true);
         // }
 
-        DockBlockEntity oldDank = (DockBlockEntity) world.getBlockEntity(pos);
+        CommonDockBlockEntity oldDank = (CommonDockBlockEntity) world.getBlockEntity(pos);
 
         if (!world.isClientSide) {
             if (oldDank != null) {
@@ -49,7 +50,7 @@ public class UpgradeItem extends Item {
                 if (!player.getAbilities().instabuild)
                     upgradeStack.shrink(1);
             }
-            player.displayClientMessage(Utils.translatable("text.dankstorage.upgrade_successful").withStyle(ChatFormatting.GREEN), true);
+            player.displayClientMessage(Component.translatable("text.dankstorage.upgrade_successful").withStyle(ChatFormatting.GREEN), true);
         }
         return InteractionResult.SUCCESS;
     }
