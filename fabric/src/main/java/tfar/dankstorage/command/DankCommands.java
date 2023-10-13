@@ -57,13 +57,13 @@ public class DankCommands {
     }
 
     private static int clearAll(CommandContext<CommandSourceStack> context) {
-        DankStorageFabric.instance.data.clearAll();
+        //DankStorageFabric.instance.data.clearAll();
         return 1;
     }
 
     private static int clearID(CommandContext<CommandSourceStack> context) {
         int id = IntegerArgumentType.getInteger(context, "id");
-        boolean success = DankStorageFabric.instance.data.clearId(id);
+        boolean success = false;//DankStorageFabric.data.clearId(id);
         if (!success) {
             throw new CommandRuntimeException(Component.translatable("dankstorage.command.clear_id.invalid_id"));
         }
@@ -73,7 +73,7 @@ public class DankCommands {
     private static int setTier(CommandContext<CommandSourceStack> context) {
         int id = IntegerArgumentType.getInteger(context, "id");
         int tier = IntegerArgumentType.getInteger(context, "tier");
-        boolean success = DankStorageFabric.instance.data.setTier(id, tier);
+        boolean success = false;//DankStorageFabric.instance.data.setTier(id, tier);
         if (!success) {
             throw new CommandRuntimeException(Component.translatable("dankstorage.command.set_tier.invalid_id"));
         }
@@ -96,7 +96,7 @@ public class DankCommands {
 
     private static int lock(CommandContext<CommandSourceStack> context) {
         int id = IntegerArgumentType.getInteger(context, "id");
-        boolean success = DankStorageFabric.instance.data.lock(id);
+        boolean success = false;//DankStorageFabric.instance.data.lock(id);
         if (!success) {
             throw new CommandRuntimeException(Component.translatable("dankstorage.command.lock.invalid_id"));
         }
@@ -105,7 +105,7 @@ public class DankCommands {
 
     private static int unlock(CommandContext<CommandSourceStack> context) {
         int id = IntegerArgumentType.getInteger(context, "id");
-        boolean success = DankStorageFabric.instance.data.unlock(id);
+        boolean success = false;//DankStorageFabric.instance.data.unlock(id);
         if (!success) {
             throw new CommandRuntimeException(Component.translatable("dankstorage.command.unlock.invalid_id"));
         }

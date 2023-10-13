@@ -22,6 +22,6 @@ public class MouseMixin {
     private void onScroll(long window, double horizontal, double vertical, CallbackInfo ci) {
         double delta = (this.minecraft.options.discreteMouseScroll().get() ? Math.signum(horizontal) : vertical) * this.minecraft.options.mouseWheelSensitivity().get();
 
-        if (ClientMixinEvents.onScroll((MouseHandler) (Object) this, window, horizontal, vertical, delta)) ci.cancel();
+        if (ClientMixinEvents.onScroll(minecraft,(MouseHandler) (Object) this, window, horizontal, vertical, delta)) ci.cancel();
     }
 }

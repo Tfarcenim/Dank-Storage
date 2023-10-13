@@ -14,6 +14,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.storage.LevelStorageSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import tfar.dankstorage.block.DankDispenserBehavior;
@@ -39,10 +41,13 @@ import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.item.RedprintItem;
 import tfar.dankstorage.item.UpgradeInfo;
 import tfar.dankstorage.item.UpgradeItem;
+import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.DankStats;
+import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankSavedData;
 
+import java.io.File;
 import java.util.stream.IntStream;
 
 import static tfar.dankstorage.DankStorage.MODID;
@@ -129,17 +134,27 @@ public class DankStorageFabric implements ModInitializer, ClientModInitializer,
         Client.client();
     }
 
-    public static DankSavedData data;
-
     @Override
     public void onServerStarted(MinecraftServer server) {
-        data = server.getLevel(Level.OVERWORLD).getDataStorage()
-                .computeIfAbsent(DankSavedData::loadStatic, DankSavedData::new, DankStorage.MODID);
+        LevelStorageSource.LevelStorageAccess storageSource = ((MinecraftServerAccess)server).getStorageSource();
+        File file = storageSource.getDimensionPath(server.getLevel(Level.OVERWORLD).dimension())
+                .resolve("data/"+ DankStorage.MODID).toFile();
+        file.mkdirs();
+
+        DankStorage.maxId = DankStorage.getMaxId(server);
+    }
+
+    public static DankSavedData getData(int id, MinecraftServer server) {
+        if (id <= Utils.INVALID) throw new RuntimeException("Invalid frequency: "+id);
+        ServerLevel overworld = server.getLevel(Level.OVERWORLD);
+        return overworld.getDataStorage()
+                .computeIfAbsent(compoundTag -> DankSavedData.loadStatic(compoundTag,overworld), () -> new DankSavedData(overworld),
+                        DankStorage.MODID+"/"+id);
     }
 
     @Override
     public void onServerStopped(MinecraftServer server) {
-        data = null;
+        DankStorage.maxId = null;
     }
 
     @Override

@@ -22,7 +22,7 @@ public class C2SRequestContentsPacket implements ServerPlayNetworking.PlayChanne
 
 
     public void handle(ServerPlayer player, int frequency) {
-        DankInventory dankInventory = DankStorageFabric.instance.data.getInventory(frequency);
+        DankInventory dankInventory = DankStorageFabric.getData(frequency,player.server).createInventory(frequency);
         if (dankInventory != null) {
             DankPacketHandler.sendList(player,dankInventory.getContents());
         }

@@ -102,7 +102,11 @@ public class DankInventory extends SimpleContainer implements ContainerData {
     }
 
     public NonNullList<ItemStack> getContents() {
-        return ((SimpleContainerAccess) this).getItems();
+        return items;
+    }
+
+    public boolean valid() {
+        return dankStats != DankStats.zero;
     }
 
     public boolean noValidSlots() {
@@ -276,9 +280,9 @@ public class DankInventory extends SimpleContainer implements ContainerData {
     @Override
     public void setChanged() {
         super.setChanged();
-        if (DankStorageFabric.instance.data != null) {
-            DankStorageFabric.instance.data.setDirty();
-        }
+     //   if (DankStorageFabric.instance.data != null) {
+     //       DankStorageFabric.instance.data.setDirty();
+     //   }
     }
 
     public int getFrequencySlot() {

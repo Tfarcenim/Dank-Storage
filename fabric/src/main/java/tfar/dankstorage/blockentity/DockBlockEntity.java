@@ -26,6 +26,7 @@ import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankSavedData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,25 +47,22 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
 
     public void setFrequency(int freq) {
         if (settings == null) {
-
         } else {
             settings.putInt(CommonUtils.FREQ,freq);
         }
     }
 
-    public static final DankInventory DUMMY = new DankInventory(DankStats.zero, CommonUtils.INVALID);
+    public static final DankInventory DUMMY = new DankInventory(DankStats.zero, Utils.INVALID);
 
     public DankInventory getInventory() {
-        if (settings != null && settings.contains(CommonUtils.FREQ)) {
-            int id = settings.getInt(CommonUtils.FREQ);
-            DankInventory dankInventory = DankStorageFabric.data.getInventory(id);
+        if (settings != null && settings.contains(Utils.FREQ)) {
+            int frequency = settings.getInt(Utils.FREQ);
+            DankSavedData savedData = DankStorageFabric.getData(frequency,level.getServer());
+            DankInventory dankInventory = savedData.createInventory(frequency);
 
-            //if the id is too high
-            if (dankInventory == null) {
-                int next = DankStorage.maxId.getMaxId();
-                dankInventory = DankStorageFabric.data
-                        .getOrCreateInventory(next, DankStats.values()[getBlockState().getValue(DockBlock.TIER)]);
-                settings.putInt(CommonUtils.FREQ, next);
+            if (!dankInventory.valid()) {
+                savedData.setStats(DankStats.values()[getBlockState().getValue(DockBlock.TIER)],frequency);
+                dankInventory = savedData.createInventory(frequency);
             }
 
             return dankInventory;
@@ -224,20 +222,14 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
             CompoundTag iSettings = Utils.getSettings(tank);
             tank.shrink(1);
 
-            DankInventory dankInventory;
-            if (iSettings != null && iSettings.contains(CommonUtils.FREQ)) {
+            if (iSettings != null && iSettings.contains(Utils.FREQ)) {//existing frequency
                 this.settings = iSettings;
-                dankInventory = DankStorageFabric.data.getInventory(iSettings.getInt(CommonUtils.FREQ));
             } else {
                 this.settings = new CompoundTag();
                 int newId = DankStorage.maxId.getMaxId();
-                dankInventory = DankStorageFabric.data.getOrCreateInventory(newId, stats);
-                settings.putInt(CommonUtils.FREQ, newId);
+                DankStorage.maxId.increment();
+                settings.putInt(Utils.FREQ, newId);
             }
-            if (stats != dankInventory.dankStats) {
-                dankInventory.upgradeTo(stats);
-            }
-
             setChanged();
         }
     }

@@ -1,5 +1,7 @@
 package tfar.dankstorage;
 
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.Level;
 import tfar.dankstorage.platform.Services;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Items;
@@ -32,4 +34,11 @@ public class DankStorage {
             Constants.LOG.info("Hello to examplemod");
         }
     }
+
+    public static MaxId getMaxId(MinecraftServer server) {
+        return server.getLevel(Level.OVERWORLD).getDataStorage()
+                .computeIfAbsent(MaxId::loadStatic,MaxId::new,
+                        DankStorage.MODID+":max_id");
+    }
+
 }

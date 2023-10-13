@@ -7,39 +7,19 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.item.DankItem;
+import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.world.ClientData;
 import tfar.dankstorage.world.DankInventory;
 
+import java.nio.file.Path;
 import java.util.List;
 
 public class Utils extends CommonUtils {
-
-
-
-    //0,1,2,3
-    public static void cyclePickupMode(ItemStack bag, Player player) {
-        int ordinal = getOrCreateSettings(bag).getInt("mode");
-        ordinal++;
-        if (ordinal > PickupMode.PICKUP_MODES.length - 1) ordinal = 0;
-        getOrCreateSettings(bag).putInt("mode", ordinal);
-        player.displayClientMessage(
-                Component.translatable("dankstorage.mode." + PickupMode.PICKUP_MODES[ordinal].name()), true);
-    }
-
-    //this can be 0 - 80
-    public static int getSelectedSlot(ItemStack bag) {
-        CompoundTag settings = Utils.getSettings(bag);
-        return settings != null && settings.contains("selectedSlot") ? settings.getInt("selectedSlot") : INVALID;
-    }
-
-    public static void setSelectedSlot(ItemStack bag, int slot) {
-        getOrCreateSettings(bag).putInt("selectedSlot",slot);
-    }
-
     public static void setPickSlot(Level level,ItemStack bag, ItemStack stack) {
 
         DankInventory dankInventory = getInventory(bag,level);
@@ -76,24 +56,6 @@ public class Utils extends CommonUtils {
         return ItemStack.EMPTY;
     }
 
-    public static void merge(List<ItemStack> stacks, ItemStack toMerge) {
-        for (ItemStack stack : stacks) {
-            if (ItemHandlerHelper.canItemStacksStack(stack, toMerge)) {
-                int grow = Math.min(Integer.MAX_VALUE - stack.getCount(), toMerge.getCount());
-                if (grow > 0) {
-                    stack.grow(grow);
-                    toMerge.shrink(grow);
-                }
-            }
-        }
-        if (!toMerge.isEmpty()) {
-            stacks.add(toMerge);
-        }
-    }
-
-    public static DankStats getStats(ItemStack bag) {
-        return ((DankItem) bag.getItem()).stats;
-    }
 
     public static void changeSelectedSlot(ItemStack bag, boolean right, ServerPlayer player) {
         DankInventory handler = getInventory(bag,player.serverLevel());
@@ -128,18 +90,23 @@ public class Utils extends CommonUtils {
         }
     }
 
-    public static DankInventory getOrCreateInventory(ItemStack bag, Level level) {
-        if (!level.isClientSide) {
-            int id = getFrequency(bag);
-            return DankStorageFabric.instance.data.getOrCreateInventory(id,getStats(bag));
-        }
-        throw new RuntimeException("Attempted to get inventory on client");
-    }
-
     public static DankInventory getInventory(ItemStack bag, Level level) {
         if (!level.isClientSide) {
             int id = getFrequency(bag);
-            return DankStorageFabric.instance.data.getInventory(id);
+            if (id != INVALID) {
+
+                Path path = ((MinecraftServerAccess)level.getServer()).getStorageSource()
+                        .getDimensionPath(level.getServer().getLevel(Level.OVERWORLD).dimension())
+                        .resolve("data/"+ DankStorage.MODID+"/"+id+".dat");
+
+                if (path.toFile().isFile()) {
+                    return DankStorageFabric.getData(id,level.getServer()).createInventory(id);
+                } else {
+                    return DankStorageFabric.getData(id,level.getServer()).createFreshInventory(getDefaultStats(bag),id);
+                }
+            } else {
+                return null;
+            }
         }
         throw new RuntimeException("Attempted to get inventory on client");
     }

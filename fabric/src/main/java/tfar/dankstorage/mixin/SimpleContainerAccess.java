@@ -9,9 +9,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(SimpleContainer.class)
 public interface SimpleContainerAccess {
-
-    @Accessor NonNullList<ItemStack> getItems();
-
     @Accessor @Mutable void setItems(NonNullList<ItemStack> stacks);
 
     @Accessor @Mutable void setSize(int slots);

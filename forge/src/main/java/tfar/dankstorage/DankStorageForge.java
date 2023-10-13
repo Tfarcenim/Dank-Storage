@@ -121,21 +121,15 @@ public class DankStorageForge {
                 .resolve("data/"+ DankStorage.MODID).toFile();
         file.mkdirs();
 
-        DankStorage.maxId = getMaxId(server);
+        DankStorage.maxId = DankStorage.getMaxId(server);
     }
 
     public static DankSavedData getData(int id, MinecraftServer server) {
-        if (id == Utils.INVALID) throw new RuntimeException("Invalid frequency");
+        if (id <= Utils.INVALID) throw new RuntimeException("Invalid frequency: "+id);
         ServerLevel overworld = server.getLevel(Level.OVERWORLD);
         return overworld.getDataStorage()
                 .computeIfAbsent(compoundTag -> DankSavedData.loadStatic(compoundTag,overworld), () -> new DankSavedData(overworld),
                         DankStorage.MODID+"/"+id);
-    }
-
-    public MaxId getMaxId(MinecraftServer server) {
-        return server.getLevel(Level.OVERWORLD).getDataStorage()
-                .computeIfAbsent(MaxId::loadStatic,MaxId::new,
-                        DankStorage.MODID+":max_id");
     }
 
     public void onServerStopped(ServerStoppedEvent e) {

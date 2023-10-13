@@ -4,19 +4,15 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.items.ItemHandlerHelper;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.ModTags;
-import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.world.ClientData;
 import tfar.dankstorage.world.DankInventory;
 
 import java.nio.file.Path;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class Utils extends CommonUtils{
@@ -56,29 +52,6 @@ public class Utils extends CommonUtils{
             }
         }
         return ItemStack.EMPTY;
-    }
-
-    public static void merge(List<ItemStack> stacks, ItemStack toMerge) {
-        for (ItemStack stack : stacks) {
-            if (ItemHandlerHelper.canItemStacksStack(stack, toMerge)) {
-                int grow = Math.min(Integer.MAX_VALUE - stack.getCount(), toMerge.getCount());
-                if (grow > 0) {
-                    stack.grow(grow);
-                    toMerge.shrink(grow);
-                }
-            }
-        }
-        if (!toMerge.isEmpty()) {
-            stacks.add(toMerge);
-        }
-    }
-
-    public static List<ItemStackWrapper> wrap(List<ItemStack> stacks) {
-        return stacks.stream().map(ItemStackWrapper::new).collect(Collectors.toList());
-    }
-
-    public static DankStats getDefaultStats(ItemStack bag) {
-        return ((DankItem) bag.getItem()).stats;
     }
 
     public static void changeSelectedSlot(ItemStack bag, boolean right, ServerPlayer player) {

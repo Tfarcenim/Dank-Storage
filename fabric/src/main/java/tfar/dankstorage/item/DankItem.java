@@ -121,7 +121,7 @@ public class DankItem extends CommonDankItem {
                         ItemStack bagCopy = bag.copy();
                         player.setItemSlot(hand1, toPlace);
                         InteractionResultHolder<ItemStack> actionResult = toPlace.getItem().use(level, player, hand);
-                        DankInventory handler = Utils.getOrCreateInventory(bagCopy, level);
+                        DankInventory handler = Utils.getInventory(bagCopy, level);
                         handler.setItem(Utils.getSelectedSlot(bagCopy), actionResult.getObject());
                         player.setItemSlot(hand1, bagCopy);
                     }
@@ -142,7 +142,7 @@ public class DankItem extends CommonDankItem {
 
         //the client doesn't have access to the full inventory
         if (!player.level().isClientSide) {
-            DankInventory handler = Utils.getOrCreateInventory(bag, player.level());
+            DankInventory handler = Utils.getInventory(bag, player.level());
             handler.setItem(Utils.getSelectedSlot(bag), toUse);
         }
 

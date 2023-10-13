@@ -8,6 +8,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageForge;
+import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventory;
@@ -33,7 +34,7 @@ public class PortableDankProvider implements MenuProvider {
     public AbstractContainerMenu createMenu(int i, Inventory playerInventory, Player player) {
 
         DankInventory dankInventory = Utils.getInventory(stack,player.level());
-        DankStats defaults = Utils.getDefaultStats(stack);
+        DankStats defaults = CommonUtils.getDefaultStats(stack);
 
         if (dankInventory == null) {//create a new one
                 int next = DankStorage.maxId.getMaxId();

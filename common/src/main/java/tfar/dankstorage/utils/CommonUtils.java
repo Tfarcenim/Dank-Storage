@@ -168,6 +168,22 @@ public class CommonUtils {
     };
 
 
+    public static void merge(List<ItemStack> stacks, ItemStack toMerge) {
+        for (ItemStack stack : stacks) {
+            if (ItemStack.isSameItemSameTags(stack, toMerge)) {
+                int grow = Math.min(Integer.MAX_VALUE - stack.getCount(), toMerge.getCount());
+                if (grow > 0) {
+                    stack.grow(grow);
+                    toMerge.shrink(grow);
+                }
+            }
+        }
+        if (!toMerge.isEmpty()) {
+            stacks.add(toMerge);
+        }
+    }
+
+
     public static CompoundTag getSettings(ItemStack bag) {
         return hasSettings(bag) ? bag.getTag().getCompound(SET) : null;
     }
@@ -298,7 +314,7 @@ public class CommonUtils {
 
 
     @Nullable
-    private static InteractionHand getHandWithDank(Player player) {
+    public static InteractionHand getHandWithDank(Player player) {
         if (player.getMainHandItem().getItem() instanceof CommonDankItem) return InteractionHand.MAIN_HAND;
         else if (player.getOffhandItem().getItem() instanceof CommonDankItem) return InteractionHand.OFF_HAND;
         return null;
@@ -329,5 +345,9 @@ public class CommonUtils {
         if (!dank.isEmpty()) {
             cyclePlacement(dank,player);
         }
+    }
+
+    public static DankStats getDefaultStats(ItemStack bag) {
+        return ((CommonDankItem) bag.getItem()).stats;
     }
 }
