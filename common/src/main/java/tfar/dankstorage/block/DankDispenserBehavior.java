@@ -7,7 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import tfar.dankstorage.blockentity.DockBlockEntity;
+import tfar.dankstorage.blockentity.CommonDockBlockEntity;
 
 public class DankDispenserBehavior implements DispenseItemBehavior {
 
@@ -28,12 +28,12 @@ public class DankDispenserBehavior implements DispenseItemBehavior {
     }
 
     public ItemStack removeDank(ServerLevel world, BlockPos pos) {
-        DockBlockEntity dockBlockEntity = (DockBlockEntity) world.getBlockEntity(pos);
+        CommonDockBlockEntity dockBlockEntity = (CommonDockBlockEntity) world.getBlockEntity(pos);
         return dockBlockEntity.removeDankWithoutItemSpawn();
     }
 
     public void insertDank(ServerLevel world, BlockPos pos, ItemStack stack) {
-        DockBlockEntity dockBlockEntity = (DockBlockEntity) world.getBlockEntity(pos);
+        CommonDockBlockEntity dockBlockEntity = (CommonDockBlockEntity) world.getBlockEntity(pos);
         dockBlockEntity.addDank(stack);
     }
 }
