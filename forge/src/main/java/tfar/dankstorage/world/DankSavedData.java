@@ -29,6 +29,12 @@ public class DankSavedData extends CDankSavedData {
         return dankInventory;
     }
 
+    public void setStats(DankStats stats, int frequency) {
+        DankInventory dankInventory = createInventory(frequency);
+        dankInventory.setDankStats(stats);
+        write(dankInventory.save());
+    }
+
     public static DankSavedData loadStatic(CompoundTag compoundTag,ServerLevel level) {
         DankSavedData dankSavedData = new DankSavedData(level);
         dankSavedData.load(compoundTag);

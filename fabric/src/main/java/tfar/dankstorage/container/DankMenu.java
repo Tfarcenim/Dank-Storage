@@ -109,44 +109,15 @@ public class DankMenu extends AbstractDankMenu {
             for (int col = 0; col < 9; ++col) {
                 int x = 8 + col * 18;
                 int y = row * 18 + 18;
-                this.addSlot(new DankSlot(dankInventory, slotIndex, x, y) {
-                    @Override
-                    public void setChanged() {
-                        super.setChanged();
-                    }
-                });
+                this.addSlot(new DankSlot(dankInventory, slotIndex, x, y));
                 slotIndex++;
             }
         }
     }
 
     @Override
-    protected void addPlayerSlots(Inventory playerinventory) {
-    }
-
-    @Override
     public void setFrequency(int freq) {
         Utils.getOrCreateSettings(bag).putInt(Utils.FREQ, freq);
-    }
-
-    protected void addPlayerSlots(Inventory playerinventory, int locked) {
-        int yStart = 32 + 18 * rows;
-        for (int row = 0; row < 3; ++row) {
-            for (int col = 0; col < 9; ++col) {
-                int x = 8 + col * 18;
-                int y = row * 18 + yStart;
-                this.addSlot(new Slot(playerinventory, col + row * 9 + 9, x, y));
-            }
-        }
-
-        for (int row = 0; row < 9; ++row) {
-            int x = 8 + row * 18;
-            int y = yStart + 58;
-            if (row != locked)
-                this.addSlot(new Slot(playerinventory, row, x, y));
-            else
-                this.addSlot(new LockedSlot(playerinventory, row, x, y));
-        }
     }
 }
 

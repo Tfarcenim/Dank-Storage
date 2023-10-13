@@ -4,8 +4,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import tfar.dankstorage.utils.DankStats;
 
-import java.io.File;
-
 public class DankSavedData extends CDankSavedData {
 
     DankInventory dankInventory;

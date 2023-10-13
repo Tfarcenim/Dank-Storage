@@ -20,7 +20,7 @@ public class DockMenu extends AbstractDankMenu {
     public DockMenu(MenuType<?> type, int id, Inventory playerInventory, DankInventory dankInventory, DockBlockEntity dock) {
         super(type, id, playerInventory, dankInventory);
         addDankSlots();
-        addPlayerSlots(playerInventory);
+        addPlayerSlots(playerInventory,-1);
         this.dock = dock;
     }
 

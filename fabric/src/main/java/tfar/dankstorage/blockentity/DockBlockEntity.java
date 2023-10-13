@@ -24,8 +24,6 @@ import java.util.List;
 
 public class DockBlockEntity extends CommonDockBlockEntity implements MenuProvider {
 
-    protected boolean originalName;
-
     public DockBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(DankStorageFabric.dank_tile, blockPos, blockState);
     }

@@ -7,20 +7,72 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import tfar.dankstorage.inventory.LockedSlot;
+
+import javax.annotation.Nonnull;
 
 public abstract class CAbstractDankMenu extends AbstractContainerMenu {
 
     public final Inventory playerInventory;
-
-    public CAbstractDankMenu(MenuType<?> type, int windowId, Inventory playerInventory) {
+    public final int rows;
+    public CAbstractDankMenu(MenuType<?> type, int windowId,int rows, Inventory playerInventory) {
         super(type, windowId);
+        this.rows = rows;
         this.playerInventory = playerInventory;
+    }
+
+    protected void addPlayerSlots(Inventory playerinventory, int locked) {
+        int yStart = 32 + 18 * rows;
+        for (int row = 0; row < 3; ++row) {
+            for (int col = 0; col < 9; ++col) {
+                int x = 8 + col * 18;
+                int y = row * 18 + yStart;
+                this.addSlot(new Slot(playerinventory, col + row * 9 + 9, x, y));
+            }
+        }
+
+        for (int row = 0; row < 9; ++row) {
+            int x = 8 + row * 18;
+            int y = yStart + 58;
+            if (row != locked)
+                this.addSlot(new Slot(playerinventory, row, x, y));
+            else
+                this.addSlot(new LockedSlot(playerinventory, row, x, y));
+        }
     }
 
     @Override
     public void doClick(int pSlotId, int pButton, ClickType pClickType, Player pPlayer) {
         if (pClickType != ClickType.SWAP)
             super.doClick(pSlotId, pButton, pClickType, pPlayer);
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack quickMoveStack(Player playerIn, int index) {
+        ItemStack itemstack = ItemStack.EMPTY;
+        Slot slot = this.slots.get(index);
+
+        if (slot.hasItem()) {
+            ItemStack slotStack = slot.getItem();
+            itemstack = slotStack.copy();
+
+
+            if (index < rows * 9) {
+                if (!this.moveItemStackTo(slotStack, rows * 9, this.slots.size(), true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (!this.moveItemStackTo(slotStack, 0, rows * 9, false)) {
+                return ItemStack.EMPTY;
+            }
+
+            if (slotStack.isEmpty()) {
+                slot.set(ItemStack.EMPTY);
+            } else {
+                slot.setChanged();
+            }
+        }
+        return itemstack;
     }
 
     //used by quick transfer, needs to respect locked slots
