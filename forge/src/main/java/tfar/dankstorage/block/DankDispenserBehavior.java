@@ -16,10 +16,10 @@ public class DankDispenserBehavior implements DispenseItemBehavior {
         ServerLevel world = pointer.getLevel();
         BlockPos blockPos = pointer.getPos().relative(pointer.getBlockState().getValue(DispenserBlock.FACING));
         BlockState state = world.getBlockState(blockPos);
-        if (state.getBlock() instanceof DockBlock && state.getValue(DockBlock.TIER) == 0) {
+        if (state.getBlock() instanceof CommonDockBlock && state.getValue(CommonDockBlock.TIER) == 0) {
             insertDank(world, blockPos, stack);
             return ItemStack.EMPTY;
-        } else if (state.getBlock() instanceof DockBlock) {
+        } else if (state.getBlock() instanceof CommonDockBlock) {
             ItemStack old = removeDank(world, blockPos);
             insertDank(world, blockPos, stack);
             return old;

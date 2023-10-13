@@ -1,7 +1,6 @@
 package tfar.dankstorage.item;
 
 import net.minecraft.world.level.block.state.BlockState;
-import tfar.dankstorage.block.DockBlock;
 
 public class UpgradeInfo {
 

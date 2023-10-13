@@ -1,16 +1,12 @@
 package tfar.dankstorage.item;
 
 import net.minecraft.ChatFormatting;
-import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.blockentity.DockBlockEntity;
 
 import javax.annotation.Nonnull;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -19,7 +15,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.world.DankInventory;
 
 public class UpgradeItem extends Item {
 

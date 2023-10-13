@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import tfar.dankstorage.block.DockBlock;
+import tfar.dankstorage.block.CommonDockBlock;
 import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
@@ -34,7 +34,7 @@ public class UpgradeItem extends Item {
         ItemStack upgradeStack = context.getItemInHand();
         BlockState state = world.getBlockState(pos);
 
-        if (player == null || !(state.getBlock() instanceof DockBlock) || !upgradeInfo.canUpgrade(state)) {
+        if (player == null || !(state.getBlock() instanceof CommonDockBlock) || !upgradeInfo.canUpgrade(state)) {
             return InteractionResult.FAIL;
         }
         //else {

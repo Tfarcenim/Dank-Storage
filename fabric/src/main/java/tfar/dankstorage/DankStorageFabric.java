@@ -31,7 +31,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import tfar.dankstorage.block.CommonDockBlock;
 import tfar.dankstorage.block.DankDispenserBehavior;
-import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.client.Client;
 import tfar.dankstorage.command.DankCommands;
