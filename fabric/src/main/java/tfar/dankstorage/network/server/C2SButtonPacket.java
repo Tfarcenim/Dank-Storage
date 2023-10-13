@@ -20,6 +20,7 @@ public class C2SButtonPacket implements ServerPlayNetworking.PlayChannelHandler 
 
     public static void send(Action action) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+        buf.writeInt(action.ordinal());
         ClientPlayNetworking.send(DankPacketHandler.button_action, buf);
     }
 

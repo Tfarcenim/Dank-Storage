@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
-import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -19,8 +18,7 @@ import tfar.dankstorage.container.DankMenu;
 import tfar.dankstorage.container.DockMenu;
 import tfar.dankstorage.event.FabricEvents;
 import tfar.dankstorage.network.ClientDankPacketHandler;
-import tfar.dankstorage.network.server.C2SMessageTogglePickup;
-import tfar.dankstorage.network.server.C2SMessageToggleUseType;
+import tfar.dankstorage.network.server.C2SButtonPacket;
 
 public class Client {
 
@@ -57,10 +55,10 @@ public class Client {
 
     public static void keyPressed(Minecraft client) {
         if (DankKeybinds.CONSTRUCTION.consumeClick()) {
-            C2SMessageToggleUseType.send();
+            C2SButtonPacket.send(C2SButtonPacket.Action.TOGGLE_USE_TYPE);
         }
         if (DankKeybinds.PICKUP_MODE.consumeClick()) {
-            C2SMessageTogglePickup.send();
+            C2SButtonPacket.send(C2SButtonPacket.Action.TOGGLE_PICKUP);
         }
     }
 

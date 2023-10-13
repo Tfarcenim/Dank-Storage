@@ -12,17 +12,10 @@ import tfar.dankstorage.network.server.*;
 import tfar.dankstorage.utils.PacketBufferEX;
 
 public class DankPacketHandler {
-
-    public static final ResourceLocation toggle_pickup = new ResourceLocation(DankStorage.MODID, "toggle_pickup");
-    public static final ResourceLocation tag_mode = new ResourceLocation(DankStorage.MODID, "tag_mode");
-    public static final ResourceLocation sort = new ResourceLocation(DankStorage.MODID, "sort");
     public static final ResourceLocation lock_slot = new ResourceLocation(DankStorage.MODID, "lock_slot");
 
-    public static final ResourceLocation pick_block = new ResourceLocation(DankStorage.MODID, "pick_block");
-    public static final ResourceLocation toggle_use = new ResourceLocation(DankStorage.MODID, "toggle_use");
     public static final ResourceLocation scroll = new ResourceLocation(DankStorage.MODID, "scroll");
     public static final ResourceLocation set_id = new ResourceLocation(DankStorage.MODID, "set_id");
-    public static final ResourceLocation lock_id = new ResourceLocation(DankStorage.MODID, "lock_id");
     public static final ResourceLocation request_contents = new ResourceLocation(DankStorage.MODID, "request_contents");
 
     public static final ResourceLocation sync_slot = new ResourceLocation(DankStorage.MODID, "sync_slot");
@@ -35,13 +28,7 @@ public class DankPacketHandler {
     public static void registerMessages() {
         ServerPlayNetworking.registerGlobalReceiver(scroll, new C2SMessageScrollSlot());
         ServerPlayNetworking.registerGlobalReceiver(lock_slot, new C2SMessageLockSlot());
-        ServerPlayNetworking.registerGlobalReceiver(sort, new C2SMessageSort());
-        ServerPlayNetworking.registerGlobalReceiver(tag_mode, new C2SMessageTagMode());
-        ServerPlayNetworking.registerGlobalReceiver(toggle_pickup, new C2SMessageTogglePickup());
-        ServerPlayNetworking.registerGlobalReceiver(toggle_use, new C2SMessageToggleUseType());
-        ServerPlayNetworking.registerGlobalReceiver(pick_block, new C2SMessagePickBlock());
         ServerPlayNetworking.registerGlobalReceiver(set_id, new C2SSetFrequencyPacket());
-        ServerPlayNetworking.registerGlobalReceiver(lock_id,new C2SMessageLockFrequency());
         ServerPlayNetworking.registerGlobalReceiver(request_contents,new C2SRequestContentsPacket());
         ServerPlayNetworking.registerGlobalReceiver(button_action,new C2SButtonPacket());
     }

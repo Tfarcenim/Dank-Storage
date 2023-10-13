@@ -15,7 +15,4 @@ public class ItemHandlerHelper {
         return copy;
     }
 
-    public static boolean canItemStacksStack(@Nonnull ItemStack a, @Nonnull ItemStack b) {
-        return ItemStack.isSameItemSameTags(a,b);
-    }
 }
