@@ -6,6 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.server.C2SMessageScrollSlot;
 import tfar.dankstorage.network.server.C2SRequestContentsPacket;
+import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
 import tfar.dankstorage.platform.services.IPlatformHelper;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -51,5 +52,10 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public void sendScrollPacket(boolean right) {
         C2SMessageScrollSlot.send(right);
+    }
+
+    @Override
+    public void sendFrequencyPacket(int frequency, boolean set) {
+        C2SSetFrequencyPacket.send(frequency, set);
     }
 }

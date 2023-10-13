@@ -16,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 import tfar.dankstorage.blockentity.DockBlockEntity;
+import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.Utils;
 
 import java.util.List;
@@ -37,8 +38,8 @@ public class RedprintItem extends Item {
     }
 
     private static int getFrequency(ItemStack stack) {
-        if (stack.hasTag() && stack.getTag().contains("frequency")) {
-            return stack.getTag().getInt("frequency");
+        if (stack.hasTag() && stack.getTag().contains(CommonUtils.FREQ)) {
+            return stack.getTag().getInt(CommonUtils.FREQ);
         }
         return Utils.INVALID;
     }
@@ -54,10 +55,10 @@ public class RedprintItem extends Item {
             if (blockEntity instanceof DockBlockEntity dockBlockEntity) {
                 if (player.isCrouching()) {
                     int freq = dockBlockEntity.getInventory().getFrequency();
-                    stack.getOrCreateTag().putInt("frequency", freq);
+                    stack.getOrCreateTag().putInt(CommonUtils.FREQ, freq);
                 } else {
-                    if (stack.hasTag() && stack.getTag().contains("frequency")) {
-                        int freq = stack.getTag().getInt("frequency");
+                    if (stack.hasTag() && stack.getTag().contains(CommonUtils.FREQ)) {
+                        int freq = stack.getTag().getInt(CommonUtils.FREQ);
                         dockBlockEntity.setFrequency(freq);
                     }
                 }
@@ -86,7 +87,7 @@ public class RedprintItem extends Item {
         if (otherStack.getItem() instanceof DankItem) {
             int freq = Utils.getFrequency(otherStack);
             if (freq > Utils.INVALID) {
-                stack.getOrCreateTag().putInt("frequency", freq);
+                stack.getOrCreateTag().putInt(CommonUtils.FREQ, freq);
                 return true;
             }
         }
@@ -96,8 +97,8 @@ public class RedprintItem extends Item {
     @Override
     public Component getName(ItemStack itemStack) {
         MutableComponent component = Utils.literal(super.getName(itemStack).getString());
-        if (itemStack.hasTag() && itemStack.getTag().contains("frequency")) {
-            component.append(" ("+itemStack.getTag().getInt("frequency")+")");
+        if (itemStack.hasTag() && itemStack.getTag().contains(CommonUtils.FREQ)) {
+            component.append(" ("+itemStack.getTag().getInt(CommonUtils.FREQ)+")");
         }
         return (Component) component;
     }

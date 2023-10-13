@@ -5,9 +5,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -18,12 +16,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
-import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
-import tfar.dankstorage.client.Client;
-import tfar.dankstorage.client.DankKeybinds;
-import tfar.dankstorage.client.DualTooltip;
-import tfar.dankstorage.client.NumberEditBox;
+import tfar.dankstorage.client.*;
 import tfar.dankstorage.client.button.SmallButton;
 import tfar.dankstorage.container.AbstractDankMenu;
 import tfar.dankstorage.inventory.DankSlot;
@@ -37,32 +31,15 @@ import tfar.dankstorage.utils.TxtColor;
 
 import java.util.List;
 
-public class DankStorageScreen<T extends AbstractDankMenu> extends AbstractContainerScreen<T> {
+public class DankStorageScreen<T extends AbstractDankMenu> extends CDankStorageScreen<T> {
 
-    static final ResourceLocation background1 = new ResourceLocation(DankStorage.MODID,
-            "textures/container/gui/dank1.png");
-    static final ResourceLocation background2 = new ResourceLocation(DankStorage.MODID,
-            "textures/container/gui/dank2.png");
-    static final ResourceLocation background3 = new ResourceLocation(DankStorage.MODID,
-            "textures/container/gui/dank3.png");
-    static final ResourceLocation background4 = new ResourceLocation(DankStorage.MODID,
-            "textures/container/gui/dank4.png");
-    static final ResourceLocation background5 = new ResourceLocation(DankStorage.MODID,
-            "textures/container/gui/dank5.png");
-    static final ResourceLocation background6 = new ResourceLocation("textures/gui/container/generic_54.png");
-    static final ResourceLocation background7 = new ResourceLocation(DankStorage.MODID,
-            "textures/container/gui/dank7.png");
-    protected final boolean is7;
-    final ResourceLocation background;//= new ResourceLocation("textures/gui/container/shulker_box.png");
-    private EditBox frequency;
+
+
 
 
     public DankStorageScreen(T container, Inventory playerinventory, Component component, ResourceLocation background) {
-        super(container, playerinventory, component);
-        this.background = background;
-        this.imageHeight = 114 + this.menu.rows * 18;
-        this.is7 = this.menu.rows > 6;
-        this.inventoryLabelY = this.imageHeight - 94;
+        super(container, playerinventory, component,background);
+
     }
 
     public static <T extends AbstractDankMenu> DankStorageScreen<T> t1(T container, Inventory playerinventory, Component component) {
@@ -148,21 +125,6 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends AbstractConta
         initEditbox();
     }
 
-    protected void initEditbox() {
-        int i = (this.width - this.imageWidth) / 2;
-        int j = (this.height - this.imageHeight) / 2;
-        this.frequency = new NumberEditBox(this.font, i + 92, j + inventoryLabelY, 56, 12, Utils.translatable("dank"));
-        this.frequency.setCanLoseFocus(true);
-        this.frequency.setTextColor(-1);
-        this.frequency.setTextColorUneditable(-1);
-        this.frequency.setBordered(false);
-        this.frequency.setMaxLength(10);
-        this.frequency.setResponder(this::onNameChanged);
-        this.frequency.setValue("");
-        this.frequency.setTextColor(0xff00ff00);
-        this.addWidget(this.frequency);
-    }
-
     private static final MutableComponent SAVE_C = buildSaveComponent();
     private static final MutableComponent PICKUP_C = buildPickupComponent();
 
@@ -210,16 +172,6 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends AbstractConta
                                         .withStyle(ChatFormatting.GRAY))
                         .withStyle(Style.EMPTY.withColor(PickupMode.void_pickup.getColor()))
         );
-    }
-
-
-    private void onNameChanged(String string) {
-        try {
-            int i = Integer.parseInt(string);
-            C2SSetFrequencyPacket.send(i, false);
-        } catch (NumberFormatException e) {
-            C2SSetFrequencyPacket.send(-1, false);
-        }
     }
 
     @Override
@@ -314,10 +266,7 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends AbstractConta
 
     @Override
     protected void renderBg(GuiGraphics stack, float partialTicks, int mouseX, int mouseY) {
-        if (is7)
-            stack.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 512);
-        else
-            stack.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        super.renderBg(stack, partialTicks, mouseX, mouseY);
         renderLockedSlots(stack);
     }
 
@@ -351,8 +300,7 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends AbstractConta
         return tooltipFromItem;
     }
 
-    private static final MutableComponent STORAGE_TXT = Utils.translatable("text.dankstorage.blacklisted_storage").withStyle(ChatFormatting.DARK_RED);
-    private static final MutableComponent USAGE_TXT = Utils.translatable("text.dankstorage.blacklisted_usage").withStyle(ChatFormatting.DARK_RED);
+
     public void appendDankInfo(List<Component> tooltip, ItemStack stack) {
         if (stack.is(ModTags.BLACKLISTED_STORAGE)) tooltip.add(STORAGE_TXT);
         if (stack.is(ModTags.BLACKLISTED_USAGE)) tooltip.add(USAGE_TXT);

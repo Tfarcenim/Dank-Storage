@@ -44,5 +44,6 @@ public interface IPlatformHelper {
     void sendRequestContentsPacket(int frequency);
 
     void sendScrollPacket(boolean right);
+    void sendFrequencyPacket(int frequency,boolean set);
 
 }
