@@ -43,4 +43,6 @@ public interface IPlatformHelper {
     void sendCustomSlotChange(ServerPlayer player, int id, int slot, ItemStack stack);
     void sendRequestContentsPacket(int frequency);
 
+    void sendScrollPacket(boolean right);
+
 }

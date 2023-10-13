@@ -30,6 +30,7 @@ import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.network.server.C2SButtonPacket;
 import tfar.dankstorage.network.server.C2SMessageLockSlotPacket;
 import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
+import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.utils.TxtColor;
@@ -295,7 +296,7 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends AbstractConta
                 }
 
                 pGuiGraphics.renderItem(itemstack, i, j, pSlot.x + pSlot.y * this.imageWidth);
-                pGuiGraphics.renderItemDecorations(this.font, itemstack, i, j, Client.getStringFromInt(itemstack.getCount()));
+                pGuiGraphics.renderItemDecorations(this.font, itemstack, i, j, CommonUtils.formatLargeNumber(itemstack.getCount()));
             }
 
             pGuiGraphics.pose().popPose();

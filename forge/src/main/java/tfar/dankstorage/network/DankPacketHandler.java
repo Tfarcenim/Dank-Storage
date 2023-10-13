@@ -22,10 +22,10 @@ public class DankPacketHandler {
         int i = 0;
 
         INSTANCE.registerMessage(i++,
-                C2SMessageScrollSlotPacket.class,
-                C2SMessageScrollSlotPacket::encode,
-                C2SMessageScrollSlotPacket::new,
-                C2SMessageScrollSlotPacket::handle);
+                C2SScrollSlotPacket.class,
+                C2SScrollSlotPacket::encode,
+                C2SScrollSlotPacket::new,
+                C2SScrollSlotPacket::handle);
 
         INSTANCE.registerMessage(i++,
                 C2SMessageLockSlotPacket.class,

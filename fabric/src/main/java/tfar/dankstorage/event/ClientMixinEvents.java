@@ -9,19 +9,4 @@ import tfar.dankstorage.utils.Utils;
 
 public class ClientMixinEvents {
 
-
-    public static boolean onScroll(Minecraft minecraft, MouseHandler mouse, long window, double horizontal, double vertical, double delta) {
-        Player player = minecraft.player;
-        if (player!=null) {
-            ItemStack main = player.getMainHandItem();
-            ItemStack off = player.getOffhandItem();
-            if (player.isCrouching() && (Utils.isConstruction(main) || Utils.isConstruction(off))) {
-                boolean right = delta < 0;
-                C2SMessageScrollSlot.send(right);
-                return true;
-            }
-        }
-        return false;
-    }
-
 }

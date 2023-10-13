@@ -4,6 +4,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.server.C2SScrollSlotPacket;
 import tfar.dankstorage.network.server.C2SRequestContentsPacket;
 import tfar.dankstorage.platform.services.IPlatformHelper;
 import net.minecraftforge.fml.ModList;
@@ -47,5 +48,10 @@ public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public void sendRequestContentsPacket(int frequency) {
         C2SRequestContentsPacket.send(frequency);
+    }
+
+    @Override
+    public void sendScrollPacket(boolean right) {
+        C2SScrollSlotPacket.send(right);
     }
 }

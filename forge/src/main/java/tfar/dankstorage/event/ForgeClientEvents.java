@@ -10,6 +10,7 @@ import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.client.DankHudOverlay;
+import tfar.dankstorage.events.ClientEvents;
 import tfar.dankstorage.network.server.C2SMessagePickBlock;
 import tfar.dankstorage.utils.Utils;
 
@@ -42,6 +43,6 @@ public class ForgeClientEvents {
     }
 
     public static void onScroll(InputEvent.MouseScrollingEvent e) {
-        if (ClientMixinEvents.onScroll(e.getScrollDelta()))e.setCanceled(true);
+        if (ClientEvents.onScroll(e.getScrollDelta()))e.setCanceled(true);
     }
 }

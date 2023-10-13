@@ -120,31 +120,4 @@ public class Client {
         return mc.player;
     }
 
-    private static final DecimalFormat decimalFormat = new DecimalFormat("0.#");
-
-
-    public static void drawSmallItemNumbers(GuiGraphics matrices, int x, int y, ItemStack stack) {
-
-        PoseStack viewModelPose = RenderSystem.getModelViewStack();
-        viewModelPose.pushPose();
-        viewModelPose.translate(x + 8, y + 8, 200);
-        float scale = .5f;
-        viewModelPose.scale(scale, scale, scale);
-        viewModelPose.translate(-x, -y, 0);
-        RenderSystem.applyModelViewMatrix();
-        String amount = (stack.getCount() > 1) ? getStringFromInt(stack.getCount()) : null;
-        matrices.renderItemDecorations(Minecraft.getInstance().font, stack, x, y, amount);
-        viewModelPose.popPose();
-        RenderSystem.applyModelViewMatrix();
-
-    }
-
-    public static String getStringFromInt(int number) {
-
-        if (number >= 1000000000) return decimalFormat.format(number / 1000000000f) + "b";
-        if (number >= 1000000) return decimalFormat.format(number / 1000000f) + "m";
-        if (number >= 1000) return decimalFormat.format(number / 1000f) + "k";
-
-        return Float.toString(number).replaceAll("\\.?0*$", "");
-    }
 }
