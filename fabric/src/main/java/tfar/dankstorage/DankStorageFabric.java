@@ -29,6 +29,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import tfar.dankstorage.block.CommonDockBlock;
 import tfar.dankstorage.block.DankDispenserBehavior;
 import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.blockentity.DockBlockEntity;
@@ -79,7 +80,8 @@ public class DankStorageFabric implements ModInitializer, ClientModInitializer,
     public void onInitialize() {
         Item.Properties properties = new Item.Properties();
 
-        Registry.register(BuiltInRegistries.BLOCK, new ResourceLocation(MODID, "dock"), dock = new DockBlock(BlockBehaviour.Properties.of().strength(1, 30)));
+        Registry.register(BuiltInRegistries.BLOCK, new ResourceLocation(MODID, "dock"),
+                dock = new CommonDockBlock(BlockBehaviour.Properties.of().strength(1, 30), DockBlockEntity::new));
         Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "dock"), new BlockItem(dock, properties));
 
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.INGREDIENTS).register(entries -> entries.accept(dock));
