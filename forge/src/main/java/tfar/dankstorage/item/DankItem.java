@@ -18,6 +18,7 @@ import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import org.jetbrains.annotations.Nullable;
 import tfar.dankstorage.container.PortableDankProvider;
 import tfar.dankstorage.mixin.ItemUsageContextAccessor;
 import tfar.dankstorage.network.DankPacketHandler;
@@ -171,7 +172,7 @@ public class DankItem extends CDankItem {
 
 
     @Override
-    public @org.jetbrains.annotations.Nullable ICapabilityProvider initCapabilities(ItemStack stack, @org.jetbrains.annotations.Nullable CompoundTag nbt) {
+    public @Nullable ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
         if (Utils.getFrequency(stack)!= Utils.INVALID) {
             return new DankItemCapability(stack);
         }
