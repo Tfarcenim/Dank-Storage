@@ -27,18 +27,18 @@ public class DankInventory extends SimpleContainer implements ContainerData {
 
     public DankStats dankStats;
     protected NonNullList<ItemStack> ghostItems;
-    protected int id;
+    protected int frequency;
     public boolean frequencyLocked = true;
 
     protected int textColor = -1;
 
     public MinecraftServer server;
 
-    public DankInventory(DankStats stats, int id) {
+    public DankInventory(DankStats stats, int frequency) {
         super(stats.slots);
         this.dankStats = stats;
         this.ghostItems = NonNullList.withSize(stats.slots, ItemStack.EMPTY);
-        this.id = id;
+        this.frequency = frequency;
     }
 
     public void upgradeTo(DankStats stats) {
@@ -47,7 +47,7 @@ public class DankInventory extends SimpleContainer implements ContainerData {
         if (stats.ordinal() <= dankStats.ordinal()) {
             return;
         }
-        Constants.LOG.debug("Upgrading dank #{} from tier {} to {}", id, dankStats.name(), stats.name());
+        Constants.LOG.debug("Upgrading dank #{} from tier {} to {}", frequency, dankStats.name(), stats.name());
         setTo(stats);
     }
 
@@ -169,7 +169,7 @@ public class DankInventory extends SimpleContainer implements ContainerData {
         nbt.put("Items", nbtTagList);
         nbt.put(GHOST, ghostItemNBT);
         nbt.putString("DankStats", dankStats.name());
-        nbt.putInt(Utils.FREQ, id);
+        nbt.putInt(Utils.FREQ, frequency);
         nbt.putBoolean("locked", frequencyLocked);
         return nbt;
     }
@@ -280,9 +280,9 @@ public class DankInventory extends SimpleContainer implements ContainerData {
     @Override
     public void setChanged() {
         super.setChanged();
-     //   if (DankStorageFabric.instance.data != null) {
-     //       DankStorageFabric.instance.data.setDirty();
-     //   }
+        if (server != null) {
+            DankStorageFabric.getData(frequency,server).write(save());
+        }
     }
 
     public int getFrequencySlot() {
@@ -317,7 +317,7 @@ public class DankInventory extends SimpleContainer implements ContainerData {
     @Override
     public int get(int slot) {
         return switch (slot) {
-            case 0 -> id;
+            case 0 -> frequency;
             case 1 -> textColor;
             case 2 -> frequencyLocked ? 1 : 0;
             default -> AbstractContainerMenu.SLOT_CLICKED_OUTSIDE;
@@ -327,7 +327,7 @@ public class DankInventory extends SimpleContainer implements ContainerData {
     @Override
     public void set(int slot, int value) {
         switch (slot) {
-            case 0 -> id = value;
+            case 0 -> frequency = value;
             case 1 -> textColor = value;
             case 2 -> frequencyLocked = value == 1;
         }
@@ -434,15 +434,6 @@ public class DankInventory extends SimpleContainer implements ContainerData {
             ghostItems.set(slot, ItemStack.EMPTY);
         }
         setChanged();
-    }
-
-    public enum TxtColor {
-        INVALID(0xffff0000), TOO_HIGH(0xffff8000), DIFFERENT_TIER(0xffffff00), GOOD(0xff00ff00), LOCKED(0xff0000ff);
-        public final int color;
-
-        TxtColor(int color) {
-            this.color = color;
-        }
     }
 
     //0 - 80 are locked slots, 81 is the id, 82 is text color, and 83 is global lock

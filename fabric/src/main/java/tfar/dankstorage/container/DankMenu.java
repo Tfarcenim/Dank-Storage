@@ -8,6 +8,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.inventory.LockedSlot;
+import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.world.DankInventory;
 import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.item.DankItem;
@@ -32,7 +33,17 @@ public class DankMenu extends AbstractDankMenu {
 
     @Override
     protected DataSlot getServerPickupData() {
-        return null;
+        return new DataSlot() {
+            @Override
+            public int get() {
+                return Utils.getPickupMode(bag).ordinal();
+            }
+
+            @Override
+            public void set(int pValue) {
+                Utils.setPickupMode(bag, PickupMode.PICKUP_MODES[pValue]);
+            }
+        };
     }
 
     public static DankMenu t1(int id, Inventory inv) {

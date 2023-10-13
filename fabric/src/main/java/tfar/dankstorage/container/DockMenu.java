@@ -26,7 +26,17 @@ public class DockMenu extends AbstractDankMenu {
 
     @Override
     protected DataSlot getServerPickupData() {
-        return null;
+        return new DataSlot() {
+            @Override
+            public int get() {
+                return dock.settings.getInt(Utils.MODE);
+            }
+
+            @Override
+            public void set(int pValue) {
+                dock.settings.putInt(Utils.MODE,pValue);
+            }
+        };
     }
 
     @Override

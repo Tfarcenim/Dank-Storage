@@ -31,6 +31,7 @@ import tfar.dankstorage.network.server.C2SMessageLockSlot;
 import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.PickupMode;
+import tfar.dankstorage.utils.TxtColor;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventory;
 
@@ -170,23 +171,23 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends AbstractConta
                 Utils.translatable("text.dankstorage.save_frequency_button.invalid",
                                 Utils.translatable("text.dankstorage.save_frequency_button.invalidtxt")
                                         .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(DankInventory.TxtColor.INVALID.color)),
+                        .withStyle(Style.EMPTY.withColor(TxtColor.INVALID.color)),
                 Utils.translatable("text.dankstorage.save_frequency_button.too_high",
                                 Utils.translatable("text.dankstorage.save_frequency_button.too_hightxt")
                                         .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(DankInventory.TxtColor.TOO_HIGH.color)),
+                        .withStyle(Style.EMPTY.withColor(TxtColor.TOO_HIGH.color)),
                 Utils.translatable("text.dankstorage.save_frequency_button.different_tier",
                                 Utils.translatable("text.dankstorage.save_frequency_button.different_tiertxt")
                                         .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(DankInventory.TxtColor.DIFFERENT_TIER.color)),
+                        .withStyle(Style.EMPTY.withColor(TxtColor.DIFFERENT_TIER.color)),
                 Utils.translatable("text.dankstorage.save_frequency_button.good",
                                 Utils.translatable("text.dankstorage.save_frequency_button.goodtxt")
                                         .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(DankInventory.TxtColor.GOOD.color))
+                        .withStyle(Style.EMPTY.withColor(TxtColor.GOOD.color))
                 , Utils.translatable("text.dankstorage.save_frequency_button.locked_frequency",
                                 Utils.translatable("text.dankstorage.save_frequency_button.locked_frequencytxt")
                                         .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(DankInventory.TxtColor.LOCKED.color))
+                        .withStyle(Style.EMPTY.withColor(TxtColor.LOCKED.color))
         );
     }
 

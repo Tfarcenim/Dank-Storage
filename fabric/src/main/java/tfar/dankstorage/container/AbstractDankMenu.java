@@ -38,18 +38,6 @@ public abstract class AbstractDankMenu extends CAbstractDankMenu {
         return PickupMode.PICKUP_MODES[pickup.get()];
     }
 
-    public static boolean canItemQuickReplace(@Nullable Slot slot, @Nonnull ItemStack stack, boolean stackSizeMatters) {
-        boolean flag = slot == null || !slot.hasItem();
-        if (slot != null) {
-            ItemStack slotStack = slot.getItem();
-
-            if (!flag && ItemStack.isSameItemSameTags(slotStack, stack)) {
-                return slotStack.getCount() + (stackSizeMatters ? 0 : stack.getCount()) <= slot.getMaxStackSize(slotStack);
-            }
-        }
-        return flag;
-    }
-
     protected void addDankSlots() {
         int slotIndex = 0;
         for (int row = 0; row < rows; ++row) {
