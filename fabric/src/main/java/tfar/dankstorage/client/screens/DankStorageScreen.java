@@ -114,27 +114,6 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends CDankStorageS
         initEditbox();
     }
 
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE || Minecraft.getInstance().options.keyInventory.matches(keyCode, scanCode)) {
-            this.minecraft.player.closeContainer();
-        }
-
-        //slot locking takes priority over frequency changing
-        boolean match = DankKeybinds.LOCK_SLOT.matches(keyCode, scanCode);
-        if (match) {
-            if (hoveredSlot instanceof DankSlot) {
-                C2SMessageLockSlot.send(hoveredSlot.index);
-                return true;
-            }
-        }
-
-        if (!match && (this.frequency.keyPressed(keyCode, scanCode, modifiers) || this.frequency.canConsumeInput())) {
-            return true;
-        }
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
-
     public void renderSlot(GuiGraphics pGuiGraphics, Slot pSlot) {
 
         if (!(pSlot instanceof DankSlot)) {

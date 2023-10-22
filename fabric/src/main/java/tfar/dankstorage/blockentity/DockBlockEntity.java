@@ -15,7 +15,7 @@ import tfar.dankstorage.container.DockMenu;
 import tfar.dankstorage.inventory.api.DankInventorySlotWrapper;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryFabric;
 import tfar.dankstorage.world.DankSavedData;
 
 import javax.annotation.Nullable;
@@ -28,20 +28,20 @@ public class DockBlockEntity extends CommonDockBlockEntity implements MenuProvid
         super(DankStorageFabric.dank_tile, blockPos, blockState);
     }
 
-    public static final DankInventory DUMMY = new DankInventory(DankStats.zero, Utils.INVALID);
+    public static final DankInventoryFabric DUMMY = new DankInventoryFabric(DankStats.zero, Utils.INVALID);
 
-    public DankInventory getInventory() {
+    public DankInventoryFabric getInventory() {
         if (settings != null && settings.contains(Utils.FREQ)) {
             int frequency = settings.getInt(Utils.FREQ);
             DankSavedData savedData = DankStorageFabric.getData(frequency,level.getServer());
-            DankInventory dankInventory = savedData.createInventory(frequency);
+            DankInventoryFabric dankInventoryFabric = savedData.createInventory(frequency);
 
-            if (!dankInventory.valid()) {
+            if (!dankInventoryFabric.valid()) {
                 savedData.setStats(DankStats.values()[getBlockState().getValue(CDockBlock.TIER)],frequency);
-                dankInventory = savedData.createInventory(frequency);
+                dankInventoryFabric = savedData.createInventory(frequency);
             }
 
-            return dankInventory;
+            return dankInventoryFabric;
         }
         return DUMMY;
     }
@@ -56,33 +56,33 @@ public class DockBlockEntity extends CommonDockBlockEntity implements MenuProvid
 
         int tier = getBlockState().getValue(CDockBlock.TIER);
 
-        DankInventory dankInventory = getInventory();
+        DankInventoryFabric dankInventoryFabric = getInventory();
 
         DankStats type = DankStats.values()[tier];
-        if (type != dankInventory.dankStats) {
-            if (type.ordinal() < dankInventory.dankStats.ordinal()) {
-                Utils.warn(player, type, dankInventory.dankStats);
+        if (type != dankInventoryFabric.dankStats) {
+            if (type.ordinal() < dankInventoryFabric.dankStats.ordinal()) {
+                Utils.warn(player, type, dankInventoryFabric.dankStats);
                 return null;
             }
-            dankInventory.upgradeTo(type);
+            dankInventoryFabric.upgradeTo(type);
         }
 
         return switch (getBlockState().getValue(CDockBlock.TIER)) {
-            case 1 -> DockMenu.t1s(syncId, inventory, dankInventory, this);
-            case 2 -> DockMenu.t2s(syncId, inventory, dankInventory, this);
-            case 3 -> DockMenu.t3s(syncId, inventory, dankInventory, this);
-            case 4 -> DockMenu.t4s(syncId, inventory, dankInventory, this);
-            case 5 -> DockMenu.t5s(syncId, inventory, dankInventory, this);
-            case 6 -> DockMenu.t6s(syncId, inventory, dankInventory, this);
-            case 7 -> DockMenu.t7s(syncId, inventory, dankInventory, this);
+            case 1 -> DockMenu.t1s(syncId, inventory, dankInventoryFabric, this);
+            case 2 -> DockMenu.t2s(syncId, inventory, dankInventoryFabric, this);
+            case 3 -> DockMenu.t3s(syncId, inventory, dankInventoryFabric, this);
+            case 4 -> DockMenu.t4s(syncId, inventory, dankInventoryFabric, this);
+            case 5 -> DockMenu.t5s(syncId, inventory, dankInventoryFabric, this);
+            case 6 -> DockMenu.t6s(syncId, inventory, dankInventoryFabric, this);
+            case 7 -> DockMenu.t7s(syncId, inventory, dankInventoryFabric, this);
             default -> null;
         };
     }
 
     public void upgradeTo(DankStats stats) {
         level.setBlockAndUpdate(worldPosition, getBlockState().setValue(CDockBlock.TIER, stats.ordinal()));
-        DankInventory dankInventory = getInventory();
-        dankInventory.upgradeTo(stats);
+        DankInventoryFabric dankInventoryFabric = getInventory();
+        dankInventoryFabric.upgradeTo(stats);
     }
 
     //item api
@@ -91,25 +91,25 @@ public class DockBlockEntity extends CommonDockBlockEntity implements MenuProvid
 
     public CombinedStorage<ItemVariant,DankInventorySlotWrapper> getStorage(Direction direction) {
 
-        DankInventory dankInventory = getInventory();
+        DankInventoryFabric dankInventoryFabric = getInventory();
 
-        if (storage != null && storage.parts.size() != dankInventory.getContainerSize()) {
+        if (storage != null && storage.parts.size() != dankInventoryFabric.getContainerSize()) {
             storage = null;
         }
         if (storage == null) {
-            storage = create(dankInventory);
+            storage = create(dankInventoryFabric);
         }
         return storage;
     }
 
 
-    public static CombinedStorage<ItemVariant,DankInventorySlotWrapper> create(DankInventory dankInventory) {
-        int slots = dankInventory.getContainerSize();
+    public static CombinedStorage<ItemVariant,DankInventorySlotWrapper> create(DankInventoryFabric dankInventoryFabric) {
+        int slots = dankInventoryFabric.getContainerSize();
 
         List<DankInventorySlotWrapper> storages = new ArrayList<>();
 
         for (int i = 0 ;i < slots;i++) {
-            DankInventorySlotWrapper storage = new DankInventorySlotWrapper(dankInventory,i);
+            DankInventorySlotWrapper storage = new DankInventorySlotWrapper(dankInventoryFabric,i);
             storages.add(storage);
         }
 

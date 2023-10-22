@@ -7,7 +7,7 @@ import net.minecraftforge.network.NetworkEvent;
 import tfar.dankstorage.container.AbstractDankMenu;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.CommonUtils;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryForge;
 
 import java.util.function.Supplier;
 
@@ -32,7 +32,7 @@ public class C2SButtonPacket {
 
         if (action.requiresContainer) {
             if (container instanceof AbstractDankMenu dankContainer) {
-                DankInventory inventory = dankContainer.dankInventory;
+                DankInventoryForge inventory = dankContainer.dankInventoryForge;
                 switch (action) {
                     case LOCK_FREQUENCY -> inventory.toggleFrequencyLock();
                     case SORT -> inventory.sort();

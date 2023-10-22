@@ -18,7 +18,7 @@ import tfar.dankstorage.container.DockMenu;
 import tfar.dankstorage.init.ModBlockEntityTypes;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryForge;
 import tfar.dankstorage.world.DankSavedData;
 
 
@@ -28,20 +28,20 @@ public class DockBlockEntity extends CommonDockBlockEntity implements MenuProvid
         super(ModBlockEntityTypes.dank_tile, blockPos, blockState);
     }
 
-    public static final DankInventory DUMMY = new DankInventory(DankStats.zero, Utils.INVALID);
+    public static final DankInventoryForge DUMMY = new DankInventoryForge(DankStats.zero, Utils.INVALID);
 
-    public DankInventory getInventory() {
+    public DankInventoryForge getInventory() {
         if (settings != null && settings.contains(Utils.FREQ)) {
             int frequency = settings.getInt(Utils.FREQ);
             DankSavedData savedData = DankStorageForge.getData(frequency,level.getServer());
-            DankInventory dankInventory = savedData.createInventory(frequency);
+            DankInventoryForge dankInventoryForge = savedData.createInventory(frequency);
 
-            if (!dankInventory.valid()) {
+            if (!dankInventoryForge.valid()) {
                 savedData.setStats(DankStats.values()[getBlockState().getValue(CDockBlock.TIER)],frequency);
-                dankInventory = savedData.createInventory(frequency);
+                dankInventoryForge = savedData.createInventory(frequency);
             }
 
-            return dankInventory;
+            return dankInventoryForge;
         }
         return DUMMY;
     }
@@ -56,25 +56,25 @@ public class DockBlockEntity extends CommonDockBlockEntity implements MenuProvid
 
         int tier = getBlockState().getValue(CDockBlock.TIER);
 
-        DankInventory dankInventory = getInventory();
+        DankInventoryForge dankInventoryForge = getInventory();
 
         DankStats defaults = DankStats.values()[tier];
-        if (defaults != dankInventory.dankStats) {
-            if (defaults.ordinal() < dankInventory.dankStats.ordinal()) {
-                Utils.warn(player, defaults, dankInventory.dankStats);
+        if (defaults != dankInventoryForge.dankStats) {
+            if (defaults.ordinal() < dankInventoryForge.dankStats.ordinal()) {
+                Utils.warn(player, defaults, dankInventoryForge.dankStats);
                 return null;
             }
-            dankInventory.upgradeTo(defaults);
+            dankInventoryForge.upgradeTo(defaults);
         }
 
         return switch (getBlockState().getValue(CDockBlock.TIER)) {
-            case 1 -> DockMenu.t1s(syncId, inventory, dankInventory, this);
-            case 2 -> DockMenu.t2s(syncId, inventory, dankInventory, this);
-            case 3 -> DockMenu.t3s(syncId, inventory, dankInventory, this);
-            case 4 -> DockMenu.t4s(syncId, inventory, dankInventory, this);
-            case 5 -> DockMenu.t5s(syncId, inventory, dankInventory, this);
-            case 6 -> DockMenu.t6s(syncId, inventory, dankInventory, this);
-            case 7 -> DockMenu.t7s(syncId, inventory, dankInventory, this);
+            case 1 -> DockMenu.t1s(syncId, inventory, dankInventoryForge, this);
+            case 2 -> DockMenu.t2s(syncId, inventory, dankInventoryForge, this);
+            case 3 -> DockMenu.t3s(syncId, inventory, dankInventoryForge, this);
+            case 4 -> DockMenu.t4s(syncId, inventory, dankInventoryForge, this);
+            case 5 -> DockMenu.t5s(syncId, inventory, dankInventoryForge, this);
+            case 6 -> DockMenu.t6s(syncId, inventory, dankInventoryForge, this);
+            case 7 -> DockMenu.t7s(syncId, inventory, dankInventoryForge, this);
             default -> null;
         };
     }
@@ -83,8 +83,8 @@ public class DockBlockEntity extends CommonDockBlockEntity implements MenuProvid
 
     public void upgradeTo(DankStats stats) {
         level.setBlockAndUpdate(worldPosition, getBlockState().setValue(CDockBlock.TIER, stats.ordinal()));
-        DankInventory dankInventory = getInventory();
-        dankInventory.upgradeTo(stats);
+        DankInventoryForge dankInventoryForge = getInventory();
+        dankInventoryForge.upgradeTo(stats);
     }
     //item api
 

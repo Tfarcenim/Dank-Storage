@@ -6,32 +6,32 @@ import tfar.dankstorage.utils.DankStats;
 
 public class DankSavedData extends CDankSavedData {
 
-    DankInventory dankInventory;
+    DankInventoryFabric dankInventoryFabric;
     public DankSavedData(ServerLevel level) {
         super(level);
     }
 
-    public DankInventory createInventory(int frequency) {
-        if (dankInventory == null) {
-            dankInventory = new DankInventory(DankStats.zero, frequency);
-            dankInventory.read(storage);
-            dankInventory.server = level.getServer();
+    public DankInventoryFabric createInventory(int frequency) {
+        if (dankInventoryFabric == null) {
+            dankInventoryFabric = new DankInventoryFabric(DankStats.zero, frequency);
+            dankInventoryFabric.read(storage);
+            dankInventoryFabric.server = level.getServer();
         }
-        return dankInventory;
+        return dankInventoryFabric;
     }
 
-    public DankInventory createFreshInventory(DankStats defaults,int frequency) {
-        if (dankInventory == null) {
-            dankInventory = new DankInventory(defaults, frequency);
-            dankInventory.server = level.getServer();
+    public DankInventoryFabric createFreshInventory(DankStats defaults, int frequency) {
+        if (dankInventoryFabric == null) {
+            dankInventoryFabric = new DankInventoryFabric(defaults, frequency);
+            dankInventoryFabric.server = level.getServer();
         }
-        return dankInventory;
+        return dankInventoryFabric;
     }
 
     public void setStats(DankStats stats, int frequency) {
-        DankInventory dankInventory = createInventory(frequency);
-        dankInventory.setDankStats(stats);
-        write(dankInventory.save());
+        DankInventoryFabric dankInventoryFabric = createInventory(frequency);
+        dankInventoryFabric.setDankStats(stats);
+        write(dankInventoryFabric.save());
     }
 
     public static DankSavedData loadStatic(CompoundTag compoundTag,ServerLevel level) {

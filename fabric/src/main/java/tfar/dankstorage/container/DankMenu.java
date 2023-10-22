@@ -4,12 +4,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.DankStorageFabric;
-import tfar.dankstorage.inventory.LockedSlot;
 import tfar.dankstorage.utils.PickupMode;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryFabric;
 import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.utils.Utils;
@@ -20,11 +18,11 @@ public class DankMenu extends AbstractDankMenu {
 
     //clientside
     public DankMenu(MenuType<?> type, int windowId, Inventory inv, int rows) {
-        this(type, windowId, inv, new DankInventory(Utils.getStatsfromRows(rows), -1));
+        this(type, windowId, inv, new DankInventoryFabric(Utils.getStatsfromRows(rows), -1));
     }
 
-    public DankMenu(MenuType<?> type, int windowId, Inventory inv, DankInventory dankInventory) {
-        super(type, windowId, inv, dankInventory);
+    public DankMenu(MenuType<?> type, int windowId, Inventory inv, DankInventoryFabric dankInventoryFabric) {
+        super(type, windowId, inv, dankInventoryFabric);
         Player player = inv.player;
         this.bag = player.getMainHandItem().getItem() instanceof DankItem ? player.getMainHandItem() : player.getOffhandItem();
         addDankSlots();
@@ -74,32 +72,32 @@ public class DankMenu extends AbstractDankMenu {
         return new DankMenu(DankStorageFabric.portable_dank_7_container, id, inv, 9);
     }
 
-    public static DankMenu t1s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(DankStorageFabric.portable_dank_1_container, id, inv, dankInventory);
+    public static DankMenu t1s(int id, Inventory inv, DankInventoryFabric dankInventoryFabric) {
+        return new DankMenu(DankStorageFabric.portable_dank_1_container, id, inv, dankInventoryFabric);
     }
 
-    public static DankMenu t2s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(DankStorageFabric.portable_dank_2_container, id, inv, dankInventory);
+    public static DankMenu t2s(int id, Inventory inv, DankInventoryFabric dankInventoryFabric) {
+        return new DankMenu(DankStorageFabric.portable_dank_2_container, id, inv, dankInventoryFabric);
     }
 
-    public static DankMenu t3s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(DankStorageFabric.portable_dank_3_container, id, inv, dankInventory);
+    public static DankMenu t3s(int id, Inventory inv, DankInventoryFabric dankInventoryFabric) {
+        return new DankMenu(DankStorageFabric.portable_dank_3_container, id, inv, dankInventoryFabric);
     }
 
-    public static DankMenu t4s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(DankStorageFabric.portable_dank_4_container, id, inv, dankInventory);
+    public static DankMenu t4s(int id, Inventory inv, DankInventoryFabric dankInventoryFabric) {
+        return new DankMenu(DankStorageFabric.portable_dank_4_container, id, inv, dankInventoryFabric);
     }
 
-    public static DankMenu t5s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(DankStorageFabric.portable_dank_5_container, id, inv, dankInventory);
+    public static DankMenu t5s(int id, Inventory inv, DankInventoryFabric dankInventoryFabric) {
+        return new DankMenu(DankStorageFabric.portable_dank_5_container, id, inv, dankInventoryFabric);
     }
 
-    public static DankMenu t6s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(DankStorageFabric.portable_dank_6_container, id, inv, dankInventory);
+    public static DankMenu t6s(int id, Inventory inv, DankInventoryFabric dankInventoryFabric) {
+        return new DankMenu(DankStorageFabric.portable_dank_6_container, id, inv, dankInventoryFabric);
     }
 
-    public static DankMenu t7s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(DankStorageFabric.portable_dank_7_container, id, inv, dankInventory);
+    public static DankMenu t7s(int id, Inventory inv, DankInventoryFabric dankInventoryFabric) {
+        return new DankMenu(DankStorageFabric.portable_dank_7_container, id, inv, dankInventoryFabric);
     }
 
     @Override
@@ -109,7 +107,7 @@ public class DankMenu extends AbstractDankMenu {
             for (int col = 0; col < 9; ++col) {
                 int x = 8 + col * 18;
                 int y = row * 18 + 18;
-                this.addSlot(new DankSlot(dankInventory, slotIndex, x, y));
+                this.addSlot(new DankSlot(dankInventoryFabric, slotIndex, x, y));
                 slotIndex++;
             }
         }

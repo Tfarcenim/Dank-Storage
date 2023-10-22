@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import tfar.dankstorage.container.AbstractDankMenu;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryFabric;
 import tfar.dankstorage.network.DankPacketHandler;
 
 public class C2SMessageLockSlot implements ServerPlayNetworking.PlayChannelHandler {
@@ -24,7 +24,7 @@ public class C2SMessageLockSlot implements ServerPlayNetworking.PlayChannelHandl
     public void handle(ServerPlayer player, int slot) {
         AbstractContainerMenu container = player.containerMenu;
         if (container instanceof AbstractDankMenu dankContainer) {
-            DankInventory inventory = dankContainer.dankInventory;
+            DankInventoryFabric inventory = dankContainer.dankInventoryFabric;
             inventory.toggleGhostItem(slot);
         }
     }

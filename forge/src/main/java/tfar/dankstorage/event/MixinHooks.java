@@ -10,7 +10,7 @@ import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.Utils;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryForge;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +40,7 @@ public class MixinHooks {
 
         PickupMode pickupMode = Utils.getPickupMode(dank);
         if (pickupMode == PickupMode.none) return false;
-        DankInventory inv = Utils.getInventory(dank,player.level());
+        DankInventoryForge inv = Utils.getInventory(dank,player.level());
 
         if (inv == null) {
             DankStorageForge.LOGGER.warn("That's odd, the player somehow got an unassigned dank to change pickup mode");
@@ -94,7 +94,7 @@ public class MixinHooks {
         return pickup.isEmpty();
     }
 
-    public static void voidPickup(DankInventory inv, int slot, ItemStack toInsert, boolean oredict, List<ItemStack> filter) {
+    public static void voidPickup(DankInventoryForge inv, int slot, ItemStack toInsert, boolean oredict, List<ItemStack> filter) {
         ItemStack existing = inv.getStackInSlot(slot);
 
         if (doesItemStackExist(toInsert, filter, oredict) && areItemStacksCompatible(existing, toInsert, oredict)) {
@@ -106,7 +106,7 @@ public class MixinHooks {
         }
     }
 
-    public static void allPickup(DankInventory inv, int slot, ItemStack pickup, boolean oredict) {
+    public static void allPickup(DankInventoryForge inv, int slot, ItemStack pickup, boolean oredict) {
         ItemStack existing = inv.getStackInSlot(slot);
 
         if (existing.isEmpty()) {
@@ -139,7 +139,7 @@ public class MixinHooks {
         }
     }
 
-    public static void filteredPickup(DankInventory inv, int slot, ItemStack toInsert, boolean oredict, List<ItemStack> filter) {
+    public static void filteredPickup(DankInventoryForge inv, int slot, ItemStack toInsert, boolean oredict, List<ItemStack> filter) {
         ItemStack existing = inv.getStackInSlot(slot);
 
         if (existing.isEmpty() && doesItemStackExist(toInsert, filter, oredict)) {

@@ -22,7 +22,7 @@ import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.UseType;
 import tfar.dankstorage.utils.Utils;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryFabric;
 
 import javax.annotation.Nonnull;
 
@@ -116,7 +116,7 @@ public class DankItem extends CoDankItem {
                         ItemStack bagCopy = bag.copy();
                         player.setItemSlot(hand1, toPlace);
                         InteractionResultHolder<ItemStack> actionResult = toPlace.getItem().use(level, player, hand);
-                        DankInventory handler = Utils.getInventory(bagCopy, level);
+                        DankInventoryFabric handler = Utils.getInventory(bagCopy, level);
                         handler.setItem(Utils.getSelectedSlot(bagCopy), actionResult.getObject());
                         player.setItemSlot(hand1, bagCopy);
                     }
@@ -137,7 +137,7 @@ public class DankItem extends CoDankItem {
 
         //the client doesn't have access to the full inventory
         if (!player.level().isClientSide) {
-            DankInventory handler = Utils.getInventory(bag, player.level());
+            DankInventoryFabric handler = Utils.getInventory(bag, player.level());
             handler.setItem(Utils.getSelectedSlot(bag), toUse);
         }
 
@@ -171,8 +171,8 @@ public class DankItem extends CoDankItem {
         UseOnContext ctx2 = new UseOnContext(ctx.getLevel(), ctx.getPlayer(), ctx.getHand(), toPlace, ((ItemUsageContextAccessor) ctx).getHitResult());
         InteractionResult actionResultType = toPlace.getItem().useOn(ctx2);//ctx2.getItem().onItemUse(ctx);
         if (!level.isClientSide) {
-            DankInventory dankInventory = Utils.getInventory(bag,level);
-            dankInventory.setItem(selectedSlot, ctx2.getItemInHand());
+            DankInventoryFabric dankInventoryFabric = Utils.getInventory(bag,level);
+            dankInventoryFabric.setItem(selectedSlot, ctx2.getItemInHand());
         }
         return actionResultType;
     }

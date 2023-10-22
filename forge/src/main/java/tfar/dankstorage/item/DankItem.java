@@ -23,7 +23,7 @@ import tfar.dankstorage.container.PortableDankProvider;
 import tfar.dankstorage.mixin.ItemUsageContextAccessor;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.*;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryForge;
 
 import javax.annotation.Nonnull;
 
@@ -100,7 +100,7 @@ public class DankItem extends CoDankItem {
                         ItemStack bagCopy = bag.copy();
                         player.setItemSlot(hand1, toPlace);
                         InteractionResultHolder<ItemStack> actionResult = toPlace.getItem().use(level, player, hand);
-                        DankInventory handler = Utils.getInventory(bagCopy, level);
+                        DankInventoryForge handler = Utils.getInventory(bagCopy, level);
                         handler.setStackInSlot(Utils.getSelectedSlot(bagCopy), actionResult.getObject());
                         player.setItemSlot(hand1, bagCopy);
                     }
@@ -121,7 +121,7 @@ public class DankItem extends CoDankItem {
 
         //the client doesn't have access to the full inventory
         if (!player.level().isClientSide) {
-            DankInventory handler = Utils.getInventory(bag, player.level());
+            DankInventoryForge handler = Utils.getInventory(bag, player.level());
             handler.setStackInSlot(Utils.getSelectedSlot(bag), toUse);
         }
 
@@ -155,8 +155,8 @@ public class DankItem extends CoDankItem {
         UseOnContext ctx2 = new UseOnContext(ctx.getLevel(), ctx.getPlayer(), ctx.getHand(), toPlace, ((ItemUsageContextAccessor) ctx).getHitResult());
         InteractionResult actionResultType = toPlace.getItem().useOn(ctx2);//ctx2.getItem().onItemUse(ctx);
         if (!level.isClientSide) {
-            DankInventory dankInventory = Utils.getInventory(bag,level);
-            dankInventory.setStackInSlot(selectedSlot, ctx2.getItemInHand());
+            DankInventoryForge dankInventoryForge = Utils.getInventory(bag,level);
+            dankInventoryForge.setStackInSlot(selectedSlot, ctx2.getItemInHand());
         }
         return actionResultType;
     }

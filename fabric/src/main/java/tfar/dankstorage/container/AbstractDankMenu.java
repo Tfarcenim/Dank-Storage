@@ -1,39 +1,20 @@
 package tfar.dankstorage.container;
 
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
 import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.menu.CAbstractDankMenu;
-import tfar.dankstorage.menu.CustomSync;
-import tfar.dankstorage.platform.Services;
-import tfar.dankstorage.utils.PickupMode;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryFabric;
 
 import javax.annotation.Nonnull;
 
-public abstract class AbstractDankMenu extends CAbstractDankMenu {
+public abstract class AbstractDankMenu extends CAbstractDankMenu<DankInventoryFabric> {
 
-    public DankInventory dankInventory;
-    protected final DataSlot pickup;
 
-    public AbstractDankMenu(MenuType<?> type, int windowId, Inventory playerInventory, DankInventory dankInventory) {
-        super(type, windowId, dankInventory.dankStats.slots / 9, playerInventory);
-        this.dankInventory = dankInventory;
-        addDataSlots(dankInventory);
-        if (!playerInventory.player.level().isClientSide) {
-            setSynchronizer(new CustomSync((ServerPlayer) playerInventory.player));
-        }
-        pickup = playerInventory.player.level().isClientSide ? DataSlot.standalone(): getServerPickupData();
-        addDataSlot(pickup);
-    }
-
-    protected abstract DataSlot getServerPickupData();
-    public PickupMode getMode() {
-        return PickupMode.PICKUP_MODES[pickup.get()];
+    public AbstractDankMenu(MenuType<?> type, int windowId, Inventory playerInventory, DankInventoryFabric dankInventoryFabric) {
+        super(type, windowId, dankInventoryFabric.dankStats.slots / 9, playerInventory,dankInventoryFabric);
     }
 
     protected void addDankSlots() {
@@ -48,21 +29,14 @@ public abstract class AbstractDankMenu extends CAbstractDankMenu {
         }
     }
 
-
+    @Override
+    public boolean isDankSlot(Slot slot) {
+        return slot instanceof DankSlot;
+    }
 
     @Override
     public boolean stillValid(@Nonnull Player playerIn) {
         return true;
     }
 
-
-
-    @Override
-    public void broadcastChanges() {
-        super.broadcastChanges();
-        //the remote inventory needs to know about locked slots
-        for (int i = 0; i < dankInventory.dankStats.slots;i++) {
-            Services.PLATFORM.sendGhostItemSlot((ServerPlayer) playerInventory.player,containerId,i,dankInventory.getGhostItem(i));
-        }
-    }
 }

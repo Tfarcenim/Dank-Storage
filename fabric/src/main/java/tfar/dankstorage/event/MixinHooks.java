@@ -9,7 +9,7 @@ import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.Utils;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryFabric;
 
 public class MixinHooks {
 
@@ -36,7 +36,7 @@ public class MixinHooks {
 
         PickupMode pickupMode = Utils.getPickupMode(dank);
         if (pickupMode == PickupMode.none) return false;
-        DankInventory inv = Utils.getInventory(dank,player.level());
+        DankInventoryFabric inv = Utils.getInventory(dank,player.level());
 
         if (inv == null) {
             DankStorageFabric.LOGGER.warn("That's odd, the player somehow got an unassigned dank to change pickup mode");
@@ -59,7 +59,7 @@ public class MixinHooks {
         return original.isEmpty();
     }
 
-    public static ItemStack pickupInv(DankInventory inv, ItemStack toInsert, boolean oredict, PickupMode mode) {
+    public static ItemStack pickupInv(DankInventoryFabric inv, ItemStack toInsert, boolean oredict, PickupMode mode) {
         for (int i = 0; i < inv.getContainerSize();i++) {
             ItemStack existing = inv.getItem(i);
             if (existing.isEmpty()) {

@@ -9,7 +9,7 @@ import tfar.dankstorage.container.AbstractDankMenu;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.util.C2SPacketHelper;
 import tfar.dankstorage.utils.Utils;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryForge;
 import tfar.dankstorage.utils.TxtColor;
 
 public class C2SSetFrequencyPacket implements C2SPacketHelper {
@@ -40,13 +40,13 @@ public class C2SSetFrequencyPacket implements C2SPacketHelper {
     public void handleServer(ServerPlayer player) {
         AbstractContainerMenu container = player.containerMenu;
         if (container instanceof AbstractDankMenu dankMenu) {
-            DankInventory inventory = dankMenu.dankInventory;
+            DankInventoryForge inventory = dankMenu.dankInventoryForge;
 
             int textColor = 0;
 
             if (frequency > Utils.INVALID) {
                 if (frequency < DankStorage.maxId.getMaxId()) {
-                    DankInventory targetInventory = DankStorageForge.getData(frequency,player.server).createInventory(frequency);
+                    DankInventoryForge targetInventory = DankStorageForge.getData(frequency,player.server).createInventory(frequency);
 
                     if (targetInventory.valid() && targetInventory.dankStats == inventory.dankStats) {
 

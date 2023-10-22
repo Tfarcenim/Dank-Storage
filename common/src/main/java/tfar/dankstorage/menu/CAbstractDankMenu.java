@@ -1,25 +1,38 @@
 package tfar.dankstorage.menu;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
+import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.LockedSlot;
+import tfar.dankstorage.platform.Services;
 
 import javax.annotation.Nonnull;
 
-public abstract class CAbstractDankMenu extends AbstractContainerMenu {
+public abstract class CAbstractDankMenu<T extends DankInterface> extends AbstractContainerMenu {
 
     public final Inventory playerInventory;
     public final int rows;
-    public CAbstractDankMenu(MenuType<?> type, int windowId,int rows, Inventory playerInventory) {
+    public final T dankInventory;
+    protected final DataSlot pickup;
+
+
+    public CAbstractDankMenu(MenuType<?> type, int windowId,int rows, Inventory playerInventory,T dankInventory) {
         super(type, windowId);
         this.rows = rows;
         this.playerInventory = playerInventory;
+        this.dankInventory = dankInventory;
+        addDataSlots(dankInventory);
+        if (!playerInventory.player.level().isClientSide) {
+            setSynchronizer(new CustomSync((ServerPlayer) playerInventory.player));
+        }
+        pickup = playerInventory.player.level().isClientSide ? DataSlot.standalone(): getServerPickupData();
+        addDataSlot(pickup);
     }
+
+    protected abstract DataSlot getServerPickupData();
 
     protected void addPlayerSlots(Inventory playerinventory, int locked) {
         int yStart = 32 + 18 * rows;
@@ -146,6 +159,17 @@ public abstract class CAbstractDankMenu extends AbstractContainerMenu {
         }
 
         return didSomething;
+    }
+
+    public abstract boolean isDankSlot(Slot slot);
+
+    @Override
+    public void broadcastChanges() {
+        super.broadcastChanges();
+        //the remote inventory needs to know about locked slots
+        for (int i = 0; i < dankInventory.getDankStats().slots; i++) {
+            Services.PLATFORM.sendGhostItemSlot((ServerPlayer) playerInventory.player,containerId,i, dankInventory.getGhostItem(i));
+        }
     }
 
     public abstract void setFrequency(int freq);

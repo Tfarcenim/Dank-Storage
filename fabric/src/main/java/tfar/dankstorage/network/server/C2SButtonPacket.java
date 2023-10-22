@@ -12,7 +12,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import tfar.dankstorage.container.AbstractDankMenu;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.Utils;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryFabric;
 
 
 public class C2SButtonPacket implements ServerPlayNetworking.PlayChannelHandler {
@@ -29,7 +29,7 @@ public class C2SButtonPacket implements ServerPlayNetworking.PlayChannelHandler 
 
         if (action.requiresContainer) {
             if (container instanceof AbstractDankMenu dankContainer) {
-                DankInventory inventory = dankContainer.dankInventory;
+                DankInventoryFabric inventory = dankContainer.dankInventoryFabric;
                 switch (action) {
                     case LOCK_FREQUENCY -> inventory.toggleFrequencyLock();
                     case SORT -> inventory.sort();

@@ -17,13 +17,14 @@ import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.Constants;
 import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.ModTags;
+import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.mixin.SimpleContainerAccess;
 import tfar.dankstorage.utils.*;
 
 import java.util.*;
 import java.util.stream.IntStream;
 
-public class DankInventory extends SimpleContainer implements ContainerData {
+public class DankInventoryFabric extends SimpleContainer implements DankInterface {
 
     public DankStats dankStats;
     protected NonNullList<ItemStack> ghostItems;
@@ -34,11 +35,16 @@ public class DankInventory extends SimpleContainer implements ContainerData {
 
     public MinecraftServer server;
 
-    public DankInventory(DankStats stats, int frequency) {
+    public DankInventoryFabric(DankStats stats, int frequency) {
         super(stats.slots);
         this.dankStats = stats;
         this.ghostItems = NonNullList.withSize(stats.slots, ItemStack.EMPTY);
         this.frequency = frequency;
+    }
+
+    @Override
+    public DankStats getDankStats() {
+        return dankStats;
     }
 
     public void upgradeTo(DankStats stats) {

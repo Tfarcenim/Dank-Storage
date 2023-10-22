@@ -4,35 +4,33 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import tfar.dankstorage.utils.DankStats;
 
-import java.io.File;
-
 public class DankSavedData extends CDankSavedData {
-    DankInventory dankInventory;
+    DankInventoryForge dankInventoryForge;
     public DankSavedData(ServerLevel level) {
         super(level);
     }
 
-    public DankInventory createInventory(int frequency) {
-        if (dankInventory == null) {
-            dankInventory = new DankInventory(DankStats.zero, frequency);
-            dankInventory.read(storage);
-            dankInventory.server = level.getServer();
+    public DankInventoryForge createInventory(int frequency) {
+        if (dankInventoryForge == null) {
+            dankInventoryForge = new DankInventoryForge(DankStats.zero, frequency);
+            dankInventoryForge.read(storage);
+            dankInventoryForge.server = level.getServer();
         }
-        return dankInventory;
+        return dankInventoryForge;
     }
 
-    public DankInventory createFreshInventory(DankStats defaults,int frequency) {
-        if (dankInventory == null) {
-            dankInventory = new DankInventory(defaults, frequency);
-            dankInventory.server = level.getServer();
+    public DankInventoryForge createFreshInventory(DankStats defaults, int frequency) {
+        if (dankInventoryForge == null) {
+            dankInventoryForge = new DankInventoryForge(defaults, frequency);
+            dankInventoryForge.server = level.getServer();
         }
-        return dankInventory;
+        return dankInventoryForge;
     }
 
     public void setStats(DankStats stats, int frequency) {
-        DankInventory dankInventory = createInventory(frequency);
-        dankInventory.setDankStats(stats);
-        write(dankInventory.save());
+        DankInventoryForge dankInventoryForge = createInventory(frequency);
+        dankInventoryForge.setDankStats(stats);
+        write(dankInventoryForge.save());
     }
 
     public static DankSavedData loadStatic(CompoundTag compoundTag,ServerLevel level) {

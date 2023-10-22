@@ -10,7 +10,7 @@ import tfar.dankstorage.ModTags;
 import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.world.ClientData;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryForge;
 
 import java.nio.file.Path;
 
@@ -19,17 +19,17 @@ public class Utils extends CommonUtils{
 
     public static void setPickSlot(Level level,ItemStack bag, ItemStack stack) {
 
-        DankInventory dankInventory = getInventory(bag,level);
+        DankInventoryForge dankInventoryForge = getInventory(bag,level);
 
-        if (dankInventory != null) {
-            int slot = findSlotMatchingItem(dankInventory, stack);
+        if (dankInventoryForge != null) {
+            int slot = findSlotMatchingItem(dankInventoryForge, stack);
             if (slot != INVALID) setSelectedSlot(bag, slot);
         }
     }
 
-    public static int findSlotMatchingItem(DankInventory dankInventory, ItemStack itemStack) {
-        for (int i = 0; i < dankInventory.getSlots(); ++i) {
-            ItemStack stack = dankInventory.getStackInSlot(i);
+    public static int findSlotMatchingItem(DankInventoryForge dankInventoryForge, ItemStack itemStack) {
+        for (int i = 0; i < dankInventoryForge.getSlots(); ++i) {
+            ItemStack stack = dankInventoryForge.getStackInSlot(i);
             if (stack.isEmpty() || !ItemStack.isSameItemSameTags(itemStack,stack)) continue;
             return i;
         }
@@ -41,9 +41,9 @@ public class Utils extends CommonUtils{
             int selected = getSelectedSlot(bag);
             if (selected == INVALID) return ItemStack.EMPTY;
             if (!level.isClientSide) {
-                DankInventory dankInventory = getInventory(bag, level);
-                if (dankInventory != null) {
-                    return dankInventory.getStackInSlot(selected);
+                DankInventoryForge dankInventoryForge = getInventory(bag, level);
+                if (dankInventoryForge != null) {
+                    return dankInventoryForge.getStackInSlot(selected);
                 } else {
                 //    System.out.println("Attempted to access a selected item from a null inventory");
                 }
@@ -55,7 +55,7 @@ public class Utils extends CommonUtils{
     }
 
     public static void changeSelectedSlot(ItemStack bag, boolean right, ServerPlayer player) {
-        DankInventory handler = getInventory(bag,player.serverLevel());
+        DankInventoryForge handler = getInventory(bag,player.serverLevel());
         //don't change slot if empty
         if (handler == null || handler.noValidSlots()) return;
         int selectedSlot = getSelectedSlot(bag);
@@ -89,7 +89,7 @@ public class Utils extends CommonUtils{
 
 
 
-    public static DankInventory getInventory(ItemStack bag, Level level) {
+    public static DankInventoryForge getInventory(ItemStack bag, Level level) {
         if (!level.isClientSide) {
             int id = getFrequency(bag);
             if (id != INVALID) {
@@ -111,7 +111,7 @@ public class Utils extends CommonUtils{
     }
 
     public static ItemStack getItemStackInSelectedSlot(ItemStack bag,ServerLevel level) {
-        DankInventory inv = getInventory(bag,level);
+        DankInventoryForge inv = getInventory(bag,level);
         if (inv == null) return ItemStack.EMPTY;
         int slot = getSelectedSlot(bag);
         if (slot == INVALID) return ItemStack.EMPTY;

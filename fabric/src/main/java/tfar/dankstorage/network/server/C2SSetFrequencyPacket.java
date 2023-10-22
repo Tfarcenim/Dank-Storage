@@ -15,7 +15,7 @@ import tfar.dankstorage.container.AbstractDankMenu;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.TxtColor;
 import tfar.dankstorage.utils.Utils;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryFabric;
 
 public class C2SSetFrequencyPacket implements ServerPlayNetworking.PlayChannelHandler {
 
@@ -29,13 +29,13 @@ public class C2SSetFrequencyPacket implements ServerPlayNetworking.PlayChannelHa
     public void handle(ServerPlayer player, int frequency,boolean set) {
         AbstractContainerMenu container = player.containerMenu;
         if (container instanceof AbstractDankMenu dankMenu) {
-            DankInventory inventory = dankMenu.dankInventory;
+            DankInventoryFabric inventory = dankMenu.dankInventoryFabric;
 
             int textColor = 0;
 
             if (frequency > Utils.INVALID) {
                 if (frequency < DankStorage.maxId.getMaxId()) {
-                    DankInventory targetInventory = DankStorageFabric.getData(frequency,player.server).createInventory(frequency);
+                    DankInventoryFabric targetInventory = DankStorageFabric.getData(frequency,player.server).createInventory(frequency);
 
                     if (targetInventory.valid() && targetInventory.dankStats == inventory.dankStats) {
 

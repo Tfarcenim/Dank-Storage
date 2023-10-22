@@ -4,7 +4,7 @@ import net.fabricmc.fabric.api.transfer.v1.item.base.SingleStackStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.world.item.ItemStack;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryFabric;
 
 /**
  * A wrapper around a single slot of an inventory.
@@ -16,11 +16,11 @@ public class DankInventorySlotWrapper extends SingleStackStorage {
 	/**
 	 * The strong reference to the InventoryStorageImpl ensures that the weak value doesn't get GC'ed when individual slots are still being accessed.
 	 */
-	private final DankInventory storage;
+	private final DankInventoryFabric storage;
 	final int slot;
 	private ItemStack lastReleasedSnapshot = null;
 
-	public DankInventorySlotWrapper(DankInventory storage, int slot) {
+	public DankInventorySlotWrapper(DankInventoryFabric storage, int slot) {
 		this.storage = storage;
 		this.slot = slot;
 	}

@@ -7,14 +7,14 @@ import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.init.ModMenuTypes;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryForge;
 
 public class DockMenu extends AbstractDankMenu {
 
     private final DockBlockEntity dock;
 
-    public DockMenu(MenuType<?> type, int id, Inventory playerInventory, DankInventory dankInventory, DockBlockEntity dock) {
-        super(type, id, playerInventory, dankInventory);
+    public DockMenu(MenuType<?> type, int id, Inventory playerInventory, DankInventoryForge dankInventoryForge, DockBlockEntity dock) {
+        super(type, id, playerInventory, dankInventoryForge);
         addDankSlots();
         addPlayerSlots(playerInventory,-1);
         this.dock = dock;
@@ -69,36 +69,36 @@ public class DockMenu extends AbstractDankMenu {
         return t7s(windowId, playerInventory, createDummy(DankStats.seven),null);
     }
 
-    static DankInventory createDummy(DankStats stats) {
-        return new DankInventory(stats, Utils.INVALID);
+    static DankInventoryForge createDummy(DankStats stats) {
+        return new DankInventoryForge(stats, Utils.INVALID);
     }
 
     //server
-    public static DockMenu t1s(int windowId, Inventory playerInventory, DankInventory inventory,DockBlockEntity dock) {
+    public static DockMenu t1s(int windowId, Inventory playerInventory, DankInventoryForge inventory, DockBlockEntity dock) {
         return new DockMenu(ModMenuTypes.dank_1_container, windowId, playerInventory, inventory,dock);
     }
 
-    public static DockMenu t2s(int windowId, Inventory playerInventory, DankInventory inventory,DockBlockEntity dock) {
+    public static DockMenu t2s(int windowId, Inventory playerInventory, DankInventoryForge inventory, DockBlockEntity dock) {
         return new DockMenu(ModMenuTypes.dank_2_container, windowId, playerInventory, inventory,dock);
     }
 
-    public static DockMenu t3s(int windowId, Inventory playerInventory, DankInventory inventory,DockBlockEntity dock) {
+    public static DockMenu t3s(int windowId, Inventory playerInventory, DankInventoryForge inventory, DockBlockEntity dock) {
         return new DockMenu(ModMenuTypes.dank_3_container, windowId, playerInventory, inventory,dock);
     }
 
-    public static DockMenu t4s(int windowId, Inventory playerInventory, DankInventory inventory,DockBlockEntity dock) {
+    public static DockMenu t4s(int windowId, Inventory playerInventory, DankInventoryForge inventory, DockBlockEntity dock) {
         return new DockMenu(ModMenuTypes.dank_4_container, windowId, playerInventory, inventory,dock);
     }
 
-    public static DockMenu t5s(int windowId, Inventory playerInventory, DankInventory inventory,DockBlockEntity dock) {
+    public static DockMenu t5s(int windowId, Inventory playerInventory, DankInventoryForge inventory, DockBlockEntity dock) {
         return new DockMenu(ModMenuTypes.dank_5_container, windowId, playerInventory, inventory,dock);
     }
 
-    public static DockMenu t6s(int windowId, Inventory playerInventory, DankInventory inventory,DockBlockEntity dock) {
+    public static DockMenu t6s(int windowId, Inventory playerInventory, DankInventoryForge inventory, DockBlockEntity dock) {
         return new DockMenu(ModMenuTypes.dank_6_container, windowId, playerInventory, inventory,dock);
     }
 
-    public static DockMenu t7s(int i, Inventory playerInventory, DankInventory inventory,DockBlockEntity dock) {
+    public static DockMenu t7s(int i, Inventory playerInventory, DankInventoryForge inventory, DockBlockEntity dock) {
         return new DockMenu(ModMenuTypes.dank_7_container, i, playerInventory, inventory,dock);
     }
 }

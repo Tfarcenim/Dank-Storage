@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryForge;
 
 public class DankItemCapability implements ICapabilityProvider {
 
@@ -28,7 +28,7 @@ public class DankItemCapability implements ICapabilityProvider {
         return ForgeCapabilities.ITEM_HANDLER.orEmpty(cap, LazyOptional.of(this::lookup));
     }
 
-    protected DankInventory lookup() {
+    protected DankInventoryForge lookup() {
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         //this can be called clientside, functional storage does so for some reason
         //this should be replaced with a proper inventory at some point
@@ -36,7 +36,7 @@ public class DankItemCapability implements ICapabilityProvider {
             return Utils.getInventory(container, server.getLevel(Level.OVERWORLD));
         }
         else {
-            return new DankInventory(DankStats.zero, -1);
+            return new DankInventoryForge(DankStats.zero, -1);
         }
     }
 }

@@ -38,7 +38,7 @@ public class S2CSendLockedSlotItemPacket implements S2CPacketHelper {
     public void handleClient() {
         Player player = getLocalPlayer();
         if (player != null && player.containerMenu instanceof AbstractDankMenu dankMenu && windowId == player.containerMenu.containerId) {
-            dankMenu.dankInventory.setGhostItem(slot,stack.getItem());
+            dankMenu.dankInventoryForge.setGhostItem(slot,stack.getItem());
         }
     }
 }

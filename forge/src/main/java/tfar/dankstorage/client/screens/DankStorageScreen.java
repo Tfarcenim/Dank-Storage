@@ -8,8 +8,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -22,12 +20,10 @@ import tfar.dankstorage.client.button.SmallButton;
 import tfar.dankstorage.container.AbstractDankMenu;
 import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.network.server.C2SButtonPacket;
-import tfar.dankstorage.network.server.C2SMessageLockSlotPacket;
+import tfar.dankstorage.network.server.C2SLockSlotPacket;
 import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
 import tfar.dankstorage.utils.CommonUtils;
-import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.Utils;
-import tfar.dankstorage.utils.TxtColor;
 
 import java.util.List;
 
@@ -116,28 +112,6 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends CDankStorageS
 
         this.addRenderableWidget(c);
         initEditbox();
-    }
-
-
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE || Minecraft.getInstance().options.keyInventory.matches(keyCode, scanCode)) {
-            this.minecraft.player.closeContainer();
-        }
-
-        //slot locking takes priority over frequency changing
-        boolean match = DankKeybinds.LOCK_SLOT.matches(keyCode, scanCode);
-        if (match) {
-            if (hoveredSlot instanceof DankSlot) {
-                C2SMessageLockSlotPacket.send(hoveredSlot.index);
-                return true;
-            }
-        }
-
-        if (!match && (this.frequency.keyPressed(keyCode, scanCode, modifiers) || this.frequency.canConsumeInput())) {
-            return true;
-        }
-        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     public void renderSlot(GuiGraphics pGuiGraphics, Slot pSlot) {

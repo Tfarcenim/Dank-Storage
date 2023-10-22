@@ -10,7 +10,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -18,6 +17,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.ModTags;
+import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.ItemStackWrapper;
@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class DankInventory extends ItemStackHandler implements ContainerData {
+public class DankInventoryForge extends ItemStackHandler implements DankInterface {
 
     public DankStats dankStats;
     protected NonNullList<ItemStack> ghostItems;
@@ -38,7 +38,7 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
 
     public MinecraftServer server;
 
-    public DankInventory(DankStats stats, int frequency) {
+    public DankInventoryForge(DankStats stats, int frequency) {
         super(stats.slots);
         this.dankStats = stats;
         this.ghostItems = NonNullList.withSize(stats.slots,ItemStack.EMPTY);
@@ -48,6 +48,11 @@ public class DankInventory extends ItemStackHandler implements ContainerData {
     public void setDankStats(DankStats dankStats) {
         this.dankStats = dankStats;
         setSize(dankStats.slots);
+    }
+
+    @Override
+    public DankStats getDankStats() {
+        return dankStats;
     }
 
     @Override

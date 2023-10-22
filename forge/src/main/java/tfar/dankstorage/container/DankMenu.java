@@ -4,22 +4,20 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.init.ModMenuTypes;
-import tfar.dankstorage.inventory.LockedSlot;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.Utils;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryForge;
 
 public class DankMenu extends AbstractDankMenu {
 
     public ItemStack bag;
 
-    public DankMenu(MenuType<?> type, int windowId, Inventory inv, DankInventory dankInventory) {
-        super(type, windowId, inv,dankInventory);
+    public DankMenu(MenuType<?> type, int windowId, Inventory inv, DankInventoryForge dankInventoryForge) {
+        super(type, windowId, inv, dankInventoryForge);
         Player player = inv.player;
         this.bag = player.getMainHandItem().getItem() instanceof DankItem ? player.getMainHandItem() : player.getOffhandItem();
         addDankSlots();
@@ -69,32 +67,32 @@ public class DankMenu extends AbstractDankMenu {
         return t7s(id, inv, DockMenu.createDummy(DankStats.seven));
     }
 
-    public static DankMenu t1s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(ModMenuTypes.portable_dank_1_container, id, inv, dankInventory);
+    public static DankMenu t1s(int id, Inventory inv, DankInventoryForge dankInventoryForge) {
+        return new DankMenu(ModMenuTypes.portable_dank_1_container, id, inv, dankInventoryForge);
     }
 
-    public static DankMenu t2s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(ModMenuTypes.portable_dank_2_container, id, inv, dankInventory);
+    public static DankMenu t2s(int id, Inventory inv, DankInventoryForge dankInventoryForge) {
+        return new DankMenu(ModMenuTypes.portable_dank_2_container, id, inv, dankInventoryForge);
     }
 
-    public static DankMenu t3s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(ModMenuTypes.portable_dank_3_container, id, inv, dankInventory);
+    public static DankMenu t3s(int id, Inventory inv, DankInventoryForge dankInventoryForge) {
+        return new DankMenu(ModMenuTypes.portable_dank_3_container, id, inv, dankInventoryForge);
     }
 
-    public static DankMenu t4s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(ModMenuTypes.portable_dank_4_container, id, inv, dankInventory);
+    public static DankMenu t4s(int id, Inventory inv, DankInventoryForge dankInventoryForge) {
+        return new DankMenu(ModMenuTypes.portable_dank_4_container, id, inv, dankInventoryForge);
     }
 
-    public static DankMenu t5s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(ModMenuTypes.portable_dank_5_container, id, inv, dankInventory);
+    public static DankMenu t5s(int id, Inventory inv, DankInventoryForge dankInventoryForge) {
+        return new DankMenu(ModMenuTypes.portable_dank_5_container, id, inv, dankInventoryForge);
     }
 
-    public static DankMenu t6s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(ModMenuTypes.portable_dank_6_container, id, inv, dankInventory);
+    public static DankMenu t6s(int id, Inventory inv, DankInventoryForge dankInventoryForge) {
+        return new DankMenu(ModMenuTypes.portable_dank_6_container, id, inv, dankInventoryForge);
     }
 
-    public static DankMenu t7s(int id, Inventory inv, DankInventory dankInventory) {
-        return new DankMenu(ModMenuTypes.portable_dank_7_container, id, inv, dankInventory);
+    public static DankMenu t7s(int id, Inventory inv, DankInventoryForge dankInventoryForge) {
+        return new DankMenu(ModMenuTypes.portable_dank_7_container, id, inv, dankInventoryForge);
     }
 
     @Override

@@ -28,7 +28,7 @@ public class DualTooltip extends Tooltip {
     @Override
     public List<FormattedCharSequence> toCharSequence(Minecraft minecraft) {
 
-        boolean locked = screen.getMenu().dankInventory.frequencyLocked();
+        boolean locked = screen.getMenu().dankInventoryForge.frequencyLocked();
         if (locked != last) {
             invalidate();
             last = locked;

@@ -4,6 +4,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.server.C2SMessageLockSlot;
 import tfar.dankstorage.network.server.C2SMessageScrollSlot;
 import tfar.dankstorage.network.server.C2SRequestContentsPacket;
 import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
@@ -57,6 +58,11 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public void sendFrequencyPacket(int frequency, boolean set) {
         C2SSetFrequencyPacket.send(frequency, set);
+    }
+
+    @Override
+    public void sendLockSlotPacket(int index) {
+        C2SMessageLockSlot.send(index);
     }
 
     @Override

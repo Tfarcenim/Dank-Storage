@@ -6,7 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.util.C2SPacketHelper;
-import tfar.dankstorage.world.DankInventory;
+import tfar.dankstorage.world.DankInventoryForge;
 
 public class C2SRequestContentsPacket implements C2SPacketHelper {
 
@@ -32,8 +32,8 @@ public class C2SRequestContentsPacket implements C2SPacketHelper {
     }
 
     public void handleServer(ServerPlayer player) {
-        DankInventory dankInventory = DankStorageForge.getData(frequency,player.server).createInventory(frequency);
-            DankPacketHandler.sendContentsForDisplay(player,dankInventory.getContents());
+        DankInventoryForge dankInventoryForge = DankStorageForge.getData(frequency,player.server).createInventory(frequency);
+            DankPacketHandler.sendContentsForDisplay(player, dankInventoryForge.getContents());
     }
 }
 

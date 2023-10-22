@@ -1,6 +1,7 @@
 package tfar.dankstorage.client.screens;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -9,7 +10,10 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
+import org.lwjgl.glfw.GLFW;
 import tfar.dankstorage.DankStorage;
+import tfar.dankstorage.client.DankKeybinds;
 import tfar.dankstorage.client.NumberEditBox;
 import tfar.dankstorage.menu.CAbstractDankMenu;
 import tfar.dankstorage.platform.Services;
@@ -76,6 +80,27 @@ public abstract class CDankStorageScreen<T extends CAbstractDankMenu> extends Ab
             stack.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 512);
         else
             stack.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE || Minecraft.getInstance().options.keyInventory.matches(keyCode, scanCode)) {
+            this.minecraft.player.closeContainer();
+        }
+
+        //slot locking takes priority over frequency changing
+        boolean match = DankKeybinds.LOCK_SLOT.matches(keyCode, scanCode);
+        if (match) {
+            if (menu.isDankSlot(hoveredSlot)) {
+                Services.PLATFORM.sendLockSlotPacket(hoveredSlot.index);
+                return true;
+            }
+        }
+
+        if (!match && (this.frequency.keyPressed(keyCode, scanCode, modifiers) || this.frequency.canConsumeInput())) {
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
 
