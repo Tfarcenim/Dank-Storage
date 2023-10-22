@@ -40,7 +40,7 @@ public class C2SSetFrequencyPacket implements C2SPacketHelper {
     public void handleServer(ServerPlayer player) {
         AbstractContainerMenu container = player.containerMenu;
         if (container instanceof AbstractDankMenu dankMenu) {
-            DankInventoryForge inventory = dankMenu.dankInventoryForge;
+            DankInventoryForge inventory = dankMenu.dankInventory;
 
             int textColor = 0;
 

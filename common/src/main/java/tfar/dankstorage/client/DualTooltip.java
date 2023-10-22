@@ -5,7 +5,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.Nullable;
-import tfar.dankstorage.client.screens.DankStorageScreen;
+import tfar.dankstorage.client.screens.CDankStorageScreen;
 
 import java.util.List;
 
@@ -13,9 +13,9 @@ public class DualTooltip extends Tooltip {
 
     private final Component message2;
     boolean last;
-    private final DankStorageScreen<?> screen;
+    private final CDankStorageScreen<?> screen;
 
-    public DualTooltip(Component message1, Component message2, @Nullable Component narration, DankStorageScreen<?> screen) {
+    public DualTooltip(Component message1, Component message2, @Nullable Component narration, CDankStorageScreen<?> screen) {
         super(message1, narration);
         this.message2 = message2;
         this.screen = screen;
@@ -28,7 +28,7 @@ public class DualTooltip extends Tooltip {
     @Override
     public List<FormattedCharSequence> toCharSequence(Minecraft minecraft) {
 
-        boolean locked = screen.getMenu().dankInventoryForge.frequencyLocked();
+        boolean locked = screen.getMenu().dankInventory.frequencyLocked();
         if (locked != last) {
             invalidate();
             last = locked;

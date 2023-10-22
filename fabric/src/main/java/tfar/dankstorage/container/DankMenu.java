@@ -101,19 +101,6 @@ public class DankMenu extends AbstractDankMenu {
     }
 
     @Override
-    protected void addDankSlots() {
-        int slotIndex = 0;
-        for (int row = 0; row < rows; ++row) {
-            for (int col = 0; col < 9; ++col) {
-                int x = 8 + col * 18;
-                int y = row * 18 + 18;
-                this.addSlot(new DankSlot(dankInventoryFabric, slotIndex, x, y));
-                slotIndex++;
-            }
-        }
-    }
-
-    @Override
     public void setFrequency(int freq) {
         Utils.getOrCreateSettings(bag).putInt(Utils.FREQ, freq);
     }

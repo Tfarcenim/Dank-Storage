@@ -32,7 +32,7 @@ public class C2SButtonPacket {
 
         if (action.requiresContainer) {
             if (container instanceof AbstractDankMenu dankContainer) {
-                DankInventoryForge inventory = dankContainer.dankInventoryForge;
+                DankInventoryForge inventory = dankContainer.dankInventory;
                 switch (action) {
                     case LOCK_FREQUENCY -> inventory.toggleFrequencyLock();
                     case SORT -> inventory.sort();
