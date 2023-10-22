@@ -7,15 +7,22 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.client.DankKeybinds;
 import tfar.dankstorage.client.DankTooltip;
+import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.mixin.ItemUsageContextAccessor;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
@@ -24,6 +31,7 @@ import tfar.dankstorage.utils.UseType;
 import tfar.dankstorage.world.ClientData;
 import tfar.dankstorage.world.MaxId;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -119,6 +127,45 @@ public abstract class CoDankItem extends Item {
                 return 0xffffff00;
             case void_pickup:
                 return 0xffff0000;
+        }
+    }
+
+    @Nonnull
+    @Override
+    public InteractionResult useOn(UseOnContext ctx) {
+        ItemStack bag = ctx.getItemInHand();
+        Level level = ctx.getLevel();
+        UseType useType = CommonUtils.getUseType(bag);
+
+        if (useType == UseType.bag) {
+            return InteractionResult.PASS;
+        }
+
+        int selectedSlot = CommonUtils.getSelectedSlot(bag);
+
+        //invalid slot
+        if (selectedSlot == CommonUtils.INVALID) {
+            return InteractionResult.PASS;
+        }
+
+        ItemStack toPlace = CommonUtils.getSelectedItem(bag,level);
+        //todo: sync locked slots to client?
+        if (/*toPlace.getCount() == 1 && handler.isLocked(selectedSlot)*/ false)
+            return InteractionResult.PASS;
+
+        UseOnContext ctx2 = new UseOnContext2(ctx.getLevel(), ctx.getPlayer(), ctx.getHand(), toPlace, ((ItemUsageContextAccessor) ctx).getHitResult());
+        InteractionResult actionResultType = toPlace.getItem().useOn(ctx2);//ctx2.getItem().onItemUse(ctx);
+        if (!level.isClientSide) {
+            DankInterface dankInventory = Services.PLATFORM.getInventoryCommon(bag,level);
+            dankInventory.setItemDank(selectedSlot, ctx2.getItemInHand());
+        }
+        return actionResultType;
+    }
+
+    static class UseOnContext2 extends UseOnContext {
+
+        protected UseOnContext2(Level $$0, @org.jetbrains.annotations.Nullable Player $$1, InteractionHand $$2, ItemStack $$3, BlockHitResult $$4) {
+            super($$0, $$1, $$2, $$3, $$4);
         }
     }
 

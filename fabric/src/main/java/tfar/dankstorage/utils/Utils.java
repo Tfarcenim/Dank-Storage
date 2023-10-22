@@ -34,24 +34,6 @@ public class Utils extends CommonUtils {
         return INVALID;
     }
 
-    public static ItemStack getSelectedItem(ItemStack bag,Level level) {
-        if (bag.hasTag()) {
-            int selected = getSelectedSlot(bag);
-            if (!level.isClientSide) {
-                DankInventoryFabric dankInventoryFabric = getInventory(bag, level);
-                if (dankInventoryFabric != null) {
-                    return dankInventoryFabric.getItem(selected);
-                } else {
-                //    System.out.println("Attempted to access a selected item from a null inventory");
-                }
-            } else {
-                return ClientData.selectedItem;
-            }
-        }
-        return ItemStack.EMPTY;
-    }
-
-
     public static void changeSelectedSlot(ItemStack bag, boolean right, ServerPlayer player) {
         DankInventoryFabric handler = getInventory(bag,player.serverLevel());
         //don't change slot if empty

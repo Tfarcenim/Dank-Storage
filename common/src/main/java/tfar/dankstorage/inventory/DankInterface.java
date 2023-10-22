@@ -9,4 +9,6 @@ public interface DankInterface extends ContainerData {
     ItemStack getGhostItem(int slot);
     DankStats getDankStats();
     boolean frequencyLocked();
+    void setItemDank(int slot,ItemStack stack);
+    ItemStack getItemDank(int slot);
 }

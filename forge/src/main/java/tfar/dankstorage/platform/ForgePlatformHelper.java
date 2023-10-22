@@ -3,7 +3,9 @@ package tfar.dankstorage.platform;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import tfar.dankstorage.DankStorageForge;
+import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.server.C2SLockSlotPacket;
 import tfar.dankstorage.network.server.C2SScrollSlotPacket;
@@ -12,6 +14,7 @@ import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
 import tfar.dankstorage.platform.services.IPlatformHelper;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
+import tfar.dankstorage.utils.Utils;
 
 public class ForgePlatformHelper implements IPlatformHelper {
 
@@ -81,5 +84,10 @@ public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public int previewY() {
         return DankStorageForge.ClientConfig.preview_y.get();
+    }
+
+    @Override
+    public DankInterface getInventoryCommon(ItemStack bag, Level level) {
+        return Utils.getInventory(bag,level);
     }
 }

@@ -36,24 +36,6 @@ public class Utils extends CommonUtils{
         return INVALID;
     }
 
-    public static ItemStack getSelectedItem(ItemStack bag,Level level) {
-        if (bag.hasTag()) {
-            int selected = getSelectedSlot(bag);
-            if (selected == INVALID) return ItemStack.EMPTY;
-            if (!level.isClientSide) {
-                DankInventoryForge dankInventoryForge = getInventory(bag, level);
-                if (dankInventoryForge != null) {
-                    return dankInventoryForge.getStackInSlot(selected);
-                } else {
-                //    System.out.println("Attempted to access a selected item from a null inventory");
-                }
-            } else {
-                return ClientData.selectedItem;
-            }
-        }
-        return ItemStack.EMPTY;
-    }
-
     public static void changeSelectedSlot(ItemStack bag, boolean right, ServerPlayer player) {
         DankInventoryForge handler = getInventory(bag,player.serverLevel());
         //don't change slot if empty

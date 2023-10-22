@@ -449,6 +449,16 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
         onContentsChanged(0);
     }
 
+    @Override
+    public void setItemDank(int slot, ItemStack stack) {
+        setStackInSlot(slot,stack);
+    }
+
+    @Override
+    public ItemStack getItemDank(int slot) {
+        return getStackInSlot(slot);
+    }
+
     //0 - 80 are locked slots, 81 is the id, 82 is text color, and 83 is global lock
 
     @Override

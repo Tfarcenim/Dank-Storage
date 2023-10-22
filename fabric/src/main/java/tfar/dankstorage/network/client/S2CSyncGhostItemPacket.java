@@ -15,7 +15,7 @@ public class S2CSyncGhostItemPacket implements ClientPlayNetworking.PlayChannelH
 
     public void handle(@Nullable LocalPlayer player, int windowId, int slot, ItemStack stack) {
         if (player != null && player.containerMenu instanceof AbstractDankMenu dankMenu && windowId == player.containerMenu.containerId) {
-            dankMenu.dankInventoryFabric.setGhostItem(slot,stack.getItem());
+            dankMenu.dankInventory.setGhostItem(slot,stack.getItem());
         }
     }
 

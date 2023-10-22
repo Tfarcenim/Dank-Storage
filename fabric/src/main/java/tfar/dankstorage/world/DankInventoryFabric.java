@@ -420,6 +420,16 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
         }
     }
 
+    @Override
+    public void setItemDank(int slot, ItemStack stack) {
+        setItem(slot, stack);
+    }
+
+    @Override
+    public ItemStack getItemDank(int slot) {
+        return getItem(slot);
+    }
+
     public boolean hasGhostItem(int slot) {
         return !ghostItems.get(slot).isEmpty();
     }

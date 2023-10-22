@@ -29,7 +29,7 @@ public class C2SButtonPacket implements ServerPlayNetworking.PlayChannelHandler 
 
         if (action.requiresContainer) {
             if (container instanceof AbstractDankMenu dankContainer) {
-                DankInventoryFabric inventory = dankContainer.dankInventoryFabric;
+                DankInventoryFabric inventory = dankContainer.dankInventory;
                 switch (action) {
                     case LOCK_FREQUENCY -> inventory.toggleFrequencyLock();
                     case SORT -> inventory.sort();

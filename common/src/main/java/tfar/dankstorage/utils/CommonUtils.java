@@ -18,8 +18,12 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.level.Level;
 import tfar.dankstorage.DankStorage;
+import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.item.CoDankItem;
+import tfar.dankstorage.platform.Services;
+import tfar.dankstorage.world.ClientData;
 
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
@@ -309,6 +313,22 @@ public class CommonUtils {
         return stack.getItem() instanceof CoDankItem;
     }
 
+    public static ItemStack getSelectedItem(ItemStack bag, Level level) {
+        if (bag.hasTag()) {
+            int selected = getSelectedSlot(bag);
+            if (!level.isClientSide) {
+                DankInterface dankInventory = Services.PLATFORM.getInventoryCommon(bag, level);
+                if (dankInventory != null) {
+                    return dankInventory.getItemDank(selected);
+                } else {
+                    //    System.out.println("Attempted to access a selected item from a null inventory");
+                }
+            } else {
+                return ClientData.selectedItem;
+            }
+        }
+        return ItemStack.EMPTY;
+    }
 
     @Nullable
     public static InteractionHand getHandWithDank(Player player) {

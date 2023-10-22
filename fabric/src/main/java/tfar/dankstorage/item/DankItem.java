@@ -1,6 +1,5 @@
 package tfar.dankstorage.item;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -13,11 +12,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.ShieldItem;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import tfar.dankstorage.container.PortableDankProvider;
-import tfar.dankstorage.mixin.ItemUsageContextAccessor;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.UseType;
@@ -61,16 +57,6 @@ public class DankItem extends CoDankItem {
     }
     return super.getRarity(stack);
   }*/
-
-    //this is used to damage tools and stuff, we use it here to damage the internal item instead
-    @Override
-    public boolean mineBlock(ItemStack s, Level level, BlockState p_179218_3_, BlockPos p_179218_4_, LivingEntity p_179218_5_) {
-        if (!Utils.isConstruction(s)) return super.mineBlock(s, level, p_179218_3_, p_179218_4_, p_179218_5_);
-
-        ItemStack tool = Utils.getItemStackInSelectedSlot(s, (ServerLevel) level);
-
-        return tool.getItem().mineBlock(tool, level, p_179218_3_, p_179218_4_, p_179218_5_);
-    }
 
     @Nonnull
     @Override
@@ -145,37 +131,7 @@ public class DankItem extends CoDankItem {
         return result;
     }
 
-    @Nonnull
-    @Override
-    public InteractionResult useOn(UseOnContext ctx) {
-        ItemStack bag = ctx.getItemInHand();
-        Level level = ctx.getLevel();
-        UseType useType = Utils.getUseType(bag);
 
-        if (useType == UseType.bag) {
-            return InteractionResult.PASS;
-        }
-
-        int selectedSlot = Utils.getSelectedSlot(bag);
-
-        //invalid slot
-        if (selectedSlot == Utils.INVALID) {
-            return InteractionResult.PASS;
-        }
-
-        ItemStack toPlace = Utils.getSelectedItem(bag,level);
-        //todo: sync locked slots to client?
-        if (/*toPlace.getCount() == 1 && handler.isLocked(selectedSlot)*/ false)
-            return InteractionResult.PASS;
-
-        UseOnContext ctx2 = new UseOnContext(ctx.getLevel(), ctx.getPlayer(), ctx.getHand(), toPlace, ((ItemUsageContextAccessor) ctx).getHitResult());
-        InteractionResult actionResultType = toPlace.getItem().useOn(ctx2);//ctx2.getItem().onItemUse(ctx);
-        if (!level.isClientSide) {
-            DankInventoryFabric dankInventoryFabric = Utils.getInventory(bag,level);
-            dankInventoryFabric.setItem(selectedSlot, ctx2.getItemInHand());
-        }
-        return actionResultType;
-    }
 
     @Override
     public void inventoryTick(ItemStack bag, Level level, Entity entity, int i, boolean equipped) {

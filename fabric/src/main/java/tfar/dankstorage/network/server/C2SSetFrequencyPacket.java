@@ -29,7 +29,7 @@ public class C2SSetFrequencyPacket implements ServerPlayNetworking.PlayChannelHa
     public void handle(ServerPlayer player, int frequency,boolean set) {
         AbstractContainerMenu container = player.containerMenu;
         if (container instanceof AbstractDankMenu dankMenu) {
-            DankInventoryFabric inventory = dankMenu.dankInventoryFabric;
+            DankInventoryFabric inventory = dankMenu.dankInventory;
 
             int textColor = 0;
 
