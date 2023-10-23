@@ -20,11 +20,9 @@ import tfar.dankstorage.ModTags;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.utils.ItemStackWrapper;
 import tfar.dankstorage.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -33,7 +31,7 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
     public DankStats dankStats;
     protected NonNullList<ItemStack> ghostItems;
     protected int frequency;
-    private boolean locked = true;
+    private boolean frequencyLocked = true;
     protected int textColor = -1;
 
     public MinecraftServer server;
@@ -198,7 +196,7 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
         nbt.put(GHOST,ghostItemNBT);
         nbt.putString("DankStats", dankStats.name());
         nbt.putInt(Utils.FREQ, frequency);
-        nbt.putBoolean("locked", locked);
+        nbt.putBoolean("locked", frequencyLocked);
         return nbt;
     }
 
@@ -209,7 +207,7 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
         readItems(tagList);
         ListTag ghostItemList = nbt.getList(GHOST,Tag.TAG_COMPOUND);
         readGhostItems(ghostItemList);
-        locked = nbt.getBoolean("locked");
+        frequencyLocked = nbt.getBoolean("locked");
         validate();
     }
 
@@ -270,7 +268,7 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
         return switch (slot) {
             case 0 -> frequency;
             case 1 -> textColor;
-            case 2 -> locked ? 1 : 0;
+            case 2 -> frequencyLocked ? 1 : 0;
             default -> AbstractContainerMenu.SLOT_CLICKED_OUTSIDE;
         };
     }
@@ -280,7 +278,7 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
         switch (slot) {
             case 0 -> frequency = value;
             case 1 -> textColor = value;
-            case 2 -> locked = value == 1;
+            case 2 -> frequencyLocked = value == 1;
         }
         onContentsChanged(slot);
     }
@@ -324,11 +322,6 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
             }
         }
         sort();
-    }
-
-    public void clearContent() {
-        stacks.clear();
-        onContentsChanged(0);
     }
 
     @Override
