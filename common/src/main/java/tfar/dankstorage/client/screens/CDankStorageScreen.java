@@ -1,20 +1,26 @@
 package tfar.dankstorage.client.screens;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.client.DankKeybinds;
 import tfar.dankstorage.client.NumberEditBox;
+import tfar.dankstorage.client.StackSizeRenderer;
 import tfar.dankstorage.menu.CAbstractDankMenu;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
@@ -74,12 +80,102 @@ public abstract class CDankStorageScreen<T extends CAbstractDankMenu> extends Ab
         }
     }
 
+
+    public void renderSlot(GuiGraphics pGuiGraphics, Slot pSlot) {
+
+        if (!menu.isDankSlot(pSlot)) {
+            super.renderSlot(pGuiGraphics, pSlot);
+        } else {
+            int i = pSlot.x;
+            int j = pSlot.y;
+            ItemStack itemstack = pSlot.getItem();
+            boolean flag = false;
+            boolean flag1 = pSlot == this.clickedSlot && !this.draggingItem.isEmpty() && !this.isSplittingStack;
+            ItemStack itemstack1 = this.menu.getCarried();
+            String s = "";
+            if (pSlot == this.clickedSlot && !this.draggingItem.isEmpty() && this.isSplittingStack && !itemstack.isEmpty()) {
+                itemstack = itemstack.copyWithCount(itemstack.getCount() / 2);
+            } else if (this.isQuickCrafting && this.quickCraftSlots.contains(pSlot) && !itemstack1.isEmpty()) {
+                if (this.quickCraftSlots.size() == 1) {
+                    return;
+                }
+
+                if (AbstractContainerMenu.canItemQuickReplace(pSlot, itemstack1, true) && this.menu.canDragTo(pSlot)) {
+                    flag = true;
+                    int k = Math.min(itemstack1.getMaxStackSize(), pSlot.getMaxStackSize(itemstack1));
+                    int l = pSlot.getItem().isEmpty() ? 0 : pSlot.getItem().getCount();
+                    int i1 = AbstractContainerMenu.getQuickCraftPlaceCount(this.quickCraftSlots, this.quickCraftingType, itemstack1) + l;
+                    if (i1 > k) {
+                        i1 = k;
+                        s = ChatFormatting.YELLOW.toString() + k;
+                    }
+
+                    itemstack = itemstack1.copyWithCount(i1);
+                } else {
+                    this.quickCraftSlots.remove(pSlot);
+                    this.recalculateQuickCraftRemaining();
+                }
+            }
+
+            pGuiGraphics.pose().pushPose();
+            pGuiGraphics.pose().translate(0.0F, 0.0F, 100.0F);
+            if (itemstack.isEmpty() && pSlot.isActive()) {
+                Pair<ResourceLocation, ResourceLocation> pair = pSlot.getNoItemIcon();
+                if (pair != null) {
+                    TextureAtlasSprite textureatlassprite = this.minecraft.getTextureAtlas(pair.getFirst()).apply(pair.getSecond());
+                    pGuiGraphics.blit(i, j, 0, 16, 16, textureatlassprite);
+                    flag1 = true;
+                }
+            }
+
+            if (!flag1) {
+                if (flag) {
+                    pGuiGraphics.fill(i, j, i + 16, j + 16, -2130706433);
+                }
+
+                pGuiGraphics.renderItem(itemstack, i, j, pSlot.x + pSlot.y * this.imageWidth);
+                pGuiGraphics.renderItemDecorations(this.font, itemstack, i, j,"");
+
+                int count = itemstack.getCount();
+                if (count > 1 || !s.isEmpty()) {
+                    StackSizeRenderer.renderSizeLabel(pGuiGraphics, Minecraft.getInstance().font, i, j, s + CommonUtils.formatLargeNumber(itemstack.getCount()));
+                }
+
+            }
+
+            pGuiGraphics.pose().popPose();
+
+            int i1 = pSlot.x;
+            int j1 = pSlot.y;
+            if (!pSlot.hasItem() && pSlot.index < menu.dankInventory.getDankStats().slots && menu.dankInventory.hasGhostItem(pSlot.index)) {
+                pGuiGraphics.renderFakeItem(menu.dankInventory.getGhostItem(pSlot.index), i1, j1);
+                RenderSystem.depthFunc(516);
+                pGuiGraphics.fill(i1, j1, i1 + 16, j1 + 16, 0x40ffffff);
+                RenderSystem.depthFunc(515);
+            }
+        }
+    }
+
     @Override
     protected void renderBg(GuiGraphics stack, float partialTicks, int mouseX, int mouseY) {
         if (is7)
             stack.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 512);
         else
             stack.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        renderLockedSlots(stack);
+    }
+
+    protected void renderLockedSlots(GuiGraphics stack) {
+        for (int i = 0; i < menu.rows * 9; i++) {
+            int j = i % 9;
+            int k = i / 9;
+            int offsetx = 8;
+            int offsety = 18;
+            if (this.menu.dankInventory.hasGhostItem(i)) {
+                stack.fill(leftPos + j * 18 + offsetx, topPos + k * 18 + offsety,
+                        leftPos + j * 18 + offsetx + 16, topPos + k * 18 + offsety + 16, 0xFFFF0000);
+            }
+        }
     }
 
     @Override

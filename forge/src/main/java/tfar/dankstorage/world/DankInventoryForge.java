@@ -1,13 +1,10 @@
 package tfar.dankstorage.world;
 
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
@@ -18,12 +15,9 @@ import org.jetbrains.annotations.NotNull;
 import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.inventory.DankInterface;
-import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.IntStream;
 
 public class DankInventoryForge extends ItemStackHandler implements DankInterface {
@@ -132,10 +126,6 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
         return IntStream.range(0, getSlots())
                 .mapToObj(this::getStackInSlot)
                 .allMatch(stack -> stack.isEmpty() || stack.is(ModTags.BLACKLISTED_USAGE));
-    }
-
-    public boolean hasGhostItem(int slot) {
-        return !ghostItems.get(slot).isEmpty();
     }
 
     public ItemStack getGhostItem(int slot) {
@@ -288,45 +278,14 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
         return getSlotLimit(0);
     }
 
-    public void compress(ServerPlayer player) {
-        sort();
-        ServerLevel level = player.serverLevel();
-        List<ItemStack> addLater = new ArrayList<>();
-        for (int i = 0; i < getSlots() ; i++) {
-            ItemStack stack = getStackInSlot(i);
-            if (stack.isEmpty()) {
-                break;
-            }
-            if (CommonUtils.canCompress(level,stack)) {
-                Pair<ItemStack,Integer> result = CommonUtils.compress(stack,player.serverLevel().registryAccess());
-                ItemStack resultStack = result.getFirst();
-                if (!resultStack.isEmpty()) {
-                    int division = result.getSecond();
-                    int compressedCount = stack.getCount() / division;
-                    int remainderCount = stack.getCount() % division;
-                    setStackInSlot(i,ItemHandlerHelper.copyStackWithSize(resultStack,compressedCount));
-                    addLater.add(ItemHandlerHelper.copyStackWithSize(stack,remainderCount));
-                }
-            }
-        }
-        sort();
-
-        for (ItemStack itemStack : addLater) {
-            ItemStack remainder = itemStack.copy();
-            for (int i = 0; i < getSlots();i++) {
-                remainder = insertItem(i,remainder,false);
-                if (remainder.isEmpty()) break;
-            }
-            if (!remainder.isEmpty()) {
-                ItemHandlerHelper.giveItemToPlayer(player,remainder);
-            }
-        }
-        sort();
-    }
-
     @Override
     public void setItemDank(int slot, ItemStack stack) {
         setStackInSlot(slot,stack);
+    }
+
+    @Override
+    public ItemStack addItemDank(int slot, ItemStack stack) {
+        return insertItem(slot,stack,false);
     }
 
     @Override

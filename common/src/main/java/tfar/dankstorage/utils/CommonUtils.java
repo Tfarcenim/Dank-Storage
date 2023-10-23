@@ -328,6 +328,7 @@ public class CommonUtils {
     public static ItemStack getSelectedItem(ItemStack bag, Level level) {
         if (bag.hasTag()) {
             int selected = getSelectedSlot(bag);
+            if (selected == INVALID) return ItemStack.EMPTY;
             if (!level.isClientSide) {
                 DankInterface dankInventory = Services.PLATFORM.getInventoryCommon(bag, level);
                 if (dankInventory != null) {

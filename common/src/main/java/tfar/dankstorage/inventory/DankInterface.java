@@ -1,9 +1,12 @@
 package tfar.dankstorage.inventory;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.utils.CommonUtils;
@@ -31,6 +34,7 @@ public interface DankInterface extends ContainerData {
     }
 
     int getContainerSizeDank();
+    ItemStack addItemDank(int slot,ItemStack stack);
 
     default void readGhostItems(ListTag listTag) {
         for (int i = 0; i < listTag.size(); i++) {
@@ -104,6 +108,45 @@ public interface DankInterface extends ContainerData {
         }
     }
 
+    default void compress(ServerPlayer player) {
+        sort();
+        ServerLevel level = player.serverLevel();
+        List<ItemStack> addLater = new ArrayList<>();
+        for (int i = 0; i < getMaxStackSizeDank() ; i++) {
+            ItemStack stack = getItemDank(i);
+            if (stack.isEmpty()) {
+                break;
+            }
+            if (CommonUtils.canCompress(level,stack)) {
+                Pair<ItemStack,Integer> result = CommonUtils.compress(stack,player.serverLevel().registryAccess());
+                ItemStack resultStack = result.getFirst();
+                if (!resultStack.isEmpty()) {
+                    int division = result.getSecond();
+                    int compressedCount = stack.getCount() / division;
+                    int remainderCount = stack.getCount() % division;
+                    setItemDank(i,CommonUtils.copyStackWithSize(resultStack,compressedCount));
+                    addLater.add(CommonUtils.copyStackWithSize(stack,remainderCount));
+                }
+            }
+        }
+        sort();
+
+        for (ItemStack itemStack : addLater) {
+            ItemStack remainder = itemStack.copy();
+            for (int i = 0; i < getContainerSizeDank();i++) {
+                remainder = addItemDank(i,remainder);
+                if (remainder.isEmpty()) break;
+            }
+            if (!remainder.isEmpty()) {
+                player.addItem(remainder);
+                if (!remainder.isEmpty()) {
+                    player.drop(remainder,false);
+                }
+            }
+        }
+        sort();
+    }
+
 
     default void readItems(ListTag listTag) {
         for (int i = 0; i < listTag.size(); i++) {
@@ -137,6 +180,10 @@ public interface DankInterface extends ContainerData {
                 }
             }
         }
+    }
+
+    default boolean hasGhostItem(int slot) {
+        return !getGhostItems().get(slot).isEmpty();
     }
 
     int getMaxStackSizeDank();

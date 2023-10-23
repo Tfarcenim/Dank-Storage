@@ -95,6 +95,32 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
     }
 
     @Override
+    public ItemStack addItemDank(int slot, ItemStack stack) {
+        return addItem(stack);
+    }
+
+    ItemStack addStack(int slot,ItemStack stack) {
+        ItemStack existing = this.getItem(slot);
+        if (ItemStack.isSameItemSameTags(existing, stack)) {
+            this.moveItemsBetweenStacks(stack, existing);
+            if (stack.isEmpty()) {
+                return ItemStack.EMPTY;
+            }
+        }
+        return stack;
+    }
+
+    private void moveItemsBetweenStacks(ItemStack itemStack, ItemStack itemStack2) {
+        int i = Math.min(this.getMaxStackSize(), itemStack2.getMaxStackSize());
+        int j = Math.min(itemStack.getCount(), i - itemStack2.getCount());
+        if (j > 0) {
+            itemStack2.grow(j);
+            itemStack.shrink(j);
+            this.setChanged();
+        }
+    }
+
+    @Override
     public NonNullList<ItemStack> getGhostItems() {
         return ghostItems;
     }
@@ -267,43 +293,6 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
         setChanged();
     }
 
-    public void compress(ServerPlayer player) {
-        sort();
-        ServerLevel level = player.serverLevel();
-        List<ItemStack> addLater = new ArrayList<>();
-        for (int i = 0; i < this.items.size() ; i++) {
-            ItemStack stack = getItem(i);
-            if (stack.isEmpty()) {
-                break;
-            }
-            if (CommonUtils.canCompress(level,stack)) {
-                Pair<ItemStack,Integer> result = CommonUtils.compress(stack,player.serverLevel().registryAccess());
-                ItemStack resultStack = result.getFirst();
-                if (!resultStack.isEmpty()) {
-                    int division = result.getSecond();
-                    int compressedCount = stack.getCount() / division;
-                    int remainderCount = stack.getCount() % division;
-                    setItem(i, CommonUtils.copyStackWithSize(resultStack,compressedCount));
-                    addLater.add(CommonUtils.copyStackWithSize(stack,remainderCount));
-                }
-            }
-        }
-        sort();
-
-        for (ItemStack itemStack : addLater) {
-            ItemStack remainder = itemStack.copy();
-            for (int i = 0; i < items.size();i++) {
-                remainder = addItem(remainder);
-                if (remainder.isEmpty()) break;
-            }
-            if (!remainder.isEmpty()) {
-                player.addItem(remainder);
-               // ItemHandlerHelperCommon.giveItemToPlayer(player,remainder);
-            }
-        }
-        sort();
-    }
-
     @Override
     public void setItemDank(int slot, ItemStack stack) {
         setItem(slot, stack);
@@ -312,10 +301,6 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
     @Override
     public ItemStack getItemDank(int slot) {
         return getItem(slot);
-    }
-
-    public boolean hasGhostItem(int slot) {
-        return !ghostItems.get(slot).isEmpty();
     }
 
     @Override
