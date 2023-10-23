@@ -168,6 +168,16 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
     }
 
     @Override
+    public MinecraftServer getServer() {
+        return server;
+    }
+
+    @Override
+    public void setServer(MinecraftServer server) {
+        this.server = server;
+    }
+
+    @Override
     public void onContentsChanged(int slot) {
         super.onContentsChanged(slot);
         if (server != null) {

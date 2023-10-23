@@ -12,7 +12,6 @@ import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventoryForge;
-import tfar.dankstorage.world.DankSavedData;
 
 import javax.annotation.Nullable;
 

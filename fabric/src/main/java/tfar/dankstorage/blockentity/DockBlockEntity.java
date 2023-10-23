@@ -9,14 +9,15 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.block.CDockBlock;
 import tfar.dankstorage.container.DockMenu;
 import tfar.dankstorage.inventory.api.DankInventorySlotWrapper;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
+import tfar.dankstorage.world.CDankSavedData;
 import tfar.dankstorage.world.DankInventoryFabric;
-import tfar.dankstorage.world.DankSavedData;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -33,12 +34,12 @@ public class DockBlockEntity extends CommonDockBlockEntity implements MenuProvid
     public DankInventoryFabric getInventory() {
         if (settings != null && settings.contains(Utils.FREQ)) {
             int frequency = settings.getInt(Utils.FREQ);
-            DankSavedData savedData = DankStorageFabric.getData(frequency,level.getServer());
-            DankInventoryFabric dankInventoryFabric = savedData.createInventory(frequency);
+            CDankSavedData savedData = DankStorage.getData(frequency,level.getServer());
+            DankInventoryFabric dankInventoryFabric = (DankInventoryFabric) savedData.createInventory(frequency);
 
             if (!dankInventoryFabric.valid()) {
                 savedData.setStats(DankStats.values()[getBlockState().getValue(CDockBlock.TIER)],frequency);
-                dankInventoryFabric = savedData.createInventory(frequency);
+                dankInventoryFabric = (DankInventoryFabric) savedData.createInventory(frequency);
             }
 
             return dankInventoryFabric;

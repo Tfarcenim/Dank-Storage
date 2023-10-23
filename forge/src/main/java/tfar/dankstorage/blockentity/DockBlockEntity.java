@@ -12,14 +12,15 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.block.CDockBlock;
 import tfar.dankstorage.container.DockMenu;
 import tfar.dankstorage.init.ModBlockEntityTypes;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
+import tfar.dankstorage.world.CDankSavedData;
 import tfar.dankstorage.world.DankInventoryForge;
-import tfar.dankstorage.world.DankSavedData;
 
 
 public class DockBlockEntity extends CommonDockBlockEntity implements MenuProvider {
@@ -33,12 +34,12 @@ public class DockBlockEntity extends CommonDockBlockEntity implements MenuProvid
     public DankInventoryForge getInventory() {
         if (settings != null && settings.contains(Utils.FREQ)) {
             int frequency = settings.getInt(Utils.FREQ);
-            DankSavedData savedData = DankStorageForge.getData(frequency,level.getServer());
-            DankInventoryForge dankInventoryForge = savedData.createInventory(frequency);
+            CDankSavedData savedData = DankStorage.getData(frequency,level.getServer());
+            DankInventoryForge dankInventoryForge = (DankInventoryForge) savedData.createInventory(frequency);
 
             if (!dankInventoryForge.valid()) {
                 savedData.setStats(DankStats.values()[getBlockState().getValue(CDockBlock.TIER)],frequency);
-                dankInventoryForge = savedData.createInventory(frequency);
+                dankInventoryForge = (DankInventoryForge) savedData.createInventory(frequency);
             }
 
             return dankInventoryForge;

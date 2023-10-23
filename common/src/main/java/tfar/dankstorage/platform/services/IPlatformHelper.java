@@ -6,6 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.utils.ButtonAction;
+import tfar.dankstorage.utils.DankStats;
 
 public interface IPlatformHelper {
 
@@ -50,6 +51,7 @@ public interface IPlatformHelper {
     void sendFrequencyPacket(int frequency,boolean set);
     void sendLockSlotPacket(int index);
     void sendButtonPacket(ButtonAction action);
+    DankInterface createInventory(DankStats stats,int frequency);
     boolean showPreview();
     int previewX();
     int previewY();

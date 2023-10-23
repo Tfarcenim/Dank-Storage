@@ -10,7 +10,9 @@ import tfar.dankstorage.network.server.*;
 import tfar.dankstorage.platform.services.IPlatformHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import tfar.dankstorage.utils.ButtonAction;
+import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
+import tfar.dankstorage.world.DankInventoryFabric;
 
 public class FabricPlatformHelper implements IPlatformHelper {
 
@@ -69,6 +71,11 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public void sendButtonPacket(ButtonAction action) {
         C2SButtonPacket.send(action);
+    }
+
+    @Override
+    public DankInterface createInventory(DankStats stats, int frequency) {
+        return new DankInventoryFabric(stats,frequency);
     }
 
     @Override

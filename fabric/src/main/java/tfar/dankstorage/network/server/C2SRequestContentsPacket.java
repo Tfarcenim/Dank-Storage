@@ -8,7 +8,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import tfar.dankstorage.DankStorageFabric;
+import tfar.dankstorage.DankStorage;
+import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.world.DankInventoryFabric;
 
@@ -22,7 +23,7 @@ public class C2SRequestContentsPacket implements ServerPlayNetworking.PlayChanne
 
 
     public void handle(ServerPlayer player, int frequency) {
-        DankInventoryFabric dankInventoryFabric = DankStorageFabric.getData(frequency,player.server).createInventory(frequency);
+        DankInterface dankInventoryFabric = DankStorage.getData(frequency,player.server).createInventory(frequency);
         if (dankInventoryFabric != null) {
             DankPacketHandler.sendList(player, dankInventoryFabric.getContents());
         }

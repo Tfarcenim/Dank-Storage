@@ -8,7 +8,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.Constants;
-import tfar.dankstorage.DankStorageFabric;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.mixin.SimpleContainerAccess;
@@ -131,6 +131,16 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
     }
 
     @Override
+    public MinecraftServer getServer() {
+        return server;
+    }
+
+    @Override
+    public void setServer(MinecraftServer server) {
+        this.server = server;
+    }
+
+    @Override
     public int getMaxStackSize() {
         return dankStats.stacklimit;
     }
@@ -194,7 +204,7 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
     public void setChanged() {
         super.setChanged();
         if (server != null) {
-            DankStorageFabric.getData(frequency,server).write(save());
+            DankStorage.getData(frequency,server).write(save());
         }
     }
 

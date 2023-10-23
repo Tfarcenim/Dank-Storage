@@ -38,8 +38,6 @@ import tfar.dankstorage.init.*;
 import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.Utils;
-import tfar.dankstorage.world.DankSavedData;
-import tfar.dankstorage.world.MaxId;
 
 import java.io.File;
 import java.util.List;
@@ -115,21 +113,7 @@ public class DankStorageForge {
     }
 
     public void onServerStarted(ServerStartedEvent e) {
-        MinecraftServer server = e.getServer();
-        LevelStorageSource.LevelStorageAccess storageSource = ((MinecraftServerAccess)server).getStorageSource();
-        File file = storageSource.getDimensionPath(server.getLevel(Level.OVERWORLD).dimension())
-                .resolve("data/"+ DankStorage.MODID).toFile();
-        file.mkdirs();
-
-        DankStorage.maxId = DankStorage.getMaxId(server);
-    }
-
-    public static DankSavedData getData(int id, MinecraftServer server) {
-        if (id <= Utils.INVALID) throw new RuntimeException("Invalid frequency: "+id);
-        ServerLevel overworld = server.getLevel(Level.OVERWORLD);
-        return overworld.getDataStorage()
-                .computeIfAbsent(compoundTag -> DankSavedData.loadStatic(compoundTag,overworld), () -> new DankSavedData(overworld),
-                        DankStorage.MODID+"/"+id);
+        DankStorage.onServerStart(e.getServer());
     }
 
     public void onServerStopped(ServerStoppedEvent e) {

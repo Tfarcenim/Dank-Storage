@@ -4,7 +4,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.network.DankPacketHandler;
@@ -75,9 +74,9 @@ public class Utils extends CommonUtils {
                         .resolve("data/"+ DankStorage.MODID+"/"+id+".dat");
 
                 if (path.toFile().isFile()) {
-                    return DankStorageFabric.getData(id,level.getServer()).createInventory(id);
+                    return (DankInventoryFabric) DankStorage.getData(id,level.getServer()).createInventory(id);
                 } else {
-                    return DankStorageFabric.getData(id,level.getServer()).createFreshInventory(getDefaultStats(bag),id);
+                    return (DankInventoryFabric) DankStorage.getData(id,level.getServer()).createFreshInventory(getDefaultStats(bag),id);
                 }
             } else {
                 return null;

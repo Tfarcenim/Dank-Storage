@@ -1,10 +1,16 @@
 package tfar.dankstorage;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.LevelStorageSource;
+import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
+import tfar.dankstorage.world.CDankSavedData;
 import tfar.dankstorage.world.MaxId;
+
+import java.io.File;
 
 // This class is part of the common project meaning it is shared between all supported loaders. Code written here can only
 // import and access the vanilla codebase, libraries used by vanilla, and optionally third party libraries that provide
@@ -45,4 +51,20 @@ public class DankStorage {
         CommonUtils.uncacheRecipes();
     }
 
+    public static void onServerStart(MinecraftServer server) {
+        LevelStorageSource.LevelStorageAccess storageSource = ((MinecraftServerAccess)server).getStorageSource();
+        File file = storageSource.getDimensionPath(server.getLevel(Level.OVERWORLD).dimension())
+                .resolve("data/"+ DankStorage.MODID).toFile();
+        file.mkdirs();
+
+        DankStorage.maxId = DankStorage.getMaxId(server);
+    }
+
+    public static CDankSavedData getData(int id, MinecraftServer server) {
+        if (id <= CommonUtils.INVALID) throw new RuntimeException("Invalid frequency: "+id);
+        ServerLevel overworld = server.getLevel(Level.OVERWORLD);
+        return overworld.getDataStorage()
+                .computeIfAbsent(compoundTag -> CDankSavedData.loadStatic(compoundTag,overworld), () -> new CDankSavedData(overworld),
+                        DankStorage.MODID+"/"+id);
+    }
 }

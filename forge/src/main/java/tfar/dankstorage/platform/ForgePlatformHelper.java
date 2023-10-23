@@ -12,7 +12,9 @@ import tfar.dankstorage.platform.services.IPlatformHelper;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import tfar.dankstorage.utils.ButtonAction;
+import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
+import tfar.dankstorage.world.DankInventoryForge;
 
 public class ForgePlatformHelper implements IPlatformHelper {
 
@@ -72,6 +74,11 @@ public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public void sendButtonPacket(ButtonAction action) {
         C2SButtonPacket.send(action);
+    }
+
+    @Override
+    public DankInterface createInventory(DankStats stats, int frequency) {
+        return new DankInventoryForge(stats,frequency);
     }
 
     @Override

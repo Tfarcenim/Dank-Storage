@@ -10,8 +10,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.container.AbstractDankMenu;
+import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.TxtColor;
 import tfar.dankstorage.utils.Utils;
@@ -35,9 +35,9 @@ public class C2SSetFrequencyPacket implements ServerPlayNetworking.PlayChannelHa
 
             if (frequency > Utils.INVALID) {
                 if (frequency < DankStorage.maxId.getMaxId()) {
-                    DankInventoryFabric targetInventory = DankStorageFabric.getData(frequency,player.server).createInventory(frequency);
+                    DankInterface targetInventory = DankStorage.getData(frequency,player.server).createInventory(frequency);
 
-                    if (targetInventory.valid() && targetInventory.dankStats == inventory.dankStats) {
+                    if (targetInventory.valid() && targetInventory.getDankStats() == inventory.dankStats) {
 
                         if (targetInventory.frequencyLocked()) {
                             textColor = TxtColor.LOCKED.color;
