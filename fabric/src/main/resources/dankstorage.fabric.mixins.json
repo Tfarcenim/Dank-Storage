@@ -7,7 +7,6 @@
     "SimpleContainerAccess"
   ],
   "client": [
-    "ItemRendererAccessor",
     "MinecraftClientMixin",
     "MouseMixin"
   ],
