@@ -5,6 +5,7 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.level.Level;
 import tfar.dankstorage.init.ModRecipeSerializers;
 
 import javax.annotation.Nonnull;
@@ -24,6 +25,11 @@ public class UpgradeRecipe extends ShapedRecipe {
         if (!oldBag.hasTag()) return newBag;
         newBag.setTag(oldBag.getTag());
         return newBag;
+    }
+
+    @Override
+    public boolean matches(CraftingContainer $$0, Level $$1) {
+        return super.matches($$0, $$1);
     }
 
     @Override

@@ -1,13 +1,16 @@
 {
   "type": "dankstorage:upgrade",
   "pattern": [
-    "iii",
+    "jij",
     "i1i",
-    "iii"
+    "jij"
   ],
   "key": {
     "i": {
-      "item": "minecraft:obsidian"
+      "tag": "forge:storage_blocks/amethyst"
+    },
+    "j": {
+      "item" : "minecraft:crying_obsidian"
     },
     "1": {
       "item": "dankstorage:dank_5"
