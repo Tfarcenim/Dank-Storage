@@ -1,6 +1,5 @@
 package tfar.dankstorage.utils;
 
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -9,7 +8,6 @@ import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.network.DankPacketHandler;
-import tfar.dankstorage.world.ClientData;
 import tfar.dankstorage.world.DankInventoryFabric;
 
 import java.nio.file.Path;
@@ -86,13 +84,6 @@ public class Utils extends CommonUtils {
             }
         }
         throw new RuntimeException("Attempted to get inventory on client");
-    }
-
-    public static ItemStack getItemStackInSelectedSlot(ItemStack bag,ServerLevel level) {
-        DankInventoryFabric inv = getInventory(bag,level);
-        if (inv == null) return ItemStack.EMPTY;
-        ItemStack stack = inv.getItem(Utils.getSelectedSlot(bag));
-        return stack.is(ModTags.BLACKLISTED_USAGE) ? ItemStack.EMPTY : stack;
     }
 
     /*public static boolean areItemStacksConvertible(final ItemStack stack1, final ItemStack stack2) {

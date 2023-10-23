@@ -63,6 +63,11 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
         copyItems();
     }
 
+    @Override
+    public int getContainerSizeDank() {
+        return getContainerSize();
+    }
+
     private void copyItems() {
 
         NonNullList<ItemStack> newStacks = NonNullList.withSize(dankStats.slots, ItemStack.EMPTY);
@@ -90,6 +95,11 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
         ghostItems = newGhosts;
     }
 
+    @Override
+    public NonNullList<ItemStack> getGhostItems() {
+        return ghostItems;
+    }
+
     //distinguish from the mixin accessor
     public void $setSize(int size) {
         ((SimpleContainerAccess)this).setSize(size);
@@ -109,10 +119,6 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
 
     public NonNullList<ItemStack> getContents() {
         return items;
-    }
-
-    public boolean valid() {
-        return dankStats != DankStats.zero;
     }
 
     public boolean noValidSlots() {
@@ -143,14 +149,13 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
         return itemStack.is(Utils.BLACKLISTED_STORAGE) ? itemStack : super.addItem(itemStack);
     }*/
 
-    static final String GHOST = "GhostItems";
 
 
     public CompoundTag save() {
         ListTag nbtTagList = new ListTag();
         for (int i = 0; i < this.getContents().size(); i++) {
             if (!getContents().get(i).isEmpty()) {
-                int realCount = Math.min(dankStats.stacklimit, getContents().get(i).getCount());
+                int realCount = Math.min(getDankStats().stacklimit, getContents().get(i).getCount());
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
                 getContents().get(i).save(itemTag);
@@ -175,8 +180,8 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
         nbt.put("Items", nbtTagList);
         nbt.put(GHOST, ghostItemNBT);
         nbt.putString("DankStats", dankStats.name());
-        nbt.putInt(Utils.FREQ, frequency);
-        nbt.putBoolean("locked", frequencyLocked);
+        nbt.putInt(Utils.FREQ, getFrequency());
+        nbt.putBoolean("locked", frequencyLocked());
         return nbt;
     }
 
@@ -191,78 +196,9 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
         validate();
     }
 
-    protected void readItems(ListTag listTag) {
-        for (int i = 0; i < listTag.size(); i++) {
-            CompoundTag itemTags = listTag.getCompound(i);
-            int slot = itemTags.getInt("Slot");
-            if (slot >= 0 && slot < getContainerSize()) {
-                if (itemTags.contains("StackList", Tag.TAG_LIST)) {
-                    ItemStack stack = ItemStack.EMPTY;
-                    ListTag stackTagList = itemTags.getList("StackList", Tag.TAG_COMPOUND);
-                    for (int j = 0; j < stackTagList.size(); j++) {
-                        CompoundTag itemTag = stackTagList.getCompound(j);
-                        ItemStack temp = ItemStack.of(itemTag);
-                        if (!temp.isEmpty()) {
-                            if (stack.isEmpty()) stack = temp;
-                            else stack.grow(temp.getCount());
-                        }
-                    }
-                    if (!stack.isEmpty()) {
-                        int count = stack.getCount();
-                        count = Math.min(count, getMaxStackSize());
-                        stack.setCount(count);
-
-                        this.setItem(slot, stack);
-                    }
-                } else {
-                    ItemStack stack = ItemStack.of(itemTags);
-                    if (itemTags.contains("ExtendedCount", Tag.TAG_INT)) {
-                        stack.setCount(itemTags.getInt("ExtendedCount"));
-                    }
-                    this.setItem(slot, stack);
-                }
-            }
-        }
-    }
-
-    protected void readGhostItems(ListTag listTag) {
-        for (int i = 0; i < listTag.size(); i++) {
-            CompoundTag itemTags = listTag.getCompound(i);
-            int slot = itemTags.getInt("Slot");
-            if (slot >= 0 && slot < getContainerSize()) {
-                if (itemTags.contains("StackList", Tag.TAG_LIST)) {
-                    ItemStack stack = ItemStack.EMPTY;
-                    ListTag stackTagList = itemTags.getList("StackList", Tag.TAG_COMPOUND);
-                    for (int j = 0; j < stackTagList.size(); j++) {
-                        CompoundTag itemTag = stackTagList.getCompound(j);
-                        ItemStack temp = ItemStack.of(itemTag);
-                        if (!temp.isEmpty()) {
-                            if (stack.isEmpty()) stack = temp;
-                            else stack.grow(temp.getCount());
-                        }
-                    }
-                    if (!stack.isEmpty()) {
-                        this.ghostItems.set(slot, stack);
-                    }
-                } else {
-                    ItemStack stack = ItemStack.of(itemTags);
-                    this.ghostItems.set(slot, stack);
-                }
-            }
-        }
-    }
-
-
-    protected void validate() {
-        if (dankStats == DankStats.zero) {
-            throw new RuntimeException("dank has no stats?");
-        } else if (getContainerSize() == 0) {
-            throw new RuntimeException("dank is empty?");
-        } else {
-            if (ghostItems.size() != getContainerSize()) {
-                throw new RuntimeException("inequal size");
-            }
-        }
+    @Override
+    public int getMaxStackSizeDank() {
+        return getMaxStackSize();
     }
 
     public int calcRedstone() {
@@ -291,10 +227,6 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
         }
     }
 
-    public int getFrequencySlot() {
-        return getContainerSize();
-    }
-
     public int getTextColor() {
         return get(1);
     }
@@ -314,10 +246,6 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
 
     public void setFrequencyLock(boolean lock) {
         set(2, lock ? 1 : 0);
-    }
-
-    public int getFrequency() {
-        return get(0);
     }
 
     @Override

@@ -104,6 +104,11 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
     }
 
     @Override
+    public int getContainerSizeDank() {
+        return getSlots();
+    }
+
+    @Override
     public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (hasGhostItem(slot) && getGhostItem(slot).getItem() != stack.getItem()) {
             return stack;
@@ -197,8 +202,6 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
         return nbt;
     }
 
-    static final String GHOST = "GhostItems";
-
     public void read(CompoundTag nbt) {
         DankStats stats = DankStats.valueOf(nbt.getString("DankStats"));
         setDankStats(stats);
@@ -210,86 +213,8 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
         validate();
     }
 
-    protected void readItems(ListTag listTag) {
-        for (int i = 0; i < listTag.size(); i++) {
-            CompoundTag itemTags = listTag.getCompound(i);
-            int slot = itemTags.getInt("Slot");
-            if (slot >= 0 && slot < getSlots()) {
-                if (itemTags.contains("StackList", Tag.TAG_LIST)) {
-                    ItemStack stack = ItemStack.EMPTY;
-                    ListTag stackTagList = itemTags.getList("StackList", Tag.TAG_COMPOUND);
-                    for (int j = 0; j < stackTagList.size(); j++) {
-                        CompoundTag itemTag = stackTagList.getCompound(j);
-                        ItemStack temp = ItemStack.of(itemTag);
-                        if (!temp.isEmpty()) {
-                            if (stack.isEmpty()) stack = temp;
-                            else stack.grow(temp.getCount());
-                        }
-                    }
-                    if (!stack.isEmpty()) {
-                        int count = stack.getCount();
-                        count = Math.min(count, getSlotLimit(slot));
-                        stack.setCount(count);
 
-                        this.setStackInSlot(slot, stack);
-                    }
-                } else {
-                    ItemStack stack = ItemStack.of(itemTags);
-                    if (itemTags.contains("ExtendedCount", Tag.TAG_INT)) {
-                        stack.setCount(itemTags.getInt("ExtendedCount"));
-                    }
-                    this.setStackInSlot(slot, stack);
-                }
-            }
-        }
-    }
 
-    protected void readGhostItems(ListTag listTag) {
-        for (int i = 0; i < listTag.size(); i++) {
-            CompoundTag itemTags = listTag.getCompound(i);
-            int slot = itemTags.getInt("Slot");
-            if (slot >= 0 && slot < getSlots()) {
-                if (itemTags.contains("StackList", Tag.TAG_LIST)) {
-                    ItemStack stack = ItemStack.EMPTY;
-                    ListTag stackTagList = itemTags.getList("StackList", Tag.TAG_COMPOUND);
-                    for (int j = 0; j < stackTagList.size(); j++) {
-                        CompoundTag itemTag = stackTagList.getCompound(j);
-                        ItemStack temp = ItemStack.of(itemTag);
-                        if (!temp.isEmpty()) {
-                            if (stack.isEmpty()) stack = temp;
-                            else stack.grow(temp.getCount());
-                        }
-                    }
-                    if (!stack.isEmpty()) {
-                        this.ghostItems.set(slot, stack);
-                    }
-                } else {
-                    ItemStack stack = ItemStack.of(itemTags);
-                    this.ghostItems.set(slot, stack);
-                }
-            }
-        }
-    }
-
-    protected void setGhostItems(NonNullList<ItemStack> newGhosts) {
-        ghostItems = newGhosts;
-    }
-
-    protected void validate() {
-        if (dankStats == DankStats.zero) {
-            throw new RuntimeException("dank has no stats?");
-        } else if (getSlots() == 0) {
-            throw new RuntimeException("dank is empty?");
-        } else {
-            if (ghostItems.size() != getSlots()) {
-                throw new RuntimeException("inequal size");
-            }
-        }
-    }
-
-    public boolean valid() {
-        return dankStats != DankStats.zero;
-    }
 
     public int calcRedstone() {
         int numStacks = 0;
@@ -350,10 +275,6 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
         };
     }
 
-    public int getFrequency() {
-        return get(0);
-    }
-
     @Override
     public void set(int slot, int value) {
         switch (slot) {
@@ -362,6 +283,11 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
             case 2 -> locked = value == 1;
         }
         onContentsChanged(slot);
+    }
+
+    @Override
+    public int getMaxStackSizeDank() {
+        return getSlotLimit(0);
     }
 
     public void compress(ServerPlayer player) {
@@ -457,6 +383,11 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
     @Override
     public ItemStack getItemDank(int slot) {
         return getStackInSlot(slot);
+    }
+
+    @Override
+    public NonNullList<ItemStack> getGhostItems() {
+        return ghostItems;
     }
 
     //0 - 80 are locked slots, 81 is the id, 82 is text color, and 83 is global lock

@@ -6,15 +6,17 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -161,6 +163,61 @@ public abstract class CoDankItem extends Item {
         }
         return actionResultType;
     }
+
+    @Nonnull
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack bag = player.getItemInHand(hand);
+
+        if (CommonUtils.getUseType(bag) == UseType.bag) {
+            if (!level.isClientSide) {
+                assignNextId(bag);
+                player.openMenu(createProvider(bag));
+            }
+            return InteractionResultHolder.success(bag);
+        } else {
+            if (!level.isClientSide) {
+                ItemStack toPlace = CommonUtils.getItemStackInSelectedSlot(bag, (ServerLevel) level);
+                EquipmentSlot hand1 = hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+                //handle empty
+                if (toPlace.isEmpty()) {
+                    return InteractionResultHolder.pass(bag);
+                }
+
+                //handle food
+                if (toPlace.getItem().isEdible()) {
+                    if (player.canEat(false)) {
+                        player.startUsingItem(hand);
+                        return InteractionResultHolder.consume(bag);
+                    }
+                }
+                //handle potion
+                else if (toPlace.getItem() instanceof PotionItem) {
+                    player.startUsingItem(hand);
+                    return InteractionResultHolder.success(player.getItemInHand(hand));
+                }
+
+                //handle shield
+                else if (toPlace.getItem() instanceof ShieldItem) {
+                    player.startUsingItem(hand);
+                    return InteractionResultHolder.success(player.getItemInHand(hand));
+                }
+
+                //todo support other items?
+                else {
+                    ItemStack bagCopy = bag.copy();
+                    player.setItemSlot(hand1, toPlace);
+                    InteractionResultHolder<ItemStack> actionResult = toPlace.getItem().use(level, player, hand);
+                    DankInterface handler = Services.PLATFORM.getInventoryCommon(bagCopy, level);
+                    handler.setItemDank(CommonUtils.getSelectedSlot(bagCopy), actionResult.getObject());
+                    player.setItemSlot(hand1, bagCopy);
+                }
+            }
+            return new InteractionResultHolder<>(InteractionResult.PASS, player.getItemInHand(hand));
+        }
+    }
+
+    public abstract MenuProvider createProvider(ItemStack stack);
 
     static class UseOnContext2 extends UseOnContext {
 

@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -56,59 +57,6 @@ public class DankItem extends CoDankItem {
       };
   }
 
-    @Nonnull
-    @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack bag = player.getItemInHand(hand);
-
-            if (Utils.getUseType(bag) == UseType.bag) {
-                if (!level.isClientSide) {
-                    assignNextId(bag);
-                    player.openMenu(new PortableDankProvider(bag));
-                }
-                return InteractionResultHolder.success(bag);
-            } else {
-                if (!level.isClientSide) {
-                    ItemStack toPlace = Utils.getItemStackInSelectedSlot(bag, (ServerLevel) level);
-                    EquipmentSlot hand1 = hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
-                    //handle empty
-                    if (toPlace.isEmpty()) {
-                        return InteractionResultHolder.pass(bag);
-                    }
-
-                    //handle food
-                    if (toPlace.getItem().isEdible()) {
-                        if (player.canEat(false)) {
-                            player.startUsingItem(hand);
-                            return InteractionResultHolder.consume(bag);
-                        }
-                    }
-                    //handle potion
-                    else if (toPlace.getItem() instanceof PotionItem) {
-                        player.startUsingItem(hand);
-                        return InteractionResultHolder.success(player.getItemInHand(hand));
-                    }
-
-                    //handle shield
-                    else if (toPlace.getItem() instanceof ShieldItem) {
-                        player.startUsingItem(hand);
-                        return InteractionResultHolder.success(player.getItemInHand(hand));
-                    }
-
-                    //todo support other items?
-                    else {
-                        ItemStack bagCopy = bag.copy();
-                        player.setItemSlot(hand1, toPlace);
-                        InteractionResultHolder<ItemStack> actionResult = toPlace.getItem().use(level, player, hand);
-                        DankInventoryForge handler = Utils.getInventory(bagCopy, level);
-                        handler.setStackInSlot(Utils.getSelectedSlot(bagCopy), actionResult.getObject());
-                        player.setItemSlot(hand1, bagCopy);
-                    }
-                }
-                return new InteractionResultHolder<>(InteractionResult.PASS, player.getItemInHand(hand));
-            }
-    }
-
     //this is called on the client
     @Override
     public InteractionResult interactLivingEntity(ItemStack bag, Player player, LivingEntity entity, InteractionHand hand) {
@@ -129,38 +77,6 @@ public class DankItem extends CoDankItem {
         return result;
     }
 
-    @Nonnull
-    @Override
-    public InteractionResult useOn(UseOnContext ctx) {
-        ItemStack bag = ctx.getItemInHand();
-        Level level = ctx.getLevel();
-        UseType useType = Utils.getUseType(bag);
-
-        if (useType == UseType.bag) {
-            return InteractionResult.PASS;
-        }
-
-        int selectedSlot = Utils.getSelectedSlot(bag);
-
-        //invalid slot
-        if (selectedSlot == Utils.INVALID) {
-            return InteractionResult.PASS;
-        }
-
-        ItemStack toPlace = Utils.getSelectedItem(bag,level);
-        //todo: sync locked slots to client?
-        if (/*toPlace.getCount() == 1 && handler.isLocked(selectedSlot)*/ false)
-            return InteractionResult.PASS;
-
-        UseOnContext ctx2 = new UseOnContext(ctx.getLevel(), ctx.getPlayer(), ctx.getHand(), toPlace, ((ItemUsageContextAccessor) ctx).getHitResult());
-        InteractionResult actionResultType = toPlace.getItem().useOn(ctx2);//ctx2.getItem().onItemUse(ctx);
-        if (!level.isClientSide) {
-            DankInventoryForge dankInventoryForge = Utils.getInventory(bag,level);
-            dankInventoryForge.setStackInSlot(selectedSlot, ctx2.getItemInHand());
-        }
-        return actionResultType;
-    }
-
     @Override
     public void inventoryTick(ItemStack bag, Level level, Entity entity, int i, boolean equipped) {
         //there has to be a better way
@@ -170,6 +86,10 @@ public class DankItem extends CoDankItem {
         }
     }
 
+    @Override
+    public MenuProvider createProvider(ItemStack stack) {
+        return new PortableDankProvider(stack);
+    }
 
     @Override
     public @Nullable ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {

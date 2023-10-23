@@ -20,6 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import tfar.dankstorage.DankStorage;
+import tfar.dankstorage.ModTags;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.item.CoDankItem;
 import tfar.dankstorage.platform.Services;
@@ -167,6 +168,16 @@ public class CommonUtils {
             return ContainerHelper.removeItem(getItems(), i, j);
         }
     };
+
+
+    public static ItemStack getItemStackInSelectedSlot(ItemStack bag,ServerLevel level) {
+        DankInterface inv = Services.PLATFORM.getInventoryCommon(bag,level);
+        if (inv == null) return ItemStack.EMPTY;
+        int slot = getSelectedSlot(bag);
+        if (slot == INVALID) return ItemStack.EMPTY;
+        ItemStack stack = inv.getItemDank(slot);
+        return stack.is(ModTags.BLACKLISTED_USAGE) ? ItemStack.EMPTY : stack;
+    }
 
 
     public static void merge(List<ItemStack> stacks, ItemStack toMerge) {
