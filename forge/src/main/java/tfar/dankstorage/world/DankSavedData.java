@@ -38,9 +38,4 @@ public class DankSavedData extends CDankSavedData {
         dankSavedData.load(compoundTag);
         return dankSavedData;
     }
-
-    protected void load(CompoundTag compoundTag) {
-        storage = compoundTag.getCompound("contents");
-    }
-
 }

@@ -26,6 +26,7 @@ import tfar.dankstorage.item.CoDankItem;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.world.ClientData;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -377,5 +378,14 @@ public class CommonUtils {
 
     public static DankStats getDefaultStats(ItemStack bag) {
         return ((CoDankItem) bag.getItem()).stats;
+    }
+
+    @Nonnull
+    public static ItemStack copyStackWithSize(@Nonnull ItemStack itemStack, int size) {
+        if (size == 0)
+            return ItemStack.EMPTY;
+        ItemStack copy = itemStack.copy();
+        copy.setCount(size);
+        return copy;
     }
 }

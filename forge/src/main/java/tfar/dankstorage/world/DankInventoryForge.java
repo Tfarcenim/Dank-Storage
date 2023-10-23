@@ -326,50 +326,6 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
         sort();
     }
 
-    public void sort() {
-        List<ItemStack> stacks = new ArrayList<>();
-
-        for (ItemStack stack : getContents()) {
-            if (!stack.isEmpty()) {
-                Utils.merge(stacks, stack.copy());
-            }
-        }
-
-        List<ItemStackWrapper> wrappers = Utils.wrap(stacks);
-
-        Collections.sort(wrappers);
-
-        for (int i = 0; i < getSlots();i++) {
-            setStackInSlot(i,ItemStack.EMPTY);
-            ghostItems.set(i,ItemStack.EMPTY);
-        }
-
-        //split up the stacks and add them to the slot
-
-        int slotId = 0;
-
-        for (int i = 0; i < wrappers.size(); i++) {
-            ItemStack stack = wrappers.get(i).stack;
-            int count = stack.getCount();
-            if (count > dankStats.stacklimit) {
-                int fullStacks = count / dankStats.stacklimit;
-                int partialStack = count - fullStacks * dankStats.stacklimit;
-
-                for (int j = 0; j < fullStacks;j++) {
-                    setStackInSlot(slotId, ItemHandlerHelper.copyStackWithSize(stack, dankStats.stacklimit));
-                    slotId++;
-                }
-                if (partialStack > 0) {
-                    setStackInSlot(slotId,  ItemHandlerHelper.copyStackWithSize(stack, partialStack));
-                    slotId++;
-                }
-            } else {
-                setStackInSlot(slotId,stack);
-                slotId++;
-            }
-        }
-    }
-
     public void clearContent() {
         stacks.clear();
         onContentsChanged(0);

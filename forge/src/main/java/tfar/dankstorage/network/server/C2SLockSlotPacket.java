@@ -27,7 +27,7 @@ public class C2SLockSlotPacket implements C2SPacketHelper {
     public void handleServer(ServerPlayer player) {
         AbstractContainerMenu container = player.containerMenu;
         if (container instanceof AbstractDankMenu dankContainer) {
-            DankInventoryForge inventory = dankContainer.dankInventoryForge;
+            DankInventoryForge inventory = dankContainer.dankInventory;
             inventory.toggleGhostItem(slot);
         }
     }

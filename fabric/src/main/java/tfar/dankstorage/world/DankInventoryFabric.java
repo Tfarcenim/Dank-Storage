@@ -11,7 +11,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.Constants;
@@ -284,8 +283,8 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
                     int division = result.getSecond();
                     int compressedCount = stack.getCount() / division;
                     int remainderCount = stack.getCount() % division;
-                    setItem(i,ItemHandlerHelper.copyStackWithSize(resultStack,compressedCount));
-                    addLater.add(ItemHandlerHelper.copyStackWithSize(stack,remainderCount));
+                    setItem(i, CommonUtils.copyStackWithSize(resultStack,compressedCount));
+                    addLater.add(CommonUtils.copyStackWithSize(stack,remainderCount));
                 }
             }
         }
@@ -299,53 +298,10 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
             }
             if (!remainder.isEmpty()) {
                 player.addItem(remainder);
-               // ItemHandlerHelper.giveItemToPlayer(player,remainder);
+               // ItemHandlerHelperCommon.giveItemToPlayer(player,remainder);
             }
         }
         sort();
-    }
-
-    public void sort() {
-        List<ItemStack> stacks = new ArrayList<>();
-
-        for (ItemStack stack : getContents()) {
-            if (!stack.isEmpty()) {
-                Utils.merge(stacks, stack.copy());
-            }
-        }
-
-        List<ItemStackWrapper> wrappers = Utils.wrap(stacks);
-
-        Collections.sort(wrappers);
-
-        clearContent();
-
-
-        //split up the stacks and add them to the slot
-
-        int slotId = 0;
-
-        for (int i = 0; i < wrappers.size(); i++) {
-            ItemStack stack = wrappers.get(i).stack;
-            int count = stack.getCount();
-            if (count > dankStats.stacklimit) {
-                int fullStacks = count / dankStats.stacklimit;
-                int partialStack = count - fullStacks * dankStats.stacklimit;
-
-                for (int j = 0; j < fullStacks; j++) {
-                    setItem(slotId, ItemHandlerHelper.copyStackWithSize(stack, dankStats.stacklimit));
-                    slotId++;
-                }
-                if (partialStack > 0) {
-                    setItem(slotId, ItemHandlerHelper.copyStackWithSize(stack, partialStack));
-                    slotId++;
-                }
-            } else {
-                setItem(slotId, stack);
-                slotId++;
-            }
-            //setItem(i, stack);
-        }
     }
 
     @Override
@@ -362,6 +318,7 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
         return !ghostItems.get(slot).isEmpty();
     }
 
+    @Override
     public ItemStack getGhostItem(int slot) {
         return ghostItems.get(slot);
     }
@@ -373,7 +330,7 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
     public void toggleGhostItem(int slot) {
         boolean loc = !ghostItems.get(slot).isEmpty();
         if (!loc) {
-            ghostItems.set(slot, ItemHandlerHelper.copyStackWithSize(getItem(slot), 1));
+            ghostItems.set(slot, CommonUtils.copyStackWithSize(getItem(slot), 1));
         } else {
             ghostItems.set(slot, ItemStack.EMPTY);
         }

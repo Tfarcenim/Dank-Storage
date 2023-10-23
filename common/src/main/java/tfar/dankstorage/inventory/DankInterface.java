@@ -6,7 +6,13 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
+import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
+import tfar.dankstorage.utils.ItemStackWrapper;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public interface DankInterface extends ContainerData {
 
@@ -49,6 +55,51 @@ public interface DankInterface extends ContainerData {
                     ItemStack stack = ItemStack.of(itemTags);
                     this.getGhostItems().set(slot, stack);
                 }
+            }
+        }
+    }
+
+    default void sort() {
+        List<ItemStack> stacks = new ArrayList<>();
+
+        for (ItemStack stack : getContents()) {
+            if (!stack.isEmpty()) {
+                CommonUtils.merge(stacks, stack.copy());
+            }
+        }
+
+        List<ItemStackWrapper> wrappers = CommonUtils.wrap(stacks);
+
+        Collections.sort(wrappers);
+
+        for (int i = 0; i < getContainerSizeDank();i++) {
+            setItemDank(i,ItemStack.EMPTY);
+            getGhostItems().set(i,ItemStack.EMPTY);
+        }
+
+        //split up the stacks and add them to the slot
+
+        int slotId = 0;
+
+        for (int i = 0; i < wrappers.size(); i++) {
+            ItemStack stack = wrappers.get(i).stack;
+            int count = stack.getCount();
+            DankStats dankStats = getDankStats();
+            if (count > dankStats.stacklimit) {
+                int fullStacks = count / dankStats.stacklimit;
+                int partialStack = count - fullStacks * dankStats.stacklimit;
+
+                for (int j = 0; j < fullStacks;j++) {
+                    setItemDank(slotId, CommonUtils.copyStackWithSize(stack, dankStats.stacklimit));
+                    slotId++;
+                }
+                if (partialStack > 0) {
+                    setItemDank(slotId,  CommonUtils.copyStackWithSize(stack, partialStack));
+                    slotId++;
+                }
+            } else {
+                setItemDank(slotId,stack);
+                slotId++;
             }
         }
     }
