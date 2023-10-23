@@ -8,8 +8,12 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
+import tfar.dankstorage.Constants;
+import tfar.dankstorage.DankStorage;
+import tfar.dankstorage.ModTags;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.ItemStackWrapper;
@@ -17,6 +21,7 @@ import tfar.dankstorage.utils.ItemStackWrapper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public interface DankInterface extends ContainerData {
 
@@ -27,7 +32,9 @@ public interface DankInterface extends ContainerData {
     int FREQ_LOCK = 2;
 
     ItemStack getGhostItem(int slot);
+
     DankStats getDankStats();
+
     default boolean frequencyLocked() {
         return get(FREQ_LOCK) == 1;
     }
@@ -49,11 +56,16 @@ public interface DankInterface extends ContainerData {
         set(FREQ_LOCK, lock ? 1 : 0);
     }
 
-    void setItemDank(int slot,ItemStack stack);
+    void setItemDank(int slot, ItemStack stack);
+
     ItemStack getItemDank(int slot);
 
     NonNullList<ItemStack> getContents();
+    void setItemsDank(NonNullList<ItemStack> stacks);
+
     NonNullList<ItemStack> getGhostItems();
+    void setGhostItems(NonNullList<ItemStack> stacks);
+
     default int frequency() {
         return get(FREQ);
     }
@@ -66,7 +78,8 @@ public interface DankInterface extends ContainerData {
     }
 
     int getContainerSizeDank();
-    ItemStack addItemDank(int slot,ItemStack stack);
+
+    ItemStack addItemDank(int slot, ItemStack stack);
 
     default void readGhostItems(ListTag listTag) {
         for (int i = 0; i < listTag.size(); i++) {
@@ -108,9 +121,9 @@ public interface DankInterface extends ContainerData {
 
         Collections.sort(wrappers);
 
-        for (int i = 0; i < getContainerSizeDank();i++) {
-            setItemDank(i,ItemStack.EMPTY);
-            getGhostItems().set(i,ItemStack.EMPTY);
+        for (int i = 0; i < getContainerSizeDank(); i++) {
+            setItemDank(i, ItemStack.EMPTY);
+            getGhostItems().set(i, ItemStack.EMPTY);
         }
 
         //split up the stacks and add them to the slot
@@ -125,16 +138,16 @@ public interface DankInterface extends ContainerData {
                 int fullStacks = count / dankStats.stacklimit;
                 int partialStack = count - fullStacks * dankStats.stacklimit;
 
-                for (int j = 0; j < fullStacks;j++) {
+                for (int j = 0; j < fullStacks; j++) {
                     setItemDank(slotId, CommonUtils.copyStackWithSize(stack, dankStats.stacklimit));
                     slotId++;
                 }
                 if (partialStack > 0) {
-                    setItemDank(slotId,  CommonUtils.copyStackWithSize(stack, partialStack));
+                    setItemDank(slotId, CommonUtils.copyStackWithSize(stack, partialStack));
                     slotId++;
                 }
             } else {
-                setItemDank(slotId,stack);
+                setItemDank(slotId, stack);
                 slotId++;
             }
         }
@@ -144,20 +157,20 @@ public interface DankInterface extends ContainerData {
         sort();
         ServerLevel level = player.serverLevel();
         List<ItemStack> addLater = new ArrayList<>();
-        for (int i = 0; i < getMaxStackSizeDank() ; i++) {
+        for (int i = 0; i < getMaxStackSizeDank(); i++) {
             ItemStack stack = getItemDank(i);
             if (stack.isEmpty()) {
                 break;
             }
-            if (CommonUtils.canCompress(level,stack)) {
-                Pair<ItemStack,Integer> result = CommonUtils.compress(stack,player.serverLevel().registryAccess());
+            if (CommonUtils.canCompress(level, stack)) {
+                Pair<ItemStack, Integer> result = CommonUtils.compress(stack, player.serverLevel().registryAccess());
                 ItemStack resultStack = result.getFirst();
                 if (!resultStack.isEmpty()) {
                     int division = result.getSecond();
                     int compressedCount = stack.getCount() / division;
                     int remainderCount = stack.getCount() % division;
-                    setItemDank(i,CommonUtils.copyStackWithSize(resultStack,compressedCount));
-                    addLater.add(CommonUtils.copyStackWithSize(stack,remainderCount));
+                    setItemDank(i, CommonUtils.copyStackWithSize(resultStack, compressedCount));
+                    addLater.add(CommonUtils.copyStackWithSize(stack, remainderCount));
                 }
             }
         }
@@ -165,14 +178,14 @@ public interface DankInterface extends ContainerData {
 
         for (ItemStack itemStack : addLater) {
             ItemStack remainder = itemStack.copy();
-            for (int i = 0; i < getContainerSizeDank();i++) {
-                remainder = addItemDank(i,remainder);
+            for (int i = 0; i < getContainerSizeDank(); i++) {
+                remainder = addItemDank(i, remainder);
                 if (remainder.isEmpty()) break;
             }
             if (!remainder.isEmpty()) {
                 player.addItem(remainder);
                 if (!remainder.isEmpty()) {
-                    player.drop(remainder,false);
+                    player.drop(remainder, false);
                 }
             }
         }
@@ -215,6 +228,7 @@ public interface DankInterface extends ContainerData {
     }
 
     MinecraftServer getServer();
+
     void setServer(MinecraftServer server);
 
     void setDankStats(DankStats dankStats);
@@ -265,6 +279,47 @@ public interface DankInterface extends ContainerData {
         validate();
     }
 
+    default int calcRedstone() {
+        int numStacks = 0;
+        float f = 0F;
+
+        for (int slot = 0; slot < this.getContainerSizeDank(); slot++) {
+            ItemStack stack = this.getItemDank(slot);
+
+            if (!stack.isEmpty()) {
+                f += (float) stack.getCount() / (float) this.getMaxStackSizeDank();
+                numStacks++;
+            }
+        }
+
+        f /= this.getContainerSizeDank();
+        return Mth.floor(f * 14F) + (numStacks > 0 ? 1 : 0);
+    }
+
+    default boolean noValidSlots() {
+        return IntStream.range(0, getContainerSizeDank())
+                .mapToObj(this::getItemDank)
+                .allMatch(stack -> stack.isEmpty() || stack.is(ModTags.BLACKLISTED_USAGE));
+    }
+
+    default void upgradeTo(DankStats stats) {
+        //can't downgrade inventories
+        if (stats.ordinal() <= getDankStats().ordinal()) {
+            return;
+        }
+        setTo(stats);
+    }
+
+    //like upgradeTo, but can go backwards, should only be used by commands
+    default void setTo(DankStats stats) {
+        if (stats != getDankStats()) {
+            Constants.LOG.debug("Upgrading dank #{} from tier {} to {}", frequency(), getDankStats().name(), stats.name());
+        }
+        setDankStats(stats);
+        copyItems();
+    }
+
+
     default boolean hasGhostItem(int slot) {
         return !getGhostItems().get(slot).isEmpty();
     }
@@ -284,6 +339,30 @@ public interface DankInterface extends ContainerData {
         }
     }
 
+    default void copyItems() {
+
+        DankStats dankStats = getDankStats();
+
+        NonNullList<ItemStack> newStacks = NonNullList.withSize(dankStats.slots, ItemStack.EMPTY);
+        NonNullList<ItemStack> newGhostStacks = NonNullList.withSize(dankStats.slots, ItemStack.EMPTY);
+
+        //don't copy nonexistent items
+        int oldSlots = getContainerSizeDank();
+        int max = Math.min(oldSlots, dankStats.slots);
+        for (int i = 0; i < max; i++) {
+            ItemStack oldStack = getItemDank(i);
+            ItemStack oldGhost = getGhostItem(i);
+            newStacks.set(i, oldStack);
+            newGhostStacks.set(i, oldGhost);
+        }
+
+        //caution, will void all current items
+        setSizeDank(dankStats.slots);
+        setItemsDank(newStacks);
+        setGhostItems(newGhostStacks);
+        setChangedDank();
+    }
+
     default void toggleGhostItem(int slot) {
         boolean loc = !getGhostItems().get(slot).isEmpty();
         if (!loc) {
@@ -291,10 +370,18 @@ public interface DankInterface extends ContainerData {
         } else {
             getGhostItems().set(slot, ItemStack.EMPTY);
         }
-        setChanged();
+        setChangedDank();
     }
 
-    void setChanged();
+    void setChangedDank();
+
+    void setSizeDank(int size);
+
+    default void saveToDisk() {
+        if (getServer() != null) {
+            DankStorage.getData(frequency(), getServer()).write(save());
+        }
+    }
 
     default boolean valid() {
         return getDankStats() != DankStats.zero;

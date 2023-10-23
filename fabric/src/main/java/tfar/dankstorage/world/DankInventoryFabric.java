@@ -38,21 +38,9 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
     public DankStats getDankStats() {
         return dankStats;
     }
-
-    public void upgradeTo(DankStats stats) {
-
-        //can't downgrade inventories
-        if (stats.ordinal() <= dankStats.ordinal()) {
-            return;
-        }
-        Constants.LOG.debug("Upgrading dank #{} from tier {} to {}", frequency, dankStats.name(), stats.name());
-        setTo(stats);
-    }
-
-    //like upgradeTo, but can go backwards, should only be used by commands
-    public void setTo(DankStats stats) {
-        this.dankStats = stats;
-        copyItems();
+    @Override
+    public void setSizeDank(int size) {
+        $setSize(size);
     }
 
     @Override
@@ -60,31 +48,13 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
         return getContainerSize();
     }
 
-    private void copyItems() {
-
-        NonNullList<ItemStack> newStacks = NonNullList.withSize(dankStats.slots, ItemStack.EMPTY);
-        NonNullList<ItemStack> newGhostStacks = NonNullList.withSize(dankStats.slots, ItemStack.EMPTY);
-
-        //don't copy nonexistent items
-        int oldSlots = getContainerSize();
-        int max = Math.min(oldSlots, dankStats.slots);
-        for (int i = 0; i < max; i++) {
-            ItemStack oldStack = getItem(i);
-            ItemStack oldGhost = getGhostItem(i);
-            newStacks.set(i, oldStack);
-            newGhostStacks.set(i, oldGhost);
-        }
-
-        //caution, will void all current items
-        $setSize(dankStats.slots);
-
-        ((SimpleContainerAccess) this).setItems(newStacks);
-        setGhostItems(newGhostStacks);
-        setChanged();
+    public void setGhostItems(NonNullList<ItemStack> newGhosts) {
+        ghostItems = newGhosts;
     }
 
-    protected void setGhostItems(NonNullList<ItemStack> newGhosts) {
-        ghostItems = newGhosts;
+    @Override
+    public void setItemsDank(NonNullList<ItemStack> stacks) {
+        ((SimpleContainerAccess)this).setItems(stacks);
     }
 
     @Override
@@ -109,7 +79,7 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
         if (j > 0) {
             itemStack2.grow(j);
             itemStack.shrink(j);
-            this.setChanged();
+            this.setChangedDank();
         }
     }
 
@@ -149,11 +119,7 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
         return items;
     }
 
-    public boolean noValidSlots() {
-        return IntStream.range(0, getContainerSize())
-                .mapToObj(this::getItem)
-                .allMatch(stack -> stack.isEmpty() || stack.is(ModTags.BLACKLISTED_USAGE));
-    }
+
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
@@ -182,30 +148,18 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
         return getMaxStackSize();
     }
 
-    public int calcRedstone() {
-        int numStacks = 0;
-        float f = 0F;
 
-        for (int slot = 0; slot < this.getContainerSize(); slot++) {
-            ItemStack stack = this.getItem(slot);
 
-            if (!stack.isEmpty()) {
-                f += (float) stack.getCount() / (float) this.getMaxStackSize();
-                numStacks++;
-            }
-        }
 
-        f /= this.getContainerSize();
-        return Mth.floor(f * 14F) + (numStacks > 0 ? 1 : 0);
+    @Override
+    public void setChangedDank() {
+        setChanged();
     }
-
 
     @Override
     public void setChanged() {
         super.setChanged();
-        if (server != null) {
-            DankStorage.getData(frequency,server).write(save());
-        }
+        saveToDisk();
     }
 
     @Override
@@ -225,7 +179,7 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
             case 1 -> textColor = value;
             case 2 -> frequencyLocked = value == 1;
         }
-        setChanged();
+        setChangedDank();
     }
 
     @Override

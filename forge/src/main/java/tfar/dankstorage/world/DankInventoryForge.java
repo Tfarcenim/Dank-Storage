@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.inventory.DankInterface;
@@ -53,46 +54,20 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
         ghostItems = NonNullList.withSize(size,ItemStack.EMPTY);
     }
 
-    public void upgradeTo(DankStats stats) {
-        //can't downgrade inventories
-        if (stats.ordinal() <= dankStats.ordinal()) {
-            return;
-        }
-        setTo(stats);
+
+    @Override
+    public void setSizeDank(int size) {
+        setSize(size);
     }
 
-    //like upgradeTo, but can go backwards, should only be used by commands
-    public void setTo(DankStats stats) {
-        if (stats != dankStats) {
-            DankStorageForge.LOGGER.debug("Upgrading dank #{} from tier {} to {}", frequency, dankStats.name(), stats.name());
-        }
-        this.dankStats = stats;
-        copyItems();
+    @Override
+    public void setItemsDank(NonNullList<ItemStack> stacks) {
+        this.stacks = stacks;
     }
 
-    private void copyItems() {
-
-        NonNullList<ItemStack> newStacks = NonNullList.withSize(dankStats.slots, ItemStack.EMPTY);
-        NonNullList<ItemStack> newGhostStacks = NonNullList.withSize(dankStats.slots, ItemStack.EMPTY);
-
-        //don't copy nonexistent items
-        int oldSlots = getSlots();
-        int max = Math.min(oldSlots, dankStats.slots);
-        for (int i = 0; i < max;i++) {
-            ItemStack oldStack = getStackInSlot(i);
-            ItemStack oldGhost = getGhostItem(i);
-            newStacks.set(i,oldStack);
-            newGhostStacks.set(i,oldGhost);
-        }
-
-        //caution, will void all current items
-        setSize(dankStats.slots);
-
-        for (int i = 0; i < max; i++) {
-            stacks = newStacks;
-            ghostItems = newGhostStacks;
-        }
-        onContentsChanged(0);
+    @Override
+    public void setGhostItems(NonNullList<ItemStack> ghostItems) {
+        this.ghostItems = ghostItems;
     }
 
     @Override
@@ -122,12 +97,6 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
         return stacks;
     }
 
-    public boolean noValidSlots() {
-        return IntStream.range(0, getSlots())
-                .mapToObj(this::getStackInSlot)
-                .allMatch(stack -> stack.isEmpty() || stack.is(ModTags.BLACKLISTED_USAGE));
-    }
-
     public ItemStack getGhostItem(int slot) {
         return ghostItems.get(slot);
     }
@@ -145,28 +114,6 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
                 && super.isItemValid(slot, stack);
     }
 
-    public int calcRedstone() {
-        int numStacks = 0;
-        float f = 0F;
-
-        for (int slot = 0; slot < this.getSlots(); slot++) {
-            ItemStack stack = this.getStackInSlot(slot);
-
-            if (!stack.isEmpty()) {
-                f += (float) stack.getCount() / (float) this.getSlotLimit(slot);
-                numStacks++;
-            }
-        }
-
-        f /= this.getSlots();
-        return Mth.floor(f * 14F) + (numStacks > 0 ? 1 : 0);
-    }
-
-    @Override
-    public void setChanged() {
-        onContentsChanged(0);
-    }
-
     @Override
     public MinecraftServer getServer() {
         return server;
@@ -178,14 +125,15 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
     }
 
     @Override
-    public void onContentsChanged(int slot) {
-        super.onContentsChanged(slot);
-        if (server != null) {
-            DankStorageForge.getData(frequency,server).write(save());
-        }
+    public void setChangedDank() {
+       onContentsChanged(0);
     }
 
-
+    @Override
+    protected void onContentsChanged(int slot) {
+        super.onContentsChanged(slot);
+        saveToDisk();
+    }
 
     @Override
     public int get(int slot) {
