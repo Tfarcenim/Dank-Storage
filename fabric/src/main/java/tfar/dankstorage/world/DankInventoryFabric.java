@@ -1,13 +1,7 @@
 package tfar.dankstorage.world;
 
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -20,7 +14,6 @@ import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.mixin.SimpleContainerAccess;
 import tfar.dankstorage.utils.*;
 
-import java.util.*;
 import java.util.stream.IntStream;
 
 public class DankInventoryFabric extends SimpleContainer implements DankInterface {
@@ -96,7 +89,7 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
 
     @Override
     public ItemStack addItemDank(int slot, ItemStack stack) {
-        return addItem(stack);
+        return addStack(slot,stack);
     }
 
     ItemStack addStack(int slot,ItemStack stack) {
@@ -174,53 +167,6 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
         return itemStack.is(Utils.BLACKLISTED_STORAGE) ? itemStack : super.addItem(itemStack);
     }*/
 
-
-
-    public CompoundTag save() {
-        ListTag nbtTagList = new ListTag();
-        for (int i = 0; i < this.getContents().size(); i++) {
-            if (!getContents().get(i).isEmpty()) {
-                int realCount = Math.min(getDankStats().stacklimit, getContents().get(i).getCount());
-                CompoundTag itemTag = new CompoundTag();
-                itemTag.putInt("Slot", i);
-                getContents().get(i).save(itemTag);
-                itemTag.putInt("ExtendedCount", realCount);
-                nbtTagList.add(itemTag);
-            }
-        }
-
-
-        ListTag ghostItemNBT = new ListTag();
-        for (int i = 0; i < this.getContents().size(); i++) {
-            if (!ghostItems.get(i).isEmpty()) {
-                CompoundTag itemTag = new CompoundTag();
-                itemTag.putInt("Slot", i);
-                ghostItems.get(i).save(itemTag);
-                ghostItemNBT.add(itemTag);
-            }
-        }
-
-
-        CompoundTag nbt = new CompoundTag();
-        nbt.put("Items", nbtTagList);
-        nbt.put(GHOST, ghostItemNBT);
-        nbt.putString("DankStats", dankStats.name());
-        nbt.putInt(Utils.FREQ, getFrequency());
-        nbt.putBoolean("locked", frequencyLocked());
-        return nbt;
-    }
-
-    public void read(CompoundTag nbt) {
-        DankStats stats = DankStats.valueOf(nbt.getString("DankStats"));
-        setDankStats(stats);
-        ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
-        readItems(tagList);
-        ListTag ghostItemList = nbt.getList(GHOST, Tag.TAG_COMPOUND);
-        readGhostItems(ghostItemList);
-        frequencyLocked = nbt.getBoolean("locked");
-        validate();
-    }
-
     @Override
     public int getMaxStackSizeDank() {
         return getMaxStackSize();
@@ -250,27 +196,6 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
         if (server != null) {
             DankStorageFabric.getData(frequency,server).write(save());
         }
-    }
-
-    public int getTextColor() {
-        return get(1);
-    }
-
-    public void setTextColor(int color) {
-        set(1, color);
-    }
-
-    public boolean frequencyLocked() {
-        return get(2) == 1;
-    }
-
-    public void toggleFrequencyLock() {
-        boolean loc = get(2) == 1;
-        setFrequencyLock(!loc);
-    }
-
-    public void setFrequencyLock(boolean lock) {
-        set(2, lock ? 1 : 0);
     }
 
     @Override
@@ -312,20 +237,5 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
         ghostItems.set(slot, new ItemStack(item));
     }
 
-    public void toggleGhostItem(int slot) {
-        boolean loc = !ghostItems.get(slot).isEmpty();
-        if (!loc) {
-            ghostItems.set(slot, CommonUtils.copyStackWithSize(getItem(slot), 1));
-        } else {
-            ghostItems.set(slot, ItemStack.EMPTY);
-        }
-        setChanged();
-    }
 
-    //0 - 80 are locked slots, 81 is the id, 82 is text color, and 83 is global lock
-
-    @Override
-    public int getCount() {
-        return getContainerSize() + 3;
-    }
 }

@@ -21,16 +21,47 @@ public interface DankInterface extends ContainerData {
 
     String GHOST = "GhostItems";
 
+    int FREQ = 0;
+    int TXT_COLOR = 1;
+    int FREQ_LOCK = 2;
+
     ItemStack getGhostItem(int slot);
     DankStats getDankStats();
-    boolean frequencyLocked();
+    default boolean frequencyLocked() {
+        return get(FREQ_LOCK) == 1;
+    }
+
+    default int textColor() {
+        return get(TXT_COLOR);
+    }
+
+    default void setTextColor(int color) {
+        set(TXT_COLOR, color);
+    }
+
+    default void toggleFrequencyLock() {
+        boolean loc = frequencyLocked();
+        setFrequencyLock(!loc);
+    }
+
+    default void setFrequencyLock(boolean lock) {
+        set(FREQ_LOCK, lock ? 1 : 0);
+    }
+
     void setItemDank(int slot,ItemStack stack);
     ItemStack getItemDank(int slot);
 
     NonNullList<ItemStack> getContents();
     NonNullList<ItemStack> getGhostItems();
-    default int getFrequency() {
-        return get(0);
+    default int frequency() {
+        return get(FREQ);
+    }
+
+
+    //0 is the id, 1 is text color, and 2 is frequency lock
+    @Override
+    default int getCount() {
+        return 3;
     }
 
     int getContainerSizeDank();
@@ -182,6 +213,54 @@ public interface DankInterface extends ContainerData {
         }
     }
 
+    void setDankStats(DankStats dankStats);
+
+
+    default CompoundTag save() {
+        ListTag nbtTagList = new ListTag();
+        for (int i = 0; i < this.getContents().size(); i++) {
+            if (!getContents().get(i).isEmpty()) {
+                int realCount = Math.min(getDankStats().stacklimit, getContents().get(i).getCount());
+                CompoundTag itemTag = new CompoundTag();
+                itemTag.putInt("Slot", i);
+                getContents().get(i).save(itemTag);
+                itemTag.putInt("ExtendedCount", realCount);
+                nbtTagList.add(itemTag);
+            }
+        }
+
+
+        ListTag ghostItemNBT = new ListTag();
+        for (int i = 0; i < this.getContents().size(); i++) {
+            if (!getGhostItems().get(i).isEmpty()) {
+                CompoundTag itemTag = new CompoundTag();
+                itemTag.putInt("Slot", i);
+                getGhostItems().get(i).save(itemTag);
+                ghostItemNBT.add(itemTag);
+            }
+        }
+
+
+        CompoundTag nbt = new CompoundTag();
+        nbt.put("Items", nbtTagList);
+        nbt.put(GHOST, ghostItemNBT);
+        nbt.putString("DankStats", getDankStats().name());
+        nbt.putInt(CommonUtils.FREQ, frequency());
+        nbt.putBoolean("locked", frequencyLocked());
+        return nbt;
+    }
+
+    default void read(CompoundTag nbt) {
+        DankStats stats = DankStats.valueOf(nbt.getString("DankStats"));
+        setDankStats(stats);
+        ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
+        readItems(tagList);
+        ListTag ghostItemList = nbt.getList(GHOST, Tag.TAG_COMPOUND);
+        readGhostItems(ghostItemList);
+        setFrequencyLock(nbt.getBoolean("locked"));
+        validate();
+    }
+
     default boolean hasGhostItem(int slot) {
         return !getGhostItems().get(slot).isEmpty();
     }
@@ -200,6 +279,18 @@ public interface DankInterface extends ContainerData {
             }
         }
     }
+
+    default void toggleGhostItem(int slot) {
+        boolean loc = !getGhostItems().get(slot).isEmpty();
+        if (!loc) {
+            getGhostItems().set(slot, CommonUtils.copyStackWithSize(getItemDank(slot), 1));
+        } else {
+            getGhostItems().set(slot, ItemStack.EMPTY);
+        }
+        setChanged();
+    }
+
+    void setChanged();
 
     default boolean valid() {
         return getDankStats() != DankStats.zero;

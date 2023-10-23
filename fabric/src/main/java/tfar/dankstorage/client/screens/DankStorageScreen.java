@@ -1,28 +1,21 @@
 package tfar.dankstorage.client.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.client.DankKeybinds;
 import tfar.dankstorage.client.DualTooltip;
-import tfar.dankstorage.client.StackSizeRenderer;
 import tfar.dankstorage.client.button.SmallButton;
 import tfar.dankstorage.container.AbstractDankMenu;
 import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.network.server.C2SButtonPacket;
 import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
-import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.Utils;
 
 import java.util.List;
@@ -112,14 +105,11 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends CDankStorageS
         initEditbox();
     }
 
-
-
-
     @Override
     public void render(GuiGraphics stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         super.render(stack, mouseX, mouseY, partialTicks);
-        int color = menu.dankInventory.getTextColor();
+        int color = menu.dankInventory.textColor();
         this.frequency.setTextColor(color);
         this.frequency.render(stack, mouseX, mouseY, partialTicks);
         this.renderTooltip(stack, mouseX, mouseY);
@@ -151,7 +141,7 @@ public class DankStorageScreen<T extends AbstractDankMenu> extends CDankStorageS
     protected void renderLabels(GuiGraphics poseStack, int i, int j) {
         RenderSystem.disableBlend();
         super.renderLabels(poseStack, i, j);
-        int id = menu.dankInventory.getFrequency();//menu.dankInventory.get(menu.rows * 9);
+        int id = menu.dankInventory.frequency();//menu.dankInventory.get(menu.rows * 9);
         int color = 0x008000;
         poseStack.drawString( font,"ID: " + id, 62, inventoryLabelY, color,false);
     }

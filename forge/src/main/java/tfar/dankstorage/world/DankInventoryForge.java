@@ -136,16 +136,6 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
         ghostItems.set(slot,new ItemStack(item));
     }
 
-    public void toggleGhostItem(int slot) {
-        boolean loc = !ghostItems.get(slot).isEmpty();
-        if (!loc) {
-            ghostItems.set(slot,ItemHandlerHelper.copyStackWithSize(getStackInSlot(slot),1));
-        } else {
-            ghostItems.set(slot,ItemStack.EMPTY);
-        }
-        onContentsChanged(slot);
-    }
-
     //paranoia
     @Override
     public boolean isItemValid(int slot,ItemStack stack) {
@@ -154,55 +144,6 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
                 && checkGhostItem
                 && super.isItemValid(slot, stack);
     }
-
-    //returns the portion of the itemstack that was NOT placed into the storage
-    public CompoundTag save() {
-        ListTag nbtTagList = new ListTag();
-        for (int i = 0; i < this.getContents().size(); i++) {
-            if (!getContents().get(i).isEmpty()) {
-                int realCount = Math.min(dankStats.stacklimit, getContents().get(i).getCount());
-                CompoundTag itemTag = new CompoundTag();
-                itemTag.putInt("Slot", i);
-                getContents().get(i).save(itemTag);
-                itemTag.putInt("ExtendedCount", realCount);
-                nbtTagList.add(itemTag);
-            }
-        }
-
-
-        ListTag ghostItemNBT = new ListTag();
-        for (int i = 0; i < this.getContents().size(); i++) {
-            if (!ghostItems.get(i).isEmpty()) {
-                CompoundTag itemTag = new CompoundTag();
-                itemTag.putInt("Slot", i);
-                ghostItems.get(i).save(itemTag);
-                ghostItemNBT.add(itemTag);
-            }
-        }
-
-
-        CompoundTag nbt = new CompoundTag();
-        nbt.put("Items", nbtTagList);
-        nbt.put(GHOST,ghostItemNBT);
-        nbt.putString("DankStats", dankStats.name());
-        nbt.putInt(Utils.FREQ, frequency);
-        nbt.putBoolean("locked", frequencyLocked);
-        return nbt;
-    }
-
-    public void read(CompoundTag nbt) {
-        DankStats stats = DankStats.valueOf(nbt.getString("DankStats"));
-        setDankStats(stats);
-        ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
-        readItems(tagList);
-        ListTag ghostItemList = nbt.getList(GHOST,Tag.TAG_COMPOUND);
-        readGhostItems(ghostItemList);
-        frequencyLocked = nbt.getBoolean("locked");
-        validate();
-    }
-
-
-
 
     public int calcRedstone() {
         int numStacks = 0;
@@ -220,6 +161,12 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
         f /= this.getSlots();
         return Mth.floor(f * 14F) + (numStacks > 0 ? 1 : 0);
     }
+
+    @Override
+    public void setChanged() {
+        onContentsChanged(0);
+    }
+
     @Override
     public void onContentsChanged(int slot) {
         super.onContentsChanged(slot);
@@ -228,30 +175,7 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
         }
     }
 
-    public int getFrequencySlot() {
-        return getSlots();
-    }
 
-    public int getTextColor() {
-        return get(1);
-    }
-
-    public void setTextColor(int color) {
-        set(1, color);
-    }
-
-    public boolean frequencyLocked() {
-        return get(2) == 1;
-    }
-
-    public void toggleFrequencyLock() {
-        boolean loc = frequencyLocked();
-        setFrequencyLock(!loc);
-    }
-
-    public void setFrequencyLock(boolean lock) {
-        set(2, lock ? 1 : 0);
-    }
 
     @Override
     public int get(int slot) {
@@ -298,10 +222,4 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
         return ghostItems;
     }
 
-    //0 - 80 are locked slots, 81 is the id, 82 is text color, and 83 is global lock
-
-    @Override
-    public int getCount() {
-        return getSlots() + 3;
-    }
 }

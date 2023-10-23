@@ -54,7 +54,7 @@ public class RedprintItem extends Item {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof DockBlockEntity dockBlockEntity) {
                 if (player.isCrouching()) {
-                    int freq = dockBlockEntity.getInventory().getFrequency();
+                    int freq = dockBlockEntity.getInventory().frequency();
                     stack.getOrCreateTag().putInt(CommonUtils.FREQ, freq);
                 } else {
                     if (stack.hasTag() && stack.getTag().contains(CommonUtils.FREQ)) {
