@@ -16,6 +16,7 @@ import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
@@ -24,6 +25,7 @@ import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.item.CDankItem;
+import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.world.ClientData;
 
@@ -438,6 +440,42 @@ public class CommonUtils {
         ItemStack dank = getDank(player);
         if (!dank.isEmpty()) {
             cyclePlacement(dank,player);
+        }
+    }
+
+    public static void setTxtColor(ServerPlayer player,int frequency,boolean set) {
+        AbstractContainerMenu container = player.containerMenu;
+        if (container instanceof AbstractDankMenu dankMenu) {
+            DankInterface inventory = dankMenu.dankInventory;
+
+            int textColor = 0;
+
+            if (frequency > INVALID) {
+                if (frequency < DankStorage.maxId.getMaxId()) {
+                    DankInterface targetInventory = DankStorage.getData(frequency,player.server).createInventory(frequency);
+
+                    if (targetInventory.valid() && targetInventory.getDankStats() == inventory.getDankStats()) {
+
+                        if (targetInventory.frequencyLocked()) {
+                            textColor = TxtColor.LOCKED.color;
+                        } else {
+                            textColor = TxtColor.GOOD.color;
+                            if (set) {
+                                dankMenu.setFrequency(frequency);
+                                player.closeContainer();
+                            }
+                        }
+                    } else {
+                        textColor = TxtColor.DIFFERENT_TIER.color;
+                    }
+                } else {
+                    //orange if it doesn't exist, yellow if it does but wrong tier
+                    textColor = TxtColor.TOO_HIGH.color ;
+                }
+            } else {
+                textColor = TxtColor.INVALID.color;
+            }
+            inventory.setTextColor(textColor);
         }
     }
 

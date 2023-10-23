@@ -12,7 +12,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.block.CDockBlock;
-import tfar.dankstorage.container.DockMenu;
 import tfar.dankstorage.inventory.api.DankInventorySlotWrapper;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;

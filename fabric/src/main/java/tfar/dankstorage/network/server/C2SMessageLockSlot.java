@@ -9,7 +9,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import tfar.dankstorage.container.AbstractDankMenu;
 import tfar.dankstorage.world.DankInventoryFabric;
 import tfar.dankstorage.network.DankPacketHandler;
 
