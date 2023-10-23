@@ -11,6 +11,7 @@ import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
+import tfar.dankstorage.world.CDankSavedData;
 import tfar.dankstorage.world.DankInventoryForge;
 
 import javax.annotation.Nullable;
@@ -39,9 +40,9 @@ public class PortableDankProvider implements MenuProvider {
                 int next = DankStorage.maxId.getMaxId();
                 DankStorage.maxId.increment();
                 Utils.getSettings(stack).putInt(Utils.FREQ,next);
-                DankSavedData dankSavedData = DankStorageForge.getData(next,player.level().getServer());
+                CDankSavedData dankSavedData = DankStorage.getData(next,player.level().getServer());
                 dankSavedData.setStats(defaults,next);
-                dankInventoryForge = dankSavedData.createFreshInventory(defaults,next);
+                dankInventoryForge = (DankInventoryForge) dankSavedData.createFreshInventory(defaults,next);
         }
 
         DankStats type = dankInventoryForge.dankStats;
