@@ -9,9 +9,11 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.ButtonAction;
-import tfar.dankstorage.utils.Utils;
+import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.world.DankInventoryFabric;
 
 
@@ -29,7 +31,7 @@ public class C2SButtonPacket implements ServerPlayNetworking.PlayChannelHandler 
 
         if (buttonAction.requiresContainer) {
             if (container instanceof AbstractDankMenu dankContainer) {
-                DankInventoryFabric inventory = dankContainer.dankInventory;
+                DankInterface inventory = dankContainer.dankInventory;
                 switch (buttonAction) {
                     case LOCK_FREQUENCY -> inventory.toggleFrequencyLock();
                     case SORT -> inventory.sort();
@@ -38,9 +40,9 @@ public class C2SButtonPacket implements ServerPlayNetworking.PlayChannelHandler 
             }
         } else {
             switch (buttonAction) {
-                case TOGGLE_TAG -> Utils.toggleTagMode(player);
-                case TOGGLE_PICKUP -> Utils.togglePickupMode(player);
-                case TOGGLE_USE_TYPE -> Utils.toggleUseType(player);
+                case TOGGLE_TAG -> CommonUtils.toggleTagMode(player);
+                case TOGGLE_PICKUP -> CommonUtils.togglePickupMode(player);
+                case TOGGLE_USE_TYPE -> CommonUtils.toggleUseType(player);
             }
         }
     }

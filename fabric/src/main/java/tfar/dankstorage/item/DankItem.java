@@ -1,20 +1,6 @@
 package tfar.dankstorage.item;
 
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import tfar.dankstorage.container.PortableDankProvider;
-import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.utils.Utils;
-import tfar.dankstorage.world.DankInventoryFabric;
 
 public class DankItem extends CDankItem {
 
@@ -53,18 +39,4 @@ public class DankItem extends CDankItem {
   }*/
 
 
-
-    @Override
-    public MenuProvider createProvider(ItemStack stack) {
-        return new PortableDankProvider(stack);
-    }
-
-    @Override
-    public void inventoryTick(ItemStack bag, Level level, Entity entity, int i, boolean equipped) {
-        //there has to be a better way
-        if (entity instanceof ServerPlayer player && equipped) {
-            ItemStack sel = Utils.getSelectedItem(bag,level);
-            DankPacketHandler.sendSelectedItem(player, sel);
-        }
-    }
 }

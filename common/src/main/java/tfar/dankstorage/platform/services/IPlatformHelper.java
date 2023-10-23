@@ -4,7 +4,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.utils.ButtonAction;
 import tfar.dankstorage.utils.DankStats;
@@ -57,7 +56,7 @@ public interface IPlatformHelper {
     int previewX();
     int previewY();
 
-    DankInterface getInventoryCommon(ItemStack bag, Level level);
     Slot createSlot(DankInterface dankInventory, int index, int xPosition, int yPosition);
 
+    void sendSelectedItem(ServerPlayer player, ItemStack selected);
 }

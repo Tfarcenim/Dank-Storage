@@ -4,18 +4,16 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.loading.FMLLoader;
 import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.server.*;
 import tfar.dankstorage.platform.services.IPlatformHelper;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.FMLLoader;
 import tfar.dankstorage.utils.ButtonAction;
 import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventoryForge;
 
 public class ForgePlatformHelper implements IPlatformHelper {
@@ -79,6 +77,11 @@ public class ForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
+    public void sendSelectedItem(ServerPlayer player, ItemStack selected) {
+        DankPacketHandler.sendSelectedItem(player, selected);
+    }
+
+    @Override
     public DankInterface createInventory(DankStats stats, int frequency) {
         return new DankInventoryForge(stats,frequency);
     }
@@ -101,10 +104,5 @@ public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public int previewY() {
         return DankStorageForge.ClientConfig.preview_y.get();
-    }
-
-    @Override
-    public DankInterface getInventoryCommon(ItemStack bag, Level level) {
-        return Utils.getInventory(bag,level);
     }
 }

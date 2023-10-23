@@ -1,19 +1,17 @@
 package tfar.dankstorage.platform;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.server.*;
 import tfar.dankstorage.platform.services.IPlatformHelper;
-import net.fabricmc.loader.api.FabricLoader;
 import tfar.dankstorage.utils.ButtonAction;
 import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventoryFabric;
 
 public class FabricPlatformHelper implements IPlatformHelper {
@@ -76,13 +74,13 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public DankInterface createInventory(DankStats stats, int frequency) {
-        return new DankInventoryFabric(stats,frequency);
+    public void sendSelectedItem(ServerPlayer player, ItemStack selected) {
+        DankPacketHandler.sendSelectedItem(player, selected);
     }
 
     @Override
-    public DankInterface getInventoryCommon(ItemStack bag, Level level) {
-        return Utils.getInventory(bag,level);
+    public DankInterface createInventory(DankStats stats, int frequency) {
+        return new DankInventoryFabric(stats,frequency);
     }
 
     @Override

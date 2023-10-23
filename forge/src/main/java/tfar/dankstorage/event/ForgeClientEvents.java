@@ -12,7 +12,7 @@ import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.client.DankHudOverlay;
 import tfar.dankstorage.events.ClientEvents;
 import tfar.dankstorage.network.server.C2SMessagePickBlock;
-import tfar.dankstorage.utils.Utils;
+import tfar.dankstorage.utils.CommonUtils;
 
 public class ForgeClientEvents {
 
@@ -27,7 +27,7 @@ public class ForgeClientEvents {
     public static void onPickBlock(InputEvent.InteractionKeyMappingTriggered e) {
         if (e.isPickBlock()) {
 
-            if (Utils.isHoldingDank(mc.player) && mc.hitResult != null && mc.hitResult.getType() != HitResult.Type.MISS) {
+            if (CommonUtils.isHoldingDank(mc.player) && mc.hitResult != null && mc.hitResult.getType() != HitResult.Type.MISS) {
 
                 HitResult result = mc.player.pick(mc.player.getBlockReach(),0,false);
 

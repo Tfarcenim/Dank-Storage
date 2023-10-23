@@ -1,25 +1,14 @@
 package tfar.dankstorage.world;
 
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
-import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.utils.Utils;
-
-import java.util.stream.IntStream;
 
 public class DankInventoryForge extends ItemStackHandler implements DankInterface {
 

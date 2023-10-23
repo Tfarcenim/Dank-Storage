@@ -1,4 +1,4 @@
-package tfar.dankstorage.container;
+package tfar.dankstorage.menu;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
@@ -7,12 +7,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.menu.DankMenu;
+import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.CDankSavedData;
-import tfar.dankstorage.world.DankInventoryForge;
 
 import javax.annotation.Nullable;
 
@@ -33,23 +32,23 @@ public class PortableDankProvider implements MenuProvider {
     @Override
     public AbstractContainerMenu createMenu(int i, Inventory playerInventory, Player player) {
 
-        DankInventoryForge dankInventoryForge = Utils.getInventory(stack,player.level());
+        DankInterface dankInventoryForge = CommonUtils.getBagInventory(stack,player.level());
         DankStats defaults = CommonUtils.getDefaultStats(stack);
 
         if (dankInventoryForge == null) {//create a new one
                 int next = DankStorage.maxId.getMaxId();
                 DankStorage.maxId.increment();
-                Utils.getSettings(stack).putInt(Utils.FREQ,next);
+                CommonUtils.getSettings(stack).putInt(CommonUtils.FREQ,next);
                 CDankSavedData dankSavedData = DankStorage.getData(next,player.level().getServer());
                 dankSavedData.setStats(defaults,next);
-                dankInventoryForge = (DankInventoryForge) dankSavedData.createFreshInventory(defaults,next);
+                dankInventoryForge = dankSavedData.createFreshInventory(defaults,next);
         }
 
-        DankStats type = dankInventoryForge.dankStats;
+        DankStats type = dankInventoryForge.getDankStats();
 
         if (defaults != type) {
             if (defaults.ordinal() < type.ordinal()) {//if the default stats are lower than what saveddata reports, abort opening
-                Utils.warn(player, defaults, type);
+                CommonUtils.warn(player, defaults, type);
                 return null;
             }
             dankInventoryForge.upgradeTo(defaults);

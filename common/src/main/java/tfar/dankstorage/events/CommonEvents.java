@@ -39,7 +39,7 @@ public class CommonEvents {
 
         PickupMode pickupMode = CommonUtils.getPickupMode(dank);
         if (pickupMode == PickupMode.none) return false;
-        DankInterface inv = Services.PLATFORM.getInventoryCommon(dank,player.level());
+        DankInterface inv = CommonUtils.getBagInventory(dank,player.level());
 
         if (inv == null) {
             Constants.LOG.warn("That's odd, the player somehow got an unassigned dank to change pickup mode");

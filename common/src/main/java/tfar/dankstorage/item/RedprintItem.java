@@ -72,7 +72,7 @@ public class RedprintItem extends Item {
 
         if (otherStack.getItem() instanceof CDankItem) {
             int redF = getFrequency(stack);
-            if (redF != CommonUtils.INVALID) {
+            if (redF > CommonUtils.INVALID) {
                 CommonUtils.setFrequency(otherStack,redF);
             }
             return true;

@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.util.C2SPacketHelper;
-import tfar.dankstorage.utils.Utils;
+import tfar.dankstorage.utils.CommonUtils;
 
 
 public class C2SMessagePickBlock implements C2SPacketHelper {
@@ -31,8 +31,8 @@ public class C2SMessagePickBlock implements C2SPacketHelper {
 
     public void handleServer(ServerPlayer player) {
         if (player.getMainHandItem().getItem() instanceof DankItem)
-            Utils.setPickSlot(player.level(),player.getMainHandItem(), stack);
+            CommonUtils.setPickSlot(player.level(),player.getMainHandItem(), stack);
         else if (player.getOffhandItem().getItem() instanceof DankItem)
-            Utils.setPickSlot(player.level(),player.getOffhandItem(), stack);
+            CommonUtils.setPickSlot(player.level(),player.getOffhandItem(), stack);
     }
 }

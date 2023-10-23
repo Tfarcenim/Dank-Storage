@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.util.C2SPacketHelper;
-import tfar.dankstorage.utils.Utils;
+import tfar.dankstorage.utils.CommonUtils;
 
 public class C2SScrollSlotPacket implements C2SPacketHelper {
 
@@ -29,9 +29,9 @@ public class C2SScrollSlotPacket implements C2SPacketHelper {
 
     public void handleServer(ServerPlayer player) {
         if (player.getMainHandItem().getItem() instanceof DankItem)
-            Utils.changeSelectedSlot(player.getMainHandItem(), right,player);
+            CommonUtils.changeSelectedSlot(player.getMainHandItem(), right,player);
         else if (player.getOffhandItem().getItem() instanceof DankItem)
-            Utils.changeSelectedSlot(player.getOffhandItem(), right,player);
+            CommonUtils.changeSelectedSlot(player.getOffhandItem(), right,player);
     }
 }
 

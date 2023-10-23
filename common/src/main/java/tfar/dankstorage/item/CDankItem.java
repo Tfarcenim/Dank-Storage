@@ -7,12 +7,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -25,6 +27,7 @@ import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.client.DankKeybinds;
 import tfar.dankstorage.client.DankTooltip;
 import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.menu.PortableDankProvider;
 import tfar.dankstorage.mixin.ItemUsageContextAccessor;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
@@ -41,7 +44,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-public abstract class CDankItem extends Item {
+public class CDankItem extends Item {
 
     public final DankStats stats;
     public CDankItem(Properties $$0, DankStats stats) {
@@ -120,7 +123,7 @@ public abstract class CDankItem extends Item {
 
         //the client doesn't have access to the full inventory
         if (!player.level().isClientSide) {
-            DankInterface handler = Services.PLATFORM.getInventoryCommon(bag, player.level());
+            DankInterface handler = CommonUtils.getBagInventory(bag, player.level());
             handler.setItemDank(CommonUtils.getSelectedSlot(bag), toUse);
         }
 
@@ -136,6 +139,10 @@ public abstract class CDankItem extends Item {
     @Override
     public boolean isFoil(ItemStack stack) {
         return stack.hasTag() && CommonUtils.getPickupMode(stack) != PickupMode.none;
+    }
+
+    public MenuProvider createProvider(ItemStack stack) {
+        return new PortableDankProvider(stack);
     }
 
     public int getGlintColor(ItemStack stack) {
@@ -179,7 +186,7 @@ public abstract class CDankItem extends Item {
         UseOnContext ctx2 = new UseOnContext2(ctx.getLevel(), ctx.getPlayer(), ctx.getHand(), toPlace, ((ItemUsageContextAccessor) ctx).getHitResult());
         InteractionResult actionResultType = toPlace.getItem().useOn(ctx2);//ctx2.getItem().onItemUse(ctx);
         if (!level.isClientSide) {
-            DankInterface dankInventory = Services.PLATFORM.getInventoryCommon(bag,level);
+            DankInterface dankInventory = CommonUtils.getBagInventory(bag,level);
             dankInventory.setItemDank(selectedSlot, ctx2.getItemInHand());
         }
         return actionResultType;
@@ -229,7 +236,7 @@ public abstract class CDankItem extends Item {
                     ItemStack bagCopy = bag.copy();
                     player.setItemSlot(hand1, toPlace);
                     InteractionResultHolder<ItemStack> actionResult = toPlace.getItem().use(level, player, hand);
-                    DankInterface handler = Services.PLATFORM.getInventoryCommon(bagCopy, level);
+                    DankInterface handler = CommonUtils.getBagInventory(bagCopy, level);
                     handler.setItemDank(CommonUtils.getSelectedSlot(bagCopy), actionResult.getObject());
                     player.setItemSlot(hand1, bagCopy);
                 }
@@ -237,8 +244,6 @@ public abstract class CDankItem extends Item {
             return new InteractionResultHolder<>(InteractionResult.PASS, player.getItemInHand(hand));
         }
     }
-
-    public abstract MenuProvider createProvider(ItemStack stack);
 
     static class UseOnContext2 extends UseOnContext {
 
@@ -280,5 +285,12 @@ public abstract class CDankItem extends Item {
         }
     }
 
-
+    @Override
+    public void inventoryTick(ItemStack bag, Level level, Entity entity, int i, boolean equipped) {
+        //there has to be a better way
+        if (entity instanceof ServerPlayer player && equipped) {
+            ItemStack sel = CommonUtils.getSelectedItem(bag,level);
+            Services.PLATFORM.sendSelectedItem(player, sel);
+        }
+    }
 }

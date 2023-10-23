@@ -26,11 +26,13 @@ import tfar.dankstorage.ModTags;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.item.CDankItem;
 import tfar.dankstorage.menu.AbstractDankMenu;
+import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.world.ClientData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,6 +125,60 @@ public class CommonUtils {
 
         return false;
     }
+
+
+    public static void setPickSlot(Level level,ItemStack bag, ItemStack stack) {
+
+        DankInterface dankInterface = getBagInventory(bag,level);
+
+        if (dankInterface != null) {
+            int slot = findSlotMatchingItem(dankInterface, stack);
+            if (slot != INVALID) setSelectedSlot(bag, slot);
+        }
+    }
+
+    public static int findSlotMatchingItem(DankInterface dankInventory, ItemStack itemStack) {
+        for (int i = 0; i < dankInventory.getContainerSizeDank(); ++i) {
+            ItemStack stack = dankInventory.getItemDank(i);
+            if (stack.isEmpty() || !ItemStack.isSameItemSameTags(itemStack,stack)) continue;
+            return i;
+        }
+        return INVALID;
+    }
+
+    public static void changeSelectedSlot(ItemStack bag, boolean right, ServerPlayer player) {
+        DankInterface handler = getBagInventory(bag,player.serverLevel());
+        //don't change slot if empty
+        if (handler == null || handler.noValidSlots()) return;
+        int selectedSlot = getSelectedSlot(bag);
+        int size = handler.getContainerSizeDank();
+        //keep iterating until a valid slot is found (not empty and not blacklisted from usage)
+        if (right) {
+            selectedSlot++;
+            if (selectedSlot >= size) selectedSlot = 0;
+        } else {
+            selectedSlot--;
+            if (selectedSlot < 0) selectedSlot = size - 1;
+        }
+        ItemStack selected = handler.getItemDank(selectedSlot);
+
+        while (selected.isEmpty() || selected.is(ModTags.BLACKLISTED_USAGE)) {
+            if (right) {
+                selectedSlot++;
+                if (selectedSlot >= size) selectedSlot = 0;
+            } else {
+                selectedSlot--;
+                if (selectedSlot < 0) selectedSlot = size - 1;
+            }
+            selected = handler.getItemDank(selectedSlot);
+        }
+        if (selectedSlot != INVALID) {
+            setSelectedSlot(bag, selectedSlot);
+            Services.PLATFORM.sendSelectedItem(player,selected);
+            player.displayClientMessage(selected.getHoverName(),true);
+        }
+    }
+
     public static List<CraftingRecipe> findReversibles(ServerLevel level,int size) {
         List<CraftingRecipe> compactingRecipes = new ArrayList<>();
         List<CraftingRecipe> recipes = level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
@@ -236,9 +292,29 @@ public class CommonUtils {
         }
     }
 
+    public static DankInterface getBagInventory(ItemStack bag, Level level) {
+        if (!level.isClientSide) {
+            int id = getFrequency(bag);
+            if (id != INVALID) {
+                Path path = ((MinecraftServerAccess)level.getServer()).getStorageSource()
+                        .getDimensionPath(level.getServer().getLevel(Level.OVERWORLD).dimension())
+                        .resolve("data/"+DankStorage.MODID+"/"+id+".dat");
+
+                if (path.toFile().isFile()) {
+                    return DankStorage.getData(id,level.getServer()).createInventory(id);
+                } else {
+                    return DankStorage.getData(id,level.getServer()).createFreshInventory(getDefaultStats(bag),id);
+                }
+            } else {
+                return null;
+            }
+        }
+        throw new RuntimeException("Attempted to get inventory on client");
+    }
+
 
     public static ItemStack getItemStackInSelectedSlot(ItemStack bag,ServerLevel level) {
-        DankInterface inv = Services.PLATFORM.getInventoryCommon(bag,level);
+        DankInterface inv = getBagInventory(bag,level);
         if (inv == null) return ItemStack.EMPTY;
         int slot = getSelectedSlot(bag);
         if (slot == INVALID) return ItemStack.EMPTY;
@@ -396,7 +472,7 @@ public class CommonUtils {
             int selected = getSelectedSlot(bag);
             if (selected == INVALID) return ItemStack.EMPTY;
             if (!level.isClientSide) {
-                DankInterface dankInventory = Services.PLATFORM.getInventoryCommon(bag, level);
+                DankInterface dankInventory = getBagInventory(bag, level);
                 if (dankInventory != null) {
                     return dankInventory.getItemDank(selected);
                 } else {
@@ -491,4 +567,31 @@ public class CommonUtils {
         copy.setCount(size);
         return copy;
     }
+
+
+        /*public static boolean areItemStacksConvertible(final ItemStack stack1, final ItemStack stack2) {
+        if (stack1.hasTag() || stack2.hasTag()) return false;
+        Collection<ResourceLocation> taglistofstack1 = getTags(stack1.getItem());
+        Collection<ResourceLocation> taglistofstack2 = getTags(stack2.getItem());
+
+        Set<ResourceLocation> commontags = new HashSet<>(taglistofstack1);
+        commontags.retainAll(taglistofstack2);
+        commontags.retainAll(taglist);
+        return !commontags.isEmpty();
+    }
+
+    private static Collection<ResourceLocation> getTags(Item item) {
+        return getTagsFor(ItemTags.getAllTags(), item);
+    }
+
+    /**
+     * can't use TagGroup#getTagsFor because it's client only
+
+    private static Collection<ResourceLocation> getTagsFor(TagCollection<Item> tagGroup, Item item) {
+        return tagGroup.getAllTags().entrySet().stream()
+                .filter(identifierTagEntry -> identifierTagEntry.getValue().contains(item))
+                .map(Map.Entry::getKey).collect(Collectors.toList());
+    }*/
+
+
 }

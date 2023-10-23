@@ -6,12 +6,11 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.network.DankPacketHandler;
-import tfar.dankstorage.utils.Utils;
+import tfar.dankstorage.utils.CommonUtils;
 
 public class C2SMessageScrollSlot implements ServerPlayNetworking.PlayChannelHandler {
 
@@ -23,9 +22,9 @@ public class C2SMessageScrollSlot implements ServerPlayNetworking.PlayChannelHan
 
     public void handle(ServerPlayer player, boolean right) {
         if (player.getMainHandItem().getItem() instanceof DankItem)
-            Utils.changeSelectedSlot(player.getMainHandItem(), right,player);
+            CommonUtils.changeSelectedSlot(player.getMainHandItem(), right,player);
         else if (player.getOffhandItem().getItem() instanceof DankItem)
-            Utils.changeSelectedSlot(player.getOffhandItem(), right,player);
+            CommonUtils.changeSelectedSlot(player.getOffhandItem(), right,player);
     }
 
     @Override

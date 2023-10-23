@@ -8,6 +8,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.utils.PacketBufferEX;
 
 public class S2CSyncGhostItemPacket implements ClientPlayNetworking.PlayChannelHandler {
