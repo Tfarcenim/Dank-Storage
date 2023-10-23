@@ -12,10 +12,10 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import org.lwjgl.glfw.GLFW;
 import tfar.dankstorage.client.screens.CDankStorageScreen;
-import tfar.dankstorage.container.DankMenu;
-import tfar.dankstorage.container.DockMenu;
-import tfar.dankstorage.event.ForgeClientEvents;
 import tfar.dankstorage.init.ModMenuTypes;
+import tfar.dankstorage.menu.DankMenu;
+import tfar.dankstorage.menu.DockMenu;
+import tfar.dankstorage.event.ForgeClientEvents;
 import tfar.dankstorage.utils.ButtonAction;
 import tfar.dankstorage.network.server.C2SButtonPacket;
 

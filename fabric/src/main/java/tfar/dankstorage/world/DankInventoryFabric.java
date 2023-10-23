@@ -148,9 +148,6 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
         return getMaxStackSize();
     }
 
-
-
-
     @Override
     public void setChangedDank() {
         setChanged();
@@ -191,15 +188,5 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
     public ItemStack getItemDank(int slot) {
         return getItem(slot);
     }
-
-    @Override
-    public ItemStack getGhostItem(int slot) {
-        return ghostItems.get(slot);
-    }
-
-    public void setGhostItem(int slot, Item item) {
-        ghostItems.set(slot, new ItemStack(item));
-    }
-
 
 }

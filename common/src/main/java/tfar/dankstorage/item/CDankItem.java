@@ -14,6 +14,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.*;
@@ -105,6 +106,26 @@ public abstract class CDankItem extends Item {
             tooltip.add(
                     CommonUtils.translatable("text.dankstorage.stacklimit", CommonUtils.literal(stats.stacklimit + "").withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.GRAY));
         }
+    }
+
+    //this is called on the client
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack bag, Player player, LivingEntity entity, InteractionHand hand) {
+        if (!CommonUtils.isConstruction(bag)) return InteractionResult.PASS;
+
+        ItemStack toUse = CommonUtils.getSelectedItem(bag,player.level());
+        EquipmentSlot hand1 = hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+        player.setItemSlot(hand1, toUse);
+        InteractionResult result = toUse.getItem().interactLivingEntity(toUse, player, entity, hand);
+
+        //the client doesn't have access to the full inventory
+        if (!player.level().isClientSide) {
+            DankInterface handler = Services.PLATFORM.getInventoryCommon(bag, player.level());
+            handler.setItemDank(CommonUtils.getSelectedSlot(bag), toUse);
+        }
+
+        player.setItemSlot(hand1, bag);
+        return result;
     }
 
     @Override

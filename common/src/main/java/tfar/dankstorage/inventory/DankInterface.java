@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.Constants;
 import tfar.dankstorage.DankStorage;
@@ -31,7 +32,10 @@ public interface DankInterface extends ContainerData {
     int TXT_COLOR = 1;
     int FREQ_LOCK = 2;
 
-    ItemStack getGhostItem(int slot);
+    default ItemStack getGhostItem(int slot) {
+        return getGhostItems().get(slot);
+    }
+
 
     DankStats getDankStats();
 
@@ -59,6 +63,10 @@ public interface DankInterface extends ContainerData {
     void setItemDank(int slot, ItemStack stack);
 
     ItemStack getItemDank(int slot);
+
+    default void setGhostItem(int slot, Item item) {
+        getGhostItems().set(slot, new ItemStack(item));
+    }
 
     NonNullList<ItemStack> getContents();
     void setItemsDank(NonNullList<ItemStack> stacks);

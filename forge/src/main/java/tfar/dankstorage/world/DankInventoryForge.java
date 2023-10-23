@@ -97,14 +97,6 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
         return stacks;
     }
 
-    public ItemStack getGhostItem(int slot) {
-        return ghostItems.get(slot);
-    }
-
-    public void setGhostItem(int slot,Item item) {
-        ghostItems.set(slot,new ItemStack(item));
-    }
-
     //paranoia
     @Override
     public boolean isItemValid(int slot,ItemStack stack) {

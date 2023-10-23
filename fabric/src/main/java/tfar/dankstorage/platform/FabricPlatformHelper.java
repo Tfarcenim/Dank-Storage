@@ -2,9 +2,11 @@ package tfar.dankstorage.platform;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.server.*;
 import tfar.dankstorage.platform.services.IPlatformHelper;
@@ -81,6 +83,11 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public DankInterface getInventoryCommon(ItemStack bag, Level level) {
         return Utils.getInventory(bag,level);
+    }
+
+    @Override
+    public Slot createSlot(DankInterface dankInventory, int index, int xPosition, int yPosition) {
+        return new DankSlot((DankInventoryFabric) dankInventory,index,xPosition,yPosition);
     }
 
     @Override

@@ -4,12 +4,11 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.DankStorageForge;
-import tfar.dankstorage.container.AbstractDankMenu;
+import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.util.C2SPacketHelper;
 import tfar.dankstorage.utils.Utils;
-import tfar.dankstorage.world.DankInventoryForge;
 import tfar.dankstorage.utils.TxtColor;
 
 public class C2SSetFrequencyPacket implements C2SPacketHelper {
@@ -40,15 +39,15 @@ public class C2SSetFrequencyPacket implements C2SPacketHelper {
     public void handleServer(ServerPlayer player) {
         AbstractContainerMenu container = player.containerMenu;
         if (container instanceof AbstractDankMenu dankMenu) {
-            DankInventoryForge inventory = dankMenu.dankInventory;
+            DankInterface inventory = dankMenu.dankInventory;
 
             int textColor = 0;
 
             if (frequency > Utils.INVALID) {
                 if (frequency < DankStorage.maxId.getMaxId()) {
-                    DankInventoryForge targetInventory = DankStorageForge.getData(frequency,player.server).createInventory(frequency);
+                    DankInterface targetInventory = DankStorage.getData(frequency,player.server).createInventory(frequency);
 
-                    if (targetInventory.valid() && targetInventory.dankStats == inventory.dankStats) {
+                    if (targetInventory.valid() && targetInventory.getDankStats() == inventory.getDankStats()) {
 
                         if (targetInventory.frequencyLocked()) {
                             textColor = TxtColor.LOCKED.color;

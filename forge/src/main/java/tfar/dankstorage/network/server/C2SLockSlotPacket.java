@@ -3,7 +3,8 @@ package tfar.dankstorage.network.server;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import tfar.dankstorage.container.AbstractDankMenu;
+import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.util.C2SPacketHelper;
 import tfar.dankstorage.world.DankInventoryForge;
@@ -27,7 +28,7 @@ public class C2SLockSlotPacket implements C2SPacketHelper {
     public void handleServer(ServerPlayer player) {
         AbstractContainerMenu container = player.containerMenu;
         if (container instanceof AbstractDankMenu dankContainer) {
-            DankInventoryForge inventory = dankContainer.dankInventory;
+            DankInterface inventory = dankContainer.dankInventory;
             inventory.toggleGhostItem(slot);
         }
     }

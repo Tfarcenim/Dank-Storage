@@ -4,7 +4,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import tfar.dankstorage.container.AbstractDankMenu;
+import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.network.util.S2CPacketHelper;
 import tfar.dankstorage.utils.PacketBufferEX;
 

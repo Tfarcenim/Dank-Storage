@@ -8,28 +8,34 @@ import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.LockedSlot;
 import tfar.dankstorage.platform.Services;
+import tfar.dankstorage.utils.CommonUtils;
+import tfar.dankstorage.utils.DankStats;
 
 import javax.annotation.Nonnull;
 
-public abstract class CAbstractDankMenu<T extends DankInterface> extends AbstractContainerMenu {
+public abstract class AbstractDankMenu extends AbstractContainerMenu {
 
     public final Inventory playerInventory;
     public final int rows;
-    public final T dankInventory;
+    public final DankInterface dankInventory;
     protected final DataSlot pickup;
 
 
-    public CAbstractDankMenu(MenuType<?> type, int windowId,int rows, Inventory playerInventory,T dankInventory) {
+    public AbstractDankMenu(MenuType<?> type, int windowId, Inventory playerInventory, DankInterface dankInventory) {
         super(type, windowId);
-        this.rows = rows;
         this.playerInventory = playerInventory;
         this.dankInventory = dankInventory;
+        this.rows = dankInventory.getContainerSizeDank() /9;
         addDataSlots(dankInventory);
         if (!playerInventory.player.level().isClientSide) {
             setSynchronizer(new CustomSync((ServerPlayer) playerInventory.player));
         }
         pickup = playerInventory.player.level().isClientSide ? DataSlot.standalone(): getServerPickupData();
         addDataSlot(pickup);
+    }
+
+    static DankInterface createDummy(DankStats stats) {
+        return Services.PLATFORM.createInventory(stats, CommonUtils.INVALID);
     }
 
     protected abstract DataSlot getServerPickupData();
@@ -87,6 +93,24 @@ public abstract class CAbstractDankMenu<T extends DankInterface> extends Abstrac
         }
         return itemstack;
     }
+
+    protected void addDankSlots() {
+        int slotIndex = 0;
+        for (int row = 0; row < rows; ++row) {
+            for (int col = 0; col < 9; ++col) {
+                int x = 8 + col * 18;
+                int y = row * 18 + 18;
+                this.addSlot(Services.PLATFORM.createSlot(dankInventory, slotIndex, x, y));
+                slotIndex++;
+            }
+        }
+    }
+
+    @Override
+    public boolean stillValid(@Nonnull Player playerIn) {
+        return true;
+    }
+
 
     //used by quick transfer, needs to respect locked slots
     @Override
@@ -161,7 +185,9 @@ public abstract class CAbstractDankMenu<T extends DankInterface> extends Abstrac
         return didSomething;
     }
 
-    public abstract boolean isDankSlot(Slot slot);
+    public boolean isDankSlot(Slot slot) {
+        return slot.getClass().getName().endsWith("DankSlot");
+    }
 
     @Override
     public void broadcastChanges() {

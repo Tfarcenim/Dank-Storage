@@ -26,7 +26,7 @@ import tfar.dankstorage.client.NumberEditBox;
 import tfar.dankstorage.client.StackSizeRenderer;
 import tfar.dankstorage.client.button.SmallButton;
 import tfar.dankstorage.inventory.DankInterface;
-import tfar.dankstorage.menu.CAbstractDankMenu;
+import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.ButtonAction;
 import tfar.dankstorage.utils.CommonUtils;
@@ -35,7 +35,7 @@ import tfar.dankstorage.utils.TxtColor;
 
 import java.util.List;
 
-public class CDankStorageScreen<S extends DankInterface,T extends CAbstractDankMenu<S>> extends AbstractContainerScreen<T> {
+public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractContainerScreen<T> {
 
     static final ResourceLocation background1 = new ResourceLocation(DankStorage.MODID,
             "textures/container/gui/dank1.png");
@@ -64,32 +64,32 @@ public class CDankStorageScreen<S extends DankInterface,T extends CAbstractDankM
         this.is7 = this.menu.rows > 6;
     }
 
-    public static <S extends DankInterface,T extends CAbstractDankMenu<S>> CDankStorageScreen<S,T> t1(T container, Inventory playerinventory, Component component) {
+    public static <S extends DankInterface,T extends AbstractDankMenu> CDankStorageScreen<T> t1(T container, Inventory playerinventory, Component component) {
         return new CDankStorageScreen<>(container, playerinventory, component, background1);
     }
 
-    public static <S extends DankInterface,T extends CAbstractDankMenu<S>> CDankStorageScreen<S,T> t2(T container, Inventory playerinventory, Component component) {
+    public static <S extends DankInterface,T extends AbstractDankMenu> CDankStorageScreen<T> t2(T container, Inventory playerinventory, Component component) {
         return new CDankStorageScreen<>(container, playerinventory, component, background2);
     }
 
-    public static <S extends DankInterface,T extends CAbstractDankMenu<S>> CDankStorageScreen<S,T> t3(T container, Inventory playerinventory, Component component) {
+    public static <S extends DankInterface,T extends AbstractDankMenu> CDankStorageScreen<T> t3(T container, Inventory playerinventory, Component component) {
         return new CDankStorageScreen<>(container, playerinventory, component, background3) {
         };
     }
 
-    public static <S extends DankInterface,T extends CAbstractDankMenu<S>> CDankStorageScreen<S,T> t4(T container, Inventory playerinventory, Component component) {
+    public static <S extends DankInterface,T extends AbstractDankMenu> CDankStorageScreen<T> t4(T container, Inventory playerinventory, Component component) {
         return new CDankStorageScreen<>(container, playerinventory, component, background4);
     }
 
-    public static <S extends DankInterface,T extends CAbstractDankMenu<S>> CDankStorageScreen<S,T> t5(T container, Inventory playerinventory, Component component) {
+    public static <S extends DankInterface,T extends AbstractDankMenu> CDankStorageScreen<T> t5(T container, Inventory playerinventory, Component component) {
         return new CDankStorageScreen<>(container, playerinventory, component, background5);
     }
 
-    public static <S extends DankInterface,T extends CAbstractDankMenu<S>> CDankStorageScreen<S,T> t6(T container, Inventory playerinventory, Component component) {
+    public static <S extends DankInterface,T extends AbstractDankMenu> CDankStorageScreen<T> t6(T container, Inventory playerinventory, Component component) {
         return new CDankStorageScreen<>(container, playerinventory, component, background6);
     }
 
-    public static <S extends DankInterface,T extends CAbstractDankMenu<S>> CDankStorageScreen<S,T> t7(T container, Inventory playerinventory, Component component) {
+    public static <S extends DankInterface,T extends AbstractDankMenu> CDankStorageScreen<T> t7(T container, Inventory playerinventory, Component component) {
         return new CDankStorageScreen<>(container, playerinventory, component, background7);
     }
 

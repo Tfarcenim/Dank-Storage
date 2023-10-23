@@ -79,9 +79,9 @@ public class Utils extends CommonUtils{
                         .resolve("data/"+DankStorage.MODID+"/"+id+".dat");
 
                 if (path.toFile().isFile()) {
-                    return DankStorage.getData(id,level.getServer()).createInventory(id);
+                    return (DankInventoryForge) DankStorage.getData(id,level.getServer()).createInventory(id);
                 } else {
-                    return DankStorage.getData(id,level.getServer()).createFreshInventory(getDefaultStats(bag),id);
+                    return (DankInventoryForge) DankStorage.getData(id,level.getServer()).createFreshInventory(getDefaultStats(bag),id);
                 }
             } else {
                 return null;

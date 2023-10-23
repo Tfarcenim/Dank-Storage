@@ -52,25 +52,7 @@ public class DankItem extends CDankItem {
     return super.getRarity(stack);
   }*/
 
-    //this is called on the client
-    @Override
-    public InteractionResult interactLivingEntity(ItemStack bag, Player player, LivingEntity entity, InteractionHand hand) {
-        if (!Utils.isConstruction(bag)) return InteractionResult.PASS;
 
-        ItemStack toUse = Utils.getSelectedItem(bag,player.level());
-        EquipmentSlot hand1 = hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
-        player.setItemSlot(hand1, toUse);
-        InteractionResult result = toUse.getItem().interactLivingEntity(toUse, player, entity, hand);
-
-        //the client doesn't have access to the full inventory
-        if (!player.level().isClientSide) {
-            DankInventoryFabric handler = Utils.getInventory(bag, player.level());
-            handler.setItem(Utils.getSelectedSlot(bag), toUse);
-        }
-
-        player.setItemSlot(hand1, bag);
-        return result;
-    }
 
     @Override
     public MenuProvider createProvider(ItemStack stack) {

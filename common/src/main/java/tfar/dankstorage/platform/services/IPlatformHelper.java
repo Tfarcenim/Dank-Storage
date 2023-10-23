@@ -2,6 +2,7 @@ package tfar.dankstorage.platform.services;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import tfar.dankstorage.inventory.DankInterface;
@@ -57,5 +58,6 @@ public interface IPlatformHelper {
     int previewY();
 
     DankInterface getInventoryCommon(ItemStack bag, Level level);
+    Slot createSlot(DankInterface dankInventory, int index, int xPosition, int yPosition);
 
 }

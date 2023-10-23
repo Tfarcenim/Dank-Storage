@@ -3,17 +3,12 @@ package tfar.dankstorage.network.server;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraftforge.network.NetworkEvent;
-import tfar.dankstorage.container.AbstractDankMenu;
 import tfar.dankstorage.inventory.DankInterface;
-import tfar.dankstorage.menu.CAbstractDankMenu;
+import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.util.C2SPacketHelper;
 import tfar.dankstorage.utils.ButtonAction;
 import tfar.dankstorage.utils.CommonUtils;
-import tfar.dankstorage.world.DankInventoryForge;
-
-import java.util.function.Supplier;
 
 public class C2SButtonPacket implements C2SPacketHelper {
 
@@ -35,7 +30,7 @@ public class C2SButtonPacket implements C2SPacketHelper {
         AbstractContainerMenu container = player.containerMenu;
 
         if (buttonAction.requiresContainer) {
-            if (container instanceof CAbstractDankMenu dankContainer) {
+            if (container instanceof AbstractDankMenu dankContainer) {
                 DankInterface inventory = dankContainer.dankInventory;
                 switch (buttonAction) {
                     case LOCK_FREQUENCY -> inventory.toggleFrequencyLock();

@@ -2,10 +2,12 @@ package tfar.dankstorage.platform;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.server.*;
 import tfar.dankstorage.platform.services.IPlatformHelper;
@@ -79,6 +81,11 @@ public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public DankInterface createInventory(DankStats stats, int frequency) {
         return new DankInventoryForge(stats,frequency);
+    }
+
+    @Override
+    public Slot createSlot(DankInterface dankInventory, int index, int xPosition, int yPosition) {
+        return new DankSlot((DankInventoryForge) dankInventory,index,xPosition,yPosition);
     }
 
     @Override

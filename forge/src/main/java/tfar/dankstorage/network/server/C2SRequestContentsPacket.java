@@ -3,7 +3,9 @@ package tfar.dankstorage.network.server;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageForge;
+import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.util.C2SPacketHelper;
 import tfar.dankstorage.world.DankInventoryForge;
@@ -32,7 +34,7 @@ public class C2SRequestContentsPacket implements C2SPacketHelper {
     }
 
     public void handleServer(ServerPlayer player) {
-        DankInventoryForge dankInventoryForge = DankStorageForge.getData(frequency,player.server).createInventory(frequency);
+        DankInterface dankInventoryForge = DankStorage.getData(frequency,player.server).createInventory(frequency);
             DankPacketHandler.sendContentsForDisplay(player, dankInventoryForge.getContents());
     }
 }
