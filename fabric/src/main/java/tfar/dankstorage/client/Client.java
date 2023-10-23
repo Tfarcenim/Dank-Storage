@@ -11,32 +11,33 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import org.lwjgl.glfw.GLFW;
 import tfar.dankstorage.DankStorageFabric;
-import tfar.dankstorage.client.screens.DankStorageScreen;
+import tfar.dankstorage.client.screens.CDankStorageScreen;
 import tfar.dankstorage.container.DankMenu;
 import tfar.dankstorage.container.DockMenu;
 import tfar.dankstorage.event.FabricEvents;
 import tfar.dankstorage.network.ClientDankPacketHandler;
 import tfar.dankstorage.network.server.C2SButtonPacket;
+import tfar.dankstorage.utils.ButtonAction;
 
 public class Client {
 
     public static void client() {
         HudRenderCallback.EVENT.register(FabricEvents::renderStack);
         ClientDankPacketHandler.registerClientMessages();
-        MenuScreens.register(DankStorageFabric.dank_1_container, (DockMenu container1, Inventory playerinventory1, Component component1) -> DankStorageScreen.t1(container1, playerinventory1, component1));
-        MenuScreens.register(DankStorageFabric.portable_dank_1_container, (DankMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t1(container, playerinventory, component));
-        MenuScreens.register(DankStorageFabric.dank_2_container, (DockMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t2(container, playerinventory, component));
-        MenuScreens.register(DankStorageFabric.portable_dank_2_container, (DankMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t2(container, playerinventory, component));
-        MenuScreens.register(DankStorageFabric.dank_3_container, (DockMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t3(container, playerinventory, component));
-        MenuScreens.register(DankStorageFabric.portable_dank_3_container, (DankMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t3(container, playerinventory, component));
-        MenuScreens.register(DankStorageFabric.dank_4_container, (DockMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t4(container, playerinventory, component));
-        MenuScreens.register(DankStorageFabric.portable_dank_4_container, (DankMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t4(container, playerinventory, component));
-        MenuScreens.register(DankStorageFabric.dank_5_container, (DockMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t5(container, playerinventory, component));
-        MenuScreens.register(DankStorageFabric.portable_dank_5_container, (DankMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t5(container, playerinventory, component));
-        MenuScreens.register(DankStorageFabric.dank_6_container, (DockMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t6(container, playerinventory, component));
-        MenuScreens.register(DankStorageFabric.portable_dank_6_container, (DankMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t6(container, playerinventory, component));
-        MenuScreens.register(DankStorageFabric.dank_7_container, (DockMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t7(container, playerinventory, component));
-        MenuScreens.register(DankStorageFabric.portable_dank_7_container, (DankMenu container, Inventory playerinventory, Component component) -> DankStorageScreen.t7(container, playerinventory, component));
+        MenuScreens.register(DankStorageFabric.dank_1_container, (DockMenu container1, Inventory playerinventory1, Component component1) -> CDankStorageScreen.t1(container1, playerinventory1, component1));
+        MenuScreens.register(DankStorageFabric.portable_dank_1_container, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t1(container, playerinventory, component));
+        MenuScreens.register(DankStorageFabric.dank_2_container, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t2(container, playerinventory, component));
+        MenuScreens.register(DankStorageFabric.portable_dank_2_container, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t2(container, playerinventory, component));
+        MenuScreens.register(DankStorageFabric.dank_3_container, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t3(container, playerinventory, component));
+        MenuScreens.register(DankStorageFabric.portable_dank_3_container, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t3(container, playerinventory, component));
+        MenuScreens.register(DankStorageFabric.dank_4_container, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t4(container, playerinventory, component));
+        MenuScreens.register(DankStorageFabric.portable_dank_4_container, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t4(container, playerinventory, component));
+        MenuScreens.register(DankStorageFabric.dank_5_container, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t5(container, playerinventory, component));
+        MenuScreens.register(DankStorageFabric.portable_dank_5_container, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t5(container, playerinventory, component));
+        MenuScreens.register(DankStorageFabric.dank_6_container, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t6(container, playerinventory, component));
+        MenuScreens.register(DankStorageFabric.portable_dank_6_container, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t6(container, playerinventory, component));
+        MenuScreens.register(DankStorageFabric.dank_7_container, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t7(container, playerinventory, component));
+        MenuScreens.register(DankStorageFabric.portable_dank_7_container, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t7(container, playerinventory, component));
 
         DankKeybinds.CONSTRUCTION = new KeyMapping("key.dankstorage.construction", GLFW.GLFW_KEY_I, "key.categories.dankstorage");
         DankKeybinds.LOCK_SLOT = new KeyMapping("key.dankstorage.lock_slot", GLFW.GLFW_KEY_LEFT_CONTROL, "key.categories.dankstorage");
@@ -51,10 +52,10 @@ public class Client {
 
     public static void keyPressed(Minecraft client) {
         if (DankKeybinds.CONSTRUCTION.consumeClick()) {
-            C2SButtonPacket.send(C2SButtonPacket.Action.TOGGLE_USE_TYPE);
+            C2SButtonPacket.send(ButtonAction.TOGGLE_USE_TYPE);
         }
         if (DankKeybinds.PICKUP_MODE.consumeClick()) {
-            C2SButtonPacket.send(C2SButtonPacket.Action.TOGGLE_PICKUP);
+            C2SButtonPacket.send(ButtonAction.TOGGLE_PICKUP);
         }
     }
 }

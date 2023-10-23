@@ -5,42 +5,46 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.network.NetworkEvent;
 import tfar.dankstorage.container.AbstractDankMenu;
+import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.menu.CAbstractDankMenu;
 import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.util.C2SPacketHelper;
+import tfar.dankstorage.utils.ButtonAction;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.world.DankInventoryForge;
 
 import java.util.function.Supplier;
 
-public class C2SButtonPacket {
+public class C2SButtonPacket implements C2SPacketHelper {
 
-    private final Action action;
+    private final ButtonAction buttonAction;
 
-    public C2SButtonPacket(Action action) {
-        this.action = action;
+    public C2SButtonPacket(ButtonAction buttonAction) {
+        this.buttonAction = buttonAction;
     }
 
     public C2SButtonPacket(FriendlyByteBuf buf) {
-        action = Action.values()[buf.readInt()];
+        buttonAction = ButtonAction.values()[buf.readInt()];
     }
 
-    public static void send(Action action) {
-        DankPacketHandler.sendToServer(new C2SButtonPacket(action));
+    public static void send(ButtonAction buttonAction) {
+        DankPacketHandler.sendToServer(new C2SButtonPacket(buttonAction));
     }
 
-    public void handleInternal(ServerPlayer player, Action action) {
+    public void handleServer(ServerPlayer player) {
         AbstractContainerMenu container = player.containerMenu;
 
-        if (action.requiresContainer) {
-            if (container instanceof AbstractDankMenu dankContainer) {
-                DankInventoryForge inventory = dankContainer.dankInventory;
-                switch (action) {
+        if (buttonAction.requiresContainer) {
+            if (container instanceof CAbstractDankMenu dankContainer) {
+                DankInterface inventory = dankContainer.dankInventory;
+                switch (buttonAction) {
                     case LOCK_FREQUENCY -> inventory.toggleFrequencyLock();
                     case SORT -> inventory.sort();
                     case COMPRESS -> inventory.compress(player);
                 }
             }
         } else {
-            switch (action) {
+            switch (buttonAction) {
                 case TOGGLE_TAG -> CommonUtils.toggleTagMode(player);
                 case TOGGLE_PICKUP -> CommonUtils.togglePickupMode(player);
                 case TOGGLE_USE_TYPE -> CommonUtils.toggleUseType(player);
@@ -49,25 +53,7 @@ public class C2SButtonPacket {
     }
 
     public void encode(FriendlyByteBuf buf) {
-        buf.writeInt(action.ordinal());
+        buf.writeInt(buttonAction.ordinal());
     }
 
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ServerPlayer player = ctx.get().getSender();
-        ctx.get().enqueueWork(() -> {
-            if (player != null) {
-                handleInternal(player,action);
-            }
-        });
-        ctx.get().setPacketHandled(true);
-    }
-
-    public enum Action {
-        LOCK_FREQUENCY(true),PICK_BLOCK(false),SORT(true),
-        TOGGLE_TAG(true),TOGGLE_PICKUP(false),TOGGLE_USE_TYPE(false),COMPRESS(true);
-        private final boolean requiresContainer;
-        Action(boolean requiresContainer) {
-            this.requiresContainer = requiresContainer;
-        }
-    }
 }

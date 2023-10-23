@@ -296,5 +296,4 @@ public interface DankInterface extends ContainerData {
         return getDankStats() != DankStats.zero;
     }
 
-
 }

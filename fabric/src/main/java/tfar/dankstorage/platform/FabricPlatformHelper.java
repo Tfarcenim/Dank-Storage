@@ -6,12 +6,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.network.DankPacketHandler;
-import tfar.dankstorage.network.server.C2SMessageLockSlot;
-import tfar.dankstorage.network.server.C2SMessageScrollSlot;
-import tfar.dankstorage.network.server.C2SRequestContentsPacket;
-import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
+import tfar.dankstorage.network.server.*;
 import tfar.dankstorage.platform.services.IPlatformHelper;
 import net.fabricmc.loader.api.FabricLoader;
+import tfar.dankstorage.utils.ButtonAction;
 import tfar.dankstorage.utils.Utils;
 
 public class FabricPlatformHelper implements IPlatformHelper {
@@ -66,6 +64,11 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public void sendLockSlotPacket(int index) {
         C2SMessageLockSlot.send(index);
+    }
+
+    @Override
+    public void sendButtonPacket(ButtonAction action) {
+        C2SButtonPacket.send(action);
     }
 
     @Override

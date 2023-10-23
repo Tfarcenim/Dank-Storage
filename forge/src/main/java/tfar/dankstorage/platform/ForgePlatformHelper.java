@@ -7,13 +7,11 @@ import net.minecraft.world.level.Level;
 import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.network.DankPacketHandler;
-import tfar.dankstorage.network.server.C2SLockSlotPacket;
-import tfar.dankstorage.network.server.C2SScrollSlotPacket;
-import tfar.dankstorage.network.server.C2SRequestContentsPacket;
-import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
+import tfar.dankstorage.network.server.*;
 import tfar.dankstorage.platform.services.IPlatformHelper;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
+import tfar.dankstorage.utils.ButtonAction;
 import tfar.dankstorage.utils.Utils;
 
 public class ForgePlatformHelper implements IPlatformHelper {
@@ -69,6 +67,11 @@ public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public void sendLockSlotPacket(int index) {
         C2SLockSlotPacket.send(index);
+    }
+
+    @Override
+    public void sendButtonPacket(ButtonAction action) {
+        C2SButtonPacket.send(action);
     }
 
     @Override
