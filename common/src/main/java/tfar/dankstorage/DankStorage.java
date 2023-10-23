@@ -3,8 +3,7 @@ package tfar.dankstorage;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.Level;
 import tfar.dankstorage.platform.Services;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.item.Items;
+import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.world.MaxId;
 
 // This class is part of the common project meaning it is shared between all supported loaders. Code written here can only
@@ -39,6 +38,11 @@ public class DankStorage {
         return server.getLevel(Level.OVERWORLD).getDataStorage()
                 .computeIfAbsent(MaxId::loadStatic,MaxId::new,
                         DankStorage.MODID+":max_id");
+    }
+
+    public static void onServerShutDown(MinecraftServer server) {
+        maxId = null;
+        CommonUtils.uncacheRecipes();
     }
 
 }

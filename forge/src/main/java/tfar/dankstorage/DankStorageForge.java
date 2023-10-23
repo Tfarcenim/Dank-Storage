@@ -133,7 +133,7 @@ public class DankStorageForge {
     }
 
     public void onServerStopped(ServerStoppedEvent e) {
-        DankStorage.maxId = null;
+        DankStorage.onServerShutDown(e.getServer());
     }
 
     public void registerCommands(RegisterCommandsEvent e) {

@@ -18,6 +18,6 @@ public class RecipeManagerMixin {
 
     @Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At("RETURN"))
     public void uncacheCompressionRecipes(Map<ResourceLocation, JsonObject> splashList, ResourceManager resourceManagerIn, ProfilerFiller profilerIn, CallbackInfo ci) {
-        CommonUtils.uncacheRecipes((RecipeManager) (Object) this);
+        CommonUtils.uncacheRecipes();
     }
 }

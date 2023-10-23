@@ -2,6 +2,7 @@ package tfar.dankstorage.utils;
 
 import com.mojang.datafixers.util.Pair;
 import io.netty.buffer.Unpooled;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -14,8 +15,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
@@ -79,7 +81,7 @@ public class CommonUtils {
     private static List<CraftingRecipe> REVERSIBLE2x2 = new ArrayList<>();
     private static boolean cached = false;
 
-    public static void uncacheRecipes(RecipeManager manager) {
+    public static void uncacheRecipes() {
         cached = false;
     }
 
@@ -158,17 +160,80 @@ public class CommonUtils {
         return compactingRecipes;
     }
     @SuppressWarnings("ConstantConditions")
-    private static final CraftingContainer DUMMY = new TransientCraftingContainer(null,1,1) {
-        @Override
-        public void setItem(int i, ItemStack itemStack) {
-            getItems().set(i, itemStack);
+    private static final CraftingContainer DUMMY = new DummyCraftingContainer(1,1);
+
+    public static class DummyCraftingContainer implements CraftingContainer {
+        private final NonNullList<ItemStack> items;
+        private final int width;
+        private final int height;
+        public DummyCraftingContainer(int p_287629_, int p_287593_) {
+            this(p_287629_, p_287593_, NonNullList.withSize(p_287629_ * p_287593_, ItemStack.EMPTY));
         }
 
-        @Override
-        public ItemStack removeItem(int i, int j) {
-            return ContainerHelper.removeItem(getItems(), i, j);
+        public DummyCraftingContainer(int p_287591_, int p_287609_, NonNullList<ItemStack> p_287695_) {
+            this.items = p_287695_;
+            this.width = p_287591_;
+            this.height = p_287609_;
         }
-    };
+
+        public int getContainerSize() {
+            return this.items.size();
+        }
+
+        public boolean isEmpty() {
+            for(ItemStack itemstack : this.items) {
+                if (!itemstack.isEmpty()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public ItemStack getItem(int slot) {
+            return slot >= this.getContainerSize() ? ItemStack.EMPTY : this.items.get(slot);
+        }
+
+        public ItemStack removeItemNoUpdate(int slot) {
+            return ContainerHelper.takeItem(this.items, slot);
+        }
+
+        public ItemStack removeItem(int i, int i1) {
+            return ContainerHelper.removeItem(this.items, i, i1);
+        }
+
+        public void setItem(int slot, ItemStack stack) {
+            this.items.set(slot, stack);
+        }
+
+        public void setChanged() {
+        }
+
+        public boolean stillValid(Player player) {
+            return true;
+        }
+
+        public void clearContent() {
+            this.items.clear();
+        }
+
+        public int getHeight() {
+            return this.height;
+        }
+
+        public int getWidth() {
+            return this.width;
+        }
+
+        public List<ItemStack> getItems() {
+            return List.copyOf(this.items);
+        }
+
+        public void fillStackedContents(StackedContents contents) {
+            for(ItemStack itemstack : this.items) {
+                contents.accountSimpleStack(itemstack);
+            }
+        }
+    }
 
 
     public static ItemStack getItemStackInSelectedSlot(ItemStack bag,ServerLevel level) {

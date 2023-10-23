@@ -155,7 +155,7 @@ public class DankStorageFabric implements ModInitializer, ClientModInitializer,
 
     @Override
     public void onServerStopped(MinecraftServer server) {
-        DankStorage.maxId = null;
+        DankStorage.onServerShutDown(server);
     }
 
     @Override
