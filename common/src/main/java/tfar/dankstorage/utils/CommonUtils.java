@@ -16,7 +16,6 @@ import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedContents;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
@@ -24,7 +23,7 @@ import net.minecraft.world.level.Level;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.inventory.DankInterface;
-import tfar.dankstorage.item.CoDankItem;
+import tfar.dankstorage.item.CDankItem;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.world.ClientData;
 
@@ -376,8 +375,8 @@ public class CommonUtils {
         return stacks.stream().map(ItemStackWrapper::new).collect(Collectors.toList());
     }
 
-    public static CoDankItem getItemFromTier(int tier) {
-        return (CoDankItem) BuiltInRegistries.ITEM.get(new ResourceLocation(DankStorage.MODID, "dank_" + tier));
+    public static CDankItem getItemFromTier(int tier) {
+        return (CDankItem) BuiltInRegistries.ITEM.get(new ResourceLocation(DankStorage.MODID, "dank_" + tier));
     }
 
     public static boolean isHoldingDank(@Nullable Player player) {
@@ -385,9 +384,9 @@ public class CommonUtils {
         if (player == null) return false;
 
         ItemStack stack = player.getMainHandItem();
-        if (stack.getItem() instanceof CoDankItem) return true;
+        if (stack.getItem() instanceof CDankItem) return true;
         stack = player.getOffhandItem();
-        return stack.getItem() instanceof CoDankItem;
+        return stack.getItem() instanceof CDankItem;
     }
 
     public static ItemStack getSelectedItem(ItemStack bag, Level level) {
@@ -410,8 +409,8 @@ public class CommonUtils {
 
     @Nullable
     public static InteractionHand getHandWithDank(Player player) {
-        if (player.getMainHandItem().getItem() instanceof CoDankItem) return InteractionHand.MAIN_HAND;
-        else if (player.getOffhandItem().getItem() instanceof CoDankItem) return InteractionHand.OFF_HAND;
+        if (player.getMainHandItem().getItem() instanceof CDankItem) return InteractionHand.MAIN_HAND;
+        else if (player.getOffhandItem().getItem() instanceof CDankItem) return InteractionHand.OFF_HAND;
         return null;
     }
 
@@ -443,7 +442,7 @@ public class CommonUtils {
     }
 
     public static DankStats getDefaultStats(ItemStack bag) {
-        return ((CoDankItem) bag.getItem()).stats;
+        return ((CDankItem) bag.getItem()).stats;
     }
 
     @Nonnull

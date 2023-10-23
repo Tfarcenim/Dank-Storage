@@ -12,7 +12,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.item.CoDankItem;
+import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.item.CDankItem;
 import tfar.dankstorage.block.CDockBlock;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
@@ -49,6 +50,8 @@ public abstract class CommonDockBlockEntity extends BlockEntity implements Namea
             return super.triggerEvent(id, type);
         }
     }
+
+    public abstract DankInterface getInventory();
 
     @Override
     public Component getName() {
@@ -142,8 +145,8 @@ public abstract class CommonDockBlockEntity extends BlockEntity implements Namea
 
 
     public void addDank(ItemStack tank) {
-        if (tank.getItem() instanceof CoDankItem) {
-            DankStats stats = ((CoDankItem) tank.getItem()).stats;
+        if (tank.getItem() instanceof CDankItem) {
+            DankStats stats = ((CDankItem) tank.getItem()).stats;
             level.setBlockAndUpdate(worldPosition, getBlockState().setValue(CDockBlock.TIER, stats.ordinal()));
             if (tank.hasCustomHoverName()) {
                 setCustomName(tank.getHoverName());

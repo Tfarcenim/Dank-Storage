@@ -5,7 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
-import tfar.dankstorage.item.CoDankItem;
+import tfar.dankstorage.item.CDankItem;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.world.ClientData;
@@ -34,9 +34,9 @@ public class ClientEvents {
             return;
         if (!(player.containerMenu instanceof InventoryMenu)) return;
         ItemStack bag = player.getMainHandItem();
-        if (!(bag.getItem() instanceof CoDankItem)) {
+        if (!(bag.getItem() instanceof CDankItem)) {
             bag = player.getOffhandItem();
-            if (!(bag.getItem() instanceof CoDankItem))
+            if (!(bag.getItem() instanceof CDankItem))
                 return;
         }
         int xStart = screenWidth / 2 + previewX();

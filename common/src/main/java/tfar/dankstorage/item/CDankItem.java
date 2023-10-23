@@ -40,10 +40,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-public abstract class CoDankItem extends Item {
+public abstract class CDankItem extends Item {
 
     public final DankStats stats;
-    public CoDankItem(Properties $$0, DankStats stats) {
+    public CDankItem(Properties $$0, DankStats stats) {
         super($$0);
         this.stats = stats;
     }

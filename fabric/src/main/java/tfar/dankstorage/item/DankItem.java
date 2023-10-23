@@ -16,7 +16,7 @@ import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.Utils;
 import tfar.dankstorage.world.DankInventoryFabric;
 
-public class DankItem extends CoDankItem {
+public class DankItem extends CDankItem {
 
     public DankItem(Properties p_i48527_2_, DankStats stats) {
         super(p_i48527_2_,stats);
