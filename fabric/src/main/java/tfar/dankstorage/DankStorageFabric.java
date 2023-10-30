@@ -30,7 +30,7 @@ import tfar.dankstorage.init.ModMenuTypes;
 import tfar.dankstorage.init.ModRecipeSerializers;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.item.RedprintItem;
-import tfar.dankstorage.item.UpgradeInfo;
+import tfar.dankstorage.utils.UpgradeInfo;
 import tfar.dankstorage.item.UpgradeItem;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.DankStats;

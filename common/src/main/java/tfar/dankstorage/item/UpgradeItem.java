@@ -16,6 +16,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import tfar.dankstorage.utils.DankStats;
+import tfar.dankstorage.utils.UpgradeInfo;
 
 public class UpgradeItem extends Item {
 

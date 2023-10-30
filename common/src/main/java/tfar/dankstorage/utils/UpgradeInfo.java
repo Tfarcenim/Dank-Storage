@@ -1,4 +1,4 @@
-package tfar.dankstorage.item;
+package tfar.dankstorage.utils;
 
 import net.minecraft.world.level.block.state.BlockState;
 import tfar.dankstorage.block.CDockBlock;

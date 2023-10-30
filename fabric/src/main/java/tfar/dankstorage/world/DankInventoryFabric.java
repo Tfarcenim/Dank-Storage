@@ -2,19 +2,13 @@ package tfar.dankstorage.world;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Mth;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import tfar.dankstorage.Constants;
-import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.mixin.SimpleContainerAccess;
 import tfar.dankstorage.utils.*;
-
-import java.util.stream.IntStream;
 
 public class DankInventoryFabric extends SimpleContainer implements DankInterface {
 

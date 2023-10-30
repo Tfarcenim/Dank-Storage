@@ -12,7 +12,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import tfar.dankstorage.Constants;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.utils.CommonUtils;
@@ -271,7 +270,6 @@ public interface DankInterface extends ContainerData {
         nbt.put("Items", nbtTagList);
         nbt.put(GHOST, ghostItemNBT);
         nbt.putString("DankStats", getDankStats().name());
-        nbt.putInt(CommonUtils.FREQ, frequency());
         nbt.putBoolean("locked", frequencyLocked());
         return nbt;
     }
@@ -321,10 +319,28 @@ public interface DankInterface extends ContainerData {
     //like upgradeTo, but can go backwards, should only be used by commands
     default void setTo(DankStats stats) {
         if (stats != getDankStats()) {
-            Constants.LOG.debug("Upgrading dank #{} from tier {} to {}", frequency(), getDankStats().name(), stats.name());
+            DankStorage.LOG.debug("Upgrading dank #{} from tier {} to {}", frequency(), getDankStats().name(), stats.name());
+
+
+            NonNullList<ItemStack> newStacks = NonNullList.withSize(stats.slots, ItemStack.EMPTY);
+            NonNullList<ItemStack> newGhostStacks = NonNullList.withSize(stats.slots, ItemStack.EMPTY);
+
+            //don't copy nonexistent items
+            int oldSlots = getContainerSizeDank();
+            int max = Math.min(oldSlots, stats.slots);
+            for (int i = 0; i < max; i++) {
+                ItemStack oldStack = getItemDank(i);
+                ItemStack oldGhost = getGhostItem(i);
+                newStacks.set(i, oldStack);
+                newGhostStacks.set(i, oldGhost);
+            }
+
+            //caution, will void all current items
+            setDankStats(stats);
+            setItemsDank(newStacks);
+            setGhostItems(newGhostStacks);
+            setChangedDank();
         }
-        setDankStats(stats);
-        copyItems();
     }
 
 
@@ -349,26 +365,7 @@ public interface DankInterface extends ContainerData {
 
     default void copyItems() {
 
-        DankStats dankStats = getDankStats();
 
-        NonNullList<ItemStack> newStacks = NonNullList.withSize(dankStats.slots, ItemStack.EMPTY);
-        NonNullList<ItemStack> newGhostStacks = NonNullList.withSize(dankStats.slots, ItemStack.EMPTY);
-
-        //don't copy nonexistent items
-        int oldSlots = getContainerSizeDank();
-        int max = Math.min(oldSlots, dankStats.slots);
-        for (int i = 0; i < max; i++) {
-            ItemStack oldStack = getItemDank(i);
-            ItemStack oldGhost = getGhostItem(i);
-            newStacks.set(i, oldStack);
-            newGhostStacks.set(i, oldGhost);
-        }
-
-        //caution, will void all current items
-        setSizeDank(dankStats.slots);
-        setItemsDank(newStacks);
-        setGhostItems(newGhostStacks);
-        setChangedDank();
     }
 
     default void toggleGhostItem(int slot) {

@@ -21,9 +21,9 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
-import tfar.dankstorage.item.CDankItem;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.blockentity.CommonDockBlockEntity;
+import tfar.dankstorage.item.CDankItem;
 
 import javax.annotation.Nonnull;
 import java.util.function.BiFunction;
@@ -76,7 +76,7 @@ public class CDockBlock extends Block implements EntityBlock {
         return function.apply(blockPos, blockState);
     }
 
-    @javax.annotation.Nullable
+    @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         ItemStack bag = ctx.getItemInHand();
@@ -97,7 +97,7 @@ public class CDockBlock extends Block implements EntityBlock {
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult p_225533_6_) {
         if (!world.isClientSide) {
             final BlockEntity tile = world.getBlockEntity(pos);
-            if (tile instanceof CommonDockBlockEntity dockBlockEntity) {
+            if (tile instanceof CommonDockBlockEntity<?> dockBlockEntity) {
                 ItemStack held = player.getItemInHand(hand);
                 if (player.isCrouching() && held.is(ModTags.WRENCHES)) {
                     world.destroyBlock(pos, true, player);

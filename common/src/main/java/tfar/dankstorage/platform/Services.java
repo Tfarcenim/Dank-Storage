@@ -1,6 +1,6 @@
 package tfar.dankstorage.platform;
 
-import tfar.dankstorage.Constants;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.platform.services.IPlatformHelper;
 
 import java.util.ServiceLoader;
@@ -24,7 +24,7 @@ public class Services {
         final T loadedService = ServiceLoader.load(clazz)
                 .findFirst()
                 .orElseThrow(() -> new NullPointerException("Failed to load service for " + clazz.getName()));
-        Constants.LOG.debug("Loaded {} for service {}", loadedService, clazz);
+        DankStorage.LOG.debug("Loaded {} for service {}", loadedService, clazz);
         return loadedService;
     }
 }

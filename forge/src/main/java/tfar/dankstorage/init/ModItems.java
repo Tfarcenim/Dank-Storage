@@ -13,7 +13,7 @@ import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.block.DankDispenserBehavior;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.item.RedprintItem;
-import tfar.dankstorage.item.UpgradeInfo;
+import tfar.dankstorage.utils.UpgradeInfo;
 import tfar.dankstorage.item.UpgradeItem;
 import tfar.dankstorage.utils.DankStats;
 

@@ -4,6 +4,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.LevelStorageSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
@@ -19,6 +21,8 @@ import java.io.File;
 public class DankStorage {
 
     public static final String MODID = "dankstorage";
+    public static final String MOD_NAME = "Dank-Storage";
+    public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
     public static MaxId maxId;
 
     // The loader specific projects are able to import and use any code from the common project. This allows you to
@@ -34,10 +38,10 @@ public class DankStorage {
         // your own abstraction layer. You can learn more about this in our provided services class. In this example
         // we have an interface in the common code and use a loader specific implementation to delegate our call to
         // the platform specific approach.
-        if (Services.PLATFORM.isModLoaded("examplemod")) {
+      //  if (Services.PLATFORM.isModLoaded("examplemod")) {
 
-            Constants.LOG.info("Hello to examplemod");
-        }
+       //     LOG.info("Hello to examplemod");
+      //  }
     }
 
     public static MaxId getMaxId(MinecraftServer server) {

@@ -5,10 +5,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import tfar.dankstorage.Constants;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.item.CDankItem;
-import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.PickupMode;
 
@@ -42,7 +41,7 @@ public class CommonEvents {
         DankInterface inv = CommonUtils.getBagInventory(dank,player.level());
 
         if (inv == null) {
-            Constants.LOG.warn("That's odd, the player somehow got an unassigned dank to change pickup mode");
+            DankStorage.LOG.warn("That's odd, the player somehow got an unassigned dank to change pickup mode");
             return false;
         }
 
