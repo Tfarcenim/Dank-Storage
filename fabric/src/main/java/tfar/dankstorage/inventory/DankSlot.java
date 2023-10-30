@@ -18,4 +18,9 @@ public class DankSlot extends Slot {
     public boolean mayPlace(ItemStack itemStack) {
         return itemHandler.canPlaceItem(index,itemStack) && super.mayPlace(itemStack);
     }
+
+    @Override
+    public int getMaxStackSize(ItemStack stack) {
+        return getMaxStackSize();
+    }
 }
