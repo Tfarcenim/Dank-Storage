@@ -114,7 +114,6 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
     }
 
 
-
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
         boolean checkGhostItem = !hasGhostItem(slot) || getGhostItem(slot).getItem() == stack.getItem();

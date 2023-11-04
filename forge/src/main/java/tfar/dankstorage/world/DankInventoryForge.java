@@ -79,7 +79,7 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
 
     @Override
     public int getStackLimit(int slot, @NotNull ItemStack stack) {
-        return stack.is(ModTags.UNSTACKABLE) ? 1 : getSlotLimit(slot);
+        return getMaxStackSizeSensitive(stack);
     }
 
     public NonNullList<ItemStack> getContents() {

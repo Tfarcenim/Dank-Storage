@@ -21,6 +21,6 @@ public class DankSlot extends Slot {
 
     @Override
     public int getMaxStackSize(ItemStack stack) {
-        return getMaxStackSize();
+        return itemHandler.getMaxStackSizeSensitive(stack);
     }
 }

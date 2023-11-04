@@ -42,7 +42,7 @@ public class DankInventorySlotWrapper extends SingleStackStorage {
 
 	@Override
 	public int getCapacity(ItemVariant variant) {
-		return storage.getMaxStackSize();
+		return storage.getMaxStackSizeSensitive(variant.toStack());
 	}
 
 	// We override updateSnapshots to also schedule a markDirty call for the backing inventory.

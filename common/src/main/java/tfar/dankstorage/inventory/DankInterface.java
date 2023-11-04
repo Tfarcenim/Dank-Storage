@@ -115,6 +115,10 @@ public interface DankInterface extends ContainerData {
         }
     }
 
+    default int getMaxStackSizeSensitive(ItemStack stack) {
+        return stack.is(ModTags.UNSTACKABLE) ? 1 : getMaxStackSizeDank();
+    }
+
     default void sort() {
         List<ItemStack> stacks = new ArrayList<>();
 
@@ -140,13 +144,15 @@ public interface DankInterface extends ContainerData {
         for (int i = 0; i < wrappers.size(); i++) {
             ItemStack stack = wrappers.get(i).stack;
             int count = stack.getCount();
-            DankStats dankStats = getDankStats();
-            if (count > dankStats.stacklimit) {
-                int fullStacks = count / dankStats.stacklimit;
-                int partialStack = count - fullStacks * dankStats.stacklimit;
+
+            int stackSizeSensitive = getMaxStackSizeSensitive(stack);
+
+            if (count > stackSizeSensitive) {
+                int fullStacks = count / stackSizeSensitive;
+                int partialStack = count - fullStacks * stackSizeSensitive;
 
                 for (int j = 0; j < fullStacks; j++) {
-                    setItemDank(slotId, CommonUtils.copyStackWithSize(stack, dankStats.stacklimit));
+                    setItemDank(slotId, CommonUtils.copyStackWithSize(stack, stackSizeSensitive));
                     slotId++;
                 }
                 if (partialStack > 0) {
