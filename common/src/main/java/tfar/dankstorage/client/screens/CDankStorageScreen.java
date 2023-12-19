@@ -73,8 +73,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
     }
 
     public static <S extends DankInterface,T extends AbstractDankMenu> CDankStorageScreen<T> t3(T container, Inventory playerinventory, Component component) {
-        return new CDankStorageScreen<>(container, playerinventory, component, background3) {
-        };
+        return new CDankStorageScreen<>(container, playerinventory, component, background3);
     }
 
     public static <S extends DankInterface,T extends AbstractDankMenu> CDankStorageScreen<T> t4(T container, Inventory playerinventory, Component component) {

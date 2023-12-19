@@ -60,6 +60,11 @@ public class DankStorageFabric implements ModInitializer, ClientModInitializer,
         Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "red_print"), red_print = new RedprintItem(properties));
         Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, new ResourceLocation(MODID, "dank_tile"), dank_tile = BlockEntityType.Builder.of(DockBlockEntity::new, dock).build(null));
 
+
+
+        IntStream.range(1, 7).forEach(i -> Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, i + "_to_" + (i + 1)), new UpgradeItem(properties, new UpgradeInfo(i, i + 1))));
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(MODID, "upgrade"), ModRecipeSerializers.upgrade);
+
         properties.stacksTo(1);
 
         IntStream.range(1, 8).forEach(i -> {
@@ -67,8 +72,6 @@ public class DankStorageFabric implements ModInitializer, ClientModInitializer,
             DispenserBlock.registerBehavior(dankItem, new DankDispenserBehavior());
             Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "dank_" + i), dankItem);
         });
-        IntStream.range(1, 7).forEach(i -> Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, i + "_to_" + (i + 1)), new UpgradeItem(properties, new UpgradeInfo(i, i + 1))));
-        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(MODID, "upgrade"), ModRecipeSerializers.upgrade);
 
         Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "dank_1"), ModMenuTypes.dank_1_container);
         Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "portable_dank_1"), ModMenuTypes.portable_dank_1_container);
