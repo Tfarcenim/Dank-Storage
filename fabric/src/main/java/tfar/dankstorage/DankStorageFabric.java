@@ -12,11 +12,10 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands.CommandSelection;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -26,6 +25,7 @@ import tfar.dankstorage.block.DankDispenserBehavior;
 import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.client.Client;
 import tfar.dankstorage.command.DankCommands;
+import tfar.dankstorage.init.ModCreativeTabs;
 import tfar.dankstorage.init.ModMenuTypes;
 import tfar.dankstorage.init.ModRecipeSerializers;
 import tfar.dankstorage.item.DankItem;
@@ -43,6 +43,7 @@ public class DankStorageFabric implements ModInitializer, ClientModInitializer,
         ServerLifecycleEvents.ServerStarted, ServerLifecycleEvents.ServerStopped, CommandRegistrationCallback {
 
     public static Block dock;
+    public static Item dock_item;
     public static Item red_print;
     public static BlockEntityType<DockBlockEntity> dank_tile;
 
@@ -52,7 +53,7 @@ public class DankStorageFabric implements ModInitializer, ClientModInitializer,
 
         Registry.register(BuiltInRegistries.BLOCK, new ResourceLocation(MODID, "dock"),
                 dock = new CDockBlock(BlockBehaviour.Properties.of().strength(1, 30), DockBlockEntity::new));
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "dock"), new BlockItem(dock, properties));
+        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "dock"), dock_item = new BlockItem(dock, properties));
 
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.INGREDIENTS).register(entries -> entries.accept(dock));
 
@@ -94,6 +95,13 @@ public class DankStorageFabric implements ModInitializer, ClientModInitializer,
         Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "dank_7"), ModMenuTypes.dank_7_container);
         Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "portable_dank_7"), ModMenuTypes.portable_dank_7_container);
 
+
+        ModCreativeTabs.tab = CreativeModeTab.builder(null,-1)
+                .icon(() -> new ItemStack(dock_item))
+                .title(Component.translatable("itemGroup."+ DankStorage.MODID))
+                .displayItems((features, output) -> BuiltInRegistries.ITEM.stream().filter(item -> BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(MODID)).forEach(output::accept)).build();
+
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,new ResourceLocation(MODID,"creative_tab"), ModCreativeTabs.tab);
 
         DankPacketHandler.registerMessages();
 

@@ -359,12 +359,12 @@ public interface DankInterface extends ContainerData {
     default void validate() {
         int containerSizeDank = getContainerSizeDank();
         if (getDankStats() == DankStats.zero) {
-            throw new RuntimeException("dank has no stats?");
+            DankStorage.LOG.error("dank has no stats?");
         } else if (containerSizeDank == 0) {
-            throw new RuntimeException("dank is empty?");
+            DankStorage.LOG.error("dank is empty?");
         } else {
             if (getGhostItems().size() != containerSizeDank) {
-                throw new RuntimeException("inequal size");
+                DankStorage.LOG.error("inequal size");
             }
         }
     }

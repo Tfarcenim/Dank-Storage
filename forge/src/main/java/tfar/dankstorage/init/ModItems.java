@@ -28,7 +28,6 @@ public class ModItems {
     public static final List<Item> DANKS;
     public static final List<Item> UPGRADES;
 
-    public static CreativeModeTab tab;
 
     static {
         DANKS = IntStream.range(1, 8).mapToObj(i -> {
@@ -39,7 +38,7 @@ public class ModItems {
 
         UPGRADES = IntStream.range(1, DANKS.size()).mapToObj(i -> new UpgradeItem(properties, new UpgradeInfo(i, i + 1))).collect(Collectors.toList());
 
-        tab = CreativeModeTab.builder()
+        ModCreativeTabs.tab = CreativeModeTab.builder()
                 .icon(() -> new ItemStack(DOCK))
                 .title(Component.translatable("itemGroup."+ DankStorage.MODID))
                 .displayItems((features, output) -> {

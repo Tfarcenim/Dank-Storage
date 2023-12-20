@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.platform.Services;
+import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 
 import java.io.File;
@@ -12,7 +13,7 @@ import java.io.File;
 public class CDankSavedData extends SavedData {
 
     protected final ServerLevel level;
-    CompoundTag storage = new CompoundTag();
+    CompoundTag storage = defaultTag();
     DankInterface dankInventory;
 
     public CDankSavedData(ServerLevel level) {
@@ -70,8 +71,14 @@ public class CDankSavedData extends SavedData {
         return dankSavedData;
     }
 
+    public static CompoundTag defaultTag() {
+        CompoundTag tag = new CompoundTag();
+        tag.putString("DankStats",DankStats.zero.name());
+        return tag;
+    }
+
     public boolean clear() {
-        storage = new CompoundTag();
+        storage = defaultTag();
         return true;
     }
 }
