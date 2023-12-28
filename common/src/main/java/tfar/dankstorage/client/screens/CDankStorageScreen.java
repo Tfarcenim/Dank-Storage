@@ -317,7 +317,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
         //slot locking takes priority over frequency changing
         boolean match = DankKeybinds.LOCK_SLOT.matches(keyCode, scanCode);
         if (match) {
-            if (menu.isDankSlot(hoveredSlot)) {
+            if (hoveredSlot != null && menu.isDankSlot(hoveredSlot)) {
                 Services.PLATFORM.sendLockSlotPacket(hoveredSlot.index);
                 return true;
             }
