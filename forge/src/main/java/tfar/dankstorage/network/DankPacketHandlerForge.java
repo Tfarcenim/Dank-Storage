@@ -18,9 +18,6 @@ import java.util.function.Supplier;
 public class DankPacketHandlerForge {
 
     public static SimpleChannel INSTANCE;
-
-    public static SimpleChannel SEND_BUTTON;
-
     public static void registerMessages() {
 
         INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(DankStorage.MODID, DankStorage.MODID), () -> "1.0", s -> true, s -> true);
@@ -43,9 +40,9 @@ public class DankPacketHandlerForge {
 
         INSTANCE.registerMessage(i++,
                 C2SButtonPacket.class,
-                C2SButtonPacket::encode,
+                C2SButtonPacket::write,
                 C2SButtonPacket::new,
-                C2SButtonPacket::handle);
+                wrapC2S());
 
         INSTANCE.registerMessage(i++,
                 C2SMessagePickBlock.class,
@@ -101,6 +98,14 @@ public class DankPacketHandlerForge {
     private static <MSG extends S2CModPacket> BiConsumer<MSG, Supplier<NetworkEvent.Context>> wrapS2C() {
         return ((msg, contextSupplier) -> {
             contextSupplier.get().enqueueWork(msg::handleClient);
+            contextSupplier.get().setPacketHandled(true);
+        });
+    }
+
+    private static <MSG extends C2SModPacket> BiConsumer<MSG, Supplier<NetworkEvent.Context>> wrapC2S() {
+        return ((msg, contextSupplier) -> {
+            ServerPlayer player = contextSupplier.get().getSender();
+            contextSupplier.get().enqueueWork(() -> msg.handleServer(player));
             contextSupplier.get().setPacketHandled(true);
         });
     }

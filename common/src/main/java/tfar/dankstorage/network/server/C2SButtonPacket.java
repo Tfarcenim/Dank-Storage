@@ -1,31 +1,32 @@
 package tfar.dankstorage.network.server;
 
-import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.network.PacketIds;
+import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.ButtonAction;
 import tfar.dankstorage.utils.CommonUtils;
 
+public class C2SButtonPacket implements C2SModPacket {
 
-public class C2SButtonPacket implements ServerPlayNetworking.PlayChannelHandler {
+    private final ButtonAction buttonAction;
 
-
-    public static void send(ButtonAction buttonAction) {
-        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        buf.writeInt(buttonAction.ordinal());
-        ClientPlayNetworking.send(PacketIds.button_action, buf);
+    public C2SButtonPacket(ButtonAction buttonAction) {
+        this.buttonAction = buttonAction;
     }
 
-    public void handleInternal(ServerPlayer player, ButtonAction buttonAction) {
+    public C2SButtonPacket(FriendlyByteBuf buf) {
+        buttonAction = ButtonAction.values()[buf.readInt()];
+    }
+
+    public static void send(ButtonAction buttonAction) {
+       Services.PLATFORM.sendToServer(new C2SButtonPacket(buttonAction),PacketIds.button_action);
+    }
+
+    public void handleServer(ServerPlayer player) {
         AbstractContainerMenu container = player.containerMenu;
 
         if (buttonAction.requiresContainer) {
@@ -46,9 +47,8 @@ public class C2SButtonPacket implements ServerPlayNetworking.PlayChannelHandler 
         }
     }
 
-    @Override
-    public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        ButtonAction buttonAction = ButtonAction.values()[buf.readInt()];
-        server.execute(() -> handleInternal(player, buttonAction));
+    public void write(FriendlyByteBuf buf) {
+        buf.writeInt(buttonAction.ordinal());
     }
+
 }

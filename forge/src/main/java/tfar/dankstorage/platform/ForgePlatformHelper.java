@@ -58,13 +58,13 @@ public class ForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public void sendButtonPacket(ButtonAction action) {
-        C2SButtonPacket.send(action);
+    public void sendToClient(IModPacket msg, ResourceLocation channel, ServerPlayer player) {
+        DankPacketHandlerForge.INSTANCE.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
 
     @Override
-    public void sendToClient(IModPacket msg, ResourceLocation channel, ServerPlayer player) {
-        DankPacketHandlerForge.INSTANCE.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+    public void sendToServer(IModPacket msg, ResourceLocation channel) {
+        DankPacketHandlerForge.INSTANCE.sendToServer(msg);
     }
 
     @Override

@@ -5,7 +5,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.Slot;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.network.IModPacket;
-import tfar.dankstorage.utils.ButtonAction;
 import tfar.dankstorage.utils.DankStats;
 
 public interface IPlatformHelper {
@@ -47,9 +46,10 @@ public interface IPlatformHelper {
     void sendScrollPacket(boolean right);
     void sendFrequencyPacket(int frequency,boolean set);
     void sendLockSlotPacket(int index);
-    void sendButtonPacket(ButtonAction action);
 
     void sendToClient(IModPacket msg, ResourceLocation channel, ServerPlayer player);
+    void sendToServer(IModPacket msg, ResourceLocation channel);
+
 
     DankInterface createInventory(DankStats stats,int frequency);
     boolean showPreview();

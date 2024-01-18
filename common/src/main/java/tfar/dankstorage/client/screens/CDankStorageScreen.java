@@ -27,6 +27,7 @@ import tfar.dankstorage.client.StackSizeRenderer;
 import tfar.dankstorage.client.button.SmallButton;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.menu.AbstractDankMenu;
+import tfar.dankstorage.network.server.C2SButtonPacket;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.ButtonAction;
 import tfar.dankstorage.utils.CommonUtils;
@@ -232,7 +233,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
 
         int j = (this.height - this.imageHeight) / 2;
         this.addRenderableWidget(new SmallButton(leftPos + 143, topPos + 4, 26, 12, Component.literal("Sort"), b -> {
-            Services.PLATFORM.sendButtonPacket(ButtonAction.SORT);
+            C2SButtonPacket.send(ButtonAction.SORT);
         }));
 
         Tooltip freqTooltip = new DualTooltip(
@@ -240,7 +241,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
                 Component.translatable("text.dankstorage.lock_button"),null,this);
 
         SmallButton l = new SmallButton(leftPos + 115, topPos + 4, 12, 12,
-                Component.literal(""), button -> Services.PLATFORM.sendButtonPacket(ButtonAction.LOCK_FREQUENCY)) {
+                Component.literal(""), button -> C2SButtonPacket.send(ButtonAction.LOCK_FREQUENCY)) {
             @Override
             public Component getMessage() {
                 return menu.dankInventory.frequencyLocked() ? Component.literal("X").withStyle(ChatFormatting.RED) :
@@ -272,7 +273,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
         Tooltip compressTooltip = Tooltip.create(Component.translatable("text.dankstorage.compress_button"));
 
         SmallButton c = new SmallButton(leftPos + 129, topPos + 4, 12, 12,
-                Component.literal("C"), button -> Services.PLATFORM.sendButtonPacket(ButtonAction.COMPRESS));
+                Component.literal("C"), button -> C2SButtonPacket.send(ButtonAction.COMPRESS));
         c.setTooltip(compressTooltip);
 
         this.addRenderableWidget(c);

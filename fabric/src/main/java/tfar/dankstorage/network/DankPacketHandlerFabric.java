@@ -9,6 +9,8 @@ import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.network.server.*;
 import tfar.dankstorage.utils.PacketBufferEX;
 
+import java.util.function.Function;
+
 public class DankPacketHandlerFabric {
 
     public static void registerMessages() {
@@ -16,23 +18,11 @@ public class DankPacketHandlerFabric {
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.lock_slot, new C2SMessageLockSlot());
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.set_id, new C2SSetFrequencyPacket());
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.request_contents,new C2SRequestContentsPacket());
-        ServerPlayNetworking.registerGlobalReceiver(PacketIds.button_action,new C2SButtonPacket());
+        ServerPlayNetworking.registerGlobalReceiver(PacketIds.button_action,wrapC2S(C2SButtonPacket::new));
     }
 
-    public static void sendSyncContainer(ServerPlayer player,int stateID, int containerID, NonNullList<ItemStack> stacks,ItemStack carried) {
-        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        buf.writeInt(stateID);
-        buf.writeInt(containerID);
-
-        buf.writeItem(carried);
-
-        buf.writeShort(stacks.size());
-
-        for (ItemStack stack : stacks) {
-            PacketBufferEX.writeExtendedItemStack(buf, stack);
-        }
-
-        ServerPlayNetworking.send(player, PacketIds.initial_sync_container, buf);
+    public static <MSG extends C2SModPacket> ServerPlayNetworking.PlayChannelHandler wrapC2S(Function<FriendlyByteBuf, MSG> decodeFunction) {
+        return new ServerHandler<>(decodeFunction);
     }
 
     public static void sendList(ServerPlayer player, NonNullList<ItemStack> stacks) {

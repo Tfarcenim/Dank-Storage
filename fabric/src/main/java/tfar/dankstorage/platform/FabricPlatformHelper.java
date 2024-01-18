@@ -1,5 +1,7 @@
 package tfar.dankstorage.platform;
 
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
@@ -13,6 +15,7 @@ import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.network.DankPacketHandlerFabric;
 import tfar.dankstorage.network.IModPacket;
+import tfar.dankstorage.network.PacketIds;
 import tfar.dankstorage.network.server.*;
 import tfar.dankstorage.platform.services.IPlatformHelper;
 import tfar.dankstorage.utils.ButtonAction;
@@ -47,6 +50,13 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
+    public void sendToServer(IModPacket msg, ResourceLocation channel) {
+        FriendlyByteBuf buf = PacketByteBufs.create();
+        msg.write(buf);
+        ClientPlayNetworking.send(channel, buf);
+    }
+
+    @Override
     public void sendRequestContentsPacket(int frequency) {
         C2SRequestContentsPacket.send(frequency);
     }
@@ -64,11 +74,6 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public void sendLockSlotPacket(int index) {
         C2SMessageLockSlot.send(index);
-    }
-
-    @Override
-    public void sendButtonPacket(ButtonAction action) {
-        C2SButtonPacket.send(action);
     }
 
     @Override
