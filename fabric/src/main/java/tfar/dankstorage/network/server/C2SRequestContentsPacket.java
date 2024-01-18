@@ -11,14 +11,14 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.network.DankPacketHandler;
-import tfar.dankstorage.world.DankInventoryFabric;
+import tfar.dankstorage.network.PacketIds;
 
 public class C2SRequestContentsPacket implements ServerPlayNetworking.PlayChannelHandler {
 
     public static void send(int frequency) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeInt(frequency);
-        ClientPlayNetworking.send(DankPacketHandler.request_contents, buf);
+        ClientPlayNetworking.send(PacketIds.request_contents, buf);
     }
 
 

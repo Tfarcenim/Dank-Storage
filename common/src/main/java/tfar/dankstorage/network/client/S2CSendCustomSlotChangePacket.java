@@ -7,21 +7,21 @@ import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.network.util.S2CPacketHelper;
 import tfar.dankstorage.utils.PacketBufferEX;
 
-import static tfar.dankstorage.client.Client.getLocalPlayer;
+import static tfar.dankstorage.client.CommonClient.getLocalPlayer;
 
-public class S2CSendLockedSlotItemPacket implements S2CPacketHelper {
+public class S2CSendCustomSlotChangePacket implements S2CPacketHelper {
 
     int windowId;
     int slot;
     ItemStack stack;
 
-    public S2CSendLockedSlotItemPacket(int windowId, int slot, ItemStack stack) {
+    public S2CSendCustomSlotChangePacket(int windowId, int slot, ItemStack stack) {
         this.windowId = windowId;
         this.slot = slot;
         this.stack = stack;
     }
 
-    public S2CSendLockedSlotItemPacket(FriendlyByteBuf buf) {
+    public S2CSendCustomSlotChangePacket(FriendlyByteBuf buf) {
         windowId = buf.readInt();
         slot = buf.readInt();
         stack = PacketBufferEX.readExtendedItemStack(buf);
@@ -37,8 +37,8 @@ public class S2CSendLockedSlotItemPacket implements S2CPacketHelper {
     @Override
     public void handleClient() {
         Player player = getLocalPlayer();
-        if (player != null && player.containerMenu instanceof AbstractDankMenu dankMenu && windowId == player.containerMenu.containerId) {
-            dankMenu.dankInventory.setGhostItem(slot,stack.getItem());
+        if (player != null && player.containerMenu instanceof AbstractDankMenu && windowId == player.containerMenu.containerId) {
+            player.containerMenu.slots.get(slot).set(stack);
         }
     }
 }

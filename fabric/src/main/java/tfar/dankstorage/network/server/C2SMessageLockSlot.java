@@ -11,15 +11,14 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.menu.AbstractDankMenu;
-import tfar.dankstorage.world.DankInventoryFabric;
-import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.PacketIds;
 
 public class C2SMessageLockSlot implements ServerPlayNetworking.PlayChannelHandler {
 
     public static void send(int slot) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeInt(slot);
-        ClientPlayNetworking.send(DankPacketHandler.lock_slot, buf);
+        ClientPlayNetworking.send(PacketIds.lock_slot, buf);
     }
 
     public void handle(ServerPlayer player, int slot) {

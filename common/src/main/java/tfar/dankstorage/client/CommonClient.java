@@ -1,6 +1,8 @@
 package tfar.dankstorage.client;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 
 public class CommonClient {
@@ -12,4 +14,7 @@ public class CommonClient {
         return null;
     }
 
+    public static Player getLocalPlayer() {
+        return Minecraft.getInstance().player;
+    }
 }

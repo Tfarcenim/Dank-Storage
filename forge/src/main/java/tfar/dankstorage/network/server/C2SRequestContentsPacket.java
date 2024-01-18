@@ -4,11 +4,9 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.inventory.DankInterface;
-import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.DankPacketHandlerForge;
 import tfar.dankstorage.network.util.C2SPacketHelper;
-import tfar.dankstorage.world.DankInventoryForge;
 
 public class C2SRequestContentsPacket implements C2SPacketHelper {
 
@@ -30,12 +28,12 @@ public class C2SRequestContentsPacket implements C2SPacketHelper {
     public static void send(int frequency) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeInt(frequency);
-        DankPacketHandler.sendToServer(new C2SRequestContentsPacket(frequency));
+        DankPacketHandlerForge.sendToServer(new C2SRequestContentsPacket(frequency));
     }
 
     public void handleServer(ServerPlayer player) {
         DankInterface dankInventoryForge = DankStorage.getData(frequency,player.server).createInventory(frequency);
-            DankPacketHandler.sendContentsForDisplay(player, dankInventoryForge.getContents());
+            DankPacketHandlerForge.sendContentsForDisplay(player, dankInventoryForge.getContents());
     }
 }
 

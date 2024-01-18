@@ -5,15 +5,21 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.network.client.*;
 import tfar.dankstorage.network.server.*;
 
-public class DankPacketHandler {
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
+
+public class DankPacketHandlerForge {
 
     public static SimpleChannel INSTANCE;
+
+    public static SimpleChannel SEND_BUTTON;
 
     public static void registerMessages() {
 
@@ -32,6 +38,8 @@ public class DankPacketHandler {
                 C2SLockSlotPacket::encode,
                 C2SLockSlotPacket::new,
                 C2SLockSlotPacket::handle);
+
+
 
         INSTANCE.registerMessage(i++,
                 C2SButtonPacket.class,
@@ -66,10 +74,10 @@ public class DankPacketHandler {
                 S2CSendCustomSlotChangePacket::handle);
 
         INSTANCE.registerMessage(i++,
-                S2CSendLockedSlotItemPacket.class,
-                S2CSendLockedSlotItemPacket::encode,
-                S2CSendLockedSlotItemPacket::new,
-                S2CSendLockedSlotItemPacket::handle);
+                S2CSendGhostSlotPacket.class,
+                S2CSendGhostSlotPacket::write,
+                S2CSendGhostSlotPacket::new,
+               wrapS2C());
 
         INSTANCE.registerMessage(i++,
                 S2CSyncSelectedItemPacket.class,
@@ -90,12 +98,15 @@ public class DankPacketHandler {
                 S2CContentsForDisplayPacket::handle);
     }
 
-    public static void sendCustomSlotChange(ServerPlayer player, int id, int slot, ItemStack stack) {
-        sendToClient(new S2CSendCustomSlotChangePacket(id,slot,stack),player);
+    private static <MSG extends S2CModPacket> BiConsumer<MSG, Supplier<NetworkEvent.Context>> wrapS2C() {
+        return ((msg, contextSupplier) -> {
+            contextSupplier.get().enqueueWork(msg::handleClient);
+            contextSupplier.get().setPacketHandled(true);
+        });
     }
 
-    public static void sendGhostItemSlot(ServerPlayer player, int id, int slot, ItemStack stack) {
-        sendToClient(new S2CSendLockedSlotItemPacket(id,slot,stack),player);
+    public static void sendCustomSlotChange(ServerPlayer player, int id, int slot, ItemStack stack) {
+        sendToClient(new S2CSendCustomSlotChangePacket(id,slot,stack),player);
     }
 
 

@@ -31,7 +31,7 @@ import tfar.dankstorage.menu.CustomSync;
 import tfar.dankstorage.datagen.DataGenerators;
 import tfar.dankstorage.event.ForgeClientEvents;
 import tfar.dankstorage.init.*;
-import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.DankPacketHandlerForge;
 
 import java.util.List;
 
@@ -98,7 +98,7 @@ public class DankStorageForge {
     }
 
     public void onInitialize(FMLCommonSetupEvent e) {
-        DankPacketHandler.registerMessages();
+        DankPacketHandlerForge.registerMessages();
     }
 
     public void onInitializeClient(FMLClientSetupEvent e) {

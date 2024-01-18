@@ -8,7 +8,6 @@ import tfar.dankstorage.utils.PacketBufferEX;
 import tfar.dankstorage.world.ClientData;
 
 public class S2CContentsForDisplayPacket implements S2CPacketHelper {
-    private int size;
     private NonNullList<ItemStack> stacks;
 
     public S2CContentsForDisplayPacket(NonNullList<ItemStack> stacks) {

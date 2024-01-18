@@ -1,13 +1,18 @@
 package tfar.dankstorage.platform;
 
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.NonNullList;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.IModPacket;
 import tfar.dankstorage.network.server.*;
 import tfar.dankstorage.platform.services.IPlatformHelper;
 import tfar.dankstorage.utils.ButtonAction;
@@ -34,11 +39,6 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public void sendGhostItemSlot(ServerPlayer player, int id, int slot, ItemStack stack) {
-        DankPacketHandler.sendGhostItem(player, id, slot, stack);
-    }
-
-    @Override
     public void sendCustomSyncData(ServerPlayer player, int stateID, int containerID, NonNullList<ItemStack> stacks, ItemStack carried) {
         DankPacketHandler.sendSyncContainer(player, stateID, containerID, stacks, carried);
     }
@@ -46,6 +46,13 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public void sendCustomSlotChange(ServerPlayer player, int id, int slot, ItemStack stack) {
         DankPacketHandler.sendSyncSlot(player, id, slot, stack);
+    }
+
+    @Override
+    public void sendToClient(IModPacket msg, ResourceLocation channel, ServerPlayer player) {
+        FriendlyByteBuf buf = PacketByteBufs.create();
+        msg.write(buf);
+        ServerPlayNetworking.send(player, channel, buf);
     }
 
     @Override

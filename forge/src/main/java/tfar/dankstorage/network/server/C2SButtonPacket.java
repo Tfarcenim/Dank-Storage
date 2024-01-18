@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.menu.AbstractDankMenu;
-import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.DankPacketHandlerForge;
 import tfar.dankstorage.network.util.C2SPacketHelper;
 import tfar.dankstorage.utils.ButtonAction;
 import tfar.dankstorage.utils.CommonUtils;
@@ -23,7 +23,7 @@ public class C2SButtonPacket implements C2SPacketHelper {
     }
 
     public static void send(ButtonAction buttonAction) {
-        DankPacketHandler.sendToServer(new C2SButtonPacket(buttonAction));
+        DankPacketHandlerForge.sendToServer(new C2SButtonPacket(buttonAction));
     }
 
     public void handleServer(ServerPlayer player) {

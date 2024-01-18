@@ -9,7 +9,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import tfar.dankstorage.item.DankItem;
-import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.PacketIds;
 import tfar.dankstorage.utils.CommonUtils;
 
 public class C2SMessageScrollSlot implements ServerPlayNetworking.PlayChannelHandler {
@@ -17,7 +17,7 @@ public class C2SMessageScrollSlot implements ServerPlayNetworking.PlayChannelHan
     public static void send(boolean right) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeBoolean(right);
-        ClientPlayNetworking.send(DankPacketHandler.scroll, buf);
+        ClientPlayNetworking.send(PacketIds.scroll, buf);
     }
 
     public void handle(ServerPlayer player, boolean right) {

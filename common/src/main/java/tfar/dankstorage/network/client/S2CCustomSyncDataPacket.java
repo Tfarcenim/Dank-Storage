@@ -8,7 +8,7 @@ import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.network.util.S2CPacketHelper;
 import tfar.dankstorage.utils.PacketBufferEX;
 
-import static tfar.dankstorage.client.Client.getLocalPlayer;
+import static tfar.dankstorage.client.CommonClient.getLocalPlayer;
 
 public class S2CCustomSyncDataPacket implements S2CPacketHelper {
 

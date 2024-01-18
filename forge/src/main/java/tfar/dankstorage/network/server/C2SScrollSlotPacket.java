@@ -3,7 +3,7 @@ package tfar.dankstorage.network.server;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import tfar.dankstorage.item.DankItem;
-import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.DankPacketHandlerForge;
 import tfar.dankstorage.network.util.C2SPacketHelper;
 import tfar.dankstorage.utils.CommonUtils;
 
@@ -20,7 +20,7 @@ public class C2SScrollSlotPacket implements C2SPacketHelper {
     }
 
     public static void send(boolean right) {
-        DankPacketHandler.sendToServer(new C2SScrollSlotPacket(right));
+        DankPacketHandlerForge.sendToServer(new C2SScrollSlotPacket(right));
     }
 
     public void encode(FriendlyByteBuf buf) {

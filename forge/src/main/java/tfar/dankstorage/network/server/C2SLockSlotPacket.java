@@ -5,9 +5,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.menu.AbstractDankMenu;
-import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.DankPacketHandlerForge;
 import tfar.dankstorage.network.util.C2SPacketHelper;
-import tfar.dankstorage.world.DankInventoryForge;
 
 public class C2SLockSlotPacket implements C2SPacketHelper {
 
@@ -22,7 +21,7 @@ public class C2SLockSlotPacket implements C2SPacketHelper {
     }
 
     public static void send(int slot) {
-        DankPacketHandler.sendToServer(new C2SLockSlotPacket(slot));
+        DankPacketHandlerForge.sendToServer(new C2SLockSlotPacket(slot));
     }
 
     public void handleServer(ServerPlayer player) {

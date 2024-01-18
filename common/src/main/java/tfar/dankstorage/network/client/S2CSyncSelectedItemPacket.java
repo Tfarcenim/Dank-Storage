@@ -7,7 +7,7 @@ import tfar.dankstorage.network.util.S2CPacketHelper;
 import tfar.dankstorage.utils.PacketBufferEX;
 import tfar.dankstorage.world.ClientData;
 
-import static tfar.dankstorage.client.Client.getLocalPlayer;
+import static tfar.dankstorage.client.CommonClient.getLocalPlayer;
 
 public class S2CSyncSelectedItemPacket implements S2CPacketHelper {
 

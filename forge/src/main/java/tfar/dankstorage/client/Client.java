@@ -5,7 +5,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -20,8 +19,6 @@ import tfar.dankstorage.utils.ButtonAction;
 import tfar.dankstorage.network.server.C2SButtonPacket;
 
 public class Client {
-
-    public static final Minecraft mc = Minecraft.getInstance();
 
     public static void client() {
 
@@ -67,41 +64,4 @@ public class Client {
             C2SButtonPacket.send(ButtonAction.TOGGLE_PICKUP);
         }
     }
-
-  /*public static class KeyHandler {
-    public static void onKeyInput(InputEvent.KeyInputEvent event) {
-      if (mc.player == null || !(mc.player.getMainHandStack().getItem() instanceof DankItem || mc.player.getOffHandStack().getItem() instanceof DankItem))
-        return;
-      if (CONSTRUCTION.wasPressed()) {
-        DankPacketHandler.INSTANCE.sendToServer(new CMessageToggleUseType());
-      }
-      if (mc.options.keyPickItem.wasPressed()) {
-        DankPacketHandler.INSTANCE.sendToServer(new CMessagePickBlock());
-      }
-    }
-
-    public static void onMouseInput(InputEvent.MouseInputEvent event) {
-      if (mc.player == null || !(mc.player.getMainHandStack().getItem() instanceof DankItem || mc.player.getOffHandStack().getItem() instanceof DankItem))
-        return;
-      if (CONSTRUCTION.wasPressed()) {
-        DankPacketHandler.INSTANCE.sendToServer(new CMessageToggleUseType());
-      }
-      if (mc.options.keyPickItem.wasPressed()) {
-        DankPacketHandler.INSTANCE.sendToServer(new CMessagePickBlock());
-      }
-    }
-
-    public static void mousewheel(InputEvent.MouseScrollEvent e) {
-      PlayerEntity player = MinecraftClient.getInstance().player;
-      if (player != null && player.isInSneakingPose() && (Utils.isConstruction(player.getMainHandStack()) || Utils.isConstruction(player.getOffHandStack()))) {
-        boolean right = e.getScrollDelta() < 0;
-        DankPacketHandler.INSTANCE.sendToServer(new C2SMessageScrollSlot(right));
-        e.setCanceled(true);
-      }
-    }*/
-
-    public static Player getLocalPlayer() {
-        return mc.player;
-    }
-
 }

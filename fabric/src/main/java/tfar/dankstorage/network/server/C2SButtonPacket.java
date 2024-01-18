@@ -11,10 +11,9 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.menu.AbstractDankMenu;
-import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.PacketIds;
 import tfar.dankstorage.utils.ButtonAction;
 import tfar.dankstorage.utils.CommonUtils;
-import tfar.dankstorage.world.DankInventoryFabric;
 
 
 public class C2SButtonPacket implements ServerPlayNetworking.PlayChannelHandler {
@@ -23,7 +22,7 @@ public class C2SButtonPacket implements ServerPlayNetworking.PlayChannelHandler 
     public static void send(ButtonAction buttonAction) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeInt(buttonAction.ordinal());
-        ClientPlayNetworking.send(DankPacketHandler.button_action, buf);
+        ClientPlayNetworking.send(PacketIds.button_action, buf);
     }
 
     public void handleInternal(ServerPlayer player, ButtonAction buttonAction) {

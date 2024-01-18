@@ -1,15 +1,18 @@
 package tfar.dankstorage.platform;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.network.NetworkDirection;
 import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.DankSlot;
-import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.DankPacketHandlerForge;
+import tfar.dankstorage.network.IModPacket;
 import tfar.dankstorage.network.server.*;
 import tfar.dankstorage.platform.services.IPlatformHelper;
 import tfar.dankstorage.utils.ButtonAction;
@@ -37,18 +40,13 @@ public class ForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public void sendGhostItemSlot(ServerPlayer player, int id, int slot, ItemStack stack) {
-        DankPacketHandler.sendGhostItemSlot(player, id, slot, stack);
-    }
-
-    @Override
     public void sendCustomSyncData(ServerPlayer player, int stateID, int containerID, NonNullList<ItemStack> stacks, ItemStack carried) {
-        DankPacketHandler.sendCustomSyncData(player, stateID, containerID, stacks, carried);
+        DankPacketHandlerForge.sendCustomSyncData(player, stateID, containerID, stacks, carried);
     }
 
     @Override
     public void sendCustomSlotChange(ServerPlayer player, int id, int slot, ItemStack stack) {
-        DankPacketHandler.sendCustomSlotChange(player, id, slot, stack);
+        DankPacketHandlerForge.sendCustomSlotChange(player, id, slot, stack);
     }
 
     @Override
@@ -78,7 +76,12 @@ public class ForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public void sendSelectedItem(ServerPlayer player, ItemStack selected) {
-        DankPacketHandler.sendSelectedItem(player, selected);
+        DankPacketHandlerForge.sendSelectedItem(player, selected);
+    }
+
+    @Override
+    public void sendToClient(IModPacket msg, ResourceLocation channel, ServerPlayer player) {
+        DankPacketHandlerForge.INSTANCE.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
 
     @Override

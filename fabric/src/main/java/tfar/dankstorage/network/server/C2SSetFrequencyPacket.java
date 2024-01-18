@@ -8,7 +8,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.PacketIds;
 import tfar.dankstorage.utils.CommonUtils;
 
 public class C2SSetFrequencyPacket implements ServerPlayNetworking.PlayChannelHandler {
@@ -17,7 +17,7 @@ public class C2SSetFrequencyPacket implements ServerPlayNetworking.PlayChannelHa
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeInt(id);
         buf.writeBoolean(set);
-        ClientPlayNetworking.send(DankPacketHandler.set_id, buf);
+        ClientPlayNetworking.send(PacketIds.set_id, buf);
     }
 
     public void handle(ServerPlayer player, int frequency,boolean set) {

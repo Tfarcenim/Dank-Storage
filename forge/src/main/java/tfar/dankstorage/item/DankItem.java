@@ -2,16 +2,10 @@ package tfar.dankstorage.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.Nullable;
-import tfar.dankstorage.menu.PortableDankProvider;
-import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.*;
 
 import javax.annotation.Nonnull;
