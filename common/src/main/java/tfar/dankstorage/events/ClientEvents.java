@@ -6,6 +6,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.item.CDankItem;
+import tfar.dankstorage.network.server.C2SScrollSlotPacket;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.world.ClientData;
@@ -21,7 +22,7 @@ public class ClientEvents {
             ItemStack off = player.getOffhandItem();
             if (player.isCrouching() && (CommonUtils.isConstruction(main) || CommonUtils.isConstruction(off))) {
                 boolean right = delta < 0;
-                Services.PLATFORM.sendScrollPacket(right);
+                C2SScrollSlotPacket.send(right);
                 return true;
             }
         }

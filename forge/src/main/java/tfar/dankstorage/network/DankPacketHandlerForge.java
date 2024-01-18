@@ -26,15 +26,15 @@ public class DankPacketHandlerForge {
 
         INSTANCE.registerMessage(i++,
                 C2SScrollSlotPacket.class,
-                C2SScrollSlotPacket::encode,
+                C2SScrollSlotPacket::write,
                 C2SScrollSlotPacket::new,
-                C2SScrollSlotPacket::handle);
+                wrapC2S());
 
         INSTANCE.registerMessage(i++,
                 C2SLockSlotPacket.class,
-                C2SLockSlotPacket::encode,
+                C2SLockSlotPacket::write,
                 C2SLockSlotPacket::new,
-                C2SLockSlotPacket::handle);
+                wrapC2S());
 
 
 
@@ -45,22 +45,16 @@ public class DankPacketHandlerForge {
                 wrapC2S());
 
         INSTANCE.registerMessage(i++,
-                C2SMessagePickBlock.class,
-                C2SMessagePickBlock::encode,
-                C2SMessagePickBlock::new,
-                C2SMessagePickBlock::handle);
-
-        INSTANCE.registerMessage(i++,
                 C2SSetFrequencyPacket.class,
-                C2SSetFrequencyPacket::encode,
+                C2SSetFrequencyPacket::write,
                 C2SSetFrequencyPacket::new,
-                C2SSetFrequencyPacket::handle);
+                wrapC2S());
 
         INSTANCE.registerMessage(i++,
                 C2SRequestContentsPacket.class,
-                C2SRequestContentsPacket::encode,
+                C2SRequestContentsPacket::write,
                 C2SRequestContentsPacket::new,
-                C2SRequestContentsPacket::handle);
+                wrapC2S());
 
         ///////server to client
 

@@ -11,7 +11,8 @@ import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.client.DankHudOverlay;
 import tfar.dankstorage.events.ClientEvents;
-import tfar.dankstorage.network.server.C2SMessagePickBlock;
+import tfar.dankstorage.network.server.C2SButtonPacket;
+import tfar.dankstorage.utils.ButtonAction;
 import tfar.dankstorage.utils.CommonUtils;
 
 public class ForgeClientEvents {
@@ -28,14 +29,9 @@ public class ForgeClientEvents {
         if (e.isPickBlock()) {
 
             if (CommonUtils.isHoldingDank(mc.player) && mc.hitResult != null && mc.hitResult.getType() != HitResult.Type.MISS) {
-
                 HitResult result = mc.player.pick(mc.player.getBlockReach(),0,false);
-
-                if (result instanceof BlockHitResult blockHitResult) {
-                    BlockPos pos = blockHitResult.getBlockPos();
-                    BlockState state = mc.player.level().getBlockState(pos);
-
-                    C2SMessagePickBlock.send(state.getCloneItemStack(blockHitResult,mc.player.level(),pos, mc.player));
+                if (result instanceof BlockHitResult) {
+                    C2SButtonPacket.send(ButtonAction.PICK_BLOCK);
                     e.setCanceled(true);
                 }
             }

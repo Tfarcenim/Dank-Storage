@@ -5,10 +5,11 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.inventory.DankInterface;
-import tfar.dankstorage.network.DankPacketHandlerForge;
-import tfar.dankstorage.network.util.C2SPacketHelper;
+import tfar.dankstorage.network.PacketIds;
+import tfar.dankstorage.network.client.S2CContentsForDisplayPacket;
+import tfar.dankstorage.platform.Services;
 
-public class C2SRequestContentsPacket implements C2SPacketHelper {
+public class C2SRequestContentsPacket implements C2SModPacket {
 
     private final int frequency;
 
@@ -21,19 +22,19 @@ public class C2SRequestContentsPacket implements C2SPacketHelper {
     }
 
     @Override
-    public void encode(FriendlyByteBuf buf) {
+    public void write(FriendlyByteBuf buf) {
         buf.writeInt(frequency);
     }
 
     public static void send(int frequency) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeInt(frequency);
-        DankPacketHandlerForge.sendToServer(new C2SRequestContentsPacket(frequency));
+        Services.PLATFORM.sendToServer(new C2SRequestContentsPacket(frequency), PacketIds.request_contents);
     }
 
     public void handleServer(ServerPlayer player) {
         DankInterface dankInventoryForge = DankStorage.getData(frequency,player.server).createInventory(frequency);
-            DankPacketHandlerForge.sendContentsForDisplay(player, dankInventoryForge.getContents());
+            Services.PLATFORM.sendToClient(new S2CContentsForDisplayPacket(dankInventoryForge.getContents()),PacketIds.sync_dank_inventory,player);
     }
 }
 

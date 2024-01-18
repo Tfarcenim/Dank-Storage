@@ -1,8 +1,14 @@
 package tfar.dankstorage.platform.services;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.HitResult;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.network.IModPacket;
 import tfar.dankstorage.utils.DankStats;
@@ -41,14 +47,10 @@ public interface IPlatformHelper {
         return isDevelopmentEnvironment() ? "development" : "production";
     }
 
-    void sendRequestContentsPacket(int frequency);
-
-    void sendScrollPacket(boolean right);
-    void sendFrequencyPacket(int frequency,boolean set);
-    void sendLockSlotPacket(int index);
-
     void sendToClient(IModPacket msg, ResourceLocation channel, ServerPlayer player);
     void sendToServer(IModPacket msg, ResourceLocation channel);
+
+    ItemStack getCloneStack(Level level, BlockPos pos, BlockState state, HitResult hitResult, Player player);
 
 
     DankInterface createInventory(DankStats stats,int frequency);

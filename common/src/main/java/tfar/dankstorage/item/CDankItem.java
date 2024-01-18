@@ -31,6 +31,7 @@ import tfar.dankstorage.menu.PortableDankProvider;
 import tfar.dankstorage.mixin.ItemUsageContextAccessor;
 import tfar.dankstorage.network.PacketIds;
 import tfar.dankstorage.network.client.S2CSyncSelectedDankItemPacket;
+import tfar.dankstorage.network.server.C2SRequestContentsPacket;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
@@ -264,7 +265,7 @@ public class CDankItem extends Item {
         if (id > CommonUtils.INVALID) {
             //don't spam the server with requests
             if (cache.get() != id || true) {
-               Services.PLATFORM.sendRequestContentsPacket(id);
+               C2SRequestContentsPacket.send(id);
                 cache.set(id);
             }
 

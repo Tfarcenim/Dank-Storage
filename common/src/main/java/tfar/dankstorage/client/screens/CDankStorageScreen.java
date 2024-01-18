@@ -28,6 +28,8 @@ import tfar.dankstorage.client.button.SmallButton;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.network.server.C2SButtonPacket;
+import tfar.dankstorage.network.server.C2SLockSlotPacket;
+import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.ButtonAction;
 import tfar.dankstorage.utils.CommonUtils;
@@ -111,9 +113,9 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
     private void onNameChanged(String string) {
         try {
             int i = Integer.parseInt(string);
-            Services.PLATFORM.sendFrequencyPacket(i, false);
+            C2SSetFrequencyPacket.send(i, false);
         } catch (NumberFormatException e) {
-            Services.PLATFORM.sendFrequencyPacket(-1, false);
+            C2SSetFrequencyPacket.send(-1, false);
         }
     }
 
@@ -260,7 +262,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
             try {
                 if (menu.dankInventory.frequencyLocked()) return;
                 int id1 = Integer.parseInt(frequency.getValue());
-                Services.PLATFORM.sendFrequencyPacket(id1, true);
+                C2SSetFrequencyPacket.send(id1, true);
             } catch (NumberFormatException e) {
 
             }
@@ -319,7 +321,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
         boolean match = DankKeybinds.LOCK_SLOT.matches(keyCode, scanCode);
         if (match) {
             if (hoveredSlot != null && menu.isDankSlot(hoveredSlot)) {
-                Services.PLATFORM.sendLockSlotPacket(hoveredSlot.index);
+                C2SLockSlotPacket.send(hoveredSlot.index);
                 return true;
             }
         }

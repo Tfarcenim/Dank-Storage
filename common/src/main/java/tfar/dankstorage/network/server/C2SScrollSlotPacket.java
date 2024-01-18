@@ -2,12 +2,12 @@ package tfar.dankstorage.network.server;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import tfar.dankstorage.item.DankItem;
-import tfar.dankstorage.network.DankPacketHandlerForge;
-import tfar.dankstorage.network.util.C2SPacketHelper;
+import tfar.dankstorage.item.CDankItem;
+import tfar.dankstorage.network.PacketIds;
+import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 
-public class C2SScrollSlotPacket implements C2SPacketHelper {
+public class C2SScrollSlotPacket implements C2SModPacket {
 
     private final boolean right;
 
@@ -20,17 +20,17 @@ public class C2SScrollSlotPacket implements C2SPacketHelper {
     }
 
     public static void send(boolean right) {
-        DankPacketHandlerForge.sendToServer(new C2SScrollSlotPacket(right));
+        Services.PLATFORM.sendToServer(new C2SScrollSlotPacket(right), PacketIds.scroll);
     }
 
-    public void encode(FriendlyByteBuf buf) {
+    public void write(FriendlyByteBuf buf) {
         buf.writeBoolean(right);
     }
 
     public void handleServer(ServerPlayer player) {
-        if (player.getMainHandItem().getItem() instanceof DankItem)
+        if (player.getMainHandItem().getItem() instanceof CDankItem)
             CommonUtils.changeSelectedSlot(player.getMainHandItem(), right,player);
-        else if (player.getOffhandItem().getItem() instanceof DankItem)
+        else if (player.getOffhandItem().getItem() instanceof CDankItem)
             CommonUtils.changeSelectedSlot(player.getOffhandItem(), right,player);
     }
 }

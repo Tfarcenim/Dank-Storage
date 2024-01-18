@@ -3,7 +3,11 @@ package tfar.dankstorage.network.server;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.item.CDankItem;
 import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.network.PacketIds;
 import tfar.dankstorage.platform.Services;
@@ -43,6 +47,19 @@ public class C2SButtonPacket implements C2SModPacket {
                 case TOGGLE_TAG -> CommonUtils.toggleTagMode(player);
                 case TOGGLE_PICKUP -> CommonUtils.togglePickupMode(player);
                 case TOGGLE_USE_TYPE -> CommonUtils.toggleUseType(player);
+                case PICK_BLOCK -> {
+                    HitResult hit = player.pick(5, 0, false);
+                    if (hit instanceof BlockHitResult blockHit && hit.getType() != HitResult.Type.MISS) {
+                        ItemStack pick = Services.PLATFORM.getCloneStack(player.level(), blockHit.getBlockPos(),
+                                player.level().getBlockState(blockHit.getBlockPos()),hit,player);
+                        if (!pick.isEmpty()) {
+                            if (player.getMainHandItem().getItem() instanceof CDankItem)
+                                CommonUtils.setPickSlot(player.level(), player.getMainHandItem(), pick);
+                            else if (player.getOffhandItem().getItem() instanceof CDankItem)
+                                CommonUtils.setPickSlot(player.level(), player.getOffhandItem(), pick);
+                        }
+                    }
+                }
             }
         }
     }

@@ -7,7 +7,7 @@ import tfar.dankstorage.utils.PacketBufferEX;
 import tfar.dankstorage.world.ClientData;
 
 public class S2CContentsForDisplayPacket implements S2CModPacket {
-    private NonNullList<ItemStack> stacks;
+    private final NonNullList<ItemStack> stacks;
 
     public S2CContentsForDisplayPacket(NonNullList<ItemStack> stacks) {
         this.stacks = stacks;
