@@ -9,13 +9,13 @@ import java.util.function.Function;
 public class ClientDankPacketHandler {
 
     public static void registerClientMessages() {
-        ClientPlayNetworking.registerGlobalReceiver(PacketIds.sync_extended_slot, new S2CSyncExtendedSlotContents());
+        ClientPlayNetworking.registerGlobalReceiver(PacketIds.sync_extended_slot, wrapS2C(S2CSendExtendedSlotChangePacket::new));
 
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.sync_ghost_slot, wrapS2C(S2CSendGhostSlotPacket::new));
 
-        ClientPlayNetworking.registerGlobalReceiver(PacketIds.sync_data, new S2CSyncSelected());
-        ClientPlayNetworking.registerGlobalReceiver(PacketIds.sync_container, new S2CSyncContainerContents());
-        ClientPlayNetworking.registerGlobalReceiver(PacketIds.sync_inventory, new S2CSyncInventory());
+        ClientPlayNetworking.registerGlobalReceiver(PacketIds.sync_selected_dank_item, wrapS2C(S2CSyncSelectedDankItemPacket::new));
+        ClientPlayNetworking.registerGlobalReceiver(PacketIds.initial_sync_container, wrapS2C(S2CInitialSyncContainerPacket::new));
+        ClientPlayNetworking.registerGlobalReceiver(PacketIds.sync_dank_inventory, wrapS2C(S2CContentsForDisplayPacket::new));
     }
 
     public static <MSG extends S2CModPacket> ClientPlayNetworking.PlayChannelHandler wrapS2C(Function<FriendlyByteBuf,MSG> decodeFunction) {

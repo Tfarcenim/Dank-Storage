@@ -65,13 +65,13 @@ public class DankPacketHandlerForge {
                 C2SRequestContentsPacket::new,
                 C2SRequestContentsPacket::handle);
 
-        ///////
+        ///////server to client
 
         INSTANCE.registerMessage(i++,
-                S2CSendCustomSlotChangePacket.class,
-                S2CSendCustomSlotChangePacket::encode,
-                S2CSendCustomSlotChangePacket::new,
-                S2CSendCustomSlotChangePacket::handle);
+                S2CSendExtendedSlotChangePacket.class,
+                S2CSendExtendedSlotChangePacket::write,
+                S2CSendExtendedSlotChangePacket::new,
+                wrapS2C());
 
         INSTANCE.registerMessage(i++,
                 S2CSendGhostSlotPacket.class,
@@ -80,22 +80,22 @@ public class DankPacketHandlerForge {
                wrapS2C());
 
         INSTANCE.registerMessage(i++,
-                S2CSyncSelectedItemPacket.class,
-                S2CSyncSelectedItemPacket::encode,
-                S2CSyncSelectedItemPacket::new,
-                S2CSyncSelectedItemPacket::handle);
+                S2CSyncSelectedDankItemPacket.class,
+                S2CSyncSelectedDankItemPacket::write,
+                S2CSyncSelectedDankItemPacket::new,
+                wrapS2C());
 
         INSTANCE.registerMessage(i++,
-                S2CCustomSyncDataPacket.class,
-                S2CCustomSyncDataPacket::encode,
-                S2CCustomSyncDataPacket::new,
-                S2CCustomSyncDataPacket::handle);
+                S2CInitialSyncContainerPacket.class,
+                S2CInitialSyncContainerPacket::write,
+                S2CInitialSyncContainerPacket::new,
+                wrapS2C());
 
         INSTANCE.registerMessage(i++,
                 S2CContentsForDisplayPacket.class,
-                S2CContentsForDisplayPacket::encode,
+                S2CContentsForDisplayPacket::write,
                 S2CContentsForDisplayPacket::new,
-                S2CContentsForDisplayPacket::handle);
+                wrapS2C());
     }
 
     private static <MSG extends S2CModPacket> BiConsumer<MSG, Supplier<NetworkEvent.Context>> wrapS2C() {
@@ -103,19 +103,6 @@ public class DankPacketHandlerForge {
             contextSupplier.get().enqueueWork(msg::handleClient);
             contextSupplier.get().setPacketHandled(true);
         });
-    }
-
-    public static void sendCustomSlotChange(ServerPlayer player, int id, int slot, ItemStack stack) {
-        sendToClient(new S2CSendCustomSlotChangePacket(id,slot,stack),player);
-    }
-
-
-    public static void sendCustomSyncData(ServerPlayer player, int stateID, int containerID, NonNullList<ItemStack> stacks, ItemStack carried) {
-        sendToClient(new S2CCustomSyncDataPacket(stateID,containerID,stacks,carried),player);
-    }
-
-    public static void sendSelectedItem(ServerPlayer player, ItemStack stack) {
-        sendToClient(new S2CSyncSelectedItemPacket(stack),player);
     }
 
     public static void sendContentsForDisplay(ServerPlayer player, NonNullList<ItemStack> stacks) {

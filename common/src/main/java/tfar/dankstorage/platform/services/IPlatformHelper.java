@@ -1,10 +1,8 @@
 package tfar.dankstorage.platform.services;
 
-import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.network.IModPacket;
 import tfar.dankstorage.utils.ButtonAction;
@@ -44,8 +42,6 @@ public interface IPlatformHelper {
         return isDevelopmentEnvironment() ? "development" : "production";
     }
 
-    void sendCustomSyncData(ServerPlayer player, int stateID, int containerID, NonNullList<ItemStack> stacks, ItemStack carried);
-    void sendCustomSlotChange(ServerPlayer player, int id, int slot, ItemStack stack);
     void sendRequestContentsPacket(int frequency);
 
     void sendScrollPacket(boolean right);
@@ -62,5 +58,4 @@ public interface IPlatformHelper {
 
     Slot createSlot(DankInterface dankInventory, int index, int xPosition, int yPosition);
 
-    void sendSelectedItem(ServerPlayer player, ItemStack selected);
 }

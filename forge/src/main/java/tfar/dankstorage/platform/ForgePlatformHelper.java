@@ -1,6 +1,5 @@
 package tfar.dankstorage.platform;
 
-import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.Slot;
@@ -38,17 +37,6 @@ public class ForgePlatformHelper implements IPlatformHelper {
 
         return !FMLLoader.isProduction();
     }
-
-    @Override
-    public void sendCustomSyncData(ServerPlayer player, int stateID, int containerID, NonNullList<ItemStack> stacks, ItemStack carried) {
-        DankPacketHandlerForge.sendCustomSyncData(player, stateID, containerID, stacks, carried);
-    }
-
-    @Override
-    public void sendCustomSlotChange(ServerPlayer player, int id, int slot, ItemStack stack) {
-        DankPacketHandlerForge.sendCustomSlotChange(player, id, slot, stack);
-    }
-
     @Override
     public void sendRequestContentsPacket(int frequency) {
         C2SRequestContentsPacket.send(frequency);
@@ -72,11 +60,6 @@ public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public void sendButtonPacket(ButtonAction action) {
         C2SButtonPacket.send(action);
-    }
-
-    @Override
-    public void sendSelectedItem(ServerPlayer player, ItemStack selected) {
-        DankPacketHandlerForge.sendSelectedItem(player, selected);
     }
 
     @Override

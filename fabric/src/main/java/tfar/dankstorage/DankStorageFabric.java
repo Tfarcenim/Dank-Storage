@@ -32,7 +32,7 @@ import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.item.RedprintItem;
 import tfar.dankstorage.utils.UpgradeInfo;
 import tfar.dankstorage.item.UpgradeItem;
-import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.DankPacketHandlerFabric;
 import tfar.dankstorage.utils.DankStats;
 
 import java.util.stream.IntStream;
@@ -103,7 +103,7 @@ public class DankStorageFabric implements ModInitializer, ClientModInitializer,
 
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,new ResourceLocation(MODID,"creative_tab"), ModCreativeTabs.tab);
 
-        DankPacketHandler.registerMessages();
+        DankPacketHandlerFabric.registerMessages();
 
         ServerLifecycleEvents.SERVER_STARTED.register(this);
         ServerLifecycleEvents.SERVER_STOPPED.register(this);

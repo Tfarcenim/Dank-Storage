@@ -5,7 +5,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.client.CommonClient;
 import tfar.dankstorage.menu.AbstractDankMenu;
-import tfar.dankstorage.network.S2CModPacket;
 import tfar.dankstorage.utils.PacketBufferEX;
 
 public class S2CSendGhostSlotPacket implements S2CModPacket {

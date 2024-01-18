@@ -8,9 +8,9 @@ public class PacketIds {
     public static final ResourceLocation request_contents = new ResourceLocation(DankStorage.MODID, "request_contents");
     public static final ResourceLocation sync_extended_slot = new ResourceLocation(DankStorage.MODID, "sync_extended_slot");
     public static final ResourceLocation sync_ghost_slot = new ResourceLocation(DankStorage.MODID, "sync_ghost_slot");
-    public static final ResourceLocation sync_container = new ResourceLocation(DankStorage.MODID, "sync_container");
-    public static final ResourceLocation sync_data = new ResourceLocation(DankStorage.MODID, "sync_data");
-    public static final ResourceLocation sync_inventory = new ResourceLocation(DankStorage.MODID, "sync_inventory");
+    public static final ResourceLocation initial_sync_container = new ResourceLocation(DankStorage.MODID, "initial_sync_container");
+    public static final ResourceLocation sync_selected_dank_item = new ResourceLocation(DankStorage.MODID, "sync_selected_dank_item");
+    public static final ResourceLocation sync_dank_inventory = new ResourceLocation(DankStorage.MODID, "sync_dank_inventory");
     public static final ResourceLocation button_action = new ResourceLocation(DankStorage.MODID, "button_action");
     public static final ResourceLocation lock_slot = new ResourceLocation(DankStorage.MODID, "lock_slot");
     public static final ResourceLocation scroll = new ResourceLocation(DankStorage.MODID, "scroll");

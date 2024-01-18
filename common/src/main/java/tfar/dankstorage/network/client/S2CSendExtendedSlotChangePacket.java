@@ -4,31 +4,30 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.menu.AbstractDankMenu;
-import tfar.dankstorage.network.util.S2CPacketHelper;
 import tfar.dankstorage.utils.PacketBufferEX;
 
 import static tfar.dankstorage.client.CommonClient.getLocalPlayer;
 
-public class S2CSendCustomSlotChangePacket implements S2CPacketHelper {
+public class S2CSendExtendedSlotChangePacket implements S2CModPacket {
 
     int windowId;
     int slot;
     ItemStack stack;
 
-    public S2CSendCustomSlotChangePacket(int windowId, int slot, ItemStack stack) {
+    public S2CSendExtendedSlotChangePacket(int windowId, int slot, ItemStack stack) {
         this.windowId = windowId;
         this.slot = slot;
         this.stack = stack;
     }
 
-    public S2CSendCustomSlotChangePacket(FriendlyByteBuf buf) {
+    public S2CSendExtendedSlotChangePacket(FriendlyByteBuf buf) {
         windowId = buf.readInt();
         slot = buf.readInt();
         stack = PacketBufferEX.readExtendedItemStack(buf);
     }
 
     @Override
-    public void encode(FriendlyByteBuf buf) {
+    public void write(FriendlyByteBuf buf) {
         buf.writeInt(windowId);
         buf.writeInt(slot);
         PacketBufferEX.writeExtendedItemStack(buf, stack);

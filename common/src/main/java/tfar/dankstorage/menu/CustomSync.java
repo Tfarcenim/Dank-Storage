@@ -7,6 +7,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerSynchronizer;
 import net.minecraft.world.item.ItemStack;
+import tfar.dankstorage.network.PacketIds;
+import tfar.dankstorage.network.client.S2CInitialSyncContainerPacket;
+import tfar.dankstorage.network.client.S2CSendExtendedSlotChangePacket;
 import tfar.dankstorage.platform.Services;
 
 public class CustomSync implements ContainerSynchronizer {
@@ -19,7 +22,7 @@ public class CustomSync implements ContainerSynchronizer {
 
     public void sendInitialData(AbstractContainerMenu abstractContainerMenu, NonNullList<ItemStack> stacks, ItemStack carried, int[] is) {
         //problem, vanilla containers send itemstack size in bytes
-        Services.PLATFORM.sendCustomSyncData(player,abstractContainerMenu.incrementStateId(),abstractContainerMenu.containerId,stacks,carried);
+        Services.PLATFORM.sendToClient(new S2CInitialSyncContainerPacket(abstractContainerMenu.incrementStateId(),abstractContainerMenu.containerId,stacks,carried),PacketIds.initial_sync_container, player);
         for(int i = 0; i < is.length; ++i) {
             this.broadcastDataValue(abstractContainerMenu, i, is[i]);
         }
@@ -28,7 +31,7 @@ public class CustomSync implements ContainerSynchronizer {
     @Override
     public void sendSlotChange(AbstractContainerMenu abstractContainerMenu, int slot, ItemStack stack) {
         //problem, vanilla containers send itemstack size in bytes
-        Services.PLATFORM.sendCustomSlotChange(player,abstractContainerMenu.containerId,slot,stack);
+        Services.PLATFORM.sendToClient(new S2CSendExtendedSlotChangePacket(abstractContainerMenu.containerId,slot,stack), PacketIds.sync_extended_slot, player);
     }
 
     @Override

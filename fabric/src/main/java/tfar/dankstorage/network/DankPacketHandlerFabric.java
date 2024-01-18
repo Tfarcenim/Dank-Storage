@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.network.server.*;
 import tfar.dankstorage.utils.PacketBufferEX;
 
-public class DankPacketHandler {
+public class DankPacketHandlerFabric {
 
     public static void registerMessages() {
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.scroll, new C2SMessageScrollSlot());
@@ -17,22 +17,6 @@ public class DankPacketHandler {
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.set_id, new C2SSetFrequencyPacket());
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.request_contents,new C2SRequestContentsPacket());
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.button_action,new C2SButtonPacket());
-    }
-
-    public static void sendSyncSlot(ServerPlayer player, int id, int slot, ItemStack stack) {
-        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        buf.writeInt(id);
-        buf.writeInt(slot);
-        PacketBufferEX.writeExtendedItemStack(buf, stack);
-        ServerPlayNetworking.send(player, PacketIds.sync_extended_slot, buf);
-    }
-
-    public static void sendGhostItem(ServerPlayer player, int id, int slot, ItemStack stack) {
-        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        buf.writeInt(id);
-        buf.writeInt(slot);
-        PacketBufferEX.writeExtendedItemStack(buf, stack);
-        ServerPlayNetworking.send(player, PacketIds.sync_ghost_slot, buf);
     }
 
     public static void sendSyncContainer(ServerPlayer player,int stateID, int containerID, NonNullList<ItemStack> stacks,ItemStack carried) {
@@ -48,18 +32,12 @@ public class DankPacketHandler {
             PacketBufferEX.writeExtendedItemStack(buf, stack);
         }
 
-        ServerPlayNetworking.send(player, PacketIds.sync_container, buf);
-    }
-
-    public static void sendSelectedItem(ServerPlayer player, ItemStack stack) {
-        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        PacketBufferEX.writeExtendedItemStack(buf, stack);
-        ServerPlayNetworking.send(player, PacketIds.sync_data, buf);
+        ServerPlayNetworking.send(player, PacketIds.initial_sync_container, buf);
     }
 
     public static void sendList(ServerPlayer player, NonNullList<ItemStack> stacks) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         PacketBufferEX.writeList(buf, stacks);
-        ServerPlayNetworking.send(player, PacketIds.sync_inventory, buf);
+        ServerPlayNetworking.send(player, PacketIds.sync_dank_inventory, buf);
     }
 }

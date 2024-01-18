@@ -3,11 +3,10 @@ package tfar.dankstorage.network.client;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
-import tfar.dankstorage.network.util.S2CPacketHelper;
 import tfar.dankstorage.utils.PacketBufferEX;
 import tfar.dankstorage.world.ClientData;
 
-public class S2CContentsForDisplayPacket implements S2CPacketHelper {
+public class S2CContentsForDisplayPacket implements S2CModPacket {
     private NonNullList<ItemStack> stacks;
 
     public S2CContentsForDisplayPacket(NonNullList<ItemStack> stacks) {
@@ -24,7 +23,7 @@ public class S2CContentsForDisplayPacket implements S2CPacketHelper {
     }
 
     @Override
-    public void encode(FriendlyByteBuf buf) {
+    public void write(FriendlyByteBuf buf) {
         PacketBufferEX.writeList(buf, stacks);
     }
 }

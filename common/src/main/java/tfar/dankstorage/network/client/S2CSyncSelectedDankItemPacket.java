@@ -3,21 +3,20 @@ package tfar.dankstorage.network.client;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import tfar.dankstorage.network.util.S2CPacketHelper;
 import tfar.dankstorage.utils.PacketBufferEX;
 import tfar.dankstorage.world.ClientData;
 
 import static tfar.dankstorage.client.CommonClient.getLocalPlayer;
 
-public class S2CSyncSelectedItemPacket implements S2CPacketHelper {
+public class S2CSyncSelectedDankItemPacket implements S2CModPacket {
 
     private final ItemStack stack;
 
-    public S2CSyncSelectedItemPacket(ItemStack stack) {
+    public S2CSyncSelectedDankItemPacket(ItemStack stack) {
         this.stack = stack;
     }
 
-    public S2CSyncSelectedItemPacket(FriendlyByteBuf buf) {
+    public S2CSyncSelectedDankItemPacket(FriendlyByteBuf buf) {
         stack = PacketBufferEX.readExtendedItemStack(buf);
     }
 
@@ -30,7 +29,7 @@ public class S2CSyncSelectedItemPacket implements S2CPacketHelper {
     }
 
     @Override
-    public void encode(FriendlyByteBuf buf) {
+    public void write(FriendlyByteBuf buf) {
         PacketBufferEX.writeExtendedItemStack(buf,stack);
     }
 }
