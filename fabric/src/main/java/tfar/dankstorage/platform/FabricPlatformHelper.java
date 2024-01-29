@@ -16,8 +16,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.DankSlot;
-import tfar.dankstorage.network.IModPacket;
-import tfar.dankstorage.network.server.*;
+import tfar.dankstorage.network.client.S2CModPacket;
+import tfar.dankstorage.network.server.C2SModPacket;
 import tfar.dankstorage.platform.services.IPlatformHelper;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.world.DankInventoryFabric;
@@ -43,14 +43,14 @@ public class FabricPlatformHelper implements IPlatformHelper {
 
 
     @Override
-    public void sendToClient(IModPacket msg, ResourceLocation channel, ServerPlayer player) {
+    public void sendToClient(S2CModPacket msg, ResourceLocation channel, ServerPlayer player) {
         FriendlyByteBuf buf = PacketByteBufs.create();
         msg.write(buf);
         ServerPlayNetworking.send(player, channel, buf);
     }
 
     @Override
-    public void sendToServer(IModPacket msg, ResourceLocation channel) {
+    public void sendToServer(C2SModPacket msg, ResourceLocation channel) {
         FriendlyByteBuf buf = PacketByteBufs.create();
         msg.write(buf);
         ClientPlayNetworking.send(channel, buf);

@@ -11,6 +11,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.network.IModPacket;
+import tfar.dankstorage.network.client.S2CModPacket;
+import tfar.dankstorage.network.server.C2SModPacket;
 import tfar.dankstorage.utils.DankStats;
 
 public interface IPlatformHelper {
@@ -47,8 +49,8 @@ public interface IPlatformHelper {
         return isDevelopmentEnvironment() ? "development" : "production";
     }
 
-    void sendToClient(IModPacket msg, ResourceLocation channel, ServerPlayer player);
-    void sendToServer(IModPacket msg, ResourceLocation channel);
+    void sendToClient(S2CModPacket msg, ResourceLocation channel, ServerPlayer player);
+    void sendToServer(C2SModPacket msg, ResourceLocation channel);
 
     ItemStack getCloneStack(Level level, BlockPos pos, BlockState state, HitResult hitResult, Player player);
 

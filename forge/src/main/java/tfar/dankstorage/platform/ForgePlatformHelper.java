@@ -16,7 +16,8 @@ import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.network.DankPacketHandlerForge;
-import tfar.dankstorage.network.IModPacket;
+import tfar.dankstorage.network.client.S2CModPacket;
+import tfar.dankstorage.network.server.C2SModPacket;
 import tfar.dankstorage.platform.services.IPlatformHelper;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.world.DankInventoryForge;
@@ -42,12 +43,12 @@ public class ForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public void sendToClient(IModPacket msg, ResourceLocation channel, ServerPlayer player) {
+    public void sendToClient(S2CModPacket msg, ResourceLocation channel, ServerPlayer player) {
         DankPacketHandlerForge.INSTANCE.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
 
     @Override
-    public void sendToServer(IModPacket msg, ResourceLocation channel) {
+    public void sendToServer(C2SModPacket msg, ResourceLocation channel) {
         DankPacketHandlerForge.INSTANCE.sendToServer(msg);
     }
 
