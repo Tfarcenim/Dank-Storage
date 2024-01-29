@@ -89,17 +89,6 @@ public class DankItem extends Item {
         return 0;//stack.getItem().getUseDuration(stack);
     }
 
-    public static ItemStack getSelected(ItemStack bag) {
-       return ItemStack.EMPTY;
-    }
-
-    @Override
-    public float getDestroySpeed(ItemStack bag, BlockState p_150893_2_) {
-        if (!Utils.isConstruction(bag)) return 1;
-        //ItemStack tool = Utils.getItemStackInSelectedSlot(bag);
-        return 1;//tool.getItem().getDestroySpeed(tool, p_150893_2_);
-    }
-
     //this is used to damage tools and stuff, we use it here to damage the internal item instead
     @Override
     public boolean mineBlock(ItemStack s, Level level, BlockState p_179218_3_, BlockPos p_179218_4_, LivingEntity p_179218_5_) {
@@ -379,7 +368,10 @@ public class DankItem extends Item {
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-        return new DankItemCapability(stack);
+        if (Utils.getFrequency(stack) > Utils.INVALID) {
+            return new DankItemCapability(stack);
+        }
+        return super.initCapabilities(stack, nbt);
     }
 
     private static final ThreadLocal<Integer> cache = ThreadLocal.withInitial(() -> Utils.INVALID);
