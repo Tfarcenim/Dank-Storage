@@ -12,6 +12,7 @@ import tfar.dankstorage.network.client.S2CSendGhostSlotPacket;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
+import tfar.dankstorage.utils.PickupMode;
 
 import javax.annotation.Nonnull;
 
@@ -21,6 +22,16 @@ public abstract class AbstractDankMenu extends AbstractContainerMenu {
     public final int rows;
     public final DankInterface dankInventory;
     protected final DataSlot pickup;
+
+    public PickupMode getMode() {
+        return PickupMode.VALUES[pickup.get()];
+    }
+
+    public enum ButtonAction {
+        LOCK_FREQUENCY, SORT,
+        TOGGLE_TAG, TOGGLE_PICKUP,  COMPRESS;
+        private static final ButtonAction[] VALUES = values();
+    }
 
 
     public AbstractDankMenu(MenuType<?> type, int windowId, Inventory playerInventory, DankInterface dankInventory) {
@@ -66,6 +77,22 @@ public abstract class AbstractDankMenu extends AbstractContainerMenu {
     public void doClick(int pSlotId, int pButton, ClickType pClickType, Player pPlayer) {
         if (pClickType != ClickType.SWAP)
             super.doClick(pSlotId, pButton, pClickType, pPlayer);
+    }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        if (id < 0 || id >= ButtonAction.VALUES.length) return false;
+        ButtonAction buttonAction = ButtonAction.VALUES[id];
+        if (player instanceof ServerPlayer serverPlayer) {
+            switch (buttonAction) {
+                case LOCK_FREQUENCY -> dankInventory.toggleFrequencyLock();
+                case SORT -> dankInventory.sort();
+                case COMPRESS -> dankInventory.compress(serverPlayer);
+                case TOGGLE_TAG -> CommonUtils.toggleTagMode(serverPlayer);
+                case TOGGLE_PICKUP -> CommonUtils.togglePickupMode(serverPlayer);
+            }
+        }
+        return true;
     }
 
     @Nonnull

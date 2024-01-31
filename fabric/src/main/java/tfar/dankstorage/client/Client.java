@@ -17,7 +17,7 @@ import tfar.dankstorage.menu.DankMenu;
 import tfar.dankstorage.menu.DockMenu;
 import tfar.dankstorage.network.ClientDankPacketHandler;
 import tfar.dankstorage.network.server.C2SButtonPacket;
-import tfar.dankstorage.utils.ButtonAction;
+import tfar.dankstorage.utils.KeybindAction;
 
 public class Client {
 
@@ -52,10 +52,10 @@ public class Client {
 
     public static void keyPressed(Minecraft client) {
         if (DankKeybinds.CONSTRUCTION.consumeClick()) {
-            C2SButtonPacket.send(ButtonAction.TOGGLE_USE_TYPE);
+            C2SButtonPacket.send(KeybindAction.TOGGLE_USE_TYPE);
         }
         if (DankKeybinds.PICKUP_MODE.consumeClick()) {
-            C2SButtonPacket.send(ButtonAction.TOGGLE_PICKUP);
+            C2SButtonPacket.send(KeybindAction.TOGGLE_PICKUP);
         }
     }
 }

@@ -1,7 +1,6 @@
 package tfar.dankstorage.client;
 
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -15,7 +14,7 @@ import tfar.dankstorage.init.ModMenuTypes;
 import tfar.dankstorage.menu.DankMenu;
 import tfar.dankstorage.menu.DockMenu;
 import tfar.dankstorage.event.ForgeClientEvents;
-import tfar.dankstorage.utils.ButtonAction;
+import tfar.dankstorage.utils.KeybindAction;
 import tfar.dankstorage.network.server.C2SButtonPacket;
 
 public class Client {
@@ -58,10 +57,10 @@ public class Client {
 
     public static void keyPressed(TickEvent.ClientTickEvent client) {
         if (DankKeybinds.CONSTRUCTION.consumeClick()) {
-            C2SButtonPacket.send(ButtonAction.TOGGLE_USE_TYPE);
+            C2SButtonPacket.send(KeybindAction.TOGGLE_USE_TYPE);
         }
         if (DankKeybinds.PICKUP_MODE.consumeClick()) {
-            C2SButtonPacket.send(ButtonAction.TOGGLE_PICKUP);
+            C2SButtonPacket.send(KeybindAction.TOGGLE_PICKUP);
         }
     }
 }

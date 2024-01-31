@@ -1,8 +1,6 @@
 package tfar.dankstorage.event;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.client.event.InputEvent;
@@ -12,7 +10,7 @@ import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.client.DankHudOverlay;
 import tfar.dankstorage.events.ClientEvents;
 import tfar.dankstorage.network.server.C2SButtonPacket;
-import tfar.dankstorage.utils.ButtonAction;
+import tfar.dankstorage.utils.KeybindAction;
 import tfar.dankstorage.utils.CommonUtils;
 
 public class ForgeClientEvents {
@@ -31,7 +29,7 @@ public class ForgeClientEvents {
             if (CommonUtils.isHoldingDank(mc.player) && mc.hitResult != null && mc.hitResult.getType() != HitResult.Type.MISS) {
                 HitResult result = mc.player.pick(mc.player.getBlockReach(),0,false);
                 if (result instanceof BlockHitResult) {
-                    C2SButtonPacket.send(ButtonAction.PICK_BLOCK);
+                    C2SButtonPacket.send(KeybindAction.PICK_BLOCK);
                     e.setCanceled(true);
                 }
             }

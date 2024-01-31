@@ -4,7 +4,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -17,6 +19,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
@@ -25,13 +28,9 @@ import tfar.dankstorage.client.DualTooltip;
 import tfar.dankstorage.client.NumberEditBox;
 import tfar.dankstorage.client.StackSizeRenderer;
 import tfar.dankstorage.client.button.SmallButton;
-import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.menu.AbstractDankMenu;
-import tfar.dankstorage.network.server.C2SButtonPacket;
 import tfar.dankstorage.network.server.C2SLockSlotPacket;
 import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
-import tfar.dankstorage.platform.Services;
-import tfar.dankstorage.utils.ButtonAction;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.TxtColor;
@@ -67,31 +66,31 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
         this.is7 = this.menu.rows > 6;
     }
 
-    public static <S extends DankInterface,T extends AbstractDankMenu> CDankStorageScreen<T> t1(T container, Inventory playerinventory, Component component) {
+    public static <T extends AbstractDankMenu> CDankStorageScreen<T> t1(T container, Inventory playerinventory, Component component) {
         return new CDankStorageScreen<>(container, playerinventory, component, background1);
     }
 
-    public static <S extends DankInterface,T extends AbstractDankMenu> CDankStorageScreen<T> t2(T container, Inventory playerinventory, Component component) {
+    public static <T extends AbstractDankMenu> CDankStorageScreen<T> t2(T container, Inventory playerinventory, Component component) {
         return new CDankStorageScreen<>(container, playerinventory, component, background2);
     }
 
-    public static <S extends DankInterface,T extends AbstractDankMenu> CDankStorageScreen<T> t3(T container, Inventory playerinventory, Component component) {
+    public static <T extends AbstractDankMenu> CDankStorageScreen<T> t3(T container, Inventory playerinventory, Component component) {
         return new CDankStorageScreen<>(container, playerinventory, component, background3);
     }
 
-    public static <S extends DankInterface,T extends AbstractDankMenu> CDankStorageScreen<T> t4(T container, Inventory playerinventory, Component component) {
+    public static <T extends AbstractDankMenu> CDankStorageScreen<T> t4(T container, Inventory playerinventory, Component component) {
         return new CDankStorageScreen<>(container, playerinventory, component, background4);
     }
 
-    public static <S extends DankInterface,T extends AbstractDankMenu> CDankStorageScreen<T> t5(T container, Inventory playerinventory, Component component) {
+    public static <T extends AbstractDankMenu> CDankStorageScreen<T> t5(T container, Inventory playerinventory, Component component) {
         return new CDankStorageScreen<>(container, playerinventory, component, background5);
     }
 
-    public static <S extends DankInterface,T extends AbstractDankMenu> CDankStorageScreen<T> t6(T container, Inventory playerinventory, Component component) {
+    public static <T extends AbstractDankMenu> CDankStorageScreen<T> t6(T container, Inventory playerinventory, Component component) {
         return new CDankStorageScreen<>(container, playerinventory, component, background6);
     }
 
-    public static <S extends DankInterface,T extends AbstractDankMenu> CDankStorageScreen<T> t7(T container, Inventory playerinventory, Component component) {
+    public static <T extends AbstractDankMenu> CDankStorageScreen<T> t7(T container, Inventory playerinventory, Component component) {
         return new CDankStorageScreen<>(container, playerinventory, component, background7);
     }
 
@@ -179,7 +178,6 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
                 if (count > 1 || !s.isEmpty()) {
                     StackSizeRenderer.renderSizeLabel(pGuiGraphics, Minecraft.getInstance().font, i, j, s + CommonUtils.formatLargeNumber(itemstack.getCount()));
                 }
-
             }
 
             pGuiGraphics.pose().popPose();
@@ -195,12 +193,20 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
         }
     }
 
+    private void sendButtonToServer(AbstractDankMenu.ButtonAction action) {
+        this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, action.ordinal());
+    }
+
     @Override
     public void render(GuiGraphics stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         super.render(stack, mouseX, mouseY, partialTicks);
         int color = menu.dankInventory.textColor();
         this.frequency.setTextColor(color);
+
+        PickupMode pickupMode = menu.getMode();
+        modeCycleButton.setValue(pickupMode);
+
         this.frequency.render(stack, mouseX, mouseY, partialTicks);
         this.renderTooltip(stack, mouseX, mouseY);
     }
@@ -229,21 +235,31 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
         }
     }
 
+    protected CycleButton<PickupMode> modeCycleButton;
+
     @Override
     protected void init() {
         super.init();
 
         int j = (this.height - this.imageHeight) / 2;
-        this.addRenderableWidget(new SmallButton(leftPos + 143, topPos + 4, 26, 12, Component.literal("Sort"), b -> {
-            C2SButtonPacket.send(ButtonAction.SORT);
-        }));
+        this.addRenderableWidget(new SmallButton(leftPos + 143, topPos + 4, 26, 12, Component.literal("Sort"), b -> sendButtonToServer(AbstractDankMenu.ButtonAction.SORT)));
+
+        modeCycleButton = CycleButton.<PickupMode>builder(pickupMode -> Component.literal("P")
+                        .withStyle(Style.EMPTY.withColor(pickupMode.getColor())))
+                .withValues(PickupMode.VALUES)
+                .withTooltip(mode -> Tooltip.create(mode.translate()))
+                .withInitialValue(PickupMode.none)
+                .displayOnlyValue()
+                .create(leftPos + 101, topPos + 4, 12, 12, Component.empty(), (pickupModeCycleButton, pickupMode) -> sendButtonToServer(AbstractDankMenu.ButtonAction.TOGGLE_PICKUP));
+
+        addRenderableWidget(modeCycleButton);
 
         Tooltip freqTooltip = new DualTooltip(
                 Component.translatable("text.dankstorage.unlock_button"),
                 Component.translatable("text.dankstorage.lock_button"),null,this);
 
         SmallButton l = new SmallButton(leftPos + 115, topPos + 4, 12, 12,
-                Component.literal(""), button -> C2SButtonPacket.send(ButtonAction.LOCK_FREQUENCY)) {
+                Component.literal(""), button -> sendButtonToServer(AbstractDankMenu.ButtonAction.LOCK_FREQUENCY)) {
             @Override
             public Component getMessage() {
                 return menu.dankInventory.frequencyLocked() ? Component.literal("X").withStyle(ChatFormatting.RED) :
@@ -275,7 +291,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
         Tooltip compressTooltip = Tooltip.create(Component.translatable("text.dankstorage.compress_button"));
 
         SmallButton c = new SmallButton(leftPos + 129, topPos + 4, 12, 12,
-                Component.literal("C"), button -> C2SButtonPacket.send(ButtonAction.COMPRESS));
+                Component.literal("C"), button -> sendButtonToServer(AbstractDankMenu.ButtonAction.COMPRESS));
         c.setTooltip(compressTooltip);
 
         this.addRenderableWidget(c);

@@ -361,7 +361,7 @@ public class CommonUtils {
     public static PickupMode getPickupMode(ItemStack bag) {
         CompoundTag tag = getSettings(bag);
         if (tag != null) {
-            return PickupMode.PICKUP_MODES[tag.getInt(MODE)];
+            return PickupMode.VALUES[tag.getInt(MODE)];
         }
         return PickupMode.none;
     }
@@ -380,10 +380,10 @@ public class CommonUtils {
     public static void cyclePickupMode(ItemStack bag, Player player) {
         int ordinal = getOrCreateSettings(bag).getInt(MODE);
         ordinal++;
-        if (ordinal > PickupMode.PICKUP_MODES.length - 1) ordinal = 0;
+        if (ordinal > PickupMode.VALUES.length - 1) ordinal = 0;
         getOrCreateSettings(bag).putInt(MODE, ordinal);
         player.displayClientMessage(
-                translatable("dankstorage.mode." + PickupMode.PICKUP_MODES[ordinal].name()), true);
+                translatable("dankstorage.mode." + PickupMode.VALUES[ordinal].name()), true);
     }
 
     public static UseType getUseType(ItemStack bag) {

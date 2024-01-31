@@ -2,6 +2,7 @@ package tfar.dankstorage.blockentity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.MenuProvider;
@@ -141,7 +142,7 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
     public void load(CompoundTag compound) {
         super.load(compound);
         this.settings = compound.getCompound(CommonUtils.SET);
-        if (compound.contains("CustomName", 8)) {
+        if (compound.contains("CustomName", Tag.TAG_STRING)) {
             this.setCustomName(Component.Serializer.fromJson(compound.getString("CustomName")));
         }
     }
@@ -155,6 +156,11 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
         if (this.hasCustomName()) {
             tag.putString("CustomName", Component.Serializer.toJson(this.customName));
         }
+    }
+
+    @Override
+    public CompoundTag getUpdateTag() {
+        return saveWithoutMetadata();
     }
 
     public void giveToPlayer(Player player) {

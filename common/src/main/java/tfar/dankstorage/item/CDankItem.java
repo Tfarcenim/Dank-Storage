@@ -99,8 +99,7 @@ public class CDankItem extends Item {
                     .withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
             PickupMode pickupMode = CommonUtils.getPickupMode(bag);
             tooltip.add(
-                    CommonUtils.translatable("text.dankstorage.current_pickup_mode", CommonUtils.translatable(
-                                    "dankstorage.mode." + pickupMode.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.YELLOW))
+                    CommonUtils.translatable("text.dankstorage.current_pickup_mode", pickupMode.translate().withStyle(ChatFormatting.YELLOW))
                             .withStyle(ChatFormatting.GRAY));
 
 

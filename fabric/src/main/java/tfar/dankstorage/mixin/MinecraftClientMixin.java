@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import tfar.dankstorage.network.server.C2SButtonPacket;
-import tfar.dankstorage.utils.ButtonAction;
+import tfar.dankstorage.utils.KeybindAction;
 import tfar.dankstorage.utils.CommonUtils;
 
 import javax.annotation.Nullable;
@@ -34,7 +34,7 @@ public class MinecraftClientMixin {
             locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
     private void dankPickBlock(CallbackInfo ci, boolean creative, BlockEntity blockEntity, ItemStack picked, HitResult.Type type, Inventory inventory) {
         if (CommonUtils.isHoldingDank(player) && hitResult != null && hitResult.getType() != HitResult.Type.MISS) {
-            C2SButtonPacket.send(ButtonAction.PICK_BLOCK);
+            C2SButtonPacket.send(KeybindAction.PICK_BLOCK);
             ci.cancel();
         }
     }

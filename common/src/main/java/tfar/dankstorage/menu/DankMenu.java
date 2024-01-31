@@ -34,7 +34,7 @@ public class DankMenu extends AbstractDankMenu {
 
             @Override
             public void set(int pValue) {
-                CommonUtils.setPickupMode(bag, PickupMode.PICKUP_MODES[pValue]);
+                CommonUtils.setPickupMode(bag, PickupMode.VALUES[pValue]);
             }
         };
     }
