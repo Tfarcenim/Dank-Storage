@@ -89,7 +89,7 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
     public static final DankInterface DUMMY = Services.PLATFORM.createInventory(DankStats.zero, CommonUtils.INVALID);
 
     public T getInventory() {
-        if (settings != null && settings.contains(CommonUtils.FREQ)) {
+        if (!level.isClientSide && settings != null && settings.contains(CommonUtils.FREQ)) {
             int frequency = settings.getInt(CommonUtils.FREQ);
             CDankSavedData savedData = DankStorage.getData(frequency,level.getServer());
             DankInterface dataInventory = savedData.createInventory(frequency);

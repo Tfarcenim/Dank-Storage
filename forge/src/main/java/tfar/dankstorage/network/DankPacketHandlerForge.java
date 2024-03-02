@@ -104,10 +104,6 @@ public class DankPacketHandlerForge {
         });
     }
 
-    public static void sendContentsForDisplay(ServerPlayer player, NonNullList<ItemStack> stacks) {
-        sendToClient(new S2CContentsForDisplayPacket(stacks),player);
-    }
-
     public static <MSG> void sendToClient(MSG packet, ServerPlayer player) {
         INSTANCE.sendTo(packet, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
