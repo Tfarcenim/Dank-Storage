@@ -45,21 +45,21 @@ public class CDockBlock extends Block implements EntityBlock {
     static {
         VoxelShape a1 = Block.box(0, 0, 0, 16, 4, 16);
         VoxelShape b1 = Block.box(4, 0, 4, 12, 4, 12);
-        VoxelShape shape1 = Shapes.joinUnoptimized(a1, b1, BooleanOp.NOT_SAME);
+        VoxelShape bottom_ring = Shapes.joinUnoptimized(a1, b1, BooleanOp.NOT_SAME);
 
         VoxelShape a2 = Block.box(0, 12, 0, 16, 16, 16);
         VoxelShape b2 = Block.box(4, 12, 4, 12, 16, 12);
-        VoxelShape shape2 = Shapes.joinUnoptimized(a2, b2, BooleanOp.NOT_SAME);
+        VoxelShape top_ring = Shapes.joinUnoptimized(a2, b2, BooleanOp.NOT_SAME);
 
-        VoxelShape p1 = Block.box(0, 4, 0, 4, 12, 4);
+        VoxelShape p1 = Block.box(0, 4, 0, 4, 12, 4);//x1,y1,z1,x2,y2,z2
 
         VoxelShape p2 = Block.box(12, 4, 0, 16, 12, 4);
 
         VoxelShape p3 = Block.box(0, 4, 12, 4, 12, 16);
 
-        VoxelShape p4 = Block.box(12, 4, 12, 12, 12, 16);
+        VoxelShape p4 = Block.box(12, 4, 12, 16, 12, 16);
 
-        EMPTY = Shapes.or(shape1, shape2, p1, p2, p3, p4);
+        EMPTY = Shapes.or(bottom_ring, top_ring, p1, p2, p3, p4);
 
         DOCKED = Shapes.or(EMPTY, Block.box(4, 4, 4, 12, 12, 12));
 
