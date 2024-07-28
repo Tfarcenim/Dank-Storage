@@ -23,11 +23,12 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import tfar.dankstorage.block.CDockBlock;
 import tfar.dankstorage.block.DankDispenserBehavior;
 import tfar.dankstorage.blockentity.DockBlockEntity;
-import tfar.dankstorage.client.Client;
+import tfar.dankstorage.client.ModClientFabric;
 import tfar.dankstorage.command.DankCommands;
 import tfar.dankstorage.init.ModCreativeTabs;
 import tfar.dankstorage.init.ModMenuTypes;
 import tfar.dankstorage.init.ModRecipeSerializers;
+import tfar.dankstorage.item.CDankItem;
 import tfar.dankstorage.item.RedprintItem;
 import tfar.dankstorage.utils.UpgradeInfo;
 import tfar.dankstorage.item.UpgradeItem;
@@ -67,7 +68,7 @@ public class DankStorageFabric implements ModInitializer, ClientModInitializer,
         properties.stacksTo(1);
 
         IntStream.range(1, 8).forEach(i -> {
-            DankItem dankItem = new DankItem(properties, DankStats.values()[i]);
+            CDankItem dankItem = new CDankItem(properties, DankStats.values()[i]);
             DispenserBlock.registerBehavior(dankItem, new DankDispenserBehavior());
             Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "dank_" + i), dankItem);
         });
@@ -111,7 +112,7 @@ public class DankStorageFabric implements ModInitializer, ClientModInitializer,
 
     @Override
     public void onInitializeClient() {
-        Client.client();
+        ModClientFabric.client();
     }
 
     @Override

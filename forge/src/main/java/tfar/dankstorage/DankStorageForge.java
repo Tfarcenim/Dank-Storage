@@ -24,14 +24,13 @@ import net.minecraftforge.registries.RegisterEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import tfar.dankstorage.client.Client;
+import tfar.dankstorage.client.ModClientForge;
 import tfar.dankstorage.command.DankCommands;
 import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.menu.CustomSync;
 import tfar.dankstorage.datagen.DataGenerators;
 import tfar.dankstorage.event.ForgeClientEvents;
 import tfar.dankstorage.init.*;
-import tfar.dankstorage.network.DankPacketHandlerForge;
 
 import java.util.HashMap;
 import java.util.List;
@@ -60,8 +59,8 @@ public class DankStorageForge {
         bus.addListener(this::onInitialize);
         if (FMLEnvironment.dist.isClient()) {
             bus.addListener(this::onInitializeClient);
-            bus.addListener(Client::keybinds);
-            bus.addListener(Client::clientTool);
+            bus.addListener(ModClientForge::keybinds);
+            bus.addListener(ModClientForge::clientTool);
             bus.addListener(ForgeClientEvents::renderStack);
         }
         DankStorage.init();
@@ -105,7 +104,7 @@ public class DankStorageForge {
     }
 
     public void onInitializeClient(FMLClientSetupEvent e) {
-        Client.client();
+        ModClientForge.client();
     }
 
     public void onServerStarted(ServerStartedEvent e) {
