@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "c": {
+      "item": "minecraft:redstone_block"
+    },
+    "d": {
+      "item": "minecraft:redstone_block"
+    }
+  },
+  "pattern": [
+    "dcd",
+    "c c",
+    "dcd"
+  ],
+  "result": {
+    "item": "dankstorage:1_to_2"
+  },
+  "show_notification": true
+}

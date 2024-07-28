@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "c": {
+      "item": "minecraft:diamond_block"
+    },
+    "d": {
+      "item": "minecraft:diamond_block"
+    }
+  },
+  "pattern": [
+    "dcd",
+    "c c",
+    "dcd"
+  ],
+  "result": {
+    "item": "dankstorage:4_to_5"
+  },
+  "show_notification": true
+}

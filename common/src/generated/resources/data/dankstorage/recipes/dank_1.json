@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "tag": "forge:barrels/wooden"
+    },
+    "c": {
+      "tag": "minecraft:coals"
+    }
+  },
+  "pattern": [
+    "ccc",
+    "cbc",
+    "ccc"
+  ],
+  "result": {
+    "item": "dankstorage:dank_1"
+  },
+  "show_notification": true
+}

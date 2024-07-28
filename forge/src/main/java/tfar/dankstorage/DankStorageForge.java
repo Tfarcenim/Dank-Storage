@@ -27,7 +27,7 @@ import tfar.dankstorage.client.ModClientForge;
 import tfar.dankstorage.command.DankCommands;
 import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.menu.CustomSync;
-import tfar.dankstorage.datagen.DataGenerators;
+import tfar.dankstorage.datagen.ModDatagen;
 import tfar.dankstorage.event.ForgeClientEvents;
 
 import java.util.HashMap;
@@ -49,7 +49,7 @@ public class DankStorageForge {
         MinecraftForge.EVENT_BUS.addListener(this::onServerStopped);
         MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
         MinecraftForge.EVENT_BUS.addListener(this::containerEvent);
-        bus.addListener(DataGenerators::setupDataGenerator);
+        bus.addListener(ModDatagen::setupDataGenerator);
         bus.addListener(this::registerObjs);
         bus.addListener(this::onInitialize);
         if (FMLEnvironment.dist.isClient()) {

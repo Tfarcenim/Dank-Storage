@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_dank_4": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "dankstorage:dank_4"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "dankstorage:4_to_5"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_dank_4",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "dankstorage:4_to_5"
+    ]
+  },
+  "sends_telemetry_event": false
+}

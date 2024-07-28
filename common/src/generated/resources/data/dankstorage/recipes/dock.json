@@ -1,16 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "rrr",
-    "r r",
-    "rrr"
-  ],
+  "category": "equipment",
   "key": {
-    "r": {
+    "c": {
       "item": "minecraft:black_concrete"
     }
   },
+  "pattern": [
+    "ccc",
+    "c c",
+    "ccc"
+  ],
   "result": {
     "item": "dankstorage:dock"
-  }
+  },
+  "show_notification": true
 }

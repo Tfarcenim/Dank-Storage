@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "c": {
+      "item": "minecraft:emerald_block"
+    },
+    "d": {
+      "item": "minecraft:emerald_block"
+    }
+  },
+  "pattern": [
+    "dcd",
+    "c c",
+    "dcd"
+  ],
+  "result": {
+    "item": "dankstorage:3_to_4"
+  },
+  "show_notification": true
+}

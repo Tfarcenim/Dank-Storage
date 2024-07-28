@@ -1,0 +1,24 @@
+{
+  "type": "dankstorage:upgrade",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "dankstorage:dank_5"
+    },
+    "c": {
+      "item": "minecraft:crying_obsidian"
+    },
+    "d": {
+      "item": "minecraft:amethyst_block"
+    }
+  },
+  "pattern": [
+    "dcd",
+    "cbc",
+    "dcd"
+  ],
+  "result": {
+    "item": "dankstorage:dank_6"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "c": {
+      "item": "minecraft:nether_star"
+    },
+    "d": {
+      "item": "minecraft:nether_star"
+    }
+  },
+  "pattern": [
+    "dcd",
+    "c c",
+    "dcd"
+  ],
+  "result": {
+    "item": "dankstorage:6_to_7"
+  },
+  "show_notification": true
+}
