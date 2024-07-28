@@ -20,7 +20,7 @@ import tfar.dankstorage.blockentity.CommonDockBlockEntity;
 import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.DankSlot;
-import tfar.dankstorage.network.ClientDankPacketHandler;
+import tfar.dankstorage.network.ClientDankPacketHandlerFabric;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.DankPacketHandlerFabric;
 import tfar.dankstorage.network.client.S2CModPacket;
@@ -54,7 +54,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public <MSG extends S2CModPacket> void registerClientPacket(Class<MSG> packetLocation, Function<FriendlyByteBuf, MSG> reader) {
         if (MixinEnvironment.getCurrentEnvironment().getSide() == MixinEnvironment.Side.CLIENT) {
-            ClientDankPacketHandler.register(packetLocation,reader);
+            ClientDankPacketHandlerFabric.register(packetLocation,reader);
         }
     }
 

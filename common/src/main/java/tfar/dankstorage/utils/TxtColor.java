@@ -1,10 +1,18 @@
 package tfar.dankstorage.utils;
 
+import net.minecraft.ChatFormatting;
+
 public enum TxtColor {
-    INVALID(0xffff0000), TOO_HIGH(0xffff8000), DIFFERENT_TIER(0xffffff00), GOOD(0xff00ff00), LOCKED(0xff0000ff);
+    INVALID(ChatFormatting.RED), TOO_HIGH(ChatFormatting.GOLD),
+    DIFFERENT_TIER(ChatFormatting.YELLOW), GOOD(ChatFormatting.GREEN),
+    LOCKED(ChatFormatting.BLUE);
     public final int color;
 
     TxtColor(int color) {
         this.color = color;
+    }
+
+    TxtColor(ChatFormatting color) {
+        this(color.getColor());
     }
 }

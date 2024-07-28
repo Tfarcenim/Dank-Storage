@@ -14,6 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
+import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.ItemStackWrapper;
@@ -30,6 +31,10 @@ public interface DankInterface extends ContainerData {
     int FREQ = 0;
     int TXT_COLOR = 1;
     int FREQ_LOCK = 2;
+
+    static DankInterface createDummy(DankStats stats) {
+        return Services.PLATFORM.createInventory(stats, CommonUtils.INVALID);
+    }
 
     default ItemStack getGhostItem(int slot) {
         return getGhostItems().get(slot);

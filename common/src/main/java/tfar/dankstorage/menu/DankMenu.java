@@ -40,31 +40,31 @@ public class DankMenu extends AbstractDankMenu {
     }
 
     public static DankMenu t1(int id, Inventory inv) {
-        return t1s(id, inv,  DockMenu.createDummy(DankStats.one));
+        return t1s(id, inv,  DankInterface.createDummy(DankStats.one));
     }
 
     public static DankMenu t2(int id, Inventory inv) {
-        return t2s(id, inv,  DockMenu.createDummy(DankStats.two));
+        return t2s(id, inv,  DankInterface.createDummy(DankStats.two));
     }
 
     public static DankMenu t3(int id, Inventory inv) {
-        return t3s(id, inv,  DockMenu.createDummy(DankStats.three));
+        return t3s(id, inv,  DankInterface.createDummy(DankStats.three));
     }
 
     public static DankMenu t4(int id, Inventory inv) {
-        return t4s( id, inv,  DockMenu.createDummy(DankStats.four));
+        return t4s( id, inv,  DankInterface.createDummy(DankStats.four));
     }
 
     public static DankMenu t5(int id, Inventory inv) {
-        return t5s( id, inv,  DockMenu.createDummy(DankStats.five));
+        return t5s( id, inv,  DankInterface.createDummy(DankStats.five));
     }
 
     public static DankMenu t6(int id, Inventory inv) {
-        return t6s(id, inv,  DockMenu.createDummy(DankStats.six));
+        return t6s(id, inv,  DankInterface.createDummy(DankStats.six));
     }
 
     public static DankMenu t7(int id, Inventory inv) {
-        return t7s(id, inv, DockMenu.createDummy(DankStats.seven));
+        return t7s(id, inv, DankInterface.createDummy(DankStats.seven));
     }
 
     public static DankMenu t1s(int id, Inventory inv, DankInterface DankInterface) {

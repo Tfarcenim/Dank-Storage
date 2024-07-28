@@ -10,6 +10,7 @@ import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -17,8 +18,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.init.ModBlockEntityTypes;
 import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.inventory.LimitedContainerData;
+import tfar.dankstorage.inventory.TierDataSlot;
 import tfar.dankstorage.item.CDankItem;
 import tfar.dankstorage.block.CDockBlock;
+import tfar.dankstorage.menu.ChangeFrequencyMenuBlockEntity;
+import tfar.dankstorage.menu.ChangeFrequencyMenuItem;
 import tfar.dankstorage.menu.DockMenu;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
@@ -60,29 +65,29 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
 
     @org.jetbrains.annotations.Nullable
     @Override
-    public DockMenu createMenu(int syncId, Inventory inventory, Player player) {
+    public AbstractContainerMenu createMenu(int syncId, Inventory inventory, Player player) {
 
         int tier = getBlockState().getValue(CDockBlock.TIER);
 
-        T dankInventoryForge = getInventory();
+        T dankInventory = getInventory();
 
         DankStats defaults = DankStats.values()[tier];
-        if (defaults != dankInventoryForge.getDankStats()) {
-            if (defaults.ordinal() < dankInventoryForge.getDankStats().ordinal()) {
-                CommonUtils.warn(player, defaults, dankInventoryForge.getDankStats());
-                return null;
+        if (defaults != dankInventory.getDankStats()) {
+            if (defaults.ordinal() < dankInventory.getDankStats().ordinal()) {
+               // CommonUtils.warn(player, defaults, dankInventory.getDankStats());
+                return new ChangeFrequencyMenuBlockEntity(syncId,inventory, new LimitedContainerData(dankInventory,3),new TierDataSlot(defaults),this);
             }
-            dankInventoryForge.upgradeTo(defaults);
+            dankInventory.upgradeTo(defaults);
         }
 
         return switch (getBlockState().getValue(CDockBlock.TIER)) {
-            case 1 -> DockMenu.t1s(syncId, inventory, dankInventoryForge, this);
-            case 2 -> DockMenu.t2s(syncId, inventory, dankInventoryForge, this);
-            case 3 -> DockMenu.t3s(syncId, inventory, dankInventoryForge, this);
-            case 4 -> DockMenu.t4s(syncId, inventory, dankInventoryForge, this);
-            case 5 -> DockMenu.t5s(syncId, inventory, dankInventoryForge, this);
-            case 6 -> DockMenu.t6s(syncId, inventory, dankInventoryForge, this);
-            case 7 -> DockMenu.t7s(syncId, inventory, dankInventoryForge, this);
+            case 1 -> DockMenu.t1s(syncId, inventory, dankInventory, this);
+            case 2 -> DockMenu.t2s(syncId, inventory, dankInventory, this);
+            case 3 -> DockMenu.t3s(syncId, inventory, dankInventory, this);
+            case 4 -> DockMenu.t4s(syncId, inventory, dankInventory, this);
+            case 5 -> DockMenu.t5s(syncId, inventory, dankInventory, this);
+            case 6 -> DockMenu.t6s(syncId, inventory, dankInventory, this);
+            case 7 -> DockMenu.t7s(syncId, inventory, dankInventory, this);
             default -> null;
         };
     }

@@ -24,8 +24,10 @@ import net.minecraft.world.level.Level;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.inventory.LimitedContainerData;
 import tfar.dankstorage.item.CDankItem;
 import tfar.dankstorage.menu.AbstractDankMenu;
+import tfar.dankstorage.menu.ChangeFrequencyMenu;
 import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.network.client.S2CSyncSelectedDankItemPacket;
 import tfar.dankstorage.platform.Services;
@@ -89,38 +91,38 @@ public class CommonUtils {
         cached = false;
     }
 
-    public static Pair<ItemStack,Integer> compress(ItemStack stack, RegistryAccess registryAccess) {
+    public static Pair<ItemStack, Integer> compress(ItemStack stack, RegistryAccess registryAccess) {
 
         for (CraftingRecipe recipe : REVERSIBLE3x3) {
             if (recipe.getIngredients().get(0).test(stack)) {
-                return Pair.of(recipe.getResultItem(registryAccess),9);
+                return Pair.of(recipe.getResultItem(registryAccess), 9);
             }
         }
 
         for (CraftingRecipe recipe : REVERSIBLE2x2) {
             if (recipe.getIngredients().get(0).test(stack)) {
-                return Pair.of(recipe.getResultItem(registryAccess),4);
+                return Pair.of(recipe.getResultItem(registryAccess), 4);
             }
         }
-        return Pair.of(ItemStack.EMPTY,0);
+        return Pair.of(ItemStack.EMPTY, 0);
     }
 
     public static boolean canCompress(ServerLevel level, ItemStack stack) {
         if (!cached) {
-            REVERSIBLE3x3 = findReversibles(level,3);
-            REVERSIBLE2x2 = findReversibles(level,2);
+            REVERSIBLE3x3 = findReversibles(level, 3);
+            REVERSIBLE2x2 = findReversibles(level, 2);
             cached = true;
         }
 
         for (CraftingRecipe recipe : REVERSIBLE3x3) {
             if (recipe.getIngredients().get(0).test(stack)) {
-                return stack.getCount() >=9;
+                return stack.getCount() >= 9;
             }
         }
 
         for (CraftingRecipe recipe : REVERSIBLE2x2) {
             if (recipe.getIngredients().get(0).test(stack)) {
-                return stack.getCount()>=4;
+                return stack.getCount() >= 4;
             }
         }
 
@@ -128,9 +130,9 @@ public class CommonUtils {
     }
 
 
-    public static void setPickSlot(Level level,ItemStack bag, ItemStack stack) {
+    public static void setPickSlot(Level level, ItemStack bag, ItemStack stack) {
 
-        DankInterface dankInterface = getBagInventory(bag,level);
+        DankInterface dankInterface = getBagInventory(bag, level);
 
         if (dankInterface != null) {
             int slot = findSlotMatchingItem(dankInterface, stack);
@@ -141,14 +143,14 @@ public class CommonUtils {
     public static int findSlotMatchingItem(DankInterface dankInventory, ItemStack itemStack) {
         for (int i = 0; i < dankInventory.getContainerSizeDank(); ++i) {
             ItemStack stack = dankInventory.getItemDank(i);
-            if (stack.isEmpty() || !ItemStack.isSameItemSameTags(itemStack,stack)) continue;
+            if (stack.isEmpty() || !ItemStack.isSameItemSameTags(itemStack, stack)) continue;
             return i;
         }
         return INVALID;
     }
 
     public static void changeSelectedSlot(ItemStack bag, boolean right, ServerPlayer player) {
-        DankInterface handler = getBagInventory(bag,player.serverLevel());
+        DankInterface handler = getBagInventory(bag, player.serverLevel());
         //don't change slot if empty
         if (handler == null || handler.noValidSlots()) return;
         int selectedSlot = getSelectedSlot(bag);
@@ -176,11 +178,11 @@ public class CommonUtils {
         if (selectedSlot != INVALID) {
             setSelectedSlot(bag, selectedSlot);
             Services.PLATFORM.sendToClient(new S2CSyncSelectedDankItemPacket(selected), player);
-            player.displayClientMessage(selected.getHoverName(),true);
+            player.displayClientMessage(selected.getHoverName(), true);
         }
     }
 
-    public static List<CraftingRecipe> findReversibles(ServerLevel level,int size) {
+    public static List<CraftingRecipe> findReversibles(ServerLevel level, int size) {
         List<CraftingRecipe> compactingRecipes = new ArrayList<>();
         List<CraftingRecipe> recipes = level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
 
@@ -195,7 +197,7 @@ public class CommonUtils {
                     Ingredient first = inputs.get(0);
                     if (first != Ingredient.EMPTY) {
                         boolean same = true;
-                        for (int i = 1; i < x * y;i++) {
+                        for (int i = 1; i < x * y; i++) {
                             Ingredient next = inputs.get(i);
                             if (next != first) {
                                 same = false;
@@ -203,7 +205,7 @@ public class CommonUtils {
                             }
                         }
                         if (same && shapedRecipe.getResultItem(level.registryAccess()).getCount() == 1) {
-                            DUMMY.setItem(0,shapedRecipe.getResultItem(level.registryAccess()));
+                            DUMMY.setItem(0, shapedRecipe.getResultItem(level.registryAccess()));
 
                             level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, DUMMY, level).ifPresent(reverseRecipe -> {
                                 if (reverseRecipe.getResultItem(level.registryAccess()).getCount() == size * size) {
@@ -217,13 +219,15 @@ public class CommonUtils {
         }
         return compactingRecipes;
     }
+
     @SuppressWarnings("ConstantConditions")
-    private static final CraftingContainer DUMMY = new DummyCraftingContainer(1,1);
+    private static final CraftingContainer DUMMY = new DummyCraftingContainer(1, 1);
 
     public static class DummyCraftingContainer implements CraftingContainer {
         private final NonNullList<ItemStack> items;
         private final int width;
         private final int height;
+
         public DummyCraftingContainer(int p_287629_, int p_287593_) {
             this(p_287629_, p_287593_, NonNullList.withSize(p_287629_ * p_287593_, ItemStack.EMPTY));
         }
@@ -239,7 +243,7 @@ public class CommonUtils {
         }
 
         public boolean isEmpty() {
-            for(ItemStack itemstack : this.items) {
+            for (ItemStack itemstack : this.items) {
                 if (!itemstack.isEmpty()) {
                     return false;
                 }
@@ -287,7 +291,7 @@ public class CommonUtils {
         }
 
         public void fillStackedContents(StackedContents contents) {
-            for(ItemStack itemstack : this.items) {
+            for (ItemStack itemstack : this.items) {
                 contents.accountSimpleStack(itemstack);
             }
         }
@@ -297,14 +301,14 @@ public class CommonUtils {
         if (!level.isClientSide) {
             int id = getFrequency(bag);
             if (id != INVALID) {
-                Path path = ((MinecraftServerAccess)level.getServer()).getStorageSource()
+                Path path = ((MinecraftServerAccess) level.getServer()).getStorageSource()
                         .getDimensionPath(level.getServer().getLevel(Level.OVERWORLD).dimension())
-                        .resolve("data/"+DankStorage.MODID+"/"+id+".dat");
+                        .resolve("data/" + DankStorage.MODID + "/" + id + ".dat");
 
                 if (path.toFile().isFile()) {
-                    return DankStorage.getData(id,level.getServer()).createInventory(id);
+                    return DankStorage.getData(id, level.getServer()).createInventory(id);
                 } else {
-                    return DankStorage.getData(id,level.getServer()).createFreshInventory(getDefaultStats(bag),id);
+                    return DankStorage.getData(id, level.getServer()).createFreshInventory(getDefaultStats(bag), id);
                 }
             } else {
                 return null;
@@ -314,8 +318,8 @@ public class CommonUtils {
     }
 
 
-    public static ItemStack getItemStackInSelectedSlot(ItemStack bag,ServerLevel level) {
-        DankInterface inv = getBagInventory(bag,level);
+    public static ItemStack getItemStackInSelectedSlot(ItemStack bag, ServerLevel level) {
+        DankInterface inv = getBagInventory(bag, level);
         if (inv == null) return ItemStack.EMPTY;
         int slot = getSelectedSlot(bag);
         if (slot == INVALID) return ItemStack.EMPTY;
@@ -367,7 +371,7 @@ public class CommonUtils {
 
     public static void setPickupMode(ItemStack bag, PickupMode mode) {
         CompoundTag tag = getOrCreateSettings(bag);
-        tag.putInt(MODE,mode.ordinal());
+        tag.putInt(MODE, mode.ordinal());
     }
 
     public static boolean isConstruction(ItemStack bag) {
@@ -408,7 +412,7 @@ public class CommonUtils {
     }
 
     public static void setSelectedSlot(ItemStack bag, int slot) {
-        getOrCreateSettings(bag).putInt(SELECTED,slot);
+        getOrCreateSettings(bag).putInt(SELECTED, slot);
     }
 
     //make sure to return an invalid ID for unassigned danks
@@ -420,8 +424,8 @@ public class CommonUtils {
         return INVALID;
     }
 
-    public static void setFrequency(ItemStack bag,int frequency) {
-        getOrCreateSettings(bag).putInt(FREQ,frequency);
+    public static void setFrequency(ItemStack bag, int frequency) {
+        getOrCreateSettings(bag).putInt(FREQ, frequency);
     }
 
     public static MutableComponent translatable(String s) {
@@ -441,7 +445,7 @@ public class CommonUtils {
     }
 
     public static void warn(Player player, DankStats item, DankStats inventory) {
-        player.sendSystemMessage(literal("Dank Item Level "+item.ordinal() +" cannot open Dank Inventory Level "+inventory.ordinal()));
+        player.sendSystemMessage(literal("Dank Item Level " + item.ordinal() + " cannot open Dank Inventory Level " + inventory.ordinal()));
     }
 
     public static int getNbtSize(@Nullable CompoundTag nbt) {
@@ -450,6 +454,7 @@ public class CommonUtils {
         buffer.release();
         return buffer.writerIndex();
     }
+
     public static List<ItemStackWrapper> wrap(List<ItemStack> stacks) {
         return stacks.stream().map(ItemStackWrapper::new).collect(Collectors.toList());
     }
@@ -516,43 +521,74 @@ public class CommonUtils {
     public static void toggleUseType(ServerPlayer player) {
         ItemStack dank = getDank(player);
         if (!dank.isEmpty()) {
-            cyclePlacement(dank,player);
+            cyclePlacement(dank, player);
         }
     }
 
-    public static void setTxtColor(ServerPlayer player,int frequency,boolean set) {
+    public static void setTxtColor(ServerPlayer player, int frequency, boolean set) {
         AbstractContainerMenu container = player.containerMenu;
-        if (container instanceof AbstractDankMenu dankMenu) {
-            DankInterface inventory = dankMenu.dankInventory;
+        if (container instanceof AbstractDankMenu abstractDankMenu) {
+            DankInterface inventory = abstractDankMenu.dankInventory;
 
-            int textColor = 0;
+            TxtColor textColor;
 
             if (frequency > INVALID) {
                 if (frequency < DankStorage.maxId.getMaxId()) {
-                    DankInterface targetInventory = DankStorage.getData(frequency,player.server).createInventory(frequency);
+                    DankInterface targetInventory = DankStorage.getData(frequency, player.server).createInventory(frequency);
 
                     if (targetInventory.valid() && targetInventory.getDankStats() == inventory.getDankStats()) {
 
                         if (targetInventory.frequencyLocked()) {
-                            textColor = TxtColor.LOCKED.color;
+                            textColor = TxtColor.LOCKED;
                         } else {
-                            textColor = TxtColor.GOOD.color;
+                            textColor = TxtColor.GOOD;
                             if (set) {
-                                dankMenu.setFrequency(frequency);
+                                abstractDankMenu.setFrequency(frequency);
                                 player.closeContainer();
                             }
                         }
                     } else {
-                        textColor = TxtColor.DIFFERENT_TIER.color;
+                        textColor = TxtColor.DIFFERENT_TIER;
                     }
                 } else {
                     //orange if it doesn't exist, yellow if it does but wrong tier
-                    textColor = TxtColor.TOO_HIGH.color ;
+                    textColor = TxtColor.TOO_HIGH;
                 }
             } else {
-                textColor = TxtColor.INVALID.color;
+                textColor = TxtColor.INVALID;
             }
-            inventory.setTextColor(textColor);
+            inventory.setTextColor(textColor.color);
+        } else if (container instanceof ChangeFrequencyMenu changeFrequencyMenu) {
+            DankInterface inventory =  (DankInterface) ((LimitedContainerData)changeFrequencyMenu.getContainerData()).getWrapped();
+
+            TxtColor textColor;
+
+            if (frequency > INVALID) {
+                if (frequency < DankStorage.maxId.getMaxId()) {
+                    DankInterface targetInventory = DankStorage.getData(frequency, player.server).createInventory(frequency);
+
+                    if (targetInventory.valid() && targetInventory.getDankStats() == DankStats.values()[changeFrequencyMenu.getCurrentTier()]) {
+
+                        if (targetInventory.frequencyLocked()) {
+                            textColor = TxtColor.LOCKED;
+                        } else {
+                            textColor = TxtColor.GOOD;
+                            if (set) {
+                                changeFrequencyMenu.setLinkedFrequency(frequency);
+                                player.closeContainer();
+                            }
+                        }
+                    } else {
+                        textColor = TxtColor.DIFFERENT_TIER;
+                    }
+                } else {
+                    //orange if it doesn't exist, yellow if it does but wrong tier
+                    textColor = TxtColor.TOO_HIGH;
+                }
+            } else {
+                textColor = TxtColor.INVALID;
+            }
+            inventory.setTextColor(textColor.color);
         }
     }
 

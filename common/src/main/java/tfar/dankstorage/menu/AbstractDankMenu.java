@@ -10,7 +10,6 @@ import tfar.dankstorage.inventory.LockedSlot;
 import tfar.dankstorage.network.client.S2CSendGhostSlotPacket;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
-import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.PickupMode;
 
 import javax.annotation.Nonnull;
@@ -29,7 +28,7 @@ public abstract class AbstractDankMenu extends AbstractContainerMenu {
     public enum ButtonAction {
         LOCK_FREQUENCY, SORT,
         TOGGLE_TAG, TOGGLE_PICKUP,  COMPRESS;
-        private static final ButtonAction[] VALUES = values();
+        static final ButtonAction[] VALUES = values();
     }
 
 
@@ -44,10 +43,6 @@ public abstract class AbstractDankMenu extends AbstractContainerMenu {
         }
         pickup = playerInventory.player.level().isClientSide ? DataSlot.standalone(): getServerPickupData();
         addDataSlot(pickup);
-    }
-
-    static DankInterface createDummy(DankStats stats) {
-        return Services.PLATFORM.createInventory(stats, CommonUtils.INVALID);
     }
 
     protected abstract DataSlot getServerPickupData();

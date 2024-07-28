@@ -42,31 +42,31 @@ public class DockMenu extends AbstractDankMenu {
     }
 
     public static DockMenu t1(int windowId, Inventory playerInventory) {
-        return t1s(windowId, playerInventory,createDummy(DankStats.one),null);
+        return t1s(windowId, playerInventory, DankInterface.createDummy(DankStats.one),null);
     }
 
     public static DockMenu t2(int windowId, Inventory playerInventory) {
-        return t2s(windowId, playerInventory,createDummy(DankStats.two),null);
+        return t2s(windowId, playerInventory, DankInterface.createDummy(DankStats.two),null);
     }
 
     public static DockMenu t3(int windowId, Inventory playerInventory) {
-        return t3s(windowId, playerInventory,createDummy(DankStats.three),null);
+        return t3s(windowId, playerInventory, DankInterface.createDummy(DankStats.three),null);
     }
 
     public static DockMenu t4(int windowId, Inventory playerInventory) {
-        return t4s(windowId, playerInventory,createDummy(DankStats.four),null);
+        return t4s(windowId, playerInventory, DankInterface.createDummy(DankStats.four),null);
     }
 
     public static DockMenu t5(int windowId, Inventory playerInventory) {
-        return t5s(windowId, playerInventory,createDummy(DankStats.five),null);
+        return t5s(windowId, playerInventory, DankInterface.createDummy(DankStats.five),null);
     }
 
     public static DockMenu t6(int windowId, Inventory playerInventory) {
-        return t6s(windowId, playerInventory,createDummy(DankStats.six),null);
+        return t6s(windowId, playerInventory, DankInterface.createDummy(DankStats.six),null);
     }
 
     public static DockMenu t7(int windowId, Inventory playerInventory) {
-        return t7s(windowId, playerInventory, createDummy(DankStats.seven),null);
+        return t7s(windowId, playerInventory, DankInterface.createDummy(DankStats.seven),null);
     }
 
 

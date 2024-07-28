@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import tfar.dankstorage.client.screens.CDankStorageScreen;
+import tfar.dankstorage.client.screens.ChangeFrequencyScreen;
 import tfar.dankstorage.init.ModMenuTypes;
 import tfar.dankstorage.menu.DankMenu;
 import tfar.dankstorage.menu.DockMenu;
@@ -40,7 +41,7 @@ public class CommonClient {
         MenuScreens.register(ModMenuTypes.portable_dank_6, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t6(container, playerinventory, component));
         MenuScreens.register(ModMenuTypes.dank_7, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t7(container, playerinventory, component));
         MenuScreens.register(ModMenuTypes.portable_dank_7, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t7(container, playerinventory, component));
+
+        MenuScreens.register(ModMenuTypes.change_frequency, ChangeFrequencyScreen::new);
     }
-
-
 }

@@ -5,7 +5,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.platform.Services;
-import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 
 import java.io.File;
@@ -14,7 +13,7 @@ public class CDankSavedData extends SavedData {
 
     protected final ServerLevel level;
     CompoundTag storage = defaultTag();
-    DankInterface dankInventory;
+    DankInterface cache;
 
     public CDankSavedData(ServerLevel level) {
         this.level = level;
@@ -27,20 +26,20 @@ public class CDankSavedData extends SavedData {
     }
 
     public DankInterface createInventory(int frequency) {
-        if (dankInventory == null) {
-            dankInventory = Services.PLATFORM.createInventory(DankStats.zero,frequency);
-            dankInventory.read(storage);
-            dankInventory.setServer(level.getServer());
+        if (cache == null) {
+            cache = Services.PLATFORM.createInventory(DankStats.zero,frequency);
+            cache.read(storage);
+            cache.setServer(level.getServer());
         }
-        return dankInventory;
+        return cache;
     }
 
     public DankInterface createFreshInventory(DankStats defaults, int frequency) {
-        if (dankInventory == null) {
-            dankInventory = Services.PLATFORM.createInventory(defaults, frequency);
-            dankInventory.setServer(level.getServer());
+        if (cache == null) {
+            cache = Services.PLATFORM.createInventory(defaults, frequency);
+            cache.setServer(level.getServer());
         }
-        return dankInventory;
+        return cache;
     }
 
     public void setStats(DankStats stats, int frequency) {
