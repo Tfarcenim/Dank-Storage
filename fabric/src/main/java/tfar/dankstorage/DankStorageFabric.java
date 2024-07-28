@@ -28,11 +28,9 @@ import tfar.dankstorage.command.DankCommands;
 import tfar.dankstorage.init.ModCreativeTabs;
 import tfar.dankstorage.init.ModMenuTypes;
 import tfar.dankstorage.init.ModRecipeSerializers;
-import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.item.RedprintItem;
 import tfar.dankstorage.utils.UpgradeInfo;
 import tfar.dankstorage.item.UpgradeItem;
-import tfar.dankstorage.network.DankPacketHandlerFabric;
 import tfar.dankstorage.utils.DankStats;
 
 import java.util.stream.IntStream;
