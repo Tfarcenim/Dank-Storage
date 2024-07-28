@@ -1,6 +1,7 @@
 package tfar.dankstorage.platform.services;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -61,5 +62,7 @@ public interface IPlatformHelper {
     int previewY();
 
     Slot createSlot(DankInterface dankInventory, int index, int xPosition, int yPosition);
+
+    <T extends Registry<? extends F>,F> void registerAll(Class<?> clazz, T registry, Class<? extends F> filter);
 
 }

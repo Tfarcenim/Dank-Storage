@@ -33,7 +33,10 @@ import tfar.dankstorage.event.ForgeClientEvents;
 import tfar.dankstorage.init.*;
 import tfar.dankstorage.network.DankPacketHandlerForge;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import static tfar.dankstorage.init.ModMenuTypes.portable_dank_7_container;
 
@@ -41,6 +44,7 @@ import static tfar.dankstorage.init.ModMenuTypes.portable_dank_7_container;
 public class DankStorageForge {
 
     public static final Logger LOGGER = LogManager.getLogger(DankStorage.MODID);
+    public static Map<Registry<?>, List<Pair<ResourceLocation, Supplier<?>>>> registerLater = new HashMap<>();
 
     public DankStorageForge() {
         ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.CLIENT, CLIENT_SPEC);

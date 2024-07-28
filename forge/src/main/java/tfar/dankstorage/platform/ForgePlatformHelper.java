@@ -1,6 +1,8 @@
 package tfar.dankstorage.platform;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -12,6 +14,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.network.NetworkDirection;
+import org.apache.commons.lang3.tuple.Pair;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageForge;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.DankSlot;
@@ -21,6 +25,12 @@ import tfar.dankstorage.network.server.C2SModPacket;
 import tfar.dankstorage.platform.services.IPlatformHelper;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.world.DankInventoryForge;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.function.Supplier;
 
 public class ForgePlatformHelper implements IPlatformHelper {
 
@@ -60,6 +70,23 @@ public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public Slot createSlot(DankInterface dankInventory, int index, int xPosition, int yPosition) {
         return new DankSlot((DankInventoryForge) dankInventory,index,xPosition,yPosition);
+    }
+
+    @Override
+    public <T extends Registry<? extends F>, F> void registerAll(Class<?> clazz, T registry, Class<? extends F> filter) {
+        List<Pair<ResourceLocation, Supplier<?>>> list = DankStorageForge.registerLater.computeIfAbsent(registry, k -> new ArrayList<>());
+        for (Field field : clazz.getFields()) {
+            MappedRegistry<? extends F> forgeRegistry = (MappedRegistry<? extends F>) registry;
+            forgeRegistry.unfreeze();
+            try {
+                Object o = field.get(null);
+                if (filter.isInstance(o)) {
+                    list.add(Pair.of(new ResourceLocation(DankStorage.MODID, field.getName().toLowerCase(Locale.ROOT)), () -> o));
+                }
+            } catch (IllegalAccessException illegalAccessException) {
+                illegalAccessException.printStackTrace();
+            }
+        }
     }
 
     @Override

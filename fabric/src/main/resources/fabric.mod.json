@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "dankstorage",
   "version": "${version}",
-  "accessWidener": "dankstorage.aw",
+  "accessWidener": "dankstorage.accesswidener",
   "name": "Dank Storage",
   "description": "It's a backpack, no it's a chest, no it's dank storage",
   "authors": [
@@ -31,8 +31,5 @@
     "fabricloader": ">=0.7.4",
     "fabric": "*",
     "minecraft": ">=1.18.2"
-  },
-  "suggests": {
-    "flamingo": "*"
   }
 }
