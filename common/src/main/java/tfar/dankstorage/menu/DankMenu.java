@@ -68,31 +68,31 @@ public class DankMenu extends AbstractDankMenu {
     }
 
     public static DankMenu t1s(int id, Inventory inv, DankInterface DankInterface) {
-        return new DankMenu(ModMenuTypes.portable_dank_1_container, id, inv, DankInterface);
+        return new DankMenu(ModMenuTypes.portable_dank_1, id, inv, DankInterface);
     }
 
     public static DankMenu t2s(int id, Inventory inv, DankInterface DankInterface) {
-        return new DankMenu(ModMenuTypes.portable_dank_2_container, id, inv, DankInterface);
+        return new DankMenu(ModMenuTypes.portable_dank_2, id, inv, DankInterface);
     }
 
     public static DankMenu t3s(int id, Inventory inv, DankInterface DankInterface) {
-        return new DankMenu(ModMenuTypes.portable_dank_3_container, id, inv, DankInterface);
+        return new DankMenu(ModMenuTypes.portable_dank_3, id, inv, DankInterface);
     }
 
     public static DankMenu t4s(int id, Inventory inv, DankInterface DankInterface) {
-        return new DankMenu(ModMenuTypes.portable_dank_4_container, id, inv, DankInterface);
+        return new DankMenu(ModMenuTypes.portable_dank_4, id, inv, DankInterface);
     }
 
     public static DankMenu t5s(int id, Inventory inv, DankInterface DankInterface) {
-        return new DankMenu(ModMenuTypes.portable_dank_5_container, id, inv, DankInterface);
+        return new DankMenu(ModMenuTypes.portable_dank_5, id, inv, DankInterface);
     }
 
     public static DankMenu t6s(int id, Inventory inv, DankInterface DankInterface) {
-        return new DankMenu(ModMenuTypes.portable_dank_6_container, id, inv, DankInterface);
+        return new DankMenu(ModMenuTypes.portable_dank_6, id, inv, DankInterface);
     }
 
     public static DankMenu t7s(int id, Inventory inv, DankInterface DankInterface) {
-        return new DankMenu(ModMenuTypes.portable_dank_7_container, id, inv, DankInterface);
+        return new DankMenu(ModMenuTypes.portable_dank_7, id, inv, DankInterface);
     }
 
     @Override

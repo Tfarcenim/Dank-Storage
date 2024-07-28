@@ -43,11 +43,11 @@ public class UpgradeItem extends Item {
         //    player.displayClientMessage(Component.translatable("dankstorage.in_use").withStyle(ChatFormatting.RED), true);
         // }
 
-        CommonDockBlockEntity oldDank = (CommonDockBlockEntity) world.getBlockEntity(pos);
+        CommonDockBlockEntity<?> oldDank = (CommonDockBlockEntity<?>) world.getBlockEntity(pos);
 
         if (!world.isClientSide) {
             if (oldDank != null) {
-                oldDank.upgradeTo(DankStats.values()[upgradeInfo.end]);
+                oldDank.upgradeTo(DankStats.values()[upgradeInfo.end()]);
                 if (!player.getAbilities().instabuild)
                     upgradeStack.shrink(1);
             }

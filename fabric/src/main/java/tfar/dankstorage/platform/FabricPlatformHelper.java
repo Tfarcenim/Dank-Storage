@@ -15,6 +15,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import org.spongepowered.asm.mixin.MixinEnvironment;
+import tfar.dankstorage.DankStorage;
+import tfar.dankstorage.blockentity.CommonDockBlockEntity;
+import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.network.ClientDankPacketHandler;
@@ -26,6 +29,7 @@ import tfar.dankstorage.platform.services.IPlatformHelper;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.world.DankInventoryFabric;
 
+import java.util.Map;
 import java.util.function.Function;
 
 public class FabricPlatformHelper implements IPlatformHelper {
@@ -85,8 +89,10 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public <T extends Registry<? extends F>, F> void registerAll(Class<?> clazz, T registry, Class<? extends F> filter) {
-
+    public <F> void registerAll(Map<String,? extends F> map, Registry<F> registry, Class<? extends F> filter) {
+        for (Map.Entry<String,? extends F> entry : map.entrySet()) {
+            Registry.register(registry, DankStorage.id(entry.getKey()),entry.getValue());
+        }
     }
 
     @Override
@@ -110,4 +116,11 @@ public class FabricPlatformHelper implements IPlatformHelper {
     public int previewY() {
         return -25;
     }
+
+
+    @Override
+    public CommonDockBlockEntity<?> blockEntity(BlockPos pos, BlockState state) {
+        return new DockBlockEntity(pos,state);
+    }
+
 }

@@ -1,12 +1,21 @@
 package tfar.dankstorage;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tfar.dankstorage.init.*;
 import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.platform.Services;
@@ -31,7 +40,18 @@ public class DankStorage {
     // write the majority of your code here and load it from your loader specific projects. This example has some
     // code that gets invoked by the entry point of the loader specific projects.
     public static void init() {
+        Services.PLATFORM.registerAll(ModBlocks.class,BuiltInRegistries.BLOCK, Block.class);
 
+        Class<BlockEntityType<?>> typeClass =(Class<BlockEntityType<?>>)(Object) BlockEntityType.class;
+        Class<MenuType<?>> typeClass1 =(Class<MenuType<?>>)(Object) MenuType.class;
+        Class<RecipeSerializer<?>> typeClass2 =(Class<RecipeSerializer<?>>)(Object) RecipeSerializer.class;
+
+        Services.PLATFORM.registerAll(ModBlockEntityTypes.class,BuiltInRegistries.BLOCK_ENTITY_TYPE, typeClass);
+        Services.PLATFORM.unfreeze(BuiltInRegistries.ITEM);
+        Services.PLATFORM.registerAll(ModItems.getAll(), BuiltInRegistries.ITEM, Item.class);
+        Services.PLATFORM.registerAll(ModCreativeTabs.class,BuiltInRegistries.CREATIVE_MODE_TAB, CreativeModeTab.class);
+        Services.PLATFORM.registerAll(ModMenuTypes.class,BuiltInRegistries.MENU, typeClass1);
+        Services.PLATFORM.registerAll(ModRecipeSerializers.class,BuiltInRegistries.RECIPE_SERIALIZER,typeClass2);
         DankPacketHandler.registerPackets();
     //    Constants.LOG.info("Hello from Common init on {}! we are currently in a {} environment!", Services.PLATFORM.getPlatformName(), Services.PLATFORM.getEnvironmentName());
     //    Constants.LOG.info("The ID for diamonds is {}", BuiltInRegistries.ITEM.getKey(Items.DIAMOND));

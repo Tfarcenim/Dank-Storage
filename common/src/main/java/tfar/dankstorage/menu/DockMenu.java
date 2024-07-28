@@ -73,31 +73,31 @@ public class DockMenu extends AbstractDankMenu {
 
     //server
     public static DockMenu t1s(int windowId, Inventory playerInventory, DankInterface inventory, CommonDockBlockEntity dock) {
-        return new DockMenu(ModMenuTypes.dank_1_container, windowId, playerInventory, inventory,dock);
+        return new DockMenu(ModMenuTypes.dank_1, windowId, playerInventory, inventory,dock);
     }
 
     public static DockMenu t2s(int windowId, Inventory playerInventory, DankInterface inventory, CommonDockBlockEntity dock) {
-        return new DockMenu(ModMenuTypes.dank_2_container, windowId, playerInventory, inventory,dock);
+        return new DockMenu(ModMenuTypes.dank_2, windowId, playerInventory, inventory,dock);
     }
 
     public static DockMenu t3s(int windowId, Inventory playerInventory, DankInterface inventory, CommonDockBlockEntity dock) {
-        return new DockMenu(ModMenuTypes.dank_3_container, windowId, playerInventory, inventory,dock);
+        return new DockMenu(ModMenuTypes.dank_3, windowId, playerInventory, inventory,dock);
     }
 
     public static DockMenu t4s(int windowId, Inventory playerInventory, DankInterface inventory, CommonDockBlockEntity dock) {
-        return new DockMenu(ModMenuTypes.dank_4_container, windowId, playerInventory, inventory,dock);
+        return new DockMenu(ModMenuTypes.dank_4, windowId, playerInventory, inventory,dock);
     }
 
     public static DockMenu t5s(int windowId, Inventory playerInventory, DankInterface inventory, CommonDockBlockEntity dock) {
-        return new DockMenu(ModMenuTypes.dank_5_container, windowId, playerInventory, inventory,dock);
+        return new DockMenu(ModMenuTypes.dank_5, windowId, playerInventory, inventory,dock);
     }
 
     public static DockMenu t6s(int windowId, Inventory playerInventory, DankInterface inventory, CommonDockBlockEntity dock) {
-        return new DockMenu(ModMenuTypes.dank_6_container, windowId, playerInventory, inventory,dock);
+        return new DockMenu(ModMenuTypes.dank_6, windowId, playerInventory, inventory,dock);
     }
 
     public static DockMenu t7s(int i, Inventory playerInventory, DankInterface inventory, CommonDockBlockEntity dock) {
-        return new DockMenu(ModMenuTypes.dank_7_container, i, playerInventory, inventory,dock);
+        return new DockMenu(ModMenuTypes.dank_7, i, playerInventory, inventory,dock);
     }
 }
 

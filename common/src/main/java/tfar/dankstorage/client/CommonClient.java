@@ -26,20 +26,20 @@ public class CommonClient {
     }
 
     public static void setup() {
-        MenuScreens.register(ModMenuTypes.dank_1_container, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t1(container, playerinventory, component));
-        MenuScreens.register(ModMenuTypes.portable_dank_1_container, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t1(container, playerinventory, component));
-        MenuScreens.register(ModMenuTypes.dank_2_container, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t2(container, playerinventory, component));
-        MenuScreens.register(ModMenuTypes.portable_dank_2_container, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t2(container, playerinventory, component));
-        MenuScreens.register(ModMenuTypes.dank_3_container, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t3(container, playerinventory, component));
-        MenuScreens.register(ModMenuTypes.portable_dank_3_container, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t3(container, playerinventory, component));
-        MenuScreens.register(ModMenuTypes.dank_4_container, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t4(container, playerinventory, component));
-        MenuScreens.register(ModMenuTypes.portable_dank_4_container, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t4(container, playerinventory, component));
-        MenuScreens.register(ModMenuTypes.dank_5_container, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t5(container, playerinventory, component));
-        MenuScreens.register(ModMenuTypes.portable_dank_5_container, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t5(container, playerinventory, component));
-        MenuScreens.register(ModMenuTypes.dank_6_container, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t6(container, playerinventory, component));
-        MenuScreens.register(ModMenuTypes.portable_dank_6_container, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t6(container, playerinventory, component));
-        MenuScreens.register(ModMenuTypes.dank_7_container, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t7(container, playerinventory, component));
-        MenuScreens.register(ModMenuTypes.portable_dank_7_container, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t7(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.dank_1, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t1(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.portable_dank_1, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t1(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.dank_2, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t2(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.portable_dank_2, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t2(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.dank_3, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t3(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.portable_dank_3, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t3(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.dank_4, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t4(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.portable_dank_4, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t4(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.dank_5, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t5(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.portable_dank_5, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t5(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.dank_6, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t6(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.portable_dank_6, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t6(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.dank_7, (DockMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t7(container, playerinventory, component));
+        MenuScreens.register(ModMenuTypes.portable_dank_7, (DankMenu container, Inventory playerinventory, Component component) -> CDankStorageScreen.t7(container, playerinventory, component));
     }
 
 

@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import tfar.dankstorage.DankStorage;
+import tfar.dankstorage.init.ModBlockEntityTypes;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.item.CDankItem;
 import tfar.dankstorage.block.CDockBlock;
@@ -27,8 +28,8 @@ import tfar.dankstorage.world.CDankSavedData;
 import javax.annotation.Nullable;
 
 public abstract class CommonDockBlockEntity<T extends DankInterface> extends BlockEntity implements Nameable, MenuProvider {
-    public CommonDockBlockEntity(BlockEntityType<?> $$0, BlockPos $$1, BlockState $$2) {
-        super($$0, $$1, $$2);
+    public CommonDockBlockEntity(BlockPos $$1, BlockState $$2) {
+        super(ModBlockEntityTypes.dank_tile, $$1, $$2);
     }
 
     @Nullable

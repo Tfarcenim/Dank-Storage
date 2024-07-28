@@ -16,7 +16,7 @@ import java.util.List;
 public class DockBlockEntity extends CommonDockBlockEntity<DankInventoryFabric> {
 
     public DockBlockEntity(BlockPos blockPos, BlockState blockState) {
-        super(DankStorageFabric.dank_tile, blockPos, blockState);
+        super(blockPos, blockState);
     }
 
     //item api

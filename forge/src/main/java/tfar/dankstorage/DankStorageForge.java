@@ -2,7 +2,6 @@ package tfar.dankstorage;
 
 import com.google.common.collect.Lists;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,14 +29,11 @@ import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.menu.CustomSync;
 import tfar.dankstorage.datagen.DataGenerators;
 import tfar.dankstorage.event.ForgeClientEvents;
-import tfar.dankstorage.init.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-
-import static tfar.dankstorage.init.ModMenuTypes.portable_dank_7_container;
 
 @Mod(DankStorage.MODID)
 public class DankStorageForge {
@@ -55,7 +51,6 @@ public class DankStorageForge {
         MinecraftForge.EVENT_BUS.addListener(this::containerEvent);
         bus.addListener(DataGenerators::setupDataGenerator);
         bus.addListener(this::registerObjs);
-        bus.addListener(ModItems::registerB);
         bus.addListener(this::onInitialize);
         if (FMLEnvironment.dist.isClient()) {
             bus.addListener(this::onInitializeClient);
@@ -67,40 +62,17 @@ public class DankStorageForge {
     }
 
     public void registerObjs(RegisterEvent event) {
-
-        DankStorageForge.register(event, Registries.BLOCK, "dock", ModBlocks.dock);
-
-        DankStorageForge.register(event, Registries.BLOCK_ENTITY_TYPE, "dank_tile", ModBlockEntityTypes.dank_tile);
-        DankStorageForge.register(event, Registries.RECIPE_SERIALIZER,"upgrade", ModRecipeSerializers.upgrade);
-
-        register(event, Registries.MENU, "dank_1", ModMenuTypes.dank_1_container);
-        register(event,Registries.MENU, "portable_dank_1", ModMenuTypes.portable_dank_1_container);
-
-        register(event,Registries.MENU, "dank_2", ModMenuTypes.dank_2_container);
-        register(event,Registries.MENU,"portable_dank_2", ModMenuTypes.portable_dank_2_container);
-
-        register(event,Registries.MENU, "dank_3", ModMenuTypes.dank_3_container);
-        register(event,Registries.MENU, "portable_dank_3", ModMenuTypes.portable_dank_3_container);
-
-        register(event,Registries.MENU, "dank_4", ModMenuTypes.dank_4_container);
-        register(event,Registries.MENU, "portable_dank_4", ModMenuTypes.portable_dank_4_container);
-
-        register(event,Registries.MENU, "dank_5", ModMenuTypes.dank_5_container);
-        register(event,Registries.MENU, "portable_dank_5", ModMenuTypes.portable_dank_5_container);
-
-        register(event,Registries.MENU, "dank_6", ModMenuTypes.dank_6_container);
-        register(event,Registries.MENU, "portable_dank_6", ModMenuTypes.portable_dank_6_container);
-
-        register(event,Registries.MENU, "dank_7", ModMenuTypes.dank_7_container);
-        register(event,Registries.MENU, "portable_dank_7", portable_dank_7_container);
-        register(event,Registries.CREATIVE_MODE_TAB, DankStorage.MODID,ModCreativeTabs.tab);
-    }
-
-    public static <T>void register(RegisterEvent event, ResourceKey<? extends Registry<T>> registry, String name, T type) {
-        event.register(registry,new ResourceLocation(DankStorage.MODID,name),() -> type);
+        for (Map.Entry<Registry<?>,List<Pair<ResourceLocation, Supplier<?>>>> entry : registerLater.entrySet()) {
+            Registry<?> registry = entry.getKey();
+            List<Pair<ResourceLocation, Supplier<?>>> toRegister = entry.getValue();
+            for (Pair<ResourceLocation,Supplier<?>> pair : toRegister) {
+                event.register((ResourceKey<? extends Registry<Object>>)registry.key(),pair.getLeft(),(Supplier<Object>)pair.getValue());
+            }
+        }
     }
 
     public void onInitialize(FMLCommonSetupEvent e) {
+        registerLater.clear();
     }
 
     public void onInitializeClient(FMLClientSetupEvent e) {

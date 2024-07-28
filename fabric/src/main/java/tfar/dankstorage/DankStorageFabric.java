@@ -5,108 +5,27 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands.CommandSelection;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.item.*;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import tfar.dankstorage.block.CDockBlock;
-import tfar.dankstorage.block.DankDispenserBehavior;
 import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.client.ModClientFabric;
 import tfar.dankstorage.command.DankCommands;
-import tfar.dankstorage.init.ModCreativeTabs;
-import tfar.dankstorage.init.ModMenuTypes;
-import tfar.dankstorage.init.ModRecipeSerializers;
-import tfar.dankstorage.item.CDankItem;
-import tfar.dankstorage.item.RedprintItem;
-import tfar.dankstorage.utils.UpgradeInfo;
-import tfar.dankstorage.item.UpgradeItem;
-import tfar.dankstorage.utils.DankStats;
-
-import java.util.stream.IntStream;
-
-import static tfar.dankstorage.DankStorage.MODID;
+import tfar.dankstorage.init.ModBlockEntityTypes;
 
 public class DankStorageFabric implements ModInitializer, ClientModInitializer,
         ServerLifecycleEvents.ServerStarted, ServerLifecycleEvents.ServerStopped, CommandRegistrationCallback {
 
-    public static Block dock;
-    public static Item dock_item;
-    public static Item red_print;
-    public static BlockEntityType<DockBlockEntity> dank_tile;
-
     @Override
     public void onInitialize() {
-        Item.Properties properties = new Item.Properties();
-
-        Registry.register(BuiltInRegistries.BLOCK, new ResourceLocation(MODID, "dock"),
-                dock = new CDockBlock(BlockBehaviour.Properties.of().strength(1, 30), DockBlockEntity::new));
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "dock"), dock_item = new BlockItem(dock, properties));
-
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.INGREDIENTS).register(entries -> entries.accept(dock));
-
-
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "red_print"), red_print = new RedprintItem(properties));
-        Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, new ResourceLocation(MODID, "dank_tile"), dank_tile = BlockEntityType.Builder.of(DockBlockEntity::new, dock).build(null));
-
-
-
-        IntStream.range(1, 7).forEach(i -> Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, i + "_to_" + (i + 1)), new UpgradeItem(properties, new UpgradeInfo(i, i + 1))));
-        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(MODID, "upgrade"), ModRecipeSerializers.upgrade);
-
-        properties.stacksTo(1);
-
-        IntStream.range(1, 8).forEach(i -> {
-            CDankItem dankItem = new CDankItem(properties, DankStats.values()[i]);
-            DispenserBlock.registerBehavior(dankItem, new DankDispenserBehavior());
-            Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "dank_" + i), dankItem);
-        });
-
-        Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "dank_1"), ModMenuTypes.dank_1_container);
-        Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "portable_dank_1"), ModMenuTypes.portable_dank_1_container);
-
-        Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "dank_2"), ModMenuTypes.dank_2_container);
-        Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "portable_dank_2"), ModMenuTypes.portable_dank_2_container);
-
-        Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "dank_3"), ModMenuTypes.dank_3_container);
-        Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "portable_dank_3"), ModMenuTypes.portable_dank_3_container);
-
-        Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "dank_4"), ModMenuTypes.dank_4_container);
-        Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "portable_dank_4"), ModMenuTypes.portable_dank_4_container);
-
-        Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "dank_5"), ModMenuTypes.dank_5_container);
-        Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "portable_dank_5"), ModMenuTypes.portable_dank_5_container);
-
-        Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "dank_6"), ModMenuTypes.dank_6_container );
-        Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "portable_dank_6"), ModMenuTypes.portable_dank_6_container);
-
-        Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "dank_7"), ModMenuTypes.dank_7_container);
-        Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "portable_dank_7"), ModMenuTypes.portable_dank_7_container);
-
-
-        ModCreativeTabs.tab = CreativeModeTab.builder(null,-1)
-                .icon(() -> new ItemStack(dock_item))
-                .title(Component.translatable("itemGroup."+ DankStorage.MODID))
-                .displayItems((features, output) -> BuiltInRegistries.ITEM.stream().filter(item -> BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(MODID)).forEach(output::accept)).build();
-
-        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,new ResourceLocation(MODID,"creative_tab"), ModCreativeTabs.tab);
-
         ServerLifecycleEvents.SERVER_STARTED.register(this);
         ServerLifecycleEvents.SERVER_STOPPED.register(this);
         CommandRegistrationCallback.EVENT.register(this);
 
-        ItemStorage.SIDED.registerForBlockEntity(DockBlockEntity::getStorage, dank_tile);
+        ItemStorage.SIDED.registerForBlockEntity(DockBlockEntity::getStorage, (BlockEntityType<DockBlockEntity>) (Object) ModBlockEntityTypes.dank_tile);
         DankStorage.init();
     }
 

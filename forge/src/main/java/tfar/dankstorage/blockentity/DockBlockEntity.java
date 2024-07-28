@@ -9,14 +9,13 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import tfar.dankstorage.init.ModBlockEntityTypes;
 import tfar.dankstorage.world.DankInventoryForge;
 
 
 public class DockBlockEntity extends CommonDockBlockEntity<DankInventoryForge> {
 
     public DockBlockEntity(BlockPos blockPos, BlockState blockState) {
-        super(ModBlockEntityTypes.dank_tile, blockPos, blockState);
+        super(blockPos, blockState);
     }
 
     //item api
