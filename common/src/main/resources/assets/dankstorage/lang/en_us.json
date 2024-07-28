@@ -75,6 +75,8 @@
   "text.dankstorage.pickup_button.voidtxt" : "Will void all slot overflow, has same pickup restrictions as filtered",
 
   "text.dankstorage.sort_button" : "Sorts from greatest to least",
-  "itemGroup.dankstorage" : "Dank Storage"
+  "itemGroup.dankstorage" : "Dank Storage",
+
+  "text.dankstorage.tier_mismatch": "Current Dank cannot open backing inventory, upgrade or switch to supported frequency"
 
 }

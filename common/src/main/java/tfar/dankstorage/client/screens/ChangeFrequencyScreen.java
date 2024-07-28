@@ -130,7 +130,7 @@ public class ChangeFrequencyScreen extends AbstractContainerScreen<ChangeFrequen
         int color = 0x008000;
         int txtWidth = font.width("ID: " + id);
         graphics.drawString( font,"ID: " + id, 62 - txtWidth, inventoryLabelY +1, color,false);
-        MutableComponent warning = Component.literal("Current Dank cannot open backing inventory, upgrade or switch to supported frequency");
+        MutableComponent warning = Component.translatable("text.dankstorage.tier_mismatch");
         graphics.drawWordWrap(font,warning,5,inventoryLabelY+18,260,0x404040);
     }
 
