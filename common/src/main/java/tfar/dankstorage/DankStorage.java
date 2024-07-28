@@ -1,5 +1,6 @@
 package tfar.dankstorage;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -7,6 +8,7 @@ import net.minecraft.world.level.storage.LevelStorageSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tfar.dankstorage.mixin.MinecraftServerAccess;
+import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.world.CDankSavedData;
@@ -30,6 +32,7 @@ public class DankStorage {
     // code that gets invoked by the entry point of the loader specific projects.
     public static void init() {
 
+        DankPacketHandler.registerPackets();
     //    Constants.LOG.info("Hello from Common init on {}! we are currently in a {} environment!", Services.PLATFORM.getPlatformName(), Services.PLATFORM.getEnvironmentName());
     //    Constants.LOG.info("The ID for diamonds is {}", BuiltInRegistries.ITEM.getKey(Items.DIAMOND));
 
@@ -70,5 +73,9 @@ public class DankStorage {
         return overworld.getDataStorage()
                 .computeIfAbsent(compoundTag -> CDankSavedData.loadStatic(compoundTag,overworld), () -> new CDankSavedData(overworld),
                         DankStorage.MODID+"/"+id);
+    }
+
+    public static ResourceLocation id(String path) {
+        return new ResourceLocation(MODID,path);
     }
 }

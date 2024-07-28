@@ -27,7 +27,6 @@ import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.item.CDankItem;
 import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.mixin.MinecraftServerAccess;
-import tfar.dankstorage.network.PacketIds;
 import tfar.dankstorage.network.client.S2CSyncSelectedDankItemPacket;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.world.ClientData;
@@ -176,7 +175,7 @@ public class CommonUtils {
         }
         if (selectedSlot != INVALID) {
             setSelectedSlot(bag, selectedSlot);
-            Services.PLATFORM.sendToClient(new S2CSyncSelectedDankItemPacket(selected), PacketIds.sync_selected_dank_item, player);
+            Services.PLATFORM.sendToClient(new S2CSyncSelectedDankItemPacket(selected), player);
             player.displayClientMessage(selected.getHoverName(),true);
         }
     }

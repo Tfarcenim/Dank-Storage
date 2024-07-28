@@ -2,7 +2,7 @@ package tfar.dankstorage.platform.services;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
@@ -11,10 +11,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import tfar.dankstorage.inventory.DankInterface;
-import tfar.dankstorage.network.IModPacket;
 import tfar.dankstorage.network.client.S2CModPacket;
 import tfar.dankstorage.network.server.C2SModPacket;
 import tfar.dankstorage.utils.DankStats;
+
+import java.util.function.Function;
 
 public interface IPlatformHelper {
 
@@ -50,8 +51,13 @@ public interface IPlatformHelper {
         return isDevelopmentEnvironment() ? "development" : "production";
     }
 
-    void sendToClient(S2CModPacket msg, ResourceLocation channel, ServerPlayer player);
-    void sendToServer(C2SModPacket msg, ResourceLocation channel);
+    <MSG extends S2CModPacket> void registerClientPacket(Class<MSG> packetLocation, Function<FriendlyByteBuf,MSG> reader);
+
+    <MSG extends C2SModPacket> void registerServerPacket(Class<MSG> packetLocation, Function<FriendlyByteBuf,MSG> reader);
+
+
+    void sendToClient(S2CModPacket msg, ServerPlayer player);
+    void sendToServer(C2SModPacket msg);
 
     ItemStack getCloneStack(Level level, BlockPos pos, BlockState state, HitResult hitResult, Player player);
 

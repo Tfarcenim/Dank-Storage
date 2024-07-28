@@ -29,7 +29,6 @@ import tfar.dankstorage.client.DankTooltip;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.menu.PortableDankProvider;
 import tfar.dankstorage.mixin.ItemUsageContextAccessor;
-import tfar.dankstorage.network.PacketIds;
 import tfar.dankstorage.network.client.S2CSyncSelectedDankItemPacket;
 import tfar.dankstorage.network.server.C2SRequestContentsPacket;
 import tfar.dankstorage.platform.Services;
@@ -292,7 +291,7 @@ public class CDankItem extends Item {
         //there has to be a better way
         if (entity instanceof ServerPlayer player && equipped) {
             ItemStack sel = CommonUtils.getSelectedItem(bag,level);
-            Services.PLATFORM.sendToClient(new S2CSyncSelectedDankItemPacket(sel), PacketIds.sync_selected_dank_item, player);
+            Services.PLATFORM.sendToClient(new S2CSyncSelectedDankItemPacket(sel), player);
         }
     }
 }

@@ -18,7 +18,13 @@ public class ClientDankPacketHandler {
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.sync_dank_inventory, wrapS2C(S2CContentsForDisplayPacket::new));
     }
 
+    public static <MSG extends S2CModPacket> void register(Class<MSG> packetLocation, Function<FriendlyByteBuf, MSG> reader) {
+        ClientPlayNetworking.registerGlobalReceiver(DankPacketHandler.packet(packetLocation), wrapS2C(reader));
+    }
+
     public static <MSG extends S2CModPacket> ClientPlayNetworking.PlayChannelHandler wrapS2C(Function<FriendlyByteBuf,MSG> decodeFunction) {
         return new ClientHandler<>(decodeFunction);
     }
+
+
 }

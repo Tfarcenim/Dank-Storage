@@ -103,13 +103,12 @@ public class DankStorageFabric implements ModInitializer, ClientModInitializer,
 
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,new ResourceLocation(MODID,"creative_tab"), ModCreativeTabs.tab);
 
-        DankPacketHandlerFabric.registerMessages();
-
         ServerLifecycleEvents.SERVER_STARTED.register(this);
         ServerLifecycleEvents.SERVER_STOPPED.register(this);
         CommandRegistrationCallback.EVENT.register(this);
 
         ItemStorage.SIDED.registerForBlockEntity(DockBlockEntity::getStorage, dank_tile);
+        DankStorage.init();
     }
 
     @Override

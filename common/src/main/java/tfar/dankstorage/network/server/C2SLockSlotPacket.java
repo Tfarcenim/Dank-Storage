@@ -5,7 +5,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.menu.AbstractDankMenu;
-import tfar.dankstorage.network.PacketIds;
 import tfar.dankstorage.platform.Services;
 
 public class C2SLockSlotPacket implements C2SModPacket {
@@ -21,7 +20,7 @@ public class C2SLockSlotPacket implements C2SModPacket {
     }
 
     public static void send(int slot) {
-        Services.PLATFORM.sendToServer(new C2SLockSlotPacket(slot), PacketIds.lock_slot);
+        Services.PLATFORM.sendToServer(new C2SLockSlotPacket(slot));
     }
 
     public void handleServer(ServerPlayer player) {

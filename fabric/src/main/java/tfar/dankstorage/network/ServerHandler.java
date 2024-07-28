@@ -10,14 +10,7 @@ import tfar.dankstorage.network.server.C2SModPacket;
 
 import java.util.function.Function;
 
-public class ServerHandler<MSG extends C2SModPacket> implements ServerPlayNetworking.PlayChannelHandler {
-
-    private final Function<FriendlyByteBuf, MSG> packetDecoder;
-
-    public ServerHandler(Function<FriendlyByteBuf,MSG> packetDecoder) {
-        this.packetDecoder = packetDecoder;
-    }
-
+public record ServerHandler<MSG extends C2SModPacket>(Function<FriendlyByteBuf,MSG> packetDecoder) implements ServerPlayNetworking.PlayChannelHandler {
     @Override
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         MSG decode = packetDecoder.apply(buf);

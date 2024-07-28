@@ -102,7 +102,6 @@ public class DankStorageForge {
     }
 
     public void onInitialize(FMLCommonSetupEvent e) {
-        DankPacketHandlerForge.registerMessages();
     }
 
     public void onInitializeClient(FMLClientSetupEvent e) {

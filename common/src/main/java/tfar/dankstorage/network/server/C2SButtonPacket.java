@@ -2,13 +2,10 @@ package tfar.dankstorage.network.server;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import tfar.dankstorage.item.CDankItem;
-import tfar.dankstorage.menu.AbstractDankMenu;
-import tfar.dankstorage.network.PacketIds;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.KeybindAction;
 import tfar.dankstorage.utils.CommonUtils;
@@ -26,7 +23,7 @@ public class C2SButtonPacket implements C2SModPacket {
     }
 
     public static void send(KeybindAction keybindAction) {
-        Services.PLATFORM.sendToServer(new C2SButtonPacket(keybindAction), PacketIds.button_action);
+        Services.PLATFORM.sendToServer(new C2SButtonPacket(keybindAction));
     }
 
     public void handleServer(ServerPlayer player) {

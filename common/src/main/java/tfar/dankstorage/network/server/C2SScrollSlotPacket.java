@@ -3,7 +3,6 @@ package tfar.dankstorage.network.server;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import tfar.dankstorage.item.CDankItem;
-import tfar.dankstorage.network.PacketIds;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 
@@ -20,7 +19,7 @@ public class C2SScrollSlotPacket implements C2SModPacket {
     }
 
     public static void send(boolean right) {
-        Services.PLATFORM.sendToServer(new C2SScrollSlotPacket(right), PacketIds.scroll);
+        Services.PLATFORM.sendToServer(new C2SScrollSlotPacket(right));
     }
 
     public void write(FriendlyByteBuf buf) {

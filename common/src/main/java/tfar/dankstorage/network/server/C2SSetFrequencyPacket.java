@@ -2,7 +2,6 @@ package tfar.dankstorage.network.server;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import tfar.dankstorage.network.PacketIds;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 
@@ -28,7 +27,7 @@ public class C2SSetFrequencyPacket implements C2SModPacket {
     }
 
     public static void send(int id, boolean set) {
-        Services.PLATFORM.sendToServer(new C2SSetFrequencyPacket(id, set), PacketIds.set_frequency);
+        Services.PLATFORM.sendToServer(new C2SSetFrequencyPacket(id, set));
     }
 
     public void handleServer(ServerPlayer player) {

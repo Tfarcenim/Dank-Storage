@@ -5,7 +5,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.inventory.DankInterface;
-import tfar.dankstorage.network.PacketIds;
 import tfar.dankstorage.network.client.S2CContentsForDisplayPacket;
 import tfar.dankstorage.platform.Services;
 
@@ -29,12 +28,12 @@ public class C2SRequestContentsPacket implements C2SModPacket {
     public static void send(int frequency) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeInt(frequency);
-        Services.PLATFORM.sendToServer(new C2SRequestContentsPacket(frequency), PacketIds.request_contents);
+        Services.PLATFORM.sendToServer(new C2SRequestContentsPacket(frequency));
     }
 
     public void handleServer(ServerPlayer player) {
         DankInterface dankInventoryForge = DankStorage.getData(frequency,player.server).createInventory(frequency);
-            Services.PLATFORM.sendToClient(new S2CContentsForDisplayPacket(dankInventoryForge.getContents()),PacketIds.sync_dank_inventory,player);
+            Services.PLATFORM.sendToClient(new S2CContentsForDisplayPacket(dankInventoryForge.getContents()), player);
     }
 }
 

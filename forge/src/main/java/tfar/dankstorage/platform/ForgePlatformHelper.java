@@ -3,6 +3,7 @@ package tfar.dankstorage.platform;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -30,6 +31,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ForgePlatformHelper implements IPlatformHelper {
@@ -52,14 +54,27 @@ public class ForgePlatformHelper implements IPlatformHelper {
         return !FMLLoader.isProduction();
     }
 
+    int i;
+
     @Override
-    public void sendToClient(S2CModPacket msg, ResourceLocation channel, ServerPlayer player) {
-        DankPacketHandlerForge.INSTANCE.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+    public <MSG extends S2CModPacket> void registerClientPacket(Class<MSG> packetLocation, Function<FriendlyByteBuf, MSG> reader) {
+        DankPacketHandlerForge.INSTANCE.registerMessage(i++, packetLocation, MSG::write, reader, DankPacketHandlerForge.wrapS2C());
     }
 
     @Override
-    public void sendToServer(C2SModPacket msg, ResourceLocation channel) {
-        DankPacketHandlerForge.INSTANCE.sendToServer(msg);
+    public <MSG extends C2SModPacket> void registerServerPacket(Class<MSG>  packetLocation, Function<FriendlyByteBuf, MSG> reader) {
+        DankPacketHandlerForge.INSTANCE.registerMessage(i++, packetLocation, MSG::write, reader, DankPacketHandlerForge.wrapC2S());
+    }
+
+
+    @Override
+    public void sendToClient(S2CModPacket msg, ServerPlayer player) {
+        DankPacketHandlerForge.sendToClient(msg, player);
+    }
+
+    @Override
+    public void sendToServer(C2SModPacket msg) {
+        DankPacketHandlerForge.sendToServer(msg);
     }
 
     @Override

@@ -5,8 +5,8 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
@@ -14,13 +14,19 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
+import org.spongepowered.asm.mixin.MixinEnvironment;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.DankSlot;
+import tfar.dankstorage.network.ClientDankPacketHandler;
+import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.DankPacketHandlerFabric;
 import tfar.dankstorage.network.client.S2CModPacket;
 import tfar.dankstorage.network.server.C2SModPacket;
 import tfar.dankstorage.platform.services.IPlatformHelper;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.world.DankInventoryFabric;
+
+import java.util.function.Function;
 
 public class FabricPlatformHelper implements IPlatformHelper {
 
@@ -41,19 +47,31 @@ public class FabricPlatformHelper implements IPlatformHelper {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
-
     @Override
-    public void sendToClient(S2CModPacket msg, ResourceLocation channel, ServerPlayer player) {
-        FriendlyByteBuf buf = PacketByteBufs.create();
-        msg.write(buf);
-        ServerPlayNetworking.send(player, channel, buf);
+    public <MSG extends S2CModPacket> void registerClientPacket(Class<MSG> packetLocation, Function<FriendlyByteBuf, MSG> reader) {
+        if (MixinEnvironment.getCurrentEnvironment().getSide() == MixinEnvironment.Side.CLIENT) {
+            ClientDankPacketHandler.register(packetLocation,reader);
+        }
     }
 
     @Override
-    public void sendToServer(C2SModPacket msg, ResourceLocation channel) {
+    public <MSG extends C2SModPacket> void registerServerPacket(Class<MSG> packetLocation, Function<FriendlyByteBuf, MSG> reader) {
+        ServerPlayNetworking.registerGlobalReceiver(DankPacketHandler.packet(packetLocation), DankPacketHandlerFabric.wrapC2S(reader));
+    }
+
+
+    @Override
+    public void sendToClient(S2CModPacket msg, ServerPlayer player) {
         FriendlyByteBuf buf = PacketByteBufs.create();
         msg.write(buf);
-        ClientPlayNetworking.send(channel, buf);
+        ServerPlayNetworking.send(player, DankPacketHandler.packet(msg.getClass()), buf);
+    }
+
+    @Override
+    public void sendToServer(C2SModPacket msg) {
+        FriendlyByteBuf buf = PacketByteBufs.create();
+        msg.write(buf);
+        ClientPlayNetworking.send(DankPacketHandler.packet(msg.getClass()), buf);
     }
 
     @Override
@@ -64,6 +82,11 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public Slot createSlot(DankInterface dankInventory, int index, int xPosition, int yPosition) {
         return new DankSlot((DankInventoryFabric) dankInventory,index,xPosition,yPosition);
+    }
+
+    @Override
+    public <T extends Registry<? extends F>, F> void registerAll(Class<?> clazz, T registry, Class<? extends F> filter) {
+
     }
 
     @Override
