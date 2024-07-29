@@ -91,7 +91,8 @@ public class SerializationHelper {
     }
 
     public static List<ItemStack> readList(RegistryFriendlyByteBuf buf) {
-        return LARGE_OPTIONAL_LIST_STREAM_CODEC.decode(buf);
+        List<ItemStack> decode = LARGE_OPTIONAL_LIST_STREAM_CODEC.decode(buf);
+        return decode;
     }
 
 

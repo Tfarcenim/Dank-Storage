@@ -56,7 +56,6 @@ public class DankStorageNeoForge {
         NeoForge.EVENT_BUS.addListener(this::onServerStarted);
         NeoForge.EVENT_BUS.addListener(this::onServerStopped);
         NeoForge.EVENT_BUS.addListener(this::registerCommands);
-        NeoForge.EVENT_BUS.addListener(this::containerEvent);
         bus.addListener(ModDatagen::setupDataGenerator);
         bus.addListener(this::registerObjs);
         bus.addListener(this::onInitialize);
@@ -104,13 +103,6 @@ public class DankStorageNeoForge {
 
     public void registerCommands(RegisterCommandsEvent e) {
         DankCommands.register(e.getDispatcher());
-    }
-
-    private void containerEvent(PlayerContainerEvent.Open e) {
-        AbstractContainerMenu abstractContainerMenu = e.getContainer();
-        if (abstractContainerMenu instanceof AbstractDankMenu dankMenu) {
-            dankMenu.setSynchronizer(new CustomSync((ServerPlayer) e.getEntity()));
-        }
     }
 
 

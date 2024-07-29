@@ -9,7 +9,8 @@
     "ItemUsageContextAccessor",
     "MinecraftServerAccess",
     "PlayerInventoryMixin",
-    "RecipeManagerMixin"
+    "RecipeManagerMixin",
+    "ServerPlayerMixin"
   ],
   "client": [
     "ClientPacketListenerMixin"

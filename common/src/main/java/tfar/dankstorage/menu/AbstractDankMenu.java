@@ -38,9 +38,6 @@ public abstract class AbstractDankMenu extends AbstractContainerMenu {
         this.dankInventory = dankInventory;
         this.rows = dankInventory.getContainerSizeDank() /9;
         addDataSlots(dankInventory);
-        if (!playerInventory.player.level().isClientSide) {
-            setSynchronizer(new CustomSync((ServerPlayer) playerInventory.player));
-        }
         pickup = playerInventory.player.level().isClientSide ? DataSlot.standalone(): getServerPickupData();
         addDataSlot(pickup);
     }

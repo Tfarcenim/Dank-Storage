@@ -21,7 +21,7 @@ public class CustomSync implements ContainerSynchronizer {
 
     public void sendInitialData(AbstractContainerMenu abstractContainerMenu, NonNullList<ItemStack> stacks, ItemStack carried, int[] is) {
         //problem, vanilla containers send itemstack size in bytes
-       // Services.PLATFORM.sendToClient(new S2CInitialSyncContainerPacket(abstractContainerMenu.containerId, abstractContainerMenu.incrementStateId(), stacks,carried), player);
+        Services.PLATFORM.sendToClient(new S2CInitialSyncContainerPacket(abstractContainerMenu.containerId, abstractContainerMenu.incrementStateId(), stacks,carried), player);
         for(int i = 0; i < is.length; ++i) {
             this.broadcastDataValue(abstractContainerMenu, i, is[i]);
         }
