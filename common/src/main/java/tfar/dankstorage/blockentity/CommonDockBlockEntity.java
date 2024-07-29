@@ -101,11 +101,11 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
     public T getInventory() {
         if (!level.isClientSide && frequency != CommonUtils.INVALID) {
             DankSavedData savedData = DankStorage.getData(frequency,level.getServer());
-            DankInterface dataInventory = savedData.createInventory(frequency);
+            DankInterface dataInventory = savedData.createInventory(level.registryAccess(),frequency);
 
             if (!dataInventory.valid()) {
                 savedData.setStats(DankStats.values()[getBlockState().getValue(CDockBlock.TIER)],frequency);
-                dataInventory = savedData.createInventory(frequency);
+                dataInventory = savedData.createInventory(level.registryAccess(),frequency);
             }
 
             return (T)dataInventory;

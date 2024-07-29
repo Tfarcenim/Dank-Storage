@@ -41,7 +41,7 @@ public class C2SRequestContentsPacket implements C2SModPacket {
     }
 
     public void handleServer(ServerPlayer player) {
-        DankInterface dankInventoryForge = DankStorage.getData(frequency,player.server).createInventory(frequency);
+        DankInterface dankInventoryForge = DankStorage.getData(frequency,player.server).createInventory(player.level().registryAccess(),frequency);
             Services.PLATFORM.sendToClient(new S2CContentsForDisplayPacket(dankInventoryForge.getContents()), player);
     }
 

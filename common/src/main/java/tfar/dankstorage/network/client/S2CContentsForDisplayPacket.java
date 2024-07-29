@@ -38,12 +38,11 @@ public class S2CContentsForDisplayPacket implements S2CModPacket {
     }
 
     public void write(RegistryFriendlyByteBuf buf) {
-        ItemStack.OPTIONAL_LIST_STREAM_CODEC.encode(buf,stacks);
         PacketBufferEX.writeList(buf, stacks);
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<S2CContentsForDisplayPacket> type() {
         return TYPE;
     }
 }

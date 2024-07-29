@@ -286,13 +286,13 @@ public interface DankInterface extends ContainerData {
         return nbt;
     }
 
-    default void read(CompoundTag nbt) {
+    default void read(HolderLookup.Provider provider,CompoundTag nbt) {
         DankStats stats = DankStats.valueOf(nbt.getString("DankStats"));
         setDankStats(stats);
         ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
         readItems(getServer().registryAccess(), tagList);
         ListTag ghostItemList = nbt.getList(GHOST, Tag.TAG_COMPOUND);
-        readGhostItems(getServer().registryAccess(), ghostItemList);
+        readGhostItems(provider, ghostItemList);
         setFrequencyLock(nbt.getBoolean("locked"));
         validate();
     }

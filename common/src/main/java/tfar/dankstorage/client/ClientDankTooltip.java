@@ -3,13 +3,13 @@ package tfar.dankstorage.client;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientBundleTooltip;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 public class ClientDankTooltip implements ClientTooltipComponent {
-    public static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.withDefaultNamespace("textures/gui/container/bundle.png");
     private static final int MARGIN_Y = 4;
     private static final int BORDER_WIDTH = 1;
     private static final int TEX_SIZE = 128;
@@ -57,9 +57,11 @@ public class ClientDankTooltip implements ClientTooltipComponent {
         }
     }
 
-    private void blit(GuiGraphics pGuiGraphics, int pX, int pY, Texture pTexture) {
-        pGuiGraphics.blit(TEXTURE_LOCATION, pX, pY, 0, (float)pTexture.x, (float)pTexture.y, pTexture.w, pTexture.h, 128, 128);
+    private void blit(GuiGraphics guiGraphics, int x, int y, Texture texture) {
+        guiGraphics.blitSprite(texture.sprite, x, y, 0, texture.w, texture.h);
     }
+
+
     private int gridSizeX() {
         return 9;
     }
@@ -68,20 +70,18 @@ public class ClientDankTooltip implements ClientTooltipComponent {
         return items.size() / this.gridSizeX();
     }
 
-    enum Texture {
-        SLOT(0, 0, 18, 18),
-        BLOCKED_SLOT(0, 40, 18, 18);
+    private enum Texture {
+        BLOCKED_SLOT(ResourceLocation.withDefaultNamespace("container/bundle/blocked_slot"), 18, 20),
+        SLOT(ResourceLocation.withDefaultNamespace("container/bundle/slot"), 18, 20);
 
-        public final int x;
-        public final int y;
+        public final ResourceLocation sprite;
         public final int w;
         public final int h;
 
-        Texture(int j, int k, int l, int m) {
-            this.x = j;
-            this.y = k;
-            this.w = l;
-            this.h = m;
+        Texture(final ResourceLocation sprite, final int w, final int h) {
+            this.sprite = sprite;
+            this.w = w;
+            this.h = h;
         }
     }
 }

@@ -303,7 +303,7 @@ public class CommonUtils {
                         .resolve("data/" + DankStorage.MODID + "/" + id + ".dat");
 
                 if (path.toFile().isFile()) {
-                    return DankStorage.getData(id, level.getServer()).createInventory(id);
+                    return DankStorage.getData(id, level.getServer()).createInventory(level.registryAccess(),id);
                 } else {
                     return DankStorage.getData(id, level.getServer()).createFreshInventory(getDefaultStats(bag), id);
                 }
@@ -501,7 +501,7 @@ public class CommonUtils {
 
             if (frequency > INVALID) {
                 if (frequency < DankStorage.maxId.getMaxId()) {
-                    DankInterface targetInventory = DankStorage.getData(frequency, player.server).createInventory(frequency);
+                    DankInterface targetInventory = DankStorage.getData(frequency, player.server).createInventory(player.level().registryAccess(),frequency);
 
                     if (targetInventory.valid() && targetInventory.getDankStats() == inventory.getDankStats()) {
 
@@ -532,7 +532,7 @@ public class CommonUtils {
 
             if (frequency > INVALID) {
                 if (frequency < DankStorage.maxId.getMaxId()) {
-                    DankInterface targetInventory = DankStorage.getData(frequency, player.server).createInventory(frequency);
+                    DankInterface targetInventory = DankStorage.getData(frequency, player.server).createInventory(player.level().registryAccess(),frequency);
 
                     if (targetInventory.valid() && targetInventory.getDankStats() == DankStats.values()[changeFrequencyMenu.getCurrentTier()]) {
 
