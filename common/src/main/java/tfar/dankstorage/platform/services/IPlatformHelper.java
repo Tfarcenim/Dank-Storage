@@ -20,6 +20,7 @@ import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.item.CDankItem;
 import tfar.dankstorage.network.client.S2CModPacket;
 import tfar.dankstorage.network.server.C2SModPacket;
+import tfar.dankstorage.platform.MLConfig;
 import tfar.dankstorage.utils.DankStats;
 
 import java.lang.reflect.Field;
@@ -70,9 +71,6 @@ public interface IPlatformHelper {
 
 
     DankInterface createInventory(DankStats stats,int frequency);
-    boolean showPreview();
-    int previewX();
-    int previewY();
 
     Slot createSlot(DankInterface dankInventory, int index, int xPosition, int yPosition);
 
@@ -105,6 +103,6 @@ public interface IPlatformHelper {
     }
 
     CommonDockBlockEntity<?> blockEntity(BlockPos pos, BlockState state);
-
+    MLConfig getConfig();
 
 }

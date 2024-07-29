@@ -19,11 +19,9 @@
 package tfar.dankstorage.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import org.joml.Matrix4f;
 
@@ -65,6 +63,37 @@ public class StackSizeRenderer {
         stack.scale(scaleFactor, scaleFactor, scaleFactor);
 
         renderSizeLabel(stack.last().pose(), fontRenderer, xPos, yPos, text, largeFonts);
+
+        stack.popPose();
+    }
+
+
+    private static void renderSizeLabelCustom(Matrix4f matrix, Font fontRenderer, float xPos, float yPos, String text,
+                                        double size) {
+        final float scaleFactor = (float) size;
+        final float inverseScaleFactor = 1.0f / scaleFactor;
+        final float offset = 0.5f - scaleFactor;
+
+        RenderSystem.disableBlend();
+        final int X = (int) ((xPos + offset + 16.0f - fontRenderer.width(text) * scaleFactor) * inverseScaleFactor);
+        final int Y = (int) ((yPos + offset + 16.0f - 7.0f * scaleFactor) * inverseScaleFactor);
+        BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+        fontRenderer.drawInBatch(text, X, Y, 0xffffff, true, matrix, buffer, Font.DisplayMode.NORMAL, 0, 0xf000f0);
+        buffer.endBatch();
+        RenderSystem.enableBlend();
+    }
+
+    public static void renderSizeLabelCustom(GuiGraphics guiGraphics, Font fontRenderer, float xPos, float yPos, String text,
+                                       double size) {
+        final float scaleFactor = (float) size;
+
+        var stack = guiGraphics.pose();
+        stack.pushPose();
+        // According to ItemRenderer, text is 200 above items.
+        stack.translate(0, 0, 200);
+        stack.scale(scaleFactor, scaleFactor, scaleFactor);
+
+        renderSizeLabelCustom(stack.last().pose(), fontRenderer, xPos, yPos, text, size);
 
         stack.popPose();
     }

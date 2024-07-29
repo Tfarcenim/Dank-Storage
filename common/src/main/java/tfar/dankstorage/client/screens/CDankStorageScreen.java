@@ -31,6 +31,7 @@ import tfar.dankstorage.client.button.SmallButton;
 import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.network.server.C2SLockSlotPacket;
 import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
+import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.TxtColor;
@@ -176,7 +177,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
 
                 int count = itemstack.getCount();
                 if (count > 1 || !s.isEmpty()) {
-                    StackSizeRenderer.renderSizeLabel(pGuiGraphics, Minecraft.getInstance().font, i, j, s + CommonUtils.formatLargeNumber(itemstack.getCount()));
+                    StackSizeRenderer.renderSizeLabelCustom(pGuiGraphics, Minecraft.getInstance().font, i, j, s + CommonUtils.formatLargeNumber(itemstack.getCount()), Services.PLATFORM.getConfig().textSize());
                 }
             }
 

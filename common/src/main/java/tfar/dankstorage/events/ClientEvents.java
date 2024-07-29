@@ -64,14 +64,14 @@ public class ClientEvents {
     }
 
     private static boolean shouldPreview() {
-        return Services.PLATFORM.showPreview();
+        return Services.PLATFORM.getConfig().showPreview();
     }
 
     private static int previewX() {
-        return Services.PLATFORM.previewX();
+        return Services.PLATFORM.getConfig().posX();
     }
 
     private static int previewY() {
-        return Services.PLATFORM.previewY();
+        return Services.PLATFORM.getConfig().posY();
     }
 }

@@ -41,6 +41,8 @@ import java.util.function.Supplier;
 
 public class NeoForgePlatformHelper implements IPlatformHelper {
 
+    final MLConfig config = new TomlConfigs();
+
     @Override
     public String getPlatformName() {
 
@@ -110,21 +112,6 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public boolean showPreview() {
-        return DankStorageNeoForge.ClientConfig.preview.get();
-    }
-
-    @Override
-    public int previewX() {
-        return DankStorageNeoForge.ClientConfig.preview_x.get();
-    }
-
-    @Override
-    public int previewY() {
-        return DankStorageNeoForge.ClientConfig.preview_y.get();
-    }
-
-    @Override
     public CDankItem create(Item.Properties properties, DankStats stats) {
         return new DankItemNeoForge(properties, stats);
     }
@@ -132,5 +119,10 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public CommonDockBlockEntity<?> blockEntity(BlockPos pos, BlockState state) {
         return new DockBlockEntity(pos,state);
+    }
+
+    @Override
+    public MLConfig getConfig() {
+        return config;
     }
 }
