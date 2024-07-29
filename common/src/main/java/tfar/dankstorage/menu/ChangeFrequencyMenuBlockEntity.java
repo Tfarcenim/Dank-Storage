@@ -17,7 +17,7 @@ public class ChangeFrequencyMenuBlockEntity extends ChangeFrequencyMenu {
 
     @Override
     public void setLinkedFrequency(int frequency) {
-        dock.settings.putInt(CommonUtils.FREQ, frequency);
+        dock.setFrequency(frequency);
         dock.setChanged();
     }
 }

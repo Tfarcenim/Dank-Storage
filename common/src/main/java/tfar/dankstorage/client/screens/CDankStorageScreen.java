@@ -199,7 +199,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
 
     @Override
     public void render(GuiGraphics stack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(stack);
+        this.renderBackground(stack,mouseX,mouseY,partialTicks);
         super.render(stack, mouseX, mouseY, partialTicks);
         int color = menu.dankInventory.textColor();
         this.frequency.setTextColor(color);

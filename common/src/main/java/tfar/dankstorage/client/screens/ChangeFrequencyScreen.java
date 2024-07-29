@@ -21,7 +21,7 @@ import tfar.dankstorage.utils.CommonUtils;
 
 public class ChangeFrequencyScreen extends AbstractContainerScreen<ChangeFrequencyMenu> {
 
-    private static final ResourceLocation DEMO_BACKGROUND_LOCATION = new ResourceLocation("textures/gui/demo_background.png");
+    private static final ResourceLocation DEMO_BACKGROUND_LOCATION = ResourceLocation.withDefaultNamespace("textures/gui/demo_background.png");
     EditBox frequency;
 
 
@@ -149,7 +149,7 @@ public class ChangeFrequencyScreen extends AbstractContainerScreen<ChangeFrequen
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBackground(guiGraphics);
+        super.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
         int $$1 = (this.width - 248) / 2;
         int $$2 = (this.height - 166) / 2;
         guiGraphics.blit(DEMO_BACKGROUND_LOCATION, $$1, $$2, 0, 0, 248, 166);

@@ -155,7 +155,7 @@ public abstract class AbstractDankMenu extends AbstractContainerMenu {
             Slot slot = this.slots.get(i);
             ItemStack slotStack = slot.getItem();
 
-            if (!slotStack.isEmpty() && slotStack.getItem() == stack.getItem() && ItemStack.isSameItemSameTags(stack, slotStack)) {
+            if (!slotStack.isEmpty() && slotStack.getItem() == stack.getItem() && ItemStack.isSameItemSameComponents(stack, slotStack)) {
                 int combinedCount = slotStack.getCount() + stack.getCount();
                 int maxSize = slot.getMaxStackSize(slotStack);
 

@@ -53,6 +53,10 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
         frequency = freq;
     }
 
+    public int getFrequency() {
+        return frequency;
+    }
+
     @Override
     public boolean triggerEvent(int id, int type) {
         if (id == 1) {

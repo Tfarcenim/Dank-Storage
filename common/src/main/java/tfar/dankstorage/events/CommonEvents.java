@@ -122,7 +122,7 @@ public class CommonEvents {
             return;
         }
 
-        if (ItemStack.isSameItemSameTags(pickup, existing) || (oredict /*&& Utils.areItemStacksConvertible(pickup, existing)*/)) {
+        if (ItemStack.isSameItemSameComponents(pickup, existing) || (oredict /*&& Utils.areItemStacksConvertible(pickup, existing)*/)) {
             int stackLimit = inv.getDankStats().stacklimit;
             int total = pickup.getCount() + existing.getCount();
             int remainder = total - stackLimit;
@@ -171,8 +171,8 @@ public class CommonEvents {
     }
 
     public static boolean areItemStacksCompatible(ItemStack stackA, ItemStack stackB, boolean oredict) {
-        return oredict ? ItemStack.isSameItemSameTags(stackA, stackB) && ItemStack.isSameItem(stackA, stackB) /*|| Utils.areItemStacksConvertible(stackA, stackB) */:
-                ItemStack.isSameItemSameTags(stackA, stackB) && ItemStack.isSameItem(stackA, stackB);
+        return oredict ? ItemStack.isSameItemSameComponents(stackA, stackB) && ItemStack.isSameItem(stackA, stackB) /*|| Utils.areItemStacksConvertible(stackA, stackB) */:
+                ItemStack.isSameItemSameComponents(stackA, stackB) && ItemStack.isSameItem(stackA, stackB);
     }
 
     public static boolean doesItemStackExist(ItemStack stack, List<ItemStack> filter, boolean oredict) {

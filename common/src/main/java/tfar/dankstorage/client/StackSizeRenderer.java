@@ -42,7 +42,7 @@ public class StackSizeRenderer {
         RenderSystem.disableBlend();
         final int X = (int) ((xPos + offset + 16.0f - fontRenderer.width(text) * scaleFactor) * inverseScaleFactor);
         final int Y = (int) ((yPos + offset + 16.0f - 7.0f * scaleFactor) * inverseScaleFactor);
-        BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
+        BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance());
         fontRenderer.drawInBatch(text, X, Y, 0xffffff, true, matrix, buffer, Font.DisplayMode.NORMAL, 0, 0xf000f0);
         buffer.endBatch();
         RenderSystem.enableBlend();

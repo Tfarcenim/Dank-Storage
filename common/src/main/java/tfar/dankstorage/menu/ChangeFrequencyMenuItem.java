@@ -17,6 +17,6 @@ public class ChangeFrequencyMenuItem extends ChangeFrequencyMenu {
 
     @Override
     public void setLinkedFrequency(int frequency) {
-        CommonUtils.getOrCreateSettings(bag).putInt(CommonUtils.FREQ, frequency);
+        CommonUtils.setFrequency(bag,frequency);
     }
 }

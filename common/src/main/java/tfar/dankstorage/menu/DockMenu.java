@@ -8,6 +8,7 @@ import tfar.dankstorage.init.ModMenuTypes;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
+import tfar.dankstorage.utils.PickupMode;
 
 public class DockMenu extends AbstractDankMenu {
 
@@ -22,7 +23,7 @@ public class DockMenu extends AbstractDankMenu {
 
     @Override
     public void setFrequency(int freq) {
-        dock.settings.putInt(CommonUtils.FREQ, freq);
+        dock.setFrequency(freq);
         dock.setChanged();
     }
 
@@ -31,12 +32,12 @@ public class DockMenu extends AbstractDankMenu {
         return new DataSlot() {
             @Override
             public int get() {
-                return dock.settings.getInt(CommonUtils.MODE);
+                return dock.pickupMode.ordinal();
             }
 
             @Override
             public void set(int pValue) {
-                dock.settings.putInt(CommonUtils.MODE,pValue);
+                dock.pickupMode = PickupMode.VALUES[pValue];
             }
         };
     }

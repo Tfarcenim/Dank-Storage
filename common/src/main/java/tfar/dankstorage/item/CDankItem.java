@@ -3,6 +3,7 @@ package tfar.dankstorage.item;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -26,6 +27,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.client.DankKeybinds;
 import tfar.dankstorage.client.DankTooltip;
+import tfar.dankstorage.init.ModDataComponents;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.menu.PortableDankProvider;
 import tfar.dankstorage.mixin.ItemUsageContextAccessor;
@@ -137,14 +139,14 @@ public class CDankItem extends Item {
         return result;
     }
 
-    @Override
+  //  @Override
     public boolean canBeHurtBy(DamageSource source) {
         return !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY);
     }
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return stack.hasTag() && CommonUtils.getPickupMode(stack) != PickupMode.none;
+        return CommonUtils.getPickupMode(stack) != PickupMode.none;
     }
 
     public MenuProvider createProvider(ItemStack stack) {
@@ -219,7 +221,7 @@ public class CDankItem extends Item {
                 }
 
                 //handle food
-                if (toPlace.getItem().isEdible()) {
+                if (toPlace.has(DataComponents.FOOD)) {
                     if (player.canEat(false)) {
                         player.startUsingItem(hand);
                         return InteractionResultHolder.consume(bag);
@@ -282,12 +284,11 @@ public class CDankItem extends Item {
     }
 
     public static void assignNextId(ItemStack dank) {
-        CompoundTag settings = CommonUtils.getSettings(dank);
-        if (settings == null || !settings.contains(CommonUtils.FREQ, Tag.TAG_INT)) {
+        if (!dank.has(ModDataComponents.FREQUENCY)) {
             MaxId maxId = DankStorage.maxId;
             int next = maxId.getMaxId();
             maxId.increment();
-            CommonUtils.getOrCreateSettings(dank).putInt(CommonUtils.FREQ,next);
+            CommonUtils.setFrequency(dank,next);
         }
     }
 

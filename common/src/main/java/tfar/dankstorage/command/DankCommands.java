@@ -22,13 +22,13 @@ public class DankCommands {
                         .then(Commands.literal("all")
                                 .executes(DankCommands::clearAll))
 
-                        .then(Commands.argument(CommonUtils.FREQ, IntegerArgumentType.integer(0))
+                        .then(Commands.argument("frequency", IntegerArgumentType.integer(0))
                                 .executes(DankCommands::clearID))
                 )
 
                 .then(Commands.literal("set_tier")
                         .requires(commandSourceStack -> commandSourceStack.hasPermission(3))
-                        .then(Commands.argument(CommonUtils.FREQ, IntegerArgumentType.integer(0))
+                        .then(Commands.argument("frequency", IntegerArgumentType.integer(0))
                                 .then(Commands.argument("tier", IntegerArgumentType.integer(1,7))
                                         .executes(DankCommands::setTier)
                                 )
@@ -38,14 +38,14 @@ public class DankCommands {
 
                 .then(Commands.literal("lock")
                         .requires(commandSourceStack -> commandSourceStack.hasPermission(3))
-                        .then(Commands.argument(CommonUtils.FREQ, IntegerArgumentType.integer(0))
+                        .then(Commands.argument("frequency", IntegerArgumentType.integer(0))
                                 .executes(DankCommands::lock)
                         )
                 )
 
                 .then(Commands.literal("unlock")
                         .requires(commandSourceStack -> commandSourceStack.hasPermission(3))
-                        .then(Commands.argument(CommonUtils.FREQ, IntegerArgumentType.integer(0))
+                        .then(Commands.argument("frequency", IntegerArgumentType.integer(0))
                                 .executes(DankCommands::unlock)
                         )
                 )
@@ -61,7 +61,7 @@ public class DankCommands {
     }
 
     private static int clearID(CommandContext<CommandSourceStack> context) {
-        int id = IntegerArgumentType.getInteger(context, CommonUtils.FREQ);
+        int id = IntegerArgumentType.getInteger(context, "frequency");
         boolean success = DankStorage.getData(id,context.getSource().getServer()).clear();
         if (!success) {
           //  throw new CommandRuntimeException(CommonUtils.translatable("dankstorage.command.clear_id.invalid_id"));
@@ -70,7 +70,7 @@ public class DankCommands {
     }
 
     private static int setTier(CommandContext<CommandSourceStack> context) {
-        int id = IntegerArgumentType.getInteger(context, CommonUtils.FREQ);
+        int id = IntegerArgumentType.getInteger(context, "frequency");
         int tier = IntegerArgumentType.getInteger(context, "tier");
         boolean success = false;//DankStorageForge.instance.data.setTier(id, tier);
         if (!success) {
@@ -95,7 +95,7 @@ public class DankCommands {
     }
 
     private static int lock(CommandContext<CommandSourceStack> context) {
-        int id = IntegerArgumentType.getInteger(context, CommonUtils.FREQ);
+        int id = IntegerArgumentType.getInteger(context, "frequency");
         boolean success = false;//DankStorageForge.instance.data.lock(id);
         if (!success) {
        //     throw new CommandRuntimeException(CommonUtils.translatable("dankstorage.command.lock.invalid_id"));
@@ -104,7 +104,7 @@ public class DankCommands {
     }
 
     private static int unlock(CommandContext<CommandSourceStack> context) {
-        int id = IntegerArgumentType.getInteger(context, CommonUtils.FREQ);
+        int id = IntegerArgumentType.getInteger(context, "frequency");
         boolean success = false;//DankStorageForge.instance.data.unlock(id);
         if (!success) {
            // throw new CommandRuntimeException(CommonUtils.translatable("dankstorage.command.unlock.invalid_id"));
