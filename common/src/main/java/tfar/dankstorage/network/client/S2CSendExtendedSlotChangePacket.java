@@ -21,24 +21,28 @@ public class S2CSendExtendedSlotChangePacket implements S2CModPacket {
             DankPacketHandler.packet(S2CSendExtendedSlotChangePacket.class));
 
     int windowId;
+    int stateID;
     int slot;
     ItemStack stack;
 
-    public S2CSendExtendedSlotChangePacket(int windowId, int slot, ItemStack stack) {
+    public S2CSendExtendedSlotChangePacket(int windowId,int stateID, int slot, ItemStack stack) {
         this.windowId = windowId;
+        this.stateID = stateID;
         this.slot = slot;
         this.stack = stack;
     }
 
     public S2CSendExtendedSlotChangePacket(RegistryFriendlyByteBuf buf) {
-        windowId = buf.readInt();
-        slot = buf.readInt();
+        windowId = buf.readByte();
+        stateID = buf.readVarInt();
+        slot = buf.readShort();
         stack = SerializationHelper.readExtendedItemStack(buf);
     }
 
     public void write(RegistryFriendlyByteBuf buf) {
-        buf.writeInt(windowId);
-        buf.writeInt(slot);
+        buf.writeByte(windowId);
+        buf.writeVarInt(stateID);
+        buf.writeShort(slot);
         SerializationHelper.writeExtendedItemStack(buf, stack);
     }
 
@@ -46,7 +50,7 @@ public class S2CSendExtendedSlotChangePacket implements S2CModPacket {
     public void handleClient() {
         Player player = getLocalPlayer();
         if (player != null && player.containerMenu instanceof AbstractDankMenu && windowId == player.containerMenu.containerId) {
-            player.containerMenu.slots.get(slot).set(stack);
+            player.containerMenu.setItem(slot,stateID,stack);
         }
     }
 

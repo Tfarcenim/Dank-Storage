@@ -238,9 +238,6 @@ public interface DankInterface extends ContainerData {
                     }
                 } else {
                     ItemStack stack = SerializationHelper.decodeLargeItemStack(provider,itemTags);
-                    if (itemTags.contains("ExtendedCount", Tag.TAG_INT)) {
-                        stack.setCount(itemTags.getInt("ExtendedCount"));
-                    }
                     this.setItemDank(slot, stack);
                 }
             }
@@ -258,11 +255,9 @@ public interface DankInterface extends ContainerData {
         ListTag nbtTagList = new ListTag();
         for (int i = 0; i < this.getContents().size(); i++) {
             if (!getContents().get(i).isEmpty()) {
-                int realCount = Math.min(getDankStats().stacklimit, getContents().get(i).getCount());
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
                 SerializationHelper.encodeLargeStack(getContents().get(i),provider,itemTag);//getContents().get(i).save(provider,itemTag);
-                itemTag.putInt("ExtendedCount", realCount);
                 nbtTagList.add(itemTag);
             }
         }
