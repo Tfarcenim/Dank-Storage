@@ -1,0 +1,245 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "name": "dankstorage:dock"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "dankstorage:dock",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "tier": "1"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "include": [
+                "minecraft:custom_name",
+                "dankstorage:frequency",
+                "dankstorage:pickup_mode",
+                "dankstorage:use_type",
+                "dankstorage:oredict"
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "dankstorage:dank_1"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "dankstorage:dock",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "tier": "2"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "include": [
+                "minecraft:custom_name",
+                "dankstorage:frequency",
+                "dankstorage:pickup_mode",
+                "dankstorage:use_type",
+                "dankstorage:oredict"
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "dankstorage:dank_2"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "dankstorage:dock",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "tier": "3"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "include": [
+                "minecraft:custom_name",
+                "dankstorage:frequency",
+                "dankstorage:pickup_mode",
+                "dankstorage:use_type",
+                "dankstorage:oredict"
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "dankstorage:dank_3"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "dankstorage:dock",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "tier": "4"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "include": [
+                "minecraft:custom_name",
+                "dankstorage:frequency",
+                "dankstorage:pickup_mode",
+                "dankstorage:use_type",
+                "dankstorage:oredict"
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "dankstorage:dank_4"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "dankstorage:dock",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "tier": "5"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "include": [
+                "minecraft:custom_name",
+                "dankstorage:frequency",
+                "dankstorage:pickup_mode",
+                "dankstorage:use_type",
+                "dankstorage:oredict"
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "dankstorage:dank_5"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "dankstorage:dock",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "tier": "6"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "include": [
+                "minecraft:custom_name",
+                "dankstorage:frequency",
+                "dankstorage:pickup_mode",
+                "dankstorage:use_type",
+                "dankstorage:oredict"
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "dankstorage:dank_6"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "dankstorage:dock",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "tier": "7"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "include": [
+                "minecraft:custom_name",
+                "dankstorage:frequency",
+                "dankstorage:pickup_mode",
+                "dankstorage:use_type",
+                "dankstorage:oredict"
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "dankstorage:dank_7"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "dankstorage:blocks/dock"
+}

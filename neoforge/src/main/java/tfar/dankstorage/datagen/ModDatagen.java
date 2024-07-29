@@ -24,6 +24,7 @@ public class ModDatagen {
             generator.addProvider(true,blockTagsProvider);
             generator.addProvider(true,new ModItemTagsProvider(packOutput,lookupProvider,blockTagsProvider.contentsGetter(),helper));
             generator.addProvider(true,new ModRecipeProvider(packOutput,lookupProvider));
+            generator.addProvider(true,ModLootTableProvider.create(packOutput,lookupProvider));
         }
         if (e.includeClient()) {
         }

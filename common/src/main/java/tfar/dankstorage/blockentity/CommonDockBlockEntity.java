@@ -2,6 +2,7 @@ package tfar.dankstorage.blockentity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -41,8 +42,8 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
     protected Component customName;
 
     private int frequency = CommonUtils.INVALID;
-    public PickupMode pickupMode = PickupMode.none;
-    public UseType useType = UseType.bag;
+    public PickupMode pickupMode;
+    public UseType useType;
     public int selected = CommonUtils.INVALID;
     public boolean oredict = false;
 
@@ -154,8 +155,12 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
         if (tag.contains("frequency")) {
             frequency = tag.getInt("frequency");
         }
-        pickupMode = PickupMode.valueOf(tag.getString("pickup_mode"));
-        useType = UseType.valueOf(tag.getString("use_type"));
+        if (tag.contains("pickup_mode")) {
+            pickupMode = PickupMode.valueOf(tag.getString("pickup_mode"));
+        }
+        if (tag.contains("use_type")) {
+            useType = UseType.valueOf(tag.getString("use_type"));
+        }
         if (tag.contains("selected")) {
             selected = tag.getInt("selected");
         }
@@ -173,8 +178,12 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
         if (frequency != CommonUtils.INVALID) {
             tag.putInt("frequency",frequency);
         }
-        tag.putString("pickup_mode",pickupMode.name());
-        tag.putString("use_type", useType.name());
+        if (pickupMode != null) {
+            tag.putString("pickup_mode", pickupMode.name());
+        }
+        if (useType != null) {
+            tag.putString("use_type", useType.name());
+        }
 
         if (selected != CommonUtils.INVALID) {
             tag.putInt("selected",selected);
@@ -257,4 +266,23 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
         dankInventory.upgradeTo(stats);
     }
 
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder pComponents) {
+        super.collectImplicitComponents(pComponents);
+        pComponents.set(DataComponents.CUSTOM_NAME,customName);
+        pComponents.set(ModDataComponents.FREQUENCY,frequency);
+        pComponents.set(ModDataComponents.PICKUP_MODE,pickupMode);
+        pComponents.set(ModDataComponents.USE_TYPE,useType);
+        pComponents.set(ModDataComponents.OREDICT,oredict);
+    }
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput pComponentInput) {
+        super.applyImplicitComponents(pComponentInput);
+        customName = pComponentInput.get(DataComponents.CUSTOM_NAME);
+        frequency = pComponentInput.getOrDefault(ModDataComponents.FREQUENCY,CommonUtils.INVALID);
+        pickupMode = pComponentInput.get(ModDataComponents.PICKUP_MODE);
+        useType = pComponentInput.get(ModDataComponents.USE_TYPE);
+        oredict = pComponentInput.getOrDefault(ModDataComponents.OREDICT,false);
+    }
 }
