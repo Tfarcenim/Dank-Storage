@@ -28,13 +28,13 @@ public class DankItemForge extends CDankItem {
     @Override
     public Rarity getRarity(ItemStack stack) {
         return switch (stats) {
-            case one -> DARK_GRAY;
-            case two -> DARK_RED;
-            case three -> GOLD;
-            case four -> GREEN;
-            case five -> BLUE;
-            case six -> DARK_PURPLE;
-            case seven -> WHITE;
+            case DankStats.one -> DARK_GRAY;
+            case DankStats.two -> DARK_RED;
+            case DankStats.three -> GOLD;
+            case DankStats.four -> GREEN;
+            case DankStats.five -> BLUE;
+            case DankStats.six -> DARK_PURPLE;
+            case DankStats.seven -> WHITE;
             default -> super.getRarity(stack);
         };
     }

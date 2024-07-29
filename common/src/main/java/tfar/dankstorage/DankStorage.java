@@ -96,6 +96,6 @@ public class DankStorage {
     }
 
     public static ResourceLocation id(String path) {
-        return new ResourceLocation(MODID,path);
+        return ResourceLocation.fromNamespaceAndPath(MODID,path);
     }
 }

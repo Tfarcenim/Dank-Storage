@@ -12,19 +12,19 @@ public class DankPacketHandler {
 
     public static void registerPackets() {
 
-        Services.PLATFORM.registerServerPacket(C2SScrollSlotPacket.class, C2SScrollSlotPacket::new);
-        Services.PLATFORM.registerServerPacket(C2SLockSlotPacket.class, C2SLockSlotPacket::new);
-        Services.PLATFORM.registerServerPacket(C2SButtonPacket.class, C2SButtonPacket::new);
-        Services.PLATFORM.registerServerPacket(C2SSetFrequencyPacket.class, C2SSetFrequencyPacket::new);
-        Services.PLATFORM.registerServerPacket(C2SRequestContentsPacket.class, C2SRequestContentsPacket::new);
+        Services.PLATFORM.registerServerPacket(C2SScrollSlotPacket.TYPE, C2SScrollSlotPacket.STREAM_CODEC);
+        Services.PLATFORM.registerServerPacket(C2SLockSlotPacket.TYPE, C2SLockSlotPacket.STREAM_CODEC);
+        Services.PLATFORM.registerServerPacket(C2SButtonPacket.TYPE, C2SButtonPacket.STREAM_CODEC);
+        Services.PLATFORM.registerServerPacket(C2SSetFrequencyPacket.TYPE, C2SSetFrequencyPacket.STREAM_CODEC);
+        Services.PLATFORM.registerServerPacket(C2SRequestContentsPacket.TYPE, C2SRequestContentsPacket.STREAM_CODEC);
 
         ///////server to client
 
-        Services.PLATFORM.registerClientPacket(S2CSendExtendedSlotChangePacket.class, S2CSendExtendedSlotChangePacket::new);
-        Services.PLATFORM.registerClientPacket(S2CSendGhostSlotPacket.class, S2CSendGhostSlotPacket::new);
-        Services.PLATFORM.registerClientPacket(S2CSyncSelectedDankItemPacket.class, S2CSyncSelectedDankItemPacket::new);
-        Services.PLATFORM.registerClientPacket(S2CInitialSyncContainerPacket.class, S2CInitialSyncContainerPacket::new);
-        Services.PLATFORM.registerClientPacket(S2CContentsForDisplayPacket.class, S2CContentsForDisplayPacket::new);
+        Services.PLATFORM.registerClientPacket(S2CSendExtendedSlotChangePacket.TYPE, S2CSendExtendedSlotChangePacket.STREAM_CODEC);
+        Services.PLATFORM.registerClientPacket(S2CSendGhostSlotPacket.TYPE, S2CSendGhostSlotPacket.STREAM_CODEC);
+        Services.PLATFORM.registerClientPacket(S2CSyncSelectedDankItemPacket.TYPE, S2CSyncSelectedDankItemPacket.STREAM_CODEC);
+        Services.PLATFORM.registerClientPacket(S2CInitialSyncContainerPacket.TYPE, S2CInitialSyncContainerPacket.STREAM_CODEC);
+        Services.PLATFORM.registerClientPacket(S2CContentsForDisplayPacket.TYPE, S2CContentsForDisplayPacket.STREAM_CODEC);
     }
 
     public static ResourceLocation packet(Class<?> clazz) {

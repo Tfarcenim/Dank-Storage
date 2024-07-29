@@ -29,7 +29,7 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("ccc")
                 .pattern("cbc")
                 .pattern("ccc")
-                .unlockedBy(getHasName(Blocks.BARREL),has(Tags.Items.BARRELS_WOODEN))
+                .unlockedBy(RecipeProvider.getHasName(Blocks.BARREL), RecipeProvider.has(Tags.Items.BARRELS_WOODEN))
                 .save(pWriter);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.DOCK)
@@ -37,7 +37,7 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("ccc")
                 .pattern("c c")
                 .pattern("ccc")
-                .unlockedBy(getHasName(Blocks.BLACK_CONCRETE),has(Blocks.BLACK_CONCRETE))
+                .unlockedBy(RecipeProvider.getHasName(Blocks.BLACK_CONCRETE), RecipeProvider.has(Blocks.BLACK_CONCRETE))
                 .save(pWriter);
 
         createDankAndUpgrade(ModItems.DANKS.get("dank_2"),ModItems.UPGRADES.get("1_to_2"),ModItems.DANKS.get("dank_1"),
@@ -68,7 +68,7 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("cbc")
                 .pattern("dcd")
                 .serializer(ModRecipeSerializers.upgrade)
-                .unlockedBy(getHasName( previousDank),has(previousDank))
+                .unlockedBy(RecipeProvider.getHasName( previousDank), RecipeProvider.has(previousDank))
                 .save(pWriter);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, upgrade)
@@ -77,7 +77,7 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("dcd")
                 .pattern("c c")
                 .pattern("dcd")
-                .unlockedBy(getHasName( previousDank),has(previousDank))
+                .unlockedBy(RecipeProvider.getHasName( previousDank), RecipeProvider.has(previousDank))
                 .save(pWriter);
     }
 

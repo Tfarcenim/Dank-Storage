@@ -1,9 +1,9 @@
 package tfar.dankstorage.network.server;
 
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import tfar.dankstorage.network.IModPacket;
 
-public interface C2SModPacket extends IModPacket {
+public interface C2SModPacket extends CustomPacketPayload {
 
     void handleServer(ServerPlayer player);
 

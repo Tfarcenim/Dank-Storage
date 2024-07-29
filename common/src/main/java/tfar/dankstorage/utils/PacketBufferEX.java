@@ -1,92 +1,77 @@
 package tfar.dankstorage.utils;
 
-import io.netty.buffer.ByteBufInputStream;
-import io.netty.buffer.ByteBufOutputStream;
-import io.netty.handler.codec.EncoderException;
+import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtAccounter;
-import net.minecraft.nbt.NbtIo;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.Nullable;
-import java.io.IOException;
+import java.util.List;
 
 public class PacketBufferEX {
 
-    public static void writeExtendedItemStack(FriendlyByteBuf buf, ItemStack stack) {
-        if (stack.isEmpty()) {
-            buf.writeInt(-1);
-        } else {
-            buf.writeInt(Item.getId(stack.getItem()));
-            buf.writeInt(stack.getCount());
+    public static final StreamCodec<RegistryFriendlyByteBuf, ItemStack> LARGE_OPTIONAL_STREAM_CODEC = new StreamCodec<>() {
+        private static final StreamCodec<RegistryFriendlyByteBuf, Holder<Item>> ITEM_STREAM_CODEC = ByteBufCodecs.holderRegistry(Registries.ITEM);
 
-            CompoundTag nbttagcompound = stack.getTag();
-
-            writeNBT(buf, nbttagcompound);
-        }
-    }
-
-    public static void writeNBT(FriendlyByteBuf buf, @Nullable CompoundTag nbt) {
-        if (nbt == null) {
-            buf.writeByte(0);
-        } else {
-            try {
-                NbtIo.write(nbt, new ByteBufOutputStream(buf));
-            } catch (IOException ioexception) {
-                throw new EncoderException(ioexception);
+        public ItemStack decode(RegistryFriendlyByteBuf buf) {
+            int i = buf.readInt();
+            if (i <= 0) {
+                return ItemStack.EMPTY;
+            } else {
+                Holder<Item> holder = ITEM_STREAM_CODEC.decode(buf);
+                DataComponentPatch datacomponentpatch = DataComponentPatch.STREAM_CODEC.decode(buf);
+                return new ItemStack(holder, i, datacomponentpatch);
             }
         }
-    }
 
-    public static ItemStack readExtendedItemStack(FriendlyByteBuf buf) {
-        int i = buf.readInt();
-
-        if (i < 0) {
-            return ItemStack.EMPTY;
-        } else {
-            int j = buf.readInt();
-            ItemStack itemstack = new ItemStack(Item.byId(i), j);
-            itemstack.setTag(readNBT(buf));
-            return itemstack;
-        }
-    }
-
-    static final long LIMIT = 2097152L * 4;
-
-    public static CompoundTag readNBT(FriendlyByteBuf buf) {
-        int i = buf.readerIndex();
-        byte b0 = buf.readByte();
-
-        if (b0 == 0) {
-            return null;
-        } else {
-            buf.readerIndex(i);
-            try {
-                return NbtIo.read(new ByteBufInputStream(buf), new NbtAccounter(LIMIT));
-            } catch (IOException ioexception) {
-                throw new EncoderException(ioexception);
+        public void encode(RegistryFriendlyByteBuf buf, ItemStack stack) {
+            if (stack.isEmpty()) {
+                buf.writeInt(0);
+            } else {
+                buf.writeInt(stack.getCount());
+                ITEM_STREAM_CODEC.encode(buf, stack.getItemHolder());
+                DataComponentPatch.STREAM_CODEC.encode(buf, ((PatchedDataComponentMap) stack.getComponents()).asPatch());
             }
         }
+    };
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, List<ItemStack>> LARGE_OPTIONAL_LIST_STREAM_CODEC = LARGE_OPTIONAL_STREAM_CODEC.apply(
+            ByteBufCodecs.collection(NonNullList::createWithCapacity)
+    );
+
+    public static void writeExtendedItemStack(RegistryFriendlyByteBuf buf, ItemStack stack) {
+        LARGE_OPTIONAL_STREAM_CODEC.encode(buf,stack);
     }
 
-    public static void writeList(FriendlyByteBuf buf, NonNullList<ItemStack> stacks) {
-        buf.writeInt(stacks.size());
-        for (int i = 0; i < stacks.size();i++) {
-            writeExtendedItemStack(buf,stacks.get(i));
-        }
+    public static ItemStack readExtendedItemStack(RegistryFriendlyByteBuf buf) {
+        return LARGE_OPTIONAL_STREAM_CODEC.decode(buf);
     }
 
-    public static NonNullList<ItemStack> readList(FriendlyByteBuf buf) {
-        int size = buf.readInt();
-        NonNullList<ItemStack> stacks = NonNullList.withSize(size,ItemStack.EMPTY);
-        for (int i = 0; i < size;i++) {
-            ItemStack stack = readExtendedItemStack(buf);
-            stacks.set(i,stack);
-        }
-        return stacks;
+    public static void writeList(RegistryFriendlyByteBuf buf, List<ItemStack> stacks) {
+        LARGE_OPTIONAL_LIST_STREAM_CODEC.encode(buf,stacks);
+    }
+
+    public static List<ItemStack> readList(RegistryFriendlyByteBuf buf) {
+        return LARGE_OPTIONAL_LIST_STREAM_CODEC.decode(buf);
+    }
+
+
+    public static <B extends FriendlyByteBuf, V extends Enum<V>> StreamCodec<B, V> enumCodec(final Class<V> enumClass) {
+        return new StreamCodec<B, V>() {
+            public V decode(B buf) {
+                return buf.readEnum(enumClass);
+            }
+
+            public void encode(B buf, V value) {
+                buf.writeEnum(value);
+            }
+        };
     }
 }
 

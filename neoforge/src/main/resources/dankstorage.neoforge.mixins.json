@@ -1,14 +1,13 @@
 {
   "required": true,
+  "minVersion": "0.8",
   "package": "tfar.dankstorage.mixin",
-  "compatibilityLevel": "JAVA_17",
-  "refmap": "dankstorage.refmap.json",
-  "mixins": [
-  ],
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [],
   "client": [
   ],
+  "server": [],
   "injectors": {
     "defaultRequire": 1
-  },
-  "minVersion": "0.8"
+  }
 }

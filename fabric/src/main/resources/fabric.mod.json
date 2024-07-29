@@ -1,35 +1,36 @@
 {
-  "schemaVersion": 1,
-  "id": "dankstorage",
-  "version": "${version}",
-  "accessWidener": "dankstorage.accesswidener",
-  "name": "Dank Storage",
-  "description": "It's a backpack, no it's a chest, no it's dank storage",
-  "authors": [
-    "Tfarcenim"
-  ],
-  "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/Tfarcenim/DankStorageFabric"
-  },
-  "license": "CC0-1.0",
-  "icon": "assets/dankstorage/icon.png",
-  "environment": "*",
-  "entrypoints": {
-    "main": [
-      "tfar.dankstorage.DankStorageFabric"
+    "schemaVersion": 1,
+    "id": "${mod_id}",
+    "version": "${version}",
+    "name": "${mod_name}",
+    "description": "${description}",
+    "authors": [
+        "${mod_author}"
     ],
-    "client": [
-      "tfar.dankstorage.DankStorageFabric"
-    ]
-  },
-  "mixins": [
-    "dankstorage.fabric.mixins.json",
-    "dankstorage.mixins.json"
-  ],
-  "depends": {
-    "fabricloader": ">=0.7.4",
-    "fabric": "*",
-    "minecraft": ">=1.18.2"
-  }
+    "contact": {
+        "homepage": "https://fabricmc.net/",
+        "sources": "https://github.com/FabricMC/fabric-example-mod"
+    },
+    "license": "${license}",
+    "icon": "${mod_id}.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "com.example.examplemod.ExampleMod"
+        ]
+    },
+    "mixins": [
+        "${mod_id}.mixins.json",
+        "${mod_id}.fabric.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=${fabric_loader_version}",
+        "fabric-api": "*",
+        "minecraft": "${minecraft_version}",
+        "java": ">=${java_version}"
+    },
+    "suggests": {
+        "another-mod": "*"
+    }
 }
+  

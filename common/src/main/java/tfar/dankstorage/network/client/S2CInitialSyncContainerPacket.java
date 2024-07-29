@@ -2,36 +2,49 @@ package tfar.dankstorage.network.client;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.menu.AbstractDankMenu;
+import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.PacketBufferEX;
+
+import java.util.List;
 
 import static tfar.dankstorage.client.CommonClient.getLocalPlayer;
 
 public class S2CInitialSyncContainerPacket implements S2CModPacket {
 
+    public static final StreamCodec<RegistryFriendlyByteBuf, S2CInitialSyncContainerPacket> STREAM_CODEC =
+            StreamCodec.ofMember(S2CInitialSyncContainerPacket::write, S2CInitialSyncContainerPacket::new);
+
+
+    public static final CustomPacketPayload.Type<S2CInitialSyncContainerPacket> TYPE = new CustomPacketPayload.Type<>(
+            DankPacketHandler.packet(S2CInitialSyncContainerPacket.class));
     private final int stateID;
     private final int windowId;
-    private final NonNullList<ItemStack> stacks;
+    private final List<ItemStack> stacks;
     private final ItemStack carried;
 
-    public S2CInitialSyncContainerPacket(int stateID, int windowId, NonNullList<ItemStack> stacks, ItemStack carried) {
+    public S2CInitialSyncContainerPacket(int stateID,int windowId,NonNullList<ItemStack> stacks,ItemStack carried){
+
         this.stateID = stateID;
         this.windowId = windowId;
         this.stacks = stacks;
         this.carried = carried;
     }
 
-    public S2CInitialSyncContainerPacket(FriendlyByteBuf buf) {
+
+    public S2CInitialSyncContainerPacket(RegistryFriendlyByteBuf buf) {
         stateID = buf.readInt();
         windowId = buf.readInt();
-        carried = buf.readItem();
-        int i = buf.readShort();
-        stacks = NonNullList.withSize(i, ItemStack.EMPTY);
-        for(int j = 0; j < i; ++j) {
-            stacks.set(j, PacketBufferEX.readExtendedItemStack(buf));
-        }
+        carried = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
+        stacks = ItemStack.OPTIONAL_LIST_STREAM_CODEC.decode(buf);
     }
 
     @Override
@@ -42,14 +55,15 @@ public class S2CInitialSyncContainerPacket implements S2CModPacket {
         }
     }
 
-    @Override
-    public void write(FriendlyByteBuf buf) {
+    public void write(RegistryFriendlyByteBuf buf) {
         buf.writeInt(stateID);
         buf.writeInt(windowId);
-        buf.writeItem(carried);
-        buf.writeShort(stacks.size());
-        for (ItemStack stack : stacks) {
-            PacketBufferEX.writeExtendedItemStack(buf, stack);
-        }
+        ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, carried);
+        ItemStack.OPTIONAL_LIST_STREAM_CODEC.encode(buf, stacks);
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

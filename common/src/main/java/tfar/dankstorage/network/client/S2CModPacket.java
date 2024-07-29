@@ -1,8 +1,8 @@
 package tfar.dankstorage.network.client;
 
-import tfar.dankstorage.network.IModPacket;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-public interface S2CModPacket extends IModPacket {
+public interface S2CModPacket extends CustomPacketPayload {
 
     void handleClient();
 

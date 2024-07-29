@@ -1,14 +1,25 @@
 package tfar.dankstorage.network.client;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.menu.AbstractDankMenu;
+import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.PacketBufferEX;
 
 import static tfar.dankstorage.client.CommonClient.getLocalPlayer;
 
 public class S2CSendExtendedSlotChangePacket implements S2CModPacket {
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, S2CSendExtendedSlotChangePacket> STREAM_CODEC =
+            StreamCodec.ofMember(S2CSendExtendedSlotChangePacket::write, S2CSendExtendedSlotChangePacket::new);
+
+
+    public static final CustomPacketPayload.Type<S2CSendExtendedSlotChangePacket> TYPE = new CustomPacketPayload.Type<>(
+            DankPacketHandler.packet(S2CSendExtendedSlotChangePacket.class));
 
     int windowId;
     int slot;
@@ -20,14 +31,13 @@ public class S2CSendExtendedSlotChangePacket implements S2CModPacket {
         this.stack = stack;
     }
 
-    public S2CSendExtendedSlotChangePacket(FriendlyByteBuf buf) {
+    public S2CSendExtendedSlotChangePacket(RegistryFriendlyByteBuf buf) {
         windowId = buf.readInt();
         slot = buf.readInt();
         stack = PacketBufferEX.readExtendedItemStack(buf);
     }
 
-    @Override
-    public void write(FriendlyByteBuf buf) {
+    public void write(RegistryFriendlyByteBuf buf) {
         buf.writeInt(windowId);
         buf.writeInt(slot);
         PacketBufferEX.writeExtendedItemStack(buf, stack);
@@ -39,5 +49,10 @@ public class S2CSendExtendedSlotChangePacket implements S2CModPacket {
         if (player != null && player.containerMenu instanceof AbstractDankMenu && windowId == player.containerMenu.containerId) {
             player.containerMenu.slots.get(slot).set(stack);
         }
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

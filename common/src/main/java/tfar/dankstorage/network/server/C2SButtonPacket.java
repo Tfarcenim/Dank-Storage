@@ -1,26 +1,29 @@
 package tfar.dankstorage.network.server;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import tfar.dankstorage.item.CDankItem;
+import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.KeybindAction;
 import tfar.dankstorage.utils.CommonUtils;
+import tfar.dankstorage.utils.PacketBufferEX;
 
-public class C2SButtonPacket implements C2SModPacket {
+public record C2SButtonPacket(KeybindAction keybindAction) implements C2SModPacket {
 
-    private final KeybindAction keybindAction;
+    public static final StreamCodec<RegistryFriendlyByteBuf, C2SButtonPacket> STREAM_CODEC =
+            StreamCodec.composite(PacketBufferEX.enumCodec(KeybindAction.class), C2SButtonPacket::keybindAction, C2SButtonPacket::new);
 
-    public C2SButtonPacket(KeybindAction keybindAction) {
-        this.keybindAction = keybindAction;
-    }
 
-    public C2SButtonPacket(FriendlyByteBuf buf) {
-        keybindAction = KeybindAction.values()[buf.readInt()];
-    }
+    public static final CustomPacketPayload.Type<C2SButtonPacket> TYPE = new CustomPacketPayload.Type<>(
+            DankPacketHandler.packet(C2SButtonPacket.class));
+
 
     public static void send(KeybindAction keybindAction) {
         Services.PLATFORM.sendToServer(new C2SButtonPacket(keybindAction));
@@ -50,4 +53,8 @@ public class C2SButtonPacket implements C2SModPacket {
         buf.writeInt(keybindAction.ordinal());
     }
 
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
 }
