@@ -254,11 +254,12 @@ public interface DankInterface extends ContainerData {
     default CompoundTag save(HolderLookup.Provider provider) {
         ListTag nbtTagList = new ListTag();
         for (int i = 0; i < this.getContents().size(); i++) {
-            if (!getContents().get(i).isEmpty()) {
+            ItemStack stack = getContents().get(i);
+            if (!stack.isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
+                //getContents().get(i).save(provider,itemTag);
                 itemTag.putInt("Slot", i);
-                SerializationHelper.encodeLargeStack(getContents().get(i),provider,itemTag);//getContents().get(i).save(provider,itemTag);
-                nbtTagList.add(itemTag);
+                nbtTagList.add(SerializationHelper.encodeLargeStack(stack, provider, itemTag));
             }
         }
 
@@ -268,8 +269,7 @@ public interface DankInterface extends ContainerData {
             if (!getGhostItems().get(i).isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
-                getGhostItems().get(i).save(provider,itemTag);
-                ghostItemNBT.add(itemTag);
+                ghostItemNBT.add(getGhostItems().get(i).save(provider,itemTag));
             }
         }
 
