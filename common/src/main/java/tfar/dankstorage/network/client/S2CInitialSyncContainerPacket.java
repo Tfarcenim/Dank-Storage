@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.utils.SerializationHelper;
 
 import java.util.List;
 
@@ -21,25 +22,24 @@ public class S2CInitialSyncContainerPacket implements S2CModPacket {
 
     public static final CustomPacketPayload.Type<S2CInitialSyncContainerPacket> TYPE = new CustomPacketPayload.Type<>(
             DankPacketHandler.packet(S2CInitialSyncContainerPacket.class));
-    private final int stateID;
     private final int windowId;
+    private final int stateID;
     private final List<ItemStack> stacks;
     private final ItemStack carried;
 
-    public S2CInitialSyncContainerPacket(int stateID,int windowId,NonNullList<ItemStack> stacks,ItemStack carried){
-
-        this.stateID = stateID;
+    public S2CInitialSyncContainerPacket(int windowId,int stateID,NonNullList<ItemStack> stacks,ItemStack carried){
         this.windowId = windowId;
+        this.stateID = stateID;
         this.stacks = stacks;
         this.carried = carried;
     }
 
 
     public S2CInitialSyncContainerPacket(RegistryFriendlyByteBuf buf) {
-        stateID = buf.readInt();
         windowId = buf.readInt();
+        stateID = buf.readVarInt();
+        stacks = SerializationHelper.readList(buf);
         carried = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
-        stacks = ItemStack.OPTIONAL_LIST_STREAM_CODEC.decode(buf);
     }
 
     @Override
@@ -51,10 +51,10 @@ public class S2CInitialSyncContainerPacket implements S2CModPacket {
     }
 
     public void write(RegistryFriendlyByteBuf buf) {
-        buf.writeInt(stateID);
         buf.writeInt(windowId);
+        buf.writeVarInt(stateID);
+        SerializationHelper.writeList(buf, stacks);
         ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, carried);
-        ItemStack.OPTIONAL_LIST_STREAM_CODEC.encode(buf, stacks);
     }
 
     @Override
