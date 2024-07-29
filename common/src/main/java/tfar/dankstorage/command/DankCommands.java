@@ -4,7 +4,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.world.entity.player.Player;
@@ -16,6 +15,7 @@ import tfar.dankstorage.utils.CommonUtils;
 public class DankCommands {
 
     public static void register(CommandDispatcher<CommandSourceStack> commandDispatcher) {
+        if (true) return;
         commandDispatcher.register(Commands.literal(DankStorage.MODID)
                 .then(Commands.literal("clear")
                         .requires(commandSourceStack -> commandSourceStack.hasPermission(3))
@@ -64,7 +64,7 @@ public class DankCommands {
         int id = IntegerArgumentType.getInteger(context, CommonUtils.FREQ);
         boolean success = DankStorage.getData(id,context.getSource().getServer()).clear();
         if (!success) {
-            throw new CommandRuntimeException(CommonUtils.translatable("dankstorage.command.clear_id.invalid_id"));
+          //  throw new CommandRuntimeException(CommonUtils.translatable("dankstorage.command.clear_id.invalid_id"));
         }
         return 1;
     }
@@ -74,7 +74,7 @@ public class DankCommands {
         int tier = IntegerArgumentType.getInteger(context, "tier");
         boolean success = false;//DankStorageForge.instance.data.setTier(id, tier);
         if (!success) {
-            throw new CommandRuntimeException(CommonUtils.translatable("dankstorage.command.set_tier.invalid_id"));
+           // throw new CommandRuntimeException(CommonUtils.translatable("dankstorage.command.set_tier.invalid_id"));
         }
         return 1;
     }
@@ -86,18 +86,19 @@ public class DankCommands {
         ItemStack dank = player.getMainHandItem();
 
         if (dank.getItem() instanceof CDankItem) {
-            dank.setTag(null);
+            //   dank.setTag(null);
             return 1;
         } else {
-            throw new CommandRuntimeException(CommonUtils.translatable("dankstorage.command.reset_frequency.not_a_dank"));
+           // throw new CommandRuntimeException(CommonUtils.translatable("dankstorage.command.reset_frequency.not_a_dank"));
         }
+        return 0;
     }
 
     private static int lock(CommandContext<CommandSourceStack> context) {
         int id = IntegerArgumentType.getInteger(context, CommonUtils.FREQ);
         boolean success = false;//DankStorageForge.instance.data.lock(id);
         if (!success) {
-            throw new CommandRuntimeException(CommonUtils.translatable("dankstorage.command.lock.invalid_id"));
+       //     throw new CommandRuntimeException(CommonUtils.translatable("dankstorage.command.lock.invalid_id"));
         }
         return 1;
     }
@@ -106,7 +107,7 @@ public class DankCommands {
         int id = IntegerArgumentType.getInteger(context, CommonUtils.FREQ);
         boolean success = false;//DankStorageForge.instance.data.unlock(id);
         if (!success) {
-            throw new CommandRuntimeException(CommonUtils.translatable("dankstorage.command.unlock.invalid_id"));
+           // throw new CommandRuntimeException(CommonUtils.translatable("dankstorage.command.unlock.invalid_id"));
         }
         return 1;
     }

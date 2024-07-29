@@ -1,12 +1,13 @@
 package tfar.dankstorage.world;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.saveddata.SavedData;
 
 public class MaxId extends SavedData {
     private int maxId;
     @Override
-    public CompoundTag save(CompoundTag pCompoundTag) {
+    public CompoundTag save(CompoundTag pCompoundTag,HolderLookup.Provider provider) {
         pCompoundTag.putInt("max_id",maxId);
         return pCompoundTag;
     }

@@ -55,6 +55,11 @@ public class CDankItem extends Item {
     }
 
     @Override
+    public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
+        super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+    }
+
+   /* @Override
     public void appendHoverText(ItemStack bag, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         if (bag.hasTag()) {
 
@@ -110,7 +115,7 @@ public class CDankItem extends Item {
             tooltip.add(
                     CommonUtils.translatable("text.dankstorage.stacklimit", CommonUtils.literal(stats.stacklimit + "").withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.GRAY));
         }
-    }
+    }*/
 
     //this is called on the client
     @Override

@@ -1,7 +1,7 @@
 package tfar.dankstorage.block;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockSource;
+import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
@@ -13,8 +13,8 @@ public class DankDispenserBehavior implements DispenseItemBehavior {
 
     @Override
     public ItemStack dispense(BlockSource pointer, ItemStack stack) {
-        ServerLevel world = pointer.getLevel();
-        BlockPos blockPos = pointer.getPos().relative(pointer.getBlockState().getValue(DispenserBlock.FACING));
+        ServerLevel world = pointer.level();
+        BlockPos blockPos = pointer.pos().relative(pointer.state().getValue(DispenserBlock.FACING));
         BlockState state = world.getBlockState(blockPos);
         if (state.getBlock() instanceof CDockBlock && state.getValue(CDockBlock.TIER) == 0) {
             insertDank(world, blockPos, stack);

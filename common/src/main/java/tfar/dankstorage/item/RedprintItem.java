@@ -14,8 +14,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jetbrains.annotations.Nullable;
 import tfar.dankstorage.blockentity.CommonDockBlockEntity;
+import tfar.dankstorage.init.ModDataComponents;
 import tfar.dankstorage.utils.CommonUtils;
 
 import java.util.List;
@@ -26,21 +26,9 @@ public class RedprintItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> list, TooltipFlag tooltipFlag) {
-        list.add(CommonUtils.translatable("text.dankstorage.red_print.tooltip0"));
-        list.add(CommonUtils.translatable("text.dankstorage.red_print.tooltip1"));
-
-      //  int frequency = getFrequency(stack);
-
-      //  list.add(CommonUtils.literal("ID: "+frequency));
-
-    }
-
-    private static int getFrequency(ItemStack stack) {
-        if (stack.hasTag() && stack.getTag().contains(CommonUtils.FREQ)) {
-            return stack.getTag().getInt(CommonUtils.FREQ);
-        }
-        return CommonUtils.INVALID;
+    public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
+        pTooltipComponents.add(CommonUtils.translatable("text.dankstorage.red_print.tooltip0"));
+        pTooltipComponents.add(CommonUtils.translatable("text.dankstorage.red_print.tooltip1"));
     }
 
     @Override
@@ -54,11 +42,10 @@ public class RedprintItem extends Item {
             if (blockEntity instanceof CommonDockBlockEntity dockBlockEntity) {
                 if (player.isCrouching()) {
                     int freq = dockBlockEntity.getInventory().frequency();
-                    stack.getOrCreateTag().putInt(CommonUtils.FREQ, freq);
+                    CommonUtils.setFrequency(stack, freq);
                 } else {
-                    if (stack.hasTag() && stack.getTag().contains(CommonUtils.FREQ)) {
-                        int freq = stack.getTag().getInt(CommonUtils.FREQ);
-                        dockBlockEntity.setFrequency(freq);
+                    if (stack.has(ModDataComponents.FREQUENCY)) {
+                        dockBlockEntity.setFrequency(stack.get(ModDataComponents.FREQUENCY));
                     }
                 }
             }
@@ -71,7 +58,7 @@ public class RedprintItem extends Item {
         ItemStack otherStack = slot.getItem();
 
         if (otherStack.getItem() instanceof CDankItem) {
-            int redF = getFrequency(stack);
+            int redF = CommonUtils.getFrequency(stack);
             if (redF > CommonUtils.INVALID) {
                 CommonUtils.setFrequency(otherStack,redF);
             }
@@ -85,7 +72,7 @@ public class RedprintItem extends Item {
         if (otherStack.getItem() instanceof CDankItem) {
             int freq = CommonUtils.getFrequency(otherStack);
             if (freq > CommonUtils.INVALID) {
-                stack.getOrCreateTag().putInt(CommonUtils.FREQ, freq);
+                CommonUtils.setFrequency(stack,freq);
                 return true;
             }
         }
@@ -95,9 +82,9 @@ public class RedprintItem extends Item {
     @Override
     public Component getName(ItemStack itemStack) {
         MutableComponent component = CommonUtils.literal(super.getName(itemStack).getString());
-        if (itemStack.hasTag() && itemStack.getTag().contains(CommonUtils.FREQ)) {
-            component.append(" ("+itemStack.getTag().getInt(CommonUtils.FREQ)+")");
-        }
+    //    if (itemStack.hasTag() && itemStack.getTag().contains(CommonUtils.FREQ)) {
+    //        component.append(" ("+itemStack.getTag().getInt(CommonUtils.FREQ)+")");
+    //    }
         return component;
     }
 }

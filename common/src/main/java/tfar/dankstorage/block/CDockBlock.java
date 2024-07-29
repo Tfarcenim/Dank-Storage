@@ -3,6 +3,7 @@ package tfar.dankstorage.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -92,27 +93,42 @@ public class CDockBlock extends Block implements EntityBlock {
         builder.add(TIER);
     }
 
-    @Nonnull
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult p_225533_6_) {
-        if (!world.isClientSide) {
-            final BlockEntity tile = world.getBlockEntity(pos);
+    protected ItemInteractionResult useItemOn(ItemStack pStack, BlockState pState, Level pLevel, BlockPos pos, Player player, InteractionHand hand, BlockHitResult pHitResult) {
+        if (!pLevel.isClientSide) {
+            final BlockEntity tile = pLevel.getBlockEntity(pos);
             if (tile instanceof CommonDockBlockEntity<?> dockBlockEntity) {
                 ItemStack held = player.getItemInHand(hand);
                 if (player.isCrouching() && held.is(ModTags.WRENCHES)) {
-                    world.destroyBlock(pos, true, player);
-                    return InteractionResult.SUCCESS;
+                    pLevel.destroyBlock(pos, true, player);
+                    return ItemInteractionResult.SUCCESS;
                 }
 
                 if (held.getItem() instanceof CDankItem) {
 
-                    if (state.getValue(TIER) > 0) {
+                    if (pState.getValue(TIER) > 0) {
                         dockBlockEntity.giveToPlayer(player);
                     }
                     dockBlockEntity.addDank(held);
-                    return InteractionResult.SUCCESS;
+                    return ItemInteractionResult.SUCCESS;
                 }
 
+                if (player.isShiftKeyDown() && pState.getValue(TIER) > 0) {
+                    dockBlockEntity.giveToPlayer(player);
+                    return ItemInteractionResult.SUCCESS;
+                }
+
+                player.openMenu((MenuProvider) tile);
+            }
+        }
+        return ItemInteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level pLevel, BlockPos pos, Player player, BlockHitResult pHitResult) {
+        if (!pLevel.isClientSide) {
+            final BlockEntity tile = pLevel.getBlockEntity(pos);
+            if (tile instanceof CommonDockBlockEntity<?> dockBlockEntity) {
                 if (player.isShiftKeyDown() && state.getValue(TIER) > 0) {
                     dockBlockEntity.giveToPlayer(player);
                     return InteractionResult.SUCCESS;
@@ -123,4 +139,6 @@ public class CDockBlock extends Block implements EntityBlock {
         }
         return InteractionResult.SUCCESS;
     }
+
+
 }

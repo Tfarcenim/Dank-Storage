@@ -4,9 +4,9 @@ package tfar.dankstorage.datagen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.BlockTagsProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
 import tfar.dankstorage.datagen.tags.ModBlockTagsProvider;
 import tfar.dankstorage.datagen.tags.ModItemTagsProvider;
 
@@ -23,7 +23,7 @@ public class ModDatagen {
             BlockTagsProvider blockTagsProvider = new ModBlockTagsProvider(packOutput,lookupProvider,helper);
             generator.addProvider(true,blockTagsProvider);
             generator.addProvider(true,new ModItemTagsProvider(packOutput,lookupProvider,blockTagsProvider.contentsGetter(),helper));
-            generator.addProvider(true,new ModRecipeProvider(packOutput));
+            generator.addProvider(true,new ModRecipeProvider(packOutput,lookupProvider));
         }
         if (e.includeClient()) {
         }

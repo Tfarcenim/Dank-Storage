@@ -1,5 +1,6 @@
 package tfar.dankstorage.utils;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentPatch;
@@ -9,10 +10,12 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
+import java.util.Locale;
 
 public class PacketBufferEX {
 
@@ -63,7 +66,7 @@ public class PacketBufferEX {
 
 
     public static <B extends FriendlyByteBuf, V extends Enum<V>> StreamCodec<B, V> enumCodec(final Class<V> enumClass) {
-        return new StreamCodec<B, V>() {
+        return new StreamCodec<>() {
             public V decode(B buf) {
                 return buf.readEnum(enumClass);
             }

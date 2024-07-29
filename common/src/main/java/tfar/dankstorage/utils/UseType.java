@@ -1,6 +1,13 @@
 package tfar.dankstorage.utils;
 
-public enum UseType {
+import net.minecraft.util.StringRepresentable;
+
+public enum UseType implements StringRepresentable {
     bag, construction;
-    public static final UseType[] useTypes = UseType.values();
+    public static final UseType[] VALUES = UseType.values();
+
+    @Override
+    public String getSerializedName() {
+        return name();
+    }
 }

@@ -9,7 +9,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
@@ -23,6 +22,7 @@ import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
+import tfar.dankstorage.init.ModDataComponents;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.LimitedContainerData;
 import tfar.dankstorage.item.CDankItem;
@@ -45,14 +45,7 @@ public class CommonUtils {
 
     public static final int INVALID = -1;
 
-    public static final String SET = "settings";
     private static final DecimalFormat decimalFormat = new DecimalFormat("0.##");
-
-    public static final String SELECTED = "selectedSlot";
-    public static final String CON = "construction";
-
-    public static final String MODE = "mode";
-    public static final String FREQ = "dankstorage:frequency";
 
     public static String formatLargeNumber(int number) {
 
@@ -143,7 +136,7 @@ public class CommonUtils {
     public static int findSlotMatchingItem(DankInterface dankInventory, ItemStack itemStack) {
         for (int i = 0; i < dankInventory.getContainerSizeDank(); ++i) {
             ItemStack stack = dankInventory.getItemDank(i);
-            if (stack.isEmpty() || !ItemStack.isSameItemSameTags(itemStack, stack)) continue;
+            if (stack.isEmpty() || !ItemStack.isSameItemSameComponents(itemStack, stack)) continue;
             return i;
         }
         return INVALID;
@@ -184,10 +177,10 @@ public class CommonUtils {
 
     public static List<CraftingRecipe> findReversibles(ServerLevel level, int size) {
         List<CraftingRecipe> compactingRecipes = new ArrayList<>();
-        List<CraftingRecipe> recipes = level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
+        List<RecipeHolder<CraftingRecipe>> recipes = level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
 
-        for (CraftingRecipe recipe : recipes) {
-            if (recipe instanceof ShapedRecipe shapedRecipe) {
+        for (RecipeHolder<CraftingRecipe> recipe : recipes) {
+            if (recipe.value() instanceof ShapedRecipe shapedRecipe) {
                 int x = shapedRecipe.getWidth();
                 int y = shapedRecipe.getHeight();
                 if (x == size && x == y) {
@@ -205,10 +198,10 @@ public class CommonUtils {
                             }
                         }
                         if (same && shapedRecipe.getResultItem(level.registryAccess()).getCount() == 1) {
-                            DUMMY.setItem(0, shapedRecipe.getResultItem(level.registryAccess()));
+                            ItemStack stack = shapedRecipe.getResultItem(level.registryAccess());
 
-                            level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, DUMMY, level).ifPresent(reverseRecipe -> {
-                                if (reverseRecipe.getResultItem(level.registryAccess()).getCount() == size * size) {
+                            level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, makeCraftInput(stack), level).ifPresent(reverseRecipe -> {
+                                if (reverseRecipe.value().getResultItem(level.registryAccess()).getCount() == size * size) {
                                     compactingRecipes.add(shapedRecipe);
                                 }
                             });
@@ -220,8 +213,12 @@ public class CommonUtils {
         return compactingRecipes;
     }
 
-    @SuppressWarnings("ConstantConditions")
-    private static final CraftingContainer DUMMY = new DummyCraftingContainer(1, 1);
+    private static CraftingInput makeCraftInput(ItemStack stack) {
+        return CraftingInput.of(1, 1, List.of(stack));
+    }
+    public static int getFrequency(ItemStack stack) {
+        return stack.getOrDefault(ModDataComponents.FREQUENCY, INVALID);
+    }
 
     public static class DummyCraftingContainer implements CraftingContainer {
         private final NonNullList<ItemStack> items;
@@ -330,7 +327,7 @@ public class CommonUtils {
 
     public static void merge(List<ItemStack> stacks, ItemStack toMerge) {
         for (ItemStack stack : stacks) {
-            if (ItemStack.isSameItemSameTags(stack, toMerge)) {
+            if (ItemStack.isSameItemSameComponents(stack, toMerge)) {
                 int grow = Math.min(Integer.MAX_VALUE - stack.getCount(), toMerge.getCount());
                 if (grow > 0) {
                     stack.grow(grow);
@@ -343,89 +340,57 @@ public class CommonUtils {
         }
     }
 
-
-    public static CompoundTag getSettings(ItemStack bag) {
-        return hasSettings(bag) ? bag.getTag().getCompound(SET) : null;
-    }
-
-    public static CompoundTag getOrCreateSettings(ItemStack bag) {
-        if (hasSettings(bag)) {
-            return bag.getTag().getCompound(SET);
-        } else {
-            bag.getOrCreateTag().put(SET, new CompoundTag());
-            return getSettings(bag);
-        }
-    }
-
-    private static boolean hasSettings(ItemStack bag) {
-        return bag.hasTag() && bag.getTag().contains(SET);
-    }
-
     public static PickupMode getPickupMode(ItemStack bag) {
-        CompoundTag tag = getSettings(bag);
-        if (tag != null) {
-            return PickupMode.VALUES[tag.getInt(MODE)];
-        }
-        return PickupMode.none;
+        return bag.getOrDefault(ModDataComponents.PICKUP_MODE, PickupMode.none);
     }
 
     public static void setPickupMode(ItemStack bag, PickupMode mode) {
-        CompoundTag tag = getOrCreateSettings(bag);
-        tag.putInt(MODE, mode.ordinal());
+        bag.set(ModDataComponents.PICKUP_MODE, mode);
     }
 
     public static boolean isConstruction(ItemStack bag) {
-        CompoundTag settings = getSettings(bag);
-        return settings != null && settings.getInt(CON) == UseType.construction.ordinal();
+        return getUseType(bag) == UseType.construction;
     }
 
     //0,1,2,3
     public static void cyclePickupMode(ItemStack bag, Player player) {
-        int ordinal = getOrCreateSettings(bag).getInt(MODE);
+        int ordinal = getPickupMode(bag).ordinal();
         ordinal++;
         if (ordinal > PickupMode.VALUES.length - 1) ordinal = 0;
-        getOrCreateSettings(bag).putInt(MODE, ordinal);
-        player.displayClientMessage(
-                translatable("dankstorage.mode." + PickupMode.VALUES[ordinal].name()), true);
+        PickupMode mode = PickupMode.VALUES[ordinal];
+        setPickupMode(bag, mode);
+        player.displayClientMessage(translatable("dankstorage.mode." + mode), true);
     }
 
     public static UseType getUseType(ItemStack bag) {
-        CompoundTag settings = getSettings(bag);
-        return settings != null ? UseType.useTypes[settings.getInt(CON)] : UseType.bag;
+        return bag.getOrDefault(ModDataComponents.USE_TYPE, UseType.bag);
     }
 
     //0,1,2
     public static void cyclePlacement(ItemStack bag, Player player) {
-        CompoundTag tag = getOrCreateSettings(bag);
-        int ordinal = tag.getInt(CON);
+        int ordinal = getUseType(bag).ordinal();
         ordinal++;
-        if (ordinal >= UseType.useTypes.length) ordinal = 0;
-        tag.putInt(CON, ordinal);
-        player.displayClientMessage(
-                translatable("dankstorage.usetype." + UseType.useTypes[ordinal].name()), true);
+        if (ordinal >= UseType.VALUES.length) ordinal = 0;
+        UseType useType = UseType.VALUES[ordinal];
+        setUseType(bag, useType);
+        player.displayClientMessage(translatable("dankstorage.usetype." + useType), true);
+    }
+
+    public static void setUseType(ItemStack bag, UseType useType) {
+        bag.set(ModDataComponents.USE_TYPE, useType);
     }
 
     //this can be 0 - 80
     public static int getSelectedSlot(ItemStack bag) {
-        CompoundTag settings = getSettings(bag);
-        return settings != null && settings.contains(SELECTED) ? settings.getInt(SELECTED) : INVALID;
+        return bag.getOrDefault(ModDataComponents.SELECTED, INVALID);
     }
 
     public static void setSelectedSlot(ItemStack bag, int slot) {
-        getOrCreateSettings(bag).putInt(SELECTED, slot);
-    }
-
-    //make sure to return an invalid ID for unassigned danks
-    public static int getFrequency(ItemStack bag) {
-        CompoundTag settings = getSettings(bag);
-        if (settings != null && settings.contains(FREQ)) {
-            return settings.getInt(FREQ);
-        }
-        return INVALID;
+        bag.set(ModDataComponents.SELECTED, slot);
     }
 
     public static void setFrequency(ItemStack bag, int frequency) {
-        getOrCreateSettings(bag).putInt(FREQ, frequency);
+        bag.set(ModDataComponents.FREQUENCY, frequency);
     }
 
     public static MutableComponent translatable(String s) {
@@ -441,7 +406,7 @@ public class CommonUtils {
     }
 
     public static boolean oredict(ItemStack bag) {
-        return bag.hasTag() && getSettings(bag).getBoolean("tag");
+        return bag.getOrDefault(ModDataComponents.OREDICT, false);
     }
 
     public static void warn(Player player, DankStats item, DankStats inventory) {
@@ -460,7 +425,7 @@ public class CommonUtils {
     }
 
     public static CDankItem getItemFromTier(int tier) {
-        return (CDankItem) BuiltInRegistries.ITEM.get(new ResourceLocation(DankStorage.MODID, "dank_" + tier));
+        return (CDankItem) BuiltInRegistries.ITEM.get(DankStorage.id("dank_" + tier));
     }
 
     public static boolean isHoldingDank(@Nullable Player player) {
@@ -474,19 +439,17 @@ public class CommonUtils {
     }
 
     public static ItemStack getSelectedItem(ItemStack bag, Level level) {
-        if (bag.hasTag()) {
-            int selected = getSelectedSlot(bag);
-            if (selected == INVALID) return ItemStack.EMPTY;
-            if (!level.isClientSide) {
-                DankInterface dankInventory = getBagInventory(bag, level);
-                if (dankInventory != null) {
-                    return dankInventory.getItemDank(selected);
-                } else {
-                    //    System.out.println("Attempted to access a selected item from a null inventory");
-                }
+        int selected = getSelectedSlot(bag);
+        if (selected == INVALID) return ItemStack.EMPTY;
+        if (!level.isClientSide) {
+            DankInterface dankInventory = getBagInventory(bag, level);
+            if (dankInventory != null) {
+                return dankInventory.getItemDank(selected);
             } else {
-                return ClientData.selectedItem;
+                //    System.out.println("Attempted to access a selected item from a null inventory");
             }
+        } else {
+            return ClientData.selectedItem;
         }
         return ItemStack.EMPTY;
     }
@@ -507,8 +470,12 @@ public class CommonUtils {
         ItemStack dank = getDank(player);
         if (!dank.isEmpty()) {
             boolean toggle = oredict(dank);
-            player.getMainHandItem().getOrCreateTag().putBoolean("tag", !toggle);
+            setOredictMode(dank,!toggle);
         }
+    }
+
+    public static void setOredictMode(ItemStack bag,boolean active) {
+        bag.set(ModDataComponents.OREDICT,active);
     }
 
     public static void togglePickupMode(ServerPlayer player) {
@@ -559,7 +526,7 @@ public class CommonUtils {
             }
             inventory.setTextColor(textColor.color);
         } else if (container instanceof ChangeFrequencyMenu changeFrequencyMenu) {
-            DankInterface inventory =  (DankInterface) ((LimitedContainerData)changeFrequencyMenu.getContainerData()).getWrapped();
+            DankInterface inventory = (DankInterface) ((LimitedContainerData) changeFrequencyMenu.getContainerData()).getWrapped();
 
             TxtColor textColor;
 

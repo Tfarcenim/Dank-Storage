@@ -1,5 +1,6 @@
 package tfar.dankstorage.world;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -20,7 +21,7 @@ public class CDankSavedData extends SavedData {
     }
 
     @Override
-    public CompoundTag save(CompoundTag compoundTag) {
+    public CompoundTag save(CompoundTag compoundTag, HolderLookup.Provider provider) {
         compoundTag.put("contents", storage);
         return compoundTag;
     }
@@ -45,7 +46,7 @@ public class CDankSavedData extends SavedData {
     public void setStats(DankStats stats, int frequency) {
         DankInterface dankInventory = createInventory(frequency);
         dankInventory.setDankStats(stats);
-        write(dankInventory.save());
+        write(dankInventory.save(level.registryAccess()));
     }
 
 
@@ -56,12 +57,6 @@ public class CDankSavedData extends SavedData {
 
     protected void load(CompoundTag compoundTag) {
         storage = compoundTag.getCompound("contents");
-    }
-
-    @Override
-    public void save(File file) {
-        super.save(file);
-        //DankStorageForge.LOGGER.debug("Saving Dank Contents");
     }
 
     public static CDankSavedData loadStatic(CompoundTag compoundTag,ServerLevel level) {

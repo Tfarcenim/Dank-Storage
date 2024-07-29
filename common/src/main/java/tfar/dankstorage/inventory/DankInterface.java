@@ -1,6 +1,7 @@
 package tfar.dankstorage.inventory;
 
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -93,7 +94,7 @@ public interface DankInterface extends ContainerData {
 
     ItemStack addItemDank(int slot, ItemStack stack);
 
-    default void readGhostItems(ListTag listTag) {
+    default void readGhostItems(HolderLookup.Provider provider, ListTag listTag) {
         for (int i = 0; i < listTag.size(); i++) {
             CompoundTag itemTags = listTag.getCompound(i);
             int slot = itemTags.getInt("Slot");
@@ -103,7 +104,7 @@ public interface DankInterface extends ContainerData {
                     ListTag stackTagList = itemTags.getList("StackList", Tag.TAG_COMPOUND);
                     for (int j = 0; j < stackTagList.size(); j++) {
                         CompoundTag itemTag = stackTagList.getCompound(j);
-                        ItemStack temp = ItemStack.of(itemTag);
+                        ItemStack temp = ItemStack.parseOptional(provider,itemTag);
                         if (!temp.isEmpty()) {
                             if (stack.isEmpty()) stack = temp;
                             else stack.grow(temp.getCount());
@@ -113,7 +114,7 @@ public interface DankInterface extends ContainerData {
                         this.getGhostItems().set(slot, stack);
                     }
                 } else {
-                    ItemStack stack = ItemStack.of(itemTags);
+                    ItemStack stack = ItemStack.parseOptional(provider,itemTags);
                     this.getGhostItems().set(slot, stack);
                 }
             }
@@ -211,7 +212,7 @@ public interface DankInterface extends ContainerData {
     }
 
 
-    default void readItems(ListTag listTag) {
+    default void readItems(HolderLookup.Provider provider,ListTag listTag) {
         for (int i = 0; i < listTag.size(); i++) {
             CompoundTag itemTags = listTag.getCompound(i);
             int slot = itemTags.getInt("Slot");
@@ -221,7 +222,7 @@ public interface DankInterface extends ContainerData {
                     ListTag stackTagList = itemTags.getList("StackList", Tag.TAG_COMPOUND);
                     for (int j = 0; j < stackTagList.size(); j++) {
                         CompoundTag itemTag = stackTagList.getCompound(j);
-                        ItemStack temp = ItemStack.of(itemTag);
+                        ItemStack temp = ItemStack.parseOptional(provider,itemTag);
                         if (!temp.isEmpty()) {
                             if (stack.isEmpty()) stack = temp;
                             else stack.grow(temp.getCount());
@@ -235,7 +236,7 @@ public interface DankInterface extends ContainerData {
                         this.setItemDank(slot, stack);
                     }
                 } else {
-                    ItemStack stack = ItemStack.of(itemTags);
+                    ItemStack stack = ItemStack.parseOptional(provider,itemTags);
                     if (itemTags.contains("ExtendedCount", Tag.TAG_INT)) {
                         stack.setCount(itemTags.getInt("ExtendedCount"));
                     }
@@ -252,14 +253,14 @@ public interface DankInterface extends ContainerData {
     void setDankStats(DankStats dankStats);
 
 
-    default CompoundTag save() {
+    default CompoundTag save(HolderLookup.Provider provider) {
         ListTag nbtTagList = new ListTag();
         for (int i = 0; i < this.getContents().size(); i++) {
             if (!getContents().get(i).isEmpty()) {
                 int realCount = Math.min(getDankStats().stacklimit, getContents().get(i).getCount());
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
-                getContents().get(i).save(itemTag);
+                getContents().get(i).save(provider,itemTag);
                 itemTag.putInt("ExtendedCount", realCount);
                 nbtTagList.add(itemTag);
             }
@@ -271,7 +272,7 @@ public interface DankInterface extends ContainerData {
             if (!getGhostItems().get(i).isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
-                getGhostItems().get(i).save(itemTag);
+                getGhostItems().get(i).save(provider,itemTag);
                 ghostItemNBT.add(itemTag);
             }
         }
@@ -289,9 +290,9 @@ public interface DankInterface extends ContainerData {
         DankStats stats = DankStats.valueOf(nbt.getString("DankStats"));
         setDankStats(stats);
         ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
-        readItems(tagList);
+        readItems(getServer().registryAccess(), tagList);
         ListTag ghostItemList = nbt.getList(GHOST, Tag.TAG_COMPOUND);
-        readGhostItems(ghostItemList);
+        readGhostItems(getServer().registryAccess(), ghostItemList);
         setFrequencyLock(nbt.getBoolean("locked"));
         validate();
     }
@@ -395,7 +396,7 @@ public interface DankInterface extends ContainerData {
 
     default void saveToDisk() {
         if (getServer() != null) {
-            DankStorage.getData(frequency(), getServer()).write(save());
+            DankStorage.getData(frequency(), getServer()).write(save(getServer().registryAccess()));
         }
     }
 

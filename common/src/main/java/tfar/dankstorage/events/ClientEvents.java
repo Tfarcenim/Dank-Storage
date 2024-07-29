@@ -46,7 +46,7 @@ public class ClientEvents {
         ItemStack toPlace = ClientData.selectedItem;
 
         if (!toPlace.isEmpty() && shouldPreview()) {
-            Integer color = toPlace.getItem().getRarity(toPlace).color.getColor();
+            Integer color = toPlace.getRarity().color().getColor();
             int c = color != null ? color : 0xFFFFFF;
             renderHotbarItem(guiGraphics, xStart, yStart, player, toPlace);
         }

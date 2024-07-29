@@ -1,6 +1,8 @@
 package tfar.dankstorage.blockentity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -13,21 +15,19 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.init.ModBlockEntityTypes;
+import tfar.dankstorage.init.ModDataComponents;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.LimitedContainerData;
 import tfar.dankstorage.inventory.TierDataSlot;
 import tfar.dankstorage.item.CDankItem;
 import tfar.dankstorage.block.CDockBlock;
 import tfar.dankstorage.menu.ChangeFrequencyMenuBlockEntity;
-import tfar.dankstorage.menu.ChangeFrequencyMenuItem;
 import tfar.dankstorage.menu.DockMenu;
 import tfar.dankstorage.platform.Services;
-import tfar.dankstorage.utils.CommonUtils;
-import tfar.dankstorage.utils.DankStats;
+import tfar.dankstorage.utils.*;
 import tfar.dankstorage.world.CDankSavedData;
 
 import javax.annotation.Nullable;
@@ -39,17 +39,18 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
 
     @Nullable
     protected Component customName;
-    public CompoundTag settings;
+
+    private int frequency = CommonUtils.INVALID;
+    public PickupMode pickupMode = PickupMode.none;
+    public UseType useType = UseType.bag;
+    public int selected = CommonUtils.INVALID;
+    public boolean oredict = false;
 
     public int numPlayersUsing = 0;
 
 
     public void setFrequency(int freq) {
-        if (settings == null) {
-
-        } else {
-            settings.putInt(CommonUtils.FREQ,freq);
-        }
+        frequency = freq;
     }
 
     @Override
@@ -95,8 +96,7 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
     public static final DankInterface DUMMY = Services.PLATFORM.createInventory(DankStats.zero, CommonUtils.INVALID);
 
     public T getInventory() {
-        if (!level.isClientSide && settings != null && settings.contains(CommonUtils.FREQ)) {
-            int frequency = settings.getInt(CommonUtils.FREQ);
+        if (!level.isClientSide && frequency != CommonUtils.INVALID) {
             CDankSavedData savedData = DankStorage.getData(frequency,level.getServer());
             DankInterface dataInventory = savedData.createInventory(frequency);
 
@@ -145,30 +145,44 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
     }
 
     @Override
-    public void load(CompoundTag compound) {
-        super.load(compound);
-        this.settings = compound.getCompound(CommonUtils.SET);
-        if (compound.contains("CustomName", Tag.TAG_STRING)) {
-            this.setCustomName(Component.Serializer.fromJson(compound.getString("CustomName")));
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider pRegistries) {
+        super.loadAdditional(tag, pRegistries);
+        if (tag.contains("frequency")) {
+            frequency = tag.getInt("frequency");
+        }
+        pickupMode = PickupMode.valueOf(tag.getString("pickup_mode"));
+        useType = UseType.valueOf(tag.getString("use_type"));
+        if (tag.contains("selected")) {
+            selected = tag.getInt("selected");
+        }
+
+        oredict = tag.getBoolean("oredict");
+
+        if (tag.contains("CustomName", Tag.TAG_STRING)) {
+            this.setCustomName(Component.Serializer.fromJson(tag.getString("CustomName"),pRegistries));
         }
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
-        if (settings != null) {
-            tag.put(CommonUtils.SET, settings);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider pRegistries) {
+        super.saveAdditional(tag, pRegistries);
+        if (frequency != CommonUtils.INVALID) {
+            tag.putInt("frequency",frequency);
         }
-        if (this.hasCustomName()) {
-            tag.putString("CustomName", Component.Serializer.toJson(this.customName));
+        tag.putString("pickup_mode",pickupMode.name());
+        tag.putString("use_type", useType.name());
+
+        if (selected != CommonUtils.INVALID) {
+            tag.putInt("selected",selected);
         }
+        tag.putBoolean("oredict",oredict);
+
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        return saveWithoutMetadata();
+    public CompoundTag getUpdateTag(HolderLookup.Provider pRegistries) {
+        return saveWithoutMetadata(pRegistries);
     }
-
     public void giveToPlayer(Player player) {
         ItemStack dankInStack = removeDankWithoutItemSpawn();
 
@@ -194,14 +208,10 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
         level.setBlockAndUpdate(worldPosition, getBlockState().setValue(CDockBlock.TIER, 0));
         ItemStack stack = new ItemStack(CommonUtils.getItemFromTier(tier));
 
-        if (settings != null) {
-            stack.getOrCreateTag().put(CommonUtils.SET, settings);
-        }
 
-        settings = null;
 
         if (hasCustomName()) {
-            stack.setHoverName(getCustomName());
+            stack.set(DataComponents.CUSTOM_NAME,customName);
         }
 
         setCustomName(null);
@@ -214,20 +224,24 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
         if (tank.getItem() instanceof CDankItem) {
             DankStats stats = ((CDankItem) tank.getItem()).stats;
             level.setBlockAndUpdate(worldPosition, getBlockState().setValue(CDockBlock.TIER, stats.ordinal()));
-            if (tank.hasCustomHoverName()) {
+            if (tank.has(DataComponents.CUSTOM_NAME)) {
                 setCustomName(tank.getHoverName());
             }
-            CompoundTag iSettings = CommonUtils.getSettings(tank);
             tank.shrink(1);
 
-            if (iSettings != null && iSettings.contains(CommonUtils.FREQ)) {//existing frequency
-                this.settings = iSettings;
+            if (CommonUtils.getFrequency(tank)!= CommonUtils.INVALID) {//existing frequency
+                this.frequency = CommonUtils.getFrequency(tank);
             } else {
-                this.settings = new CompoundTag();
                 int newId = DankStorage.maxId.getMaxId();
                 DankStorage.maxId.increment();
-                settings.putInt(CommonUtils.FREQ, newId);
+                frequency = newId;
             }
+
+            pickupMode = CommonUtils.getPickupMode(tank);
+            useType = CommonUtils.getUseType(tank);
+            selected = CommonUtils.getSelectedSlot(tank);
+            oredict = CommonUtils.oredict(tank);
+
             setChanged();
         }
     }

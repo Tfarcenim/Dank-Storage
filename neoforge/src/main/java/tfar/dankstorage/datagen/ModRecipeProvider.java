@@ -1,8 +1,9 @@
 package tfar.dankstorage.datagen;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.tags.ItemTags;
@@ -10,19 +11,20 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 import tfar.dankstorage.init.ModItems;
 import tfar.dankstorage.init.ModRecipeSerializers;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class ModRecipeProvider extends RecipeProvider {
-    public ModRecipeProvider(PackOutput pOutput) {
-        super(pOutput);
+    public ModRecipeProvider(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pRegistries) {
+        super(pOutput,pRegistries);
     }
 
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> pWriter) {
+    protected void buildRecipes(RecipeOutput pWriter) {
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.DANKS.get("dank_1"))
                 .define('c', ItemTags.COALS)
                 .define('b', Tags.Items.BARRELS_WOODEN)
@@ -59,7 +61,7 @@ public class ModRecipeProvider extends RecipeProvider {
                 Ingredient.of(Items.NETHER_STAR),Ingredient.of(Items.NETHER_STAR),pWriter);
     }
 
-    protected void createDankAndUpgrade(Item dank, Item upgrade, Item previousDank, Ingredient around,Ingredient around2,Consumer<FinishedRecipe> pWriter) {
+    protected void createDankAndUpgrade(Item dank, Item upgrade, Item previousDank, Ingredient around,Ingredient around2,RecipeOutput pWriter) {
         ShapedRecipeBuilderCustom.shaped(RecipeCategory.TOOLS, dank)
                 .define('c', around)
                 .define('d', around2)
