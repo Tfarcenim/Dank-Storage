@@ -1,13 +1,12 @@
 package tfar.dankstorage.network.client;
 
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.network.DankPacketHandler;
-import tfar.dankstorage.utils.PacketBufferEX;
+import tfar.dankstorage.utils.SerializationHelper;
 import tfar.dankstorage.world.ClientData;
 
 import java.util.List;
@@ -29,7 +28,7 @@ public class S2CContentsForDisplayPacket implements S2CModPacket {
     }
 
     public S2CContentsForDisplayPacket(RegistryFriendlyByteBuf buf) {
-        stacks = PacketBufferEX.readList(buf);
+        stacks = SerializationHelper.readList(buf);
     }
 
     @Override
@@ -38,7 +37,7 @@ public class S2CContentsForDisplayPacket implements S2CModPacket {
     }
 
     public void write(RegistryFriendlyByteBuf buf) {
-        PacketBufferEX.writeList(buf, stacks);
+        SerializationHelper.writeList(buf, stacks);
     }
 
     @Override

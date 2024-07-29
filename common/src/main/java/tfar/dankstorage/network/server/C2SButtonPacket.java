@@ -13,12 +13,12 @@ import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.KeybindAction;
 import tfar.dankstorage.utils.CommonUtils;
-import tfar.dankstorage.utils.PacketBufferEX;
+import tfar.dankstorage.utils.SerializationHelper;
 
 public record C2SButtonPacket(KeybindAction keybindAction) implements C2SModPacket {
 
     public static final StreamCodec<RegistryFriendlyByteBuf, C2SButtonPacket> STREAM_CODEC =
-            StreamCodec.composite(PacketBufferEX.enumCodec(KeybindAction.class), C2SButtonPacket::keybindAction, C2SButtonPacket::new);
+            StreamCodec.composite(SerializationHelper.enumCodec(KeybindAction.class), C2SButtonPacket::keybindAction, C2SButtonPacket::new);
 
 
     public static final CustomPacketPayload.Type<C2SButtonPacket> TYPE = new CustomPacketPayload.Type<>(

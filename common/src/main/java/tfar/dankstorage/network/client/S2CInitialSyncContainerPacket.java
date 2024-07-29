@@ -1,18 +1,13 @@
 package tfar.dankstorage.network.client;
 
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.network.DankPacketHandler;
-import tfar.dankstorage.utils.PacketBufferEX;
 
 import java.util.List;
 
@@ -63,7 +58,7 @@ public class S2CInitialSyncContainerPacket implements S2CModPacket {
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<S2CInitialSyncContainerPacket> type() {
         return TYPE;
     }
 }

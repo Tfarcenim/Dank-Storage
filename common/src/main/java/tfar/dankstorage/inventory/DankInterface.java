@@ -19,6 +19,7 @@ import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.ItemStackWrapper;
+import tfar.dankstorage.utils.SerializationHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -222,7 +223,7 @@ public interface DankInterface extends ContainerData {
                     ListTag stackTagList = itemTags.getList("StackList", Tag.TAG_COMPOUND);
                     for (int j = 0; j < stackTagList.size(); j++) {
                         CompoundTag itemTag = stackTagList.getCompound(j);
-                        ItemStack temp = ItemStack.parseOptional(provider,itemTag);
+                        ItemStack temp = SerializationHelper.decodeLargeItemStack(provider,itemTag);
                         if (!temp.isEmpty()) {
                             if (stack.isEmpty()) stack = temp;
                             else stack.grow(temp.getCount());
@@ -236,7 +237,7 @@ public interface DankInterface extends ContainerData {
                         this.setItemDank(slot, stack);
                     }
                 } else {
-                    ItemStack stack = ItemStack.parseOptional(provider,itemTags);
+                    ItemStack stack = SerializationHelper.decodeLargeItemStack(provider,itemTags);
                     if (itemTags.contains("ExtendedCount", Tag.TAG_INT)) {
                         stack.setCount(itemTags.getInt("ExtendedCount"));
                     }
@@ -260,7 +261,7 @@ public interface DankInterface extends ContainerData {
                 int realCount = Math.min(getDankStats().stacklimit, getContents().get(i).getCount());
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
-                getContents().get(i).save(provider,itemTag);
+                SerializationHelper.encodeLargeStack(getContents().get(i),provider,itemTag);//getContents().get(i).save(provider,itemTag);
                 itemTag.putInt("ExtendedCount", realCount);
                 nbtTagList.add(itemTag);
             }
@@ -290,7 +291,7 @@ public interface DankInterface extends ContainerData {
         DankStats stats = DankStats.valueOf(nbt.getString("DankStats"));
         setDankStats(stats);
         ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
-        readItems(getServer().registryAccess(), tagList);
+        readItems(provider, tagList);
         ListTag ghostItemList = nbt.getList(GHOST, Tag.TAG_COMPOUND);
         readGhostItems(provider, ghostItemList);
         setFrequencyLock(nbt.getBoolean("locked"));

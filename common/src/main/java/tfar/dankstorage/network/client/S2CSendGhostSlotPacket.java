@@ -1,6 +1,5 @@
 package tfar.dankstorage.network.client;
 
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -9,7 +8,6 @@ import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.client.CommonClient;
 import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.network.DankPacketHandler;
-import tfar.dankstorage.utils.PacketBufferEX;
 
 public class S2CSendGhostSlotPacket implements S2CModPacket {
     public static final StreamCodec<RegistryFriendlyByteBuf, S2CSendGhostSlotPacket> STREAM_CODEC =
@@ -32,13 +30,13 @@ public class S2CSendGhostSlotPacket implements S2CModPacket {
     public S2CSendGhostSlotPacket(RegistryFriendlyByteBuf buf) {
         windowId = buf.readInt();
         slot = buf.readInt();
-        stack = PacketBufferEX.readExtendedItemStack(buf);
+        stack = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
     }
 
     public void write(RegistryFriendlyByteBuf buf) {
         buf.writeInt(windowId);
         buf.writeInt(slot);
-        PacketBufferEX.writeExtendedItemStack(buf, stack);
+        ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, stack);
     }
 
     @Override

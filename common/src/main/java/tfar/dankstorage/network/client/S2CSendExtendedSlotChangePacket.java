@@ -1,6 +1,5 @@
 package tfar.dankstorage.network.client;
 
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -8,7 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.network.DankPacketHandler;
-import tfar.dankstorage.utils.PacketBufferEX;
+import tfar.dankstorage.utils.SerializationHelper;
 
 import static tfar.dankstorage.client.CommonClient.getLocalPlayer;
 
@@ -34,13 +33,13 @@ public class S2CSendExtendedSlotChangePacket implements S2CModPacket {
     public S2CSendExtendedSlotChangePacket(RegistryFriendlyByteBuf buf) {
         windowId = buf.readInt();
         slot = buf.readInt();
-        stack = PacketBufferEX.readExtendedItemStack(buf);
+        stack = SerializationHelper.readExtendedItemStack(buf);
     }
 
     public void write(RegistryFriendlyByteBuf buf) {
         buf.writeInt(windowId);
         buf.writeInt(slot);
-        PacketBufferEX.writeExtendedItemStack(buf, stack);
+        SerializationHelper.writeExtendedItemStack(buf, stack);
     }
 
     @Override
@@ -52,7 +51,7 @@ public class S2CSendExtendedSlotChangePacket implements S2CModPacket {
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<S2CSendExtendedSlotChangePacket> type() {
         return TYPE;
     }
 }
