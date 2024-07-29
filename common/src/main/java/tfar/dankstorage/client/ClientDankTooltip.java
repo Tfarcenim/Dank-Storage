@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import tfar.dankstorage.utils.CommonUtils;
 
 public class ClientDankTooltip implements ClientTooltipComponent {
     private static final int MARGIN_Y = 4;
@@ -51,7 +52,10 @@ public class ClientDankTooltip implements ClientTooltipComponent {
         ItemStack itemStack = this.items.get(slot);
         this.blit(poseStack, i, j,  Texture.SLOT);
         poseStack.renderItem(itemStack, i + 1, j + 1, slot);
-        poseStack.renderItemDecorations(font, itemStack, i + 1, j + 1);
+        int count = itemStack.getCount();
+        if (count > 1) {
+            StackSizeRenderer.renderSizeLabel(poseStack, font, i + 1, j + 1, CommonUtils.formatLargeNumber(count));
+        }
         if (slot == selected) {
             AbstractContainerScreen.renderSlotHighlight(poseStack, i + 1, j + 1, 0);
         }
