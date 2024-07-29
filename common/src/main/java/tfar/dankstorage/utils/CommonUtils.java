@@ -443,7 +443,7 @@ public class CommonUtils {
         if (selected == INVALID) return ItemStack.EMPTY;
         if (!level.isClientSide) {
             DankInterface dankInventory = getBagInventory(bag, level);
-            if (dankInventory != null) {
+            if (dankInventory != null && selected < dankInventory.getContainerSizeDank()) {
                 return dankInventory.getItemDank(selected);
             } else {
                 //    System.out.println("Attempted to access a selected item from a null inventory");

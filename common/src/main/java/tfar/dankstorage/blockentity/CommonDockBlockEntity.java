@@ -213,9 +213,11 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
         }
 
         CommonUtils.setFrequency(stack,frequency);
+        frequency = CommonUtils.INVALID;
         CommonUtils.setPickupMode(stack,pickupMode);
         CommonUtils.setUseType(stack,useType);
-        CommonUtils.setSelectedSlot(stack,frequency);
+        CommonUtils.setSelectedSlot(stack,selected);
+        selected = CommonUtils.INVALID;
         CommonUtils.setOredict(stack,oredict);
 
         level.setBlockAndUpdate(worldPosition, getBlockState().setValue(CDockBlock.TIER, 0));
