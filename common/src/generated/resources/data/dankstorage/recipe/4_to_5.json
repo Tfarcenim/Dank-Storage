@@ -1,0 +1,22 @@
+{
+  "type": "dankstorage:upgrade",
+  "category": "equipment",
+  "group": "dank",
+  "key": {
+    "c": {
+      "item": "minecraft:diamond_block"
+    },
+    "d": {
+      "item": "minecraft:diamond_block"
+    }
+  },
+  "pattern": [
+    "dcd",
+    "c c",
+    "dcd"
+  ],
+  "result": {
+    "count": 1,
+    "id": "dankstorage:4_to_5"
+  }
+}

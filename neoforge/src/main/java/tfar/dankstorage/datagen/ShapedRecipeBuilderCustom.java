@@ -20,11 +20,10 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.ItemLike;
-import tfar.dankstorage.recipe.Serializer2;
+import tfar.dankstorage.recipe.UpgradeRecipe;
 
 public class ShapedRecipeBuilderCustom implements RecipeBuilder {
     private final RecipeCategory category;
@@ -37,14 +36,13 @@ public class ShapedRecipeBuilderCustom implements RecipeBuilder {
     @Nullable
     private String group;
     private boolean showNotification = true;
-    private RecipeSerializer<?> serializer;
 
     public ShapedRecipeBuilderCustom(RecipeCategory pCategory, ItemLike pResult, int pCount) {
         this(pCategory, new ItemStack(pResult, pCount));
     }
 
-    public ShapedRecipeBuilderCustom(RecipeCategory p_249996_, ItemStack result) {
-        this.category = p_249996_;
+    public ShapedRecipeBuilderCustom(RecipeCategory category, ItemStack result) {
+        this.category = category;
         this.result = result.getItem();
         this.count = result.getCount();
         this.resultStack = result;
@@ -82,8 +80,7 @@ public class ShapedRecipeBuilderCustom implements RecipeBuilder {
         return this.define(pSymbol, Ingredient.of(pItem));
     }
 
-    public RecipeBuilder serializer(RecipeSerializer<?> serializer) {
-        this.serializer = serializer;
+    public RecipeBuilder serializer() {
         return this;
     }
 
@@ -143,13 +140,13 @@ public class ShapedRecipeBuilderCustom implements RecipeBuilder {
                 .rewards(AdvancementRewards.Builder.recipe(pId))
                 .requirements(AdvancementRequirements.Strategy.OR);
         this.criteria.forEach(advancement$builder::addCriterion);
-        ShapedRecipe shapedrecipe = new ShapedRecipe(
+        UpgradeRecipe shapedrecipe = new UpgradeRecipe(new ShapedRecipe(
                 Objects.requireNonNullElse(this.group, ""),
                 RecipeBuilder.determineBookCategory(this.category),
                 shapedrecipepattern,
                 this.resultStack,
                 this.showNotification
-        );
+        ));
         pRecipeOutput.accept(pId, shapedrecipe, advancement$builder.build(pId.withPrefix("recipes/" + this.category.getFolderName() + "/")));
     }
 
@@ -160,6 +157,4 @@ public class ShapedRecipeBuilderCustom implements RecipeBuilder {
             return ShapedRecipePattern.of(this.key, this.rows);
         }
     }
-
-
 }

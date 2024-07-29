@@ -12,7 +12,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import tfar.dankstorage.init.ModItems;
-import tfar.dankstorage.init.ModRecipeSerializers;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -67,7 +66,6 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("dcd")
                 .pattern("cbc")
                 .pattern("dcd")
-                .serializer(ModRecipeSerializers.upgrade)
                 .unlockedBy(RecipeProvider.getHasName( previousDank), RecipeProvider.has(previousDank))
                 .save(pWriter);
 

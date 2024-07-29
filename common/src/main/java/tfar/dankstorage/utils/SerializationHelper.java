@@ -27,6 +27,7 @@ public class SerializationHelper {
     public static final StreamCodec<RegistryFriendlyByteBuf, ItemStack> LARGE_OPTIONAL_STREAM_CODEC = new StreamCodec<>() {
         private static final StreamCodec<RegistryFriendlyByteBuf, Holder<Item>> ITEM_STREAM_CODEC = ByteBufCodecs.holderRegistry(Registries.ITEM);
 
+        @Override
         public ItemStack decode(RegistryFriendlyByteBuf buf) {
             int i = buf.readInt();
             if (i <= 0) {
@@ -38,6 +39,7 @@ public class SerializationHelper {
             }
         }
 
+        @Override
         public void encode(RegistryFriendlyByteBuf buf, ItemStack stack) {
             if (stack.isEmpty()) {
                 buf.writeInt(0);
@@ -87,17 +89,18 @@ public class SerializationHelper {
     }
 
     public static List<ItemStack> readList(RegistryFriendlyByteBuf buf) {
-        List<ItemStack> decode = LARGE_OPTIONAL_LIST_STREAM_CODEC.decode(buf);
-        return decode;
+        return LARGE_OPTIONAL_LIST_STREAM_CODEC.decode(buf);
     }
 
 
     public static <B extends FriendlyByteBuf, V extends Enum<V>> StreamCodec<B, V> enumCodec(final Class<V> enumClass) {
         return new StreamCodec<>() {
+            @Override
             public V decode(B buf) {
                 return buf.readEnum(enumClass);
             }
 
+            @Override
             public void encode(B buf, V value) {
                 buf.writeEnum(value);
             }
