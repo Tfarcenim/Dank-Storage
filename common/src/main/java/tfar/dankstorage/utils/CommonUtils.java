@@ -470,11 +470,11 @@ public class CommonUtils {
         ItemStack dank = getDank(player);
         if (!dank.isEmpty()) {
             boolean toggle = oredict(dank);
-            setOredictMode(dank,!toggle);
+            setOredict(dank,!toggle);
         }
     }
 
-    public static void setOredictMode(ItemStack bag,boolean active) {
+    public static void setOredict(ItemStack bag, boolean active) {
         bag.set(ModDataComponents.OREDICT,active);
     }
 

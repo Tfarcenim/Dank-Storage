@@ -57,8 +57,42 @@ public class CDankItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
-        super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+    public void appendHoverText(ItemStack bag, TooltipContext pContext, List<Component> tooltip, TooltipFlag pTooltipFlag) {
+        super.appendHoverText(bag, pContext, tooltip, pTooltipFlag);
+
+
+        int id = CommonUtils.getFrequency(bag);
+        tooltip.add(CommonUtils.literal("ID: "+id));
+
+        if (!Screen.hasShiftDown()) {
+            tooltip.add(CommonUtils.translatable("text.dankstorage.shift",
+                    CommonUtils.literal("Shift").withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
+        } else {
+
+            tooltip.add(CommonUtils.translatable("text.dankstorage.change_pickup_mode", DankKeybinds.PICKUP_MODE.getTranslatedKeyMessage().copy()
+                    .withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
+            PickupMode pickupMode = CommonUtils.getPickupMode(bag);
+            tooltip.add(
+                    CommonUtils.translatable("text.dankstorage.current_pickup_mode", pickupMode.translate().withStyle(ChatFormatting.YELLOW))
+                            .withStyle(ChatFormatting.GRAY));
+
+
+            tooltip.add(CommonUtils.translatable("text.dankstorage.changeusetype", DankKeybinds.CONSTRUCTION.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
+            UseType useType = CommonUtils.getUseType(bag);
+            tooltip.add(
+                    CommonUtils.translatable("text.dankstorage.currentusetype", CommonUtils.translatable(
+                            "dankstorage.usetype." + useType.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
+            tooltip.add(
+                    CommonUtils.translatable("text.dankstorage.stacklimit", CommonUtils.literal(stats.stacklimit + "").withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.GRAY));
+        }
+
+        if (Services.PLATFORM.isDevelopmentEnvironment()) {
+            appendDevOnly(bag, pContext, tooltip, pTooltipFlag);
+        }
+    }
+
+    protected void appendDevOnly(ItemStack stack,TooltipContext context,List<Component> tooltip,TooltipFlag tooltipFlag) {
+
     }
 
    /* @Override
@@ -93,30 +127,6 @@ public class CDankItem extends Item {
             }
         }
 
-        int id = CommonUtils.getFrequency(bag);
-        tooltip.add(CommonUtils.literal("ID: "+id));
-
-        if (!Screen.hasShiftDown()) {
-            tooltip.add(CommonUtils.translatable("text.dankstorage.shift",
-                    CommonUtils.literal("Shift").withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
-        } else {
-
-            tooltip.add(CommonUtils.translatable("text.dankstorage.change_pickup_mode", DankKeybinds.PICKUP_MODE.getTranslatedKeyMessage().copy()
-                    .withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
-            PickupMode pickupMode = CommonUtils.getPickupMode(bag);
-            tooltip.add(
-                    CommonUtils.translatable("text.dankstorage.current_pickup_mode", pickupMode.translate().withStyle(ChatFormatting.YELLOW))
-                            .withStyle(ChatFormatting.GRAY));
-
-
-            tooltip.add(CommonUtils.translatable("text.dankstorage.changeusetype", DankKeybinds.CONSTRUCTION.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
-            UseType useType = CommonUtils.getUseType(bag);
-            tooltip.add(
-                    CommonUtils.translatable("text.dankstorage.currentusetype", CommonUtils.translatable(
-                            "dankstorage.usetype." + useType.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
-            tooltip.add(
-                    CommonUtils.translatable("text.dankstorage.stacklimit", CommonUtils.literal(stats.stacklimit + "").withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.GRAY));
-        }
     }*/
 
     //this is called on the client

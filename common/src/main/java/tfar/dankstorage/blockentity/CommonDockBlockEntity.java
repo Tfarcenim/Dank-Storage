@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.init.ModBlockEntityTypes;
+import tfar.dankstorage.init.ModDataComponents;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.LimitedContainerData;
 import tfar.dankstorage.inventory.TierDataSlot;
@@ -186,6 +187,7 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
     public CompoundTag getUpdateTag(HolderLookup.Provider pRegistries) {
         return saveWithoutMetadata(pRegistries);
     }
+
     public void giveToPlayer(Player player) {
         ItemStack dankInStack = removeDankWithoutItemSpawn();
 
@@ -204,19 +206,19 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
     public ItemStack removeDankWithoutItemSpawn() {
         int tier = getBlockState().getValue(CDockBlock.TIER);
 
-        if (tier == 0) {
-            throw new RuntimeException("tried to remove a null dank?");
-        }
-
-        level.setBlockAndUpdate(worldPosition, getBlockState().setValue(CDockBlock.TIER, 0));
         ItemStack stack = new ItemStack(CommonUtils.getItemFromTier(tier));
-
-
 
         if (hasCustomName()) {
             stack.set(DataComponents.CUSTOM_NAME,customName);
         }
 
+        CommonUtils.setFrequency(stack,frequency);
+        CommonUtils.setPickupMode(stack,pickupMode);
+        CommonUtils.setUseType(stack,useType);
+        CommonUtils.setSelectedSlot(stack,frequency);
+        CommonUtils.setOredict(stack,oredict);
+
+        level.setBlockAndUpdate(worldPosition, getBlockState().setValue(CDockBlock.TIER, 0));
         setCustomName(null);
         setChanged();
         return stack;
@@ -230,9 +232,7 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
             if (tank.has(DataComponents.CUSTOM_NAME)) {
                 setCustomName(tank.getHoverName());
             }
-            tank.shrink(1);
-
-            if (CommonUtils.getFrequency(tank)!= CommonUtils.INVALID) {//existing frequency
+            if (tank.has(ModDataComponents.FREQUENCY)) {//existing frequency
                 this.frequency = CommonUtils.getFrequency(tank);
             } else {
                 int newId = DankStorage.maxId.getMaxId();
@@ -244,7 +244,7 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
             useType = CommonUtils.getUseType(tank);
             selected = CommonUtils.getSelectedSlot(tank);
             oredict = CommonUtils.oredict(tank);
-
+            tank.shrink(1);
             setChanged();
         }
     }
