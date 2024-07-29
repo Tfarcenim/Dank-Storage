@@ -1,5 +1,6 @@
 package tfar.dankstorage;
 
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -44,6 +45,7 @@ public class DankStorage {
         Class<BlockEntityType<?>> typeClass =(Class<BlockEntityType<?>>)(Object) BlockEntityType.class;
         Class<MenuType<?>> typeClass1 =(Class<MenuType<?>>)(Object) MenuType.class;
         Class<RecipeSerializer<?>> typeClass2 =(Class<RecipeSerializer<?>>)(Object) RecipeSerializer.class;
+        Class<DataComponentType<?>> typeClass3 =(Class<DataComponentType<?>>)(Object) DataComponentType.class;
 
         Services.PLATFORM.registerAll(ModBlockEntityTypes.class,BuiltInRegistries.BLOCK_ENTITY_TYPE, typeClass);
         Services.PLATFORM.unfreeze(BuiltInRegistries.ITEM);
@@ -51,6 +53,7 @@ public class DankStorage {
         Services.PLATFORM.registerAll(ModCreativeTabs.class,BuiltInRegistries.CREATIVE_MODE_TAB, CreativeModeTab.class);
         Services.PLATFORM.registerAll(ModMenuTypes.class,BuiltInRegistries.MENU, typeClass1);
         Services.PLATFORM.registerAll(ModRecipeSerializers.class,BuiltInRegistries.RECIPE_SERIALIZER,typeClass2);
+        Services.PLATFORM.registerAll(ModDataComponents.class,BuiltInRegistries.DATA_COMPONENT_TYPE, typeClass3);
     //    Constants.LOG.info("Hello from Common init on {}! we are currently in a {} environment!", Services.PLATFORM.getPlatformName(), Services.PLATFORM.getEnvironmentName());
     //    Constants.LOG.info("The ID for diamonds is {}", BuiltInRegistries.ITEM.getKey(Items.DIAMOND));
 
@@ -67,7 +70,7 @@ public class DankStorage {
 
     public static MaxId getMaxId(MinecraftServer server) {
         return server.overworld().getDataStorage()
-                .computeIfAbsent(MaxId.factory(server.overworld()), DankStorage.MODID+":max_id");
+                .computeIfAbsent(MaxId.factory(server.overworld()), DankStorage.MODID+"_max_id");
     }
 
     public static void onServerShutDown(MinecraftServer server) {

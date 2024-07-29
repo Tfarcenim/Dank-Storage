@@ -15,12 +15,12 @@ import java.util.List;
 public class S2CContentsForDisplayPacket implements S2CModPacket {
 
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, S2CInitialSyncContainerPacket> STREAM_CODEC =
-            StreamCodec.ofMember(S2CInitialSyncContainerPacket::write, S2CInitialSyncContainerPacket::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, S2CContentsForDisplayPacket> STREAM_CODEC =
+            StreamCodec.ofMember(S2CContentsForDisplayPacket::write, S2CContentsForDisplayPacket::new);
 
 
-    public static final CustomPacketPayload.Type<S2CInitialSyncContainerPacket> TYPE = new CustomPacketPayload.Type<>(
-            DankPacketHandler.packet(S2CInitialSyncContainerPacket.class));
+    public static final CustomPacketPayload.Type<S2CContentsForDisplayPacket> TYPE = new CustomPacketPayload.Type<>(
+            DankPacketHandler.packet(S2CContentsForDisplayPacket.class));
 
     private final List<ItemStack> stacks;
 

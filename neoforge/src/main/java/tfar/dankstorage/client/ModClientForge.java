@@ -29,7 +29,7 @@ public class ModClientForge {
         e.register(DankTooltip.class, CommonClient::tooltipImage);
     }
 
-    public static void keyPressed(ClientTickEvent client) {
+    public static void keyPressed(ClientTickEvent.Pre client) {
         if (DankKeybinds.CONSTRUCTION.consumeClick()) {
             C2SButtonPacket.send(KeybindAction.TOGGLE_USE_TYPE);
         }

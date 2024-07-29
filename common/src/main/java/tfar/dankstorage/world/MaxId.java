@@ -16,7 +16,7 @@ public class MaxId extends SavedData {
     }
 
     public static SavedData.Factory<MaxId> factory(ServerLevel pLevel) {
-        return new SavedData.Factory<>(() -> new MaxId(), (p_294039_, p_324123_) -> loadStatic(p_294039_), DataFixTypes.SAVED_DATA_RAIDS);
+        return new SavedData.Factory<>(() -> new MaxId(), (p_294039_, p_324123_) -> loadStatic(p_294039_), null);
     }
 
     public static MaxId loadStatic(CompoundTag compoundTag) {
