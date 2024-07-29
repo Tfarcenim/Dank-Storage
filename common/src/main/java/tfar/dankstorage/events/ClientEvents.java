@@ -1,5 +1,6 @@
 package tfar.dankstorage.events;
 
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
@@ -29,7 +30,7 @@ public class ClientEvents {
         return false;
     }
 
-    public static void renderSelectedItem(GuiGraphics guiGraphics, float partialTick, int screenWidth, int screenHeight) {
+    public static void renderSelectedItem(GuiGraphics guiGraphics, DeltaTracker partialTick) {
         Player player = mc.player;
         if (player == null)
             return;
@@ -40,8 +41,8 @@ public class ClientEvents {
             if (!(bag.getItem() instanceof CDankItem))
                 return;
         }
-        int xStart = screenWidth / 2 + previewX();
-        int yStart = screenHeight + previewY();
+        int xStart = guiGraphics.guiWidth() / 2 + previewX();
+        int yStart = guiGraphics.guiHeight() + previewY();
 
         ItemStack toPlace = ClientData.selectedItem;
 

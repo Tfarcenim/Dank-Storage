@@ -5,7 +5,6 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -16,7 +15,6 @@ import tfar.dankstorage.init.ModItems;
 import tfar.dankstorage.init.ModRecipeSerializers;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
 public class ModRecipeProvider extends RecipeProvider {
     public ModRecipeProvider(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pRegistries) {
@@ -25,7 +23,7 @@ public class ModRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildRecipes(RecipeOutput pWriter) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.DANKS.get("dank_1"))
+        ShapedRecipeBuilderCustom.shaped(RecipeCategory.TOOLS, ModItems.DANKS.get("dank_1"))
                 .define('c', ItemTags.COALS)
                 .define('b', Tags.Items.BARRELS_WOODEN)
                 .pattern("ccc")
@@ -34,7 +32,7 @@ public class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy(RecipeProvider.getHasName(Blocks.BARREL), RecipeProvider.has(Tags.Items.BARRELS_WOODEN))
                 .save(pWriter);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.DOCK)
+        ShapedRecipeBuilderCustom.shaped(RecipeCategory.TOOLS, ModItems.DOCK)
                 .define('c', Blocks.BLACK_CONCRETE)
                 .pattern("ccc")
                 .pattern("c c")
@@ -73,7 +71,7 @@ public class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy(RecipeProvider.getHasName( previousDank), RecipeProvider.has(previousDank))
                 .save(pWriter);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, upgrade)
+        ShapedRecipeBuilderCustom.shaped(RecipeCategory.TOOLS, upgrade)
                 .define('c', around)
                 .define('d', around2)
                 .pattern("dcd")

@@ -5,7 +5,6 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.inventory.DankInterface;
@@ -13,7 +12,7 @@ import tfar.dankstorage.inventory.LimitedContainerData;
 import tfar.dankstorage.inventory.TierDataSlot;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.world.CDankSavedData;
+import tfar.dankstorage.world.DankSavedData;
 
 import javax.annotation.Nullable;
 
@@ -40,8 +39,8 @@ public class PortableDankProvider implements MenuProvider {
         if (dankInventory == null) {//create a new one
                 int next = DankStorage.maxId.getMaxId();
                 DankStorage.maxId.increment();
-                CommonUtils.getSettings(stack).putInt(CommonUtils.FREQ,next);
-                CDankSavedData dankSavedData = DankStorage.getData(next,player.level().getServer());
+                CommonUtils.setFrequency(stack,next);
+                DankSavedData dankSavedData = DankStorage.getData(next,player.level().getServer());
                 dankSavedData.setStats(defaults,next);
                 dankInventory = dankSavedData.createFreshInventory(defaults,next);
         }

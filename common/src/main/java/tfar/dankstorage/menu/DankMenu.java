@@ -97,7 +97,7 @@ public class DankMenu extends AbstractDankMenu {
 
     @Override
     public void setFrequency(int freq) {
-        CommonUtils.getOrCreateSettings(bag).putInt(CommonUtils.FREQ, freq);
+        CommonUtils.setFrequency(bag,freq);
     }
 
 }

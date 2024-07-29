@@ -20,14 +20,14 @@ import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.apache.commons.lang3.tuple.Pair;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.DankStorageForge;
+import tfar.dankstorage.DankStorageNeoForge;
 import tfar.dankstorage.blockentity.CommonDockBlockEntity;
 import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.DankSlot;
 import tfar.dankstorage.item.CDankItem;
-import tfar.dankstorage.item.DankItemForge;
-import tfar.dankstorage.network.DankPacketHandlerForge;
+import tfar.dankstorage.item.DankItemNeoForge;
+import tfar.dankstorage.network.DankPacketHandlerNeoForge;
 import tfar.dankstorage.network.client.S2CModPacket;
 import tfar.dankstorage.network.server.C2SModPacket;
 import tfar.dankstorage.platform.services.IPlatformHelper;
@@ -37,7 +37,6 @@ import tfar.dankstorage.world.DankInventoryForge;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class NeoForgePlatformHelper implements IPlatformHelper {
@@ -74,12 +73,12 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public void sendToClient(S2CModPacket msg, ServerPlayer player) {
-        DankPacketHandlerForge.sendToClient(msg, player);
+        DankPacketHandlerNeoForge.sendToClient(msg, player);
     }
 
     @Override
     public void sendToServer(C2SModPacket msg) {
-        DankPacketHandlerForge.sendToServer(msg);
+        DankPacketHandlerNeoForge.sendToServer(msg);
     }
 
     @Override
@@ -94,7 +93,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public <F> void registerAll(Map<String, ? extends F> map, Registry<F> registry, Class<? extends F> filter) {
-        List<Pair<ResourceLocation, Supplier<?>>> list = DankStorageForge.registerLater.computeIfAbsent(registry, k -> new ArrayList<>());
+        List<Pair<ResourceLocation, Supplier<?>>> list = DankStorageNeoForge.registerLater.computeIfAbsent(registry, k -> new ArrayList<>());
         for (Map.Entry<String, ? extends F> entry : map.entrySet()) {
             list.add(Pair.of(DankStorage.id(entry.getKey()), entry::getValue));
         }
@@ -112,22 +111,22 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public boolean showPreview() {
-        return DankStorageForge.ClientConfig.preview.get();
+        return DankStorageNeoForge.ClientConfig.preview.get();
     }
 
     @Override
     public int previewX() {
-        return DankStorageForge.ClientConfig.preview_x.get();
+        return DankStorageNeoForge.ClientConfig.preview_x.get();
     }
 
     @Override
     public int previewY() {
-        return DankStorageForge.ClientConfig.preview_y.get();
+        return DankStorageNeoForge.ClientConfig.preview_y.get();
     }
 
     @Override
     public CDankItem create(Item.Properties properties, DankStats stats) {
-        return new DankItemForge(properties, stats);
+        return new DankItemNeoForge(properties, stats);
     }
 
     @Override

@@ -1,9 +1,10 @@
 package tfar.dankstorage.client;
 
-import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
+
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import tfar.dankstorage.event.ForgeClientEvents;
 import tfar.dankstorage.utils.KeybindAction;
 import tfar.dankstorage.network.server.C2SButtonPacket;
@@ -12,9 +13,9 @@ public class ModClientForge {
 
     public static void client() {
 
-        MinecraftForge.EVENT_BUS.addListener(ForgeClientEvents::onPickBlock);
-        MinecraftForge.EVENT_BUS.addListener(ForgeClientEvents::onScroll);
-        MinecraftForge.EVENT_BUS.addListener(ModClientForge::keyPressed);
+        NeoForge.EVENT_BUS.addListener(ForgeClientEvents::onPickBlock);
+        NeoForge.EVENT_BUS.addListener(ForgeClientEvents::onScroll);
+        NeoForge.EVENT_BUS.addListener(ModClientForge::keyPressed);
         CommonClient.setup();
     }
 
@@ -28,7 +29,7 @@ public class ModClientForge {
         e.register(DankTooltip.class, CommonClient::tooltipImage);
     }
 
-    public static void keyPressed(TickEvent.ClientTickEvent client) {
+    public static void keyPressed(ClientTickEvent client) {
         if (DankKeybinds.CONSTRUCTION.consumeClick()) {
             C2SButtonPacket.send(KeybindAction.TOGGLE_USE_TYPE);
         }

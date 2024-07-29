@@ -48,22 +48,6 @@ public class UpgradeRecipe extends ShapedRecipe {
         return newBag;
     }
 
-    //
-    //    public static final DataComponentType<Integer> FREQUENCY = DataComponentType.<Integer>builder()
-    //            .persistent(ExtraCodecs.intRange(0,Integer.MAX_VALUE)).networkSynchronized(ByteBufCodecs.INT).build();
-    //
-    //    public static final DataComponentType<PickupMode> PICKUP_MODE = DataComponentType.<PickupMode>builder()
-    //            .persistent(PICKUP_MODE_CODEC).networkSynchronized(PacketBufferEX.enumCodec(PickupMode.class)).build();
-    //
-    //    public static final DataComponentType<UseType> USE_TYPE = DataComponentType.<UseType>builder()
-    //            .persistent(USE_TYPE_CODEC).networkSynchronized(PacketBufferEX.enumCodec(UseType.class)).build();
-    //
-    //    public static final DataComponentType<Integer> SELECTED = DataComponentType.<Integer>builder()
-    //            .persistent(ExtraCodecs.intRange(0,99)).networkSynchronized(ByteBufCodecs.INT).build();
-    //
-    //    public static final DataComponentType<Boolean> OREDICT = DataComponentType.<Boolean>builder()
-    //            .persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL).build();
-
     @Override
     public RecipeSerializer<?> getSerializer() {
         return ModRecipeSerializers.upgrade;

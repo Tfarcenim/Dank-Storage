@@ -2,6 +2,9 @@ package tfar.dankstorage.world;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.datafix.DataFixTypes;
+import net.minecraft.world.entity.raid.Raids;
 import net.minecraft.world.level.saveddata.SavedData;
 
 public class MaxId extends SavedData {
@@ -10,6 +13,10 @@ public class MaxId extends SavedData {
     public CompoundTag save(CompoundTag pCompoundTag,HolderLookup.Provider provider) {
         pCompoundTag.putInt("max_id",maxId);
         return pCompoundTag;
+    }
+
+    public static SavedData.Factory<MaxId> factory(ServerLevel pLevel) {
+        return new SavedData.Factory<>(() -> new MaxId(), (p_294039_, p_324123_) -> loadStatic(p_294039_), DataFixTypes.SAVED_DATA_RAIDS);
     }
 
     public static MaxId loadStatic(CompoundTag compoundTag) {

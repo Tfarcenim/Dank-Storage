@@ -29,8 +29,7 @@ public class C2SSetFrequencyPacket implements C2SModPacket {
         frequency = buf.readInt();
         set = buf.readBoolean();
     }
-
-    @Override
+    
     public void write(FriendlyByteBuf buf) {
         buf.writeInt(frequency);
         buf.writeBoolean(set);

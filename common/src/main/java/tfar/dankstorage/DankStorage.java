@@ -10,7 +10,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import org.slf4j.Logger;
@@ -20,7 +19,7 @@ import tfar.dankstorage.mixin.MinecraftServerAccess;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
-import tfar.dankstorage.world.CDankSavedData;
+import tfar.dankstorage.world.DankSavedData;
 import tfar.dankstorage.world.MaxId;
 
 import java.io.File;
@@ -52,7 +51,6 @@ public class DankStorage {
         Services.PLATFORM.registerAll(ModCreativeTabs.class,BuiltInRegistries.CREATIVE_MODE_TAB, CreativeModeTab.class);
         Services.PLATFORM.registerAll(ModMenuTypes.class,BuiltInRegistries.MENU, typeClass1);
         Services.PLATFORM.registerAll(ModRecipeSerializers.class,BuiltInRegistries.RECIPE_SERIALIZER,typeClass2);
-        DankPacketHandler.registerPackets();
     //    Constants.LOG.info("Hello from Common init on {}! we are currently in a {} environment!", Services.PLATFORM.getPlatformName(), Services.PLATFORM.getEnvironmentName());
     //    Constants.LOG.info("The ID for diamonds is {}", BuiltInRegistries.ITEM.getKey(Items.DIAMOND));
 
@@ -68,9 +66,8 @@ public class DankStorage {
     }
 
     public static MaxId getMaxId(MinecraftServer server) {
-        return server.getLevel(Level.OVERWORLD).getDataStorage()
-                .computeIfAbsent(MaxId::loadStatic,MaxId::new,
-                        DankStorage.MODID+":max_id");
+        return server.overworld().getDataStorage()
+                .computeIfAbsent(MaxId.factory(server.overworld()), DankStorage.MODID+":max_id");
     }
 
     public static void onServerShutDown(MinecraftServer server) {
@@ -87,12 +84,11 @@ public class DankStorage {
         DankStorage.maxId = DankStorage.getMaxId(server);
     }
 
-    public static CDankSavedData getData(int id, MinecraftServer server) {
+    public static DankSavedData getData(int id, MinecraftServer server) {
         if (id <= CommonUtils.INVALID) throw new RuntimeException("Invalid frequency: "+id);
         ServerLevel overworld = server.getLevel(Level.OVERWORLD);
         return overworld.getDataStorage()
-                .computeIfAbsent(compoundTag -> CDankSavedData.loadStatic(compoundTag,overworld), () -> new CDankSavedData(overworld),
-                        DankStorage.MODID+"/"+id);
+                .computeIfAbsent(DankSavedData.factory(overworld), DankStorage.MODID+"/"+id);
     }
 
     public static ResourceLocation id(String path) {

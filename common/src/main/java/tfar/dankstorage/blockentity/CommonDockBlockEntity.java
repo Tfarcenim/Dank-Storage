@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.init.ModBlockEntityTypes;
-import tfar.dankstorage.init.ModDataComponents;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.LimitedContainerData;
 import tfar.dankstorage.inventory.TierDataSlot;
@@ -28,7 +27,7 @@ import tfar.dankstorage.menu.ChangeFrequencyMenuBlockEntity;
 import tfar.dankstorage.menu.DockMenu;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.*;
-import tfar.dankstorage.world.CDankSavedData;
+import tfar.dankstorage.world.DankSavedData;
 
 import javax.annotation.Nullable;
 
@@ -101,7 +100,7 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
 
     public T getInventory() {
         if (!level.isClientSide && frequency != CommonUtils.INVALID) {
-            CDankSavedData savedData = DankStorage.getData(frequency,level.getServer());
+            DankSavedData savedData = DankStorage.getData(frequency,level.getServer());
             DankInterface dataInventory = savedData.createInventory(frequency);
 
             if (!dataInventory.valid()) {

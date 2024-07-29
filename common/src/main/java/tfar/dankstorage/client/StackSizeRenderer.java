@@ -20,6 +20,7 @@ package tfar.dankstorage.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.Tesselator;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -42,7 +43,7 @@ public class StackSizeRenderer {
         RenderSystem.disableBlend();
         final int X = (int) ((xPos + offset + 16.0f - fontRenderer.width(text) * scaleFactor) * inverseScaleFactor);
         final int Y = (int) ((yPos + offset + 16.0f - 7.0f * scaleFactor) * inverseScaleFactor);
-        BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance());
+        BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
         fontRenderer.drawInBatch(text, X, Y, 0xffffff, true, matrix, buffer, Font.DisplayMode.NORMAL, 0, 0xf000f0);
         buffer.endBatch();
         RenderSystem.enableBlend();

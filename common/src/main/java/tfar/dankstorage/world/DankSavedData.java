@@ -3,21 +3,26 @@ package tfar.dankstorage.world;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.datafix.DataFixTypes;
+import net.minecraft.world.entity.raid.Raids;
 import net.minecraft.world.level.saveddata.SavedData;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.DankStats;
 
-import java.io.File;
-
-public class CDankSavedData extends SavedData {
+public class DankSavedData extends SavedData {
 
     protected final ServerLevel level;
     CompoundTag storage = defaultTag();
     DankInterface cache;
 
-    public CDankSavedData(ServerLevel level) {
+    public DankSavedData(ServerLevel level) {
         this.level = level;
+    }
+
+
+    public static SavedData.Factory<DankSavedData> factory(ServerLevel pLevel) {
+        return new SavedData.Factory<>(() -> new DankSavedData(pLevel), (p_294039_, p_324123_) -> loadStatic(p_294039_, pLevel), DataFixTypes.SAVED_DATA_RAIDS);
     }
 
     @Override
@@ -59,8 +64,8 @@ public class CDankSavedData extends SavedData {
         storage = compoundTag.getCompound("contents");
     }
 
-    public static CDankSavedData loadStatic(CompoundTag compoundTag,ServerLevel level) {
-        CDankSavedData dankSavedData = new CDankSavedData(level);
+    public static DankSavedData loadStatic(CompoundTag compoundTag, ServerLevel level) {
+        DankSavedData dankSavedData = new DankSavedData(level);
         dankSavedData.load(compoundTag);
         return dankSavedData;
     }
