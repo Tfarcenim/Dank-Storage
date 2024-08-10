@@ -2,13 +2,16 @@ package tfar.dankstorage.events;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
+import tfar.dankstorage.client.CommonClient;
 import tfar.dankstorage.item.CDankItem;
 import tfar.dankstorage.network.server.C2SScrollSlotPacket;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
+import tfar.dankstorage.utils.UseType;
 import tfar.dankstorage.world.ClientData;
 
 public class ClientEvents {
@@ -50,11 +53,12 @@ public class ClientEvents {
             int c = color != null ? color : 0xFFFFFF;
             renderHotbarItem(guiGraphics, xStart, yStart, player, toPlace);
         }
-        String mode = CommonUtils.getUseType(bag).name();
+        UseType mode = CommonUtils.getUseType(bag);
+        MutableComponent translate = CommonUtils.translatable("dankstorage.usetype." + mode.name());
 
-        final int stringX = xStart + 8 - mc.font.width(mode) / 2;
+        final int stringX = xStart + 8 - mc.font.width(translate) / 2;
         final int stringY = yStart + 16;
-        guiGraphics.drawString(mc.font,mode, stringX, stringY, 0xffffff);
+        guiGraphics.drawString(mc.font, translate, stringX, stringY, 0xffffff);
     }
 
     private static void renderHotbarItem(GuiGraphics poses, int x, int y, Player player, ItemStack stack) {
