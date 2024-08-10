@@ -25,7 +25,7 @@ public class DankStorageFabric implements ModInitializer, ClientModInitializer,
         ServerLifecycleEvents.SERVER_STOPPED.register(this);
         CommandRegistrationCallback.EVENT.register(this);
 
-        ItemStorage.SIDED.registerForBlockEntity(DockBlockEntity::getStorage, (BlockEntityType<DockBlockEntity>) (Object) ModBlockEntityTypes.dank_tile);
+        ItemStorage.SIDED.registerForBlockEntity(DockBlockEntity::getStorage, (BlockEntityType<DockBlockEntity>) ModBlockEntityTypes.dank_tile);
         DankStorage.init();
     }
 
