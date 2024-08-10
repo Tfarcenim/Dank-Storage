@@ -15,6 +15,7 @@ import tfar.dankstorage.client.screens.DockScreen;
 import tfar.dankstorage.client.screens.PortableDankStorageScreen;
 import tfar.dankstorage.event.ForgeClientEvents;
 import tfar.dankstorage.init.ModMenuTypes;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.network.server.C2SButtonPacket;
 
 public class Client {
@@ -56,11 +57,18 @@ public class Client {
     }
 
     public static void keyPressed(TickEvent.ClientTickEvent client) {
+
         if (CONSTRUCTION.consumeClick()) {
             C2SButtonPacket.send(C2SButtonPacket.Action.TOGGLE_USE_TYPE);
         }
         if (PICKUP_MODE.consumeClick()) {
             C2SButtonPacket.send(C2SButtonPacket.Action.TOGGLE_PICKUP);
+        }
+        Player player = getLocalPlayer();
+        if (player != null && (player.getMainHandItem().getItem() instanceof DankItem || player.getOffhandItem().getItem() instanceof DankItem)) {
+            if (Minecraft.getInstance().options.keyPickItem.consumeClick()) {
+                C2SButtonPacket.send(C2SButtonPacket.Action.PICK_BLOCK);
+            }
         }
     }
 
