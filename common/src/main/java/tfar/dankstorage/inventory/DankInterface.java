@@ -19,9 +19,7 @@ import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.ItemStackWrapper;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public interface DankInterface extends ContainerData {
@@ -127,9 +125,24 @@ public interface DankInterface extends ContainerData {
     default void sort() {
         List<ItemStack> stacks = new ArrayList<>();
 
-        for (ItemStack stack : getContents()) {
+        Set<ItemStack> lockedItems = new HashSet<>();
+
+
+        NonNullList<ItemStack> contents = getContents();
+        for (int i = 0; i < contents.size(); i++) {
+            ItemStack stack = contents.get(i);
+            ItemStack ghost = getGhostItem(i);
             if (!stack.isEmpty()) {
                 CommonUtils.merge(stacks, stack.copy());
+                boolean unique = true;
+                for (ItemStack stack1 : lockedItems) {
+                    if (ItemStack.isSameItemSameTags(stack1, stack)) {
+                        unique = false;
+                    }
+                }
+                if (unique && !ghost.isEmpty()) {
+                    lockedItems.add(stack.copyWithCount(1));
+                }
             }
         }
 
@@ -137,17 +150,21 @@ public interface DankInterface extends ContainerData {
 
         Collections.sort(wrappers);
 
+
+
         for (int i = 0; i < getContainerSizeDank(); i++) {
             setItemDank(i, ItemStack.EMPTY);
             getGhostItems().set(i, ItemStack.EMPTY);
         }
+
+
 
         //split up the stacks and add them to the slot
 
         int slotId = 0;
 
         for (int i = 0; i < wrappers.size(); i++) {
-            ItemStack stack = wrappers.get(i).stack;
+            ItemStack stack = wrappers.get(i).stack();
             int count = stack.getCount();
 
             int stackSizeSensitive = getMaxStackSizeSensitive(stack);
@@ -158,17 +175,42 @@ public interface DankInterface extends ContainerData {
 
                 for (int j = 0; j < fullStacks; j++) {
                     setItemDank(slotId, CommonUtils.copyStackWithSize(stack, stackSizeSensitive));
+
+                    if (anyMatch(stack,lockedItems)) {
+                        setGhostItem(slotId,stack.getItem());
+                    }
+
                     slotId++;
                 }
                 if (partialStack > 0) {
                     setItemDank(slotId, CommonUtils.copyStackWithSize(stack, partialStack));
+
+                    if (anyMatch(stack,lockedItems)) {
+                        setGhostItem(slotId,stack.getItem());
+                    }
+
                     slotId++;
                 }
             } else {
                 setItemDank(slotId, stack);
+
+
+                if (anyMatch(stack,lockedItems)) {
+                    setGhostItem(slotId,stack.getItem());
+                }
+
                 slotId++;
             }
         }
+    }
+
+    static boolean anyMatch(ItemStack stack, Set<ItemStack> stacks) {
+        for (ItemStack stack1 : stacks) {
+            if (ItemStack.isSameItemSameTags(stack1,stack)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     default void compress(ServerPlayer player) {
