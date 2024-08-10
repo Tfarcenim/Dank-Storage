@@ -1,5 +1,6 @@
 package tfar.dankstorage.init;
 
+import com.google.gson.internal.LinkedTreeMap;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.DispenserBlock;
@@ -22,11 +23,11 @@ public class ModItems {
     public static final Item DOCK = new BlockItem(ModBlocks.dock, properties);
     public static final Map<String, CDankItem> DANKS;
     public static final Map<String, UpgradeItem> UPGRADES;
-    public static final Map<String,Item> ALL = new HashMap<>();
+    public static final Map<String,Item> ALL = new LinkedTreeMap<>();
 
 
     static {
-        DANKS = new HashMap<>();
+        DANKS = new LinkedTreeMap<>();
         IntStream.range(1, 8).forEach(i -> {
             String s = "dank_" + i;
             CDankItem dankItem = Services.PLATFORM.create(dank_properties, DankStats.values()[i]);
@@ -34,7 +35,7 @@ public class ModItems {
             DANKS.put(s, dankItem);
         });
 
-        UPGRADES = new HashMap<>();
+        UPGRADES = new LinkedTreeMap<>();
         int bound = DANKS.size();
         for (int i = 1; i < bound; i++) {
             String s = i+"_to_"+(i+1);
@@ -45,10 +46,10 @@ public class ModItems {
 
     public static Map<String,Item> getAll() {
         if (ALL.isEmpty()) {
-            ALL.put("dock",DOCK);
-            ALL.put("red_print",RED_PRINT);
             ALL.putAll(DANKS);
             ALL.putAll(UPGRADES);
+            ALL.put("dock",DOCK);
+            ALL.put("red_print",RED_PRINT);
         }
         return ALL;
     }
