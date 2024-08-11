@@ -30,3 +30,5 @@ accessible class net/minecraft/client/gui/screens/MenuScreens$ScreenConstructor
 extendable class net/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier
 
 accessible field net/minecraft/client/gui/screens/inventory/tooltip/ClientBundleTooltip BACKGROUND_SPRITE Lnet/minecraft/resources/ResourceLocation;
+
+accessible field net/minecraft/world/item/crafting/ShapedRecipe pattern Lnet/minecraft/world/item/crafting/ShapedRecipePattern;

@@ -1,6 +1,8 @@
 package tfar.dankstorage;
 
 import com.mojang.brigadier.CommandDispatcher;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -15,24 +17,29 @@ import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.client.ModClientFabric;
 import tfar.dankstorage.command.DankCommands;
 import tfar.dankstorage.init.ModBlockEntityTypes;
+import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.platform.ClothConfig;
 
-public class DankStorageFabric implements ModInitializer, ClientModInitializer,
+public class DankStorageFabric implements ModInitializer,
         ServerLifecycleEvents.ServerStarted, ServerLifecycleEvents.ServerStopped, CommandRegistrationCallback {
+
+
+    public static ClothConfig CONFIG;
+
 
     @Override
     public void onInitialize() {
+        AutoConfig.register(ClothConfig.class, JanksonConfigSerializer::new);
+        CONFIG = AutoConfig.getConfigHolder(ClothConfig.class).getConfig();
         ServerLifecycleEvents.SERVER_STARTED.register(this);
         ServerLifecycleEvents.SERVER_STOPPED.register(this);
         CommandRegistrationCallback.EVENT.register(this);
 
         ItemStorage.SIDED.registerForBlockEntity(DockBlockEntity::getStorage, (BlockEntityType<DockBlockEntity>) ModBlockEntityTypes.dank_tile);
         DankStorage.init();
+        DankPacketHandler.registerPackets();
     }
 
-    @Override
-    public void onInitializeClient() {
-        ModClientFabric.client();
-    }
 
     @Override
     public void onServerStarted(MinecraftServer server) {

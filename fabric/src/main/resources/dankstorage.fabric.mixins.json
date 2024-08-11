@@ -3,6 +3,7 @@
   "package": "tfar.dankstorage.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "ItemStackMixin",
     "SimpleContainerAccess"
   ],
   "client": [

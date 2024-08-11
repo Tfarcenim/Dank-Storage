@@ -16,8 +16,9 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "com.example.examplemod.ExampleMod"
-        ]
+            "tfar.dankstorage.DankStorageFabric"
+        ],
+        "client": ["tfar.dankstorage.client.ModClientFabric"]
     },
     "mixins": [
         "${mod_id}.mixins.json",
@@ -27,10 +28,8 @@
         "fabricloader": ">=${fabric_loader_version}",
         "fabric-api": "*",
         "minecraft": "${minecraft_version}",
-        "java": ">=${java_version}"
-    },
-    "suggests": {
-        "another-mod": "*"
+        "java": ">=${java_version}",
+        "cloth-config":"*"
     }
 }
   

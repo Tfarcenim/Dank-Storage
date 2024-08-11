@@ -3,8 +3,12 @@ package tfar.dankstorage.inventory.api;
 import net.fabricmc.fabric.api.transfer.v1.item.base.SingleStackStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import net.fabricmc.fabric.impl.transfer.item.SpecialLogicInventory;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.world.DankInventoryFabric;
+
+import java.util.Objects;
 
 /**
  * A wrapper around a single slot of an inventory.
@@ -64,9 +68,18 @@ public class DankInventorySlotWrapper extends SingleStackStorage {
 		ItemStack currentStack = getStack();
 
 		if (!original.isEmpty() && original.getItem() == currentStack.getItem()) {
-			// None is empty and the items match: just update the amount and NBT, and reuse the original stack.
+			// Components have changed, we need to copy the stack.
+			if (!Objects.equals(original.getComponentsPatch(), currentStack.getComponentsPatch())) {
+				// Remove all the existing components and copy the new ones on top.
+				for (DataComponentType<?> type : original.getComponents().keySet()) {
+					original.set(type, null);
+				}
+
+				original.applyComponents(currentStack.getComponents());
+			}
+
+			// None is empty and the items and components match: just update the amount, and reuse the original stack.
 			original.setCount(currentStack.getCount());
-			original.setTag(currentStack.hasTag() ? currentStack.getTag().copy() : null);
 			setStack(original);
 		} else {
 			// Otherwise assume everything was taken from original so empty it.

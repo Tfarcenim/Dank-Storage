@@ -1,12 +1,14 @@
 package tfar.dankstorage.platform;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
@@ -16,13 +18,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import tfar.dankstorage.DankStorage;
+import tfar.dankstorage.DankStorageFabric;
 import tfar.dankstorage.blockentity.CommonDockBlockEntity;
 import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.DankSlot;
-import tfar.dankstorage.network.ClientDankPacketHandlerFabric;
-import tfar.dankstorage.network.DankPacketHandler;
-import tfar.dankstorage.network.DankPacketHandlerFabric;
 import tfar.dankstorage.network.client.S2CModPacket;
 import tfar.dankstorage.network.server.C2SModPacket;
 import tfar.dankstorage.platform.services.IPlatformHelper;
@@ -30,7 +30,6 @@ import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.world.DankInventoryFabric;
 
 import java.util.Map;
-import java.util.function.Function;
 
 public class FabricPlatformHelper implements IPlatformHelper {
 
@@ -52,30 +51,27 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public <MSG extends S2CModPacket> void registerClientPacket(Class<MSG> packetLocation, Function<FriendlyByteBuf, MSG> reader) {
+    public <MSG extends S2CModPacket> void registerClientPacket(CustomPacketPayload.Type<MSG> type, StreamCodec<RegistryFriendlyByteBuf, MSG> streamCodec) {
+        PayloadTypeRegistry.playS2C().register(type,streamCodec);//payload needs to be registered on server/client, packethandler is client only
         if (MixinEnvironment.getCurrentEnvironment().getSide() == MixinEnvironment.Side.CLIENT) {
-            ClientDankPacketHandlerFabric.register(packetLocation,reader);
+            ClientPlayNetworking.registerGlobalReceiver(type,(payload, context) -> context.client().execute(payload::handleClient));
         }
     }
 
     @Override
-    public <MSG extends C2SModPacket> void registerServerPacket(Class<MSG> packetLocation, Function<FriendlyByteBuf, MSG> reader) {
-        ServerPlayNetworking.registerGlobalReceiver(DankPacketHandler.packet(packetLocation), DankPacketHandlerFabric.wrapC2S(reader));
+    public <MSG extends C2SModPacket> void registerServerPacket(CustomPacketPayload.Type<MSG> type, StreamCodec<RegistryFriendlyByteBuf, MSG> streamCodec) {
+        PayloadTypeRegistry.playC2S().register(type,streamCodec);
+        ServerPlayNetworking.registerGlobalReceiver(type,(payload, context) -> context.player().server.execute(() -> payload.handleServer(context.player())));
     }
-
 
     @Override
     public void sendToClient(S2CModPacket msg, ServerPlayer player) {
-        FriendlyByteBuf buf = PacketByteBufs.create();
-        msg.write(buf);
-        ServerPlayNetworking.send(player, DankPacketHandler.packet(msg.getClass()), buf);
+        ServerPlayNetworking.send(player,msg);
     }
 
     @Override
     public void sendToServer(C2SModPacket msg) {
-        FriendlyByteBuf buf = PacketByteBufs.create();
-        msg.write(buf);
-        ClientPlayNetworking.send(DankPacketHandler.packet(msg.getClass()), buf);
+        ClientPlayNetworking.send(msg);
     }
 
     @Override
@@ -108,6 +104,6 @@ public class FabricPlatformHelper implements IPlatformHelper {
 
     @Override
     public MLConfig getConfig() {
-        return null;
+        return DankStorageFabric.CONFIG;
     }
 }

@@ -58,7 +58,7 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
 
     ItemStack addStack(int slot,ItemStack stack) {
         ItemStack existing = this.getItem(slot);
-        if (ItemStack.isSameItemSameTags(existing, stack)) {
+        if (ItemStack.isSameItemSameComponents(existing, stack)) {
             this.moveItemsBetweenStacks(stack, existing);
             if (stack.isEmpty()) {
                 return ItemStack.EMPTY;
