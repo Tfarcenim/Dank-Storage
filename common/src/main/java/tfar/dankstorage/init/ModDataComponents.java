@@ -3,8 +3,10 @@ package tfar.dankstorage.init;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.util.Unit;
 import tfar.dankstorage.utils.SerializationHelper;
 import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.UseType;
@@ -26,7 +28,7 @@ public class ModDataComponents {
     public static final DataComponentType<Integer> SELECTED = DataComponentType.<Integer>builder()
             .persistent(ExtraCodecs.intRange(0,99)).networkSynchronized(ByteBufCodecs.INT).build();
 
-    public static final DataComponentType<Boolean> OREDICT = DataComponentType.<Boolean>builder()
-            .persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL).build();
+    public static final DataComponentType<Unit> OREDICT = DataComponentType.<Unit>builder()
+            .persistent(Unit.CODEC).networkSynchronized(StreamCodec.unit(Unit.INSTANCE)).build();
 
 }

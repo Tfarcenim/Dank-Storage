@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.util.Unit;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -221,11 +222,11 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
             stack.set(DataComponents.CUSTOM_NAME,customName);
         }
 
-        CommonUtils.setFrequency(stack,frequency);
+        CommonUtils.setFrequency(stack, frequency);
         frequency = CommonUtils.INVALID;
         CommonUtils.setPickupMode(stack,pickupMode);
         CommonUtils.setUseType(stack,useType);
-        CommonUtils.setSelectedSlot(stack,selected);
+        CommonUtils.setSelectedSlot(stack, selected);
         selected = CommonUtils.INVALID;
         CommonUtils.setOredict(stack,oredict);
 
@@ -273,7 +274,9 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
         pComponents.set(ModDataComponents.FREQUENCY,frequency);
         pComponents.set(ModDataComponents.PICKUP_MODE,pickupMode);
         pComponents.set(ModDataComponents.USE_TYPE,useType);
-        pComponents.set(ModDataComponents.OREDICT,oredict);
+        if (oredict) {
+            pComponents.set(ModDataComponents.OREDICT, Unit.INSTANCE);
+        }
     }
 
     @Override
@@ -283,6 +286,6 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
         frequency = pComponentInput.getOrDefault(ModDataComponents.FREQUENCY,CommonUtils.INVALID);
         pickupMode = pComponentInput.get(ModDataComponents.PICKUP_MODE);
         useType = pComponentInput.get(ModDataComponents.USE_TYPE);
-        oredict = pComponentInput.getOrDefault(ModDataComponents.OREDICT,false);
+        oredict = pComponentInput.get(ModDataComponents.OREDICT) != null;
     }
 }

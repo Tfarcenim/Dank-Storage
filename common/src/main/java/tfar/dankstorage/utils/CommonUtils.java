@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Unit;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -386,11 +387,19 @@ public class CommonUtils {
     }
 
     public static void setSelectedSlot(ItemStack bag, int slot) {
-        bag.set(ModDataComponents.SELECTED, slot);
+        if (slot < 0) {
+            bag.remove(ModDataComponents.SELECTED);
+        } else {
+            bag.set(ModDataComponents.SELECTED, slot);
+        }
     }
 
     public static void setFrequency(ItemStack bag, int frequency) {
-        bag.set(ModDataComponents.FREQUENCY, frequency);
+        if (frequency < 0) {
+            bag.remove(ModDataComponents.FREQUENCY);
+        } else {
+            bag.set(ModDataComponents.FREQUENCY, frequency);
+        }
     }
 
     public static MutableComponent translatable(String s) {
@@ -406,7 +415,7 @@ public class CommonUtils {
     }
 
     public static boolean oredict(ItemStack bag) {
-        return bag.getOrDefault(ModDataComponents.OREDICT, false);
+        return bag.has(ModDataComponents.OREDICT);
     }
 
     public static void warn(Player player, DankStats item, DankStats inventory) {
@@ -475,7 +484,11 @@ public class CommonUtils {
     }
 
     public static void setOredict(ItemStack bag, boolean active) {
-        bag.set(ModDataComponents.OREDICT,active);
+        if (active) {
+            bag.set(ModDataComponents.OREDICT, Unit.INSTANCE);
+        } else {
+            bag.remove(ModDataComponents.OREDICT);
+        }
     }
 
     public static void togglePickupMode(ServerPlayer player) {
