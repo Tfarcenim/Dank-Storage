@@ -24,9 +24,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.blockentity.CommonDockBlockEntity;
-import tfar.dankstorage.item.CDankItem;
+import tfar.dankstorage.item.DankItem;
 
-import javax.annotation.Nonnull;
 import java.util.function.BiFunction;
 
 public class CDockBlock extends Block implements EntityBlock {
@@ -104,7 +103,7 @@ public class CDockBlock extends Block implements EntityBlock {
                     return ItemInteractionResult.SUCCESS;
                 }
 
-                if (held.getItem() instanceof CDankItem) {
+                if (held.getItem() instanceof DankItem) {
 
                     if (pState.getValue(TIER) > 0) {
                         dockBlockEntity.giveToPlayer(player);

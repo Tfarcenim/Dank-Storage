@@ -10,7 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,8 +24,6 @@ import tfar.dankstorage.blockentity.CommonDockBlockEntity;
 import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.DankSlot;
-import tfar.dankstorage.item.CDankItem;
-import tfar.dankstorage.item.DankItemNeoForge;
 import tfar.dankstorage.network.DankPacketHandlerNeoForge;
 import tfar.dankstorage.network.client.S2CModPacket;
 import tfar.dankstorage.network.server.C2SModPacket;
@@ -109,11 +106,6 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public ItemStack getCloneStack(Level level, BlockPos pos, BlockState state, HitResult hitResult, Player player) {
         return state.getCloneItemStack(hitResult, level, pos, player);
-    }
-
-    @Override
-    public CDankItem create(Item.Properties properties, DankStats stats) {
-        return new DankItemNeoForge(properties, stats);
     }
 
     @Override

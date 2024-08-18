@@ -57,7 +57,7 @@ public class RedprintItem extends Item {
     public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction clickAction, Player player) {
         ItemStack otherStack = slot.getItem();
 
-        if (otherStack.getItem() instanceof CDankItem) {
+        if (otherStack.getItem() instanceof DankItem) {
             int redF = CommonUtils.getFrequency(stack);
             if (redF > CommonUtils.INVALID) {
                 CommonUtils.setFrequency(otherStack,redF);
@@ -69,7 +69,7 @@ public class RedprintItem extends Item {
 
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack stack, ItemStack otherStack, Slot slot, ClickAction clickAction, Player player, SlotAccess slotAccess) {
-        if (otherStack.getItem() instanceof CDankItem) {
+        if (otherStack.getItem() instanceof DankItem) {
             int freq = CommonUtils.getFrequency(otherStack);
             if (freq > CommonUtils.INVALID) {
                 CommonUtils.setFrequency(stack,freq);

@@ -5,14 +5,12 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.DispenserBlock;
 import tfar.dankstorage.block.DankDispenserBehavior;
-import tfar.dankstorage.item.CDankItem;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.item.RedprintItem;
 import tfar.dankstorage.item.UpgradeItem;
-import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.UpgradeInfo;
 import tfar.dankstorage.utils.DankStats;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
 
@@ -21,7 +19,7 @@ public class ModItems {
     static Item.Properties dank_properties = new Item.Properties().stacksTo(1);
     public static Item RED_PRINT = new RedprintItem(properties);
     public static final Item DOCK = new BlockItem(ModBlocks.dock, properties);
-    public static final Map<String, CDankItem> DANKS;
+    public static final Map<String, DankItem> DANKS;
     public static final Map<String, UpgradeItem> UPGRADES;
     public static final Map<String,Item> ALL = new LinkedTreeMap<>();
 
@@ -30,7 +28,7 @@ public class ModItems {
         DANKS = new LinkedTreeMap<>();
         IntStream.range(1, 8).forEach(i -> {
             String s = "dank_" + i;
-            CDankItem dankItem = Services.PLATFORM.create(dank_properties, DankStats.values()[i]);
+            DankItem dankItem = new DankItem(dank_properties, DankStats.values()[i]);
             DispenserBlock.registerBehavior(dankItem, new DankDispenserBehavior());
             DANKS.put(s, dankItem);
         });

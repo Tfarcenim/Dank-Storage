@@ -5,7 +5,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import tfar.dankstorage.item.CDankItem;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
@@ -37,9 +37,9 @@ public class C2SScrollSlotPacket implements C2SModPacket {
     }
 
     public void handleServer(ServerPlayer player) {
-        if (player.getMainHandItem().getItem() instanceof CDankItem)
+        if (player.getMainHandItem().getItem() instanceof DankItem)
             CommonUtils.changeSelectedSlot(player.getMainHandItem(), right,player);
-        else if (player.getOffhandItem().getItem() instanceof CDankItem)
+        else if (player.getOffhandItem().getItem() instanceof DankItem)
             CommonUtils.changeSelectedSlot(player.getOffhandItem(), right,player);
     }
 

@@ -8,7 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import tfar.dankstorage.item.CDankItem;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.KeybindAction;
@@ -39,9 +39,9 @@ public record C2SButtonPacket(KeybindAction keybindAction) implements C2SModPack
                     ItemStack pick = Services.PLATFORM.getCloneStack(player.level(), blockHit.getBlockPos(),
                             player.level().getBlockState(blockHit.getBlockPos()), hit, player);
                     if (!pick.isEmpty()) {
-                        if (player.getMainHandItem().getItem() instanceof CDankItem)
+                        if (player.getMainHandItem().getItem() instanceof DankItem)
                             CommonUtils.setPickSlot(player.level(), player.getMainHandItem(), pick);
-                        else if (player.getOffhandItem().getItem() instanceof CDankItem)
+                        else if (player.getOffhandItem().getItem() instanceof DankItem)
                             CommonUtils.setPickSlot(player.level(), player.getOffhandItem(), pick);
                     }
                 }

@@ -3,8 +3,6 @@ package tfar.dankstorage;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -31,7 +29,7 @@ import tfar.dankstorage.client.ModClientForge;
 import tfar.dankstorage.command.DankCommands;
 import tfar.dankstorage.init.ModBlockEntityTypes;
 import tfar.dankstorage.init.ModItems;
-import tfar.dankstorage.item.CDankItem;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.item.DankItemCapability;
 import tfar.dankstorage.datagen.ModDatagen;
 import tfar.dankstorage.event.ForgeClientEvents;
@@ -82,7 +80,7 @@ public class DankStorageNeoForge {
 
     private void capabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntityTypes.dank_tile,(object, context) -> (IItemHandler) object.getInventory());
-        event.registerItem(Capabilities.ItemHandler.ITEM,(stack,context) -> DankItemCapability.lookup(stack), ModItems.DANKS.values().toArray(CDankItem[]::new));
+        event.registerItem(Capabilities.ItemHandler.ITEM,(stack,context) -> DankItemCapability.lookup(stack), ModItems.DANKS.values().toArray(DankItem[]::new));
     }
 
     public void onInitialize(FMLCommonSetupEvent e) {
@@ -107,7 +105,7 @@ public class DankStorageNeoForge {
 
     private void entityInvulnerabilityCheck(EntityInvulnerabilityCheckEvent event) {
         if (event.getEntity() instanceof ItemEntity itemEntity) {
-            if (itemEntity.getItem().getItem() instanceof CDankItem && !event.getSource().is(Tags.DamageTypes.IS_TECHNICAL)) {
+            if (itemEntity.getItem().getItem() instanceof DankItem && !event.getSource().is(Tags.DamageTypes.IS_TECHNICAL)) {
                 event.setInvulnerable(true);
             }
         }

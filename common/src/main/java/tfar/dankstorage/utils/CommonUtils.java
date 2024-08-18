@@ -26,7 +26,7 @@ import tfar.dankstorage.ModTags;
 import tfar.dankstorage.init.ModDataComponents;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.LimitedContainerData;
-import tfar.dankstorage.item.CDankItem;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.menu.AbstractDankMenu;
 import tfar.dankstorage.menu.ChangeFrequencyMenu;
 import tfar.dankstorage.mixin.MinecraftServerAccess;
@@ -433,8 +433,8 @@ public class CommonUtils {
         return stacks.stream().map(ItemStackWrapper::new).collect(Collectors.toList());
     }
 
-    public static CDankItem getItemFromTier(int tier) {
-        return (CDankItem) BuiltInRegistries.ITEM.get(DankStorage.id("dank_" + tier));
+    public static DankItem getItemFromTier(int tier) {
+        return (DankItem) BuiltInRegistries.ITEM.get(DankStorage.id("dank_" + tier));
     }
 
     public static boolean isHoldingDank(@Nullable Player player) {
@@ -442,9 +442,9 @@ public class CommonUtils {
         if (player == null) return false;
 
         ItemStack stack = player.getMainHandItem();
-        if (stack.getItem() instanceof CDankItem) return true;
+        if (stack.getItem() instanceof DankItem) return true;
         stack = player.getOffhandItem();
-        return stack.getItem() instanceof CDankItem;
+        return stack.getItem() instanceof DankItem;
     }
 
     public static ItemStack getSelectedItem(ItemStack bag, Level level) {
@@ -465,8 +465,8 @@ public class CommonUtils {
 
     @Nullable
     public static InteractionHand getHandWithDank(Player player) {
-        if (player.getMainHandItem().getItem() instanceof CDankItem) return InteractionHand.MAIN_HAND;
-        else if (player.getOffhandItem().getItem() instanceof CDankItem) return InteractionHand.OFF_HAND;
+        if (player.getMainHandItem().getItem() instanceof DankItem) return InteractionHand.MAIN_HAND;
+        else if (player.getOffhandItem().getItem() instanceof DankItem) return InteractionHand.OFF_HAND;
         return null;
     }
 
@@ -573,7 +573,7 @@ public class CommonUtils {
     }
 
     public static DankStats getDefaultStats(ItemStack bag) {
-        return ((CDankItem) bag.getItem()).stats;
+        return ((DankItem) bag.getItem()).stats;
     }
 
     @Nonnull

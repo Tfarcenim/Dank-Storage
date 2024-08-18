@@ -7,7 +7,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
-import tfar.dankstorage.item.CDankItem;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.network.server.C2SScrollSlotPacket;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
@@ -38,9 +38,9 @@ public class ClientEvents {
             return;
         if (!(player.containerMenu instanceof InventoryMenu)) return;
         ItemStack bag = player.getMainHandItem();
-        if (!(bag.getItem() instanceof CDankItem)) {
+        if (!(bag.getItem() instanceof DankItem)) {
             bag = player.getOffhandItem();
-            if (!(bag.getItem() instanceof CDankItem))
+            if (!(bag.getItem() instanceof DankItem))
                 return;
         }
         int xStart = guiGraphics.guiWidth() / 2 + previewX();

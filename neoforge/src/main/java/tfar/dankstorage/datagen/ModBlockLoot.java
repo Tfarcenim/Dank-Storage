@@ -15,7 +15,7 @@ import tfar.dankstorage.block.CDockBlock;
 import tfar.dankstorage.init.ModBlocks;
 import tfar.dankstorage.init.ModDataComponents;
 import tfar.dankstorage.init.ModItems;
-import tfar.dankstorage.item.CDankItem;
+import tfar.dankstorage.item.DankItem;
 
 import java.util.List;
 import java.util.Set;
@@ -38,7 +38,7 @@ public class ModBlockLoot extends BlockLootSubProvider {
         );
     }
 
-    protected LootPool.Builder makeDank(CDankItem dank) {
+    protected LootPool.Builder makeDank(DankItem dank) {
         return LootPool.lootPool().add(LootItem.lootTableItem(dank)
                 .when(
                         LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.dock)

@@ -4,8 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,16 +40,14 @@ import tfar.dankstorage.world.ClientData;
 import tfar.dankstorage.world.MaxId;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-public class CDankItem extends Item {
+public class DankItem extends Item {
 
     public final DankStats stats;
-    public CDankItem(Properties $$0, DankStats stats) {
+    public DankItem(Properties $$0, DankStats stats) {
         super($$0);
         this.stats = stats;
     }
@@ -135,8 +131,8 @@ public class CDankItem extends Item {
         if (!CommonUtils.isConstruction(bag)) return InteractionResult.PASS;
 
         ItemStack toUse = CommonUtils.getSelectedItem(bag,player.level());
-        EquipmentSlot hand1 = hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
-        player.setItemSlot(hand1, toUse);
+        if (toUse.isEmpty()) return InteractionResult.PASS;
+        player.setItemInHand(hand, toUse);
         InteractionResult result = toUse.getItem().interactLivingEntity(toUse, player, entity, hand);
 
         //the client doesn't have access to the full inventory
@@ -145,7 +141,7 @@ public class CDankItem extends Item {
             handler.setItemDank(CommonUtils.getSelectedSlot(bag), toUse);
         }
 
-        player.setItemSlot(hand1, bag);
+        player.setItemInHand(hand, bag);
         return result;
     }
 

@@ -7,7 +7,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.init.ModMenuTypes;
 import tfar.dankstorage.inventory.DankInterface;
-import tfar.dankstorage.item.CDankItem;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.PickupMode;
@@ -19,7 +19,7 @@ public class DankMenu extends AbstractDankMenu {
     public DankMenu(MenuType<?> type, int windowId, Inventory inv, DankInterface DankInterface) {
         super(type, windowId, inv, DankInterface);
         Player player = inv.player;
-        this.bag = player.getMainHandItem().getItem() instanceof CDankItem ? player.getMainHandItem() : player.getOffhandItem();
+        this.bag = player.getMainHandItem().getItem() instanceof DankItem ? player.getMainHandItem() : player.getOffhandItem();
         addDankSlots();
         addPlayerSlots(inv, inv.selected);
     }

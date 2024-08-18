@@ -24,7 +24,7 @@ import tfar.dankstorage.init.ModDataComponents;
 import tfar.dankstorage.inventory.DankInterface;
 import tfar.dankstorage.inventory.LimitedContainerData;
 import tfar.dankstorage.inventory.TierDataSlot;
-import tfar.dankstorage.item.CDankItem;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.block.CDockBlock;
 import tfar.dankstorage.menu.ChangeFrequencyMenuBlockEntity;
 import tfar.dankstorage.menu.DockMenu;
@@ -238,8 +238,8 @@ public abstract class CommonDockBlockEntity<T extends DankInterface> extends Blo
 
 
     public void addDank(ItemStack tank) {
-        if (tank.getItem() instanceof CDankItem) {
-            DankStats stats = ((CDankItem) tank.getItem()).stats;
+        if (tank.getItem() instanceof DankItem) {
+            DankStats stats = ((DankItem) tank.getItem()).stats;
             level.setBlockAndUpdate(worldPosition, getBlockState().setValue(CDockBlock.TIER, stats.ordinal()));
             if (tank.has(DataComponents.CUSTOM_NAME)) {
                 setCustomName(tank.getHoverName());

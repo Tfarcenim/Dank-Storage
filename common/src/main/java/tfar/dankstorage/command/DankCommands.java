@@ -9,8 +9,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.item.CDankItem;
-import tfar.dankstorage.utils.CommonUtils;
+import tfar.dankstorage.item.DankItem;
 
 public class DankCommands {
 
@@ -85,7 +84,7 @@ public class DankCommands {
 
         ItemStack dank = player.getMainHandItem();
 
-        if (dank.getItem() instanceof CDankItem) {
+        if (dank.getItem() instanceof DankItem) {
             //   dank.setTag(null);
             return 1;
         } else {

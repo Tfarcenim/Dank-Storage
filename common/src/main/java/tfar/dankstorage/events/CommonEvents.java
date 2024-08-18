@@ -7,7 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.inventory.DankInterface;
-import tfar.dankstorage.item.CDankItem;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.PickupMode;
 
@@ -27,7 +27,7 @@ public class CommonEvents {
         }
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack possibleDank = inv.getItem(i);
-            if (possibleDank.getItem() instanceof CDankItem && onItemPickup(player, incoming, possibleDank)) {
+            if (possibleDank.getItem() instanceof DankItem && onItemPickup(player, incoming, possibleDank)) {
                 return true;
             }
         }

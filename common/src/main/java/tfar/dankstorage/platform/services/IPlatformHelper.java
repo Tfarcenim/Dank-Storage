@@ -1,23 +1,19 @@
 package tfar.dankstorage.platform.services;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import tfar.dankstorage.blockentity.CommonDockBlockEntity;
 import tfar.dankstorage.inventory.DankInterface;
-import tfar.dankstorage.item.CDankItem;
 import tfar.dankstorage.network.client.S2CModPacket;
 import tfar.dankstorage.network.server.C2SModPacket;
 import tfar.dankstorage.platform.MLConfig;
@@ -25,7 +21,6 @@ import tfar.dankstorage.utils.DankStats;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.function.Function;
 
 public interface IPlatformHelper {
 
@@ -97,10 +92,6 @@ public interface IPlatformHelper {
     <F> void registerAll(Map<String,? extends F> map, Registry<F> registry, Class<? extends F> filter) ;
 
         //registry helpers
-
-    default CDankItem create(Item.Properties properties,DankStats stats) {
-        return new CDankItem(properties,stats);
-    }
 
     CommonDockBlockEntity<?> blockEntity(BlockPos pos, BlockState state);
     MLConfig getConfig();
