@@ -116,10 +116,9 @@ public class CDankItem extends Item {
     @Override
     public InteractionResult interactLivingEntity(ItemStack bag, Player player, LivingEntity entity, InteractionHand hand) {
         if (!CommonUtils.isConstruction(bag)) return InteractionResult.PASS;
-
         ItemStack toUse = CommonUtils.getSelectedItem(bag,player.level());
-        EquipmentSlot hand1 = hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
-        player.setItemSlot(hand1, toUse);
+        if (toUse.isEmpty()) return InteractionResult.PASS;
+        player.setItemInHand(hand, toUse);
         InteractionResult result = toUse.getItem().interactLivingEntity(toUse, player, entity, hand);
 
         //the client doesn't have access to the full inventory
@@ -128,7 +127,7 @@ public class CDankItem extends Item {
             handler.setItemDank(CommonUtils.getSelectedSlot(bag), toUse);
         }
 
-        player.setItemSlot(hand1, bag);
+        player.setItemInHand(hand, bag);
         return result;
     }
 
