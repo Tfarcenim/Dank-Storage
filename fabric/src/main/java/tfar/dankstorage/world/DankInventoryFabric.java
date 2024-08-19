@@ -178,6 +178,13 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
     }
 
     @Override
+    public void setItem(int slot, ItemStack stack) {
+        this.items.set(slot, stack);
+     //   stack.limitSize(this.getMaxStackSize(stack));
+        this.setChanged();
+    }
+
+    @Override
     public ItemStack getItemDank(int slot) {
         return getItem(slot);
     }
