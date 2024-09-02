@@ -25,14 +25,4 @@ public class DockBlockEntity extends CommonDockBlockEntity<DankInventoryForge> {
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         return cap == ForgeCapabilities.ITEM_HANDLER ? LazyOptional.of(this::getInventory).cast() : super.getCapability(cap, side);
     }
-
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-    }
-
-    @Override
-    public void reviveCaps() {
-        super.reviveCaps();
-    }
 }

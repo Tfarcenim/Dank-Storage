@@ -95,7 +95,7 @@ public interface IPlatformHelper {
 
     }
 
-    <F> void registerAll(Map<String,? extends F> map, Registry<F> registry, Class<? extends F> filter) ;
+    <F> void registerAll(Map<String,? extends F> map, Registry<F> registry, Class<? extends F> filter);
 
         //registry helpers
 

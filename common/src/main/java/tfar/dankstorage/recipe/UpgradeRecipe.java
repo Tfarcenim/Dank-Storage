@@ -28,11 +28,6 @@ public class UpgradeRecipe extends ShapedRecipe {
     }
 
     @Override
-    public boolean matches(CraftingContainer $$0, Level $$1) {
-        return super.matches($$0, $$1);
-    }
-
-    @Override
     public RecipeSerializer<?> getSerializer() {
         return ModRecipeSerializers.upgrade;
     }

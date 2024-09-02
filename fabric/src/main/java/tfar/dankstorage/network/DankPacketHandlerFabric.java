@@ -15,7 +15,7 @@ public class DankPacketHandlerFabric {
         return new ServerHandler<>(decodeFunction);
     }
 
-    public static record ServerHandler<MSG extends C2SModPacket>(Function<FriendlyByteBuf,MSG> packetDecoder) implements ServerPlayNetworking.PlayChannelHandler {
+    public record ServerHandler<MSG extends C2SModPacket>(Function<FriendlyByteBuf,MSG> packetDecoder) implements ServerPlayNetworking.PlayChannelHandler {
         @Override
         public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
             MSG decode = packetDecoder.apply(buf);
