@@ -17,7 +17,9 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
@@ -27,7 +29,10 @@ import tfar.dankstorage.client.DankKeybinds;
 import tfar.dankstorage.client.DankTooltip;
 import tfar.dankstorage.init.ModDataComponentTypes;
 import tfar.dankstorage.inventory.DankInventory;
-import tfar.dankstorage.menu.PortableDankProvider;
+import tfar.dankstorage.inventory.LimitedContainerData;
+import tfar.dankstorage.inventory.TierDataSlot;
+import tfar.dankstorage.menu.ChangeFrequencyMenu;
+import tfar.dankstorage.menu.DankMenu;
 import tfar.dankstorage.mixin.ItemUsageContextAccessor;
 import tfar.dankstorage.network.server.C2SRequestContentsPacket;
 import tfar.dankstorage.platform.Services;
@@ -39,6 +44,7 @@ import tfar.dankstorage.world.ClientData;
 import tfar.dankstorage.world.DankSavedData;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -155,7 +161,48 @@ public class DankItem extends Item {
     }
 
     public MenuProvider createProvider(ItemStack stack) {
-        return new PortableDankProvider(stack);
+        return new MenuProvider() {
+            @Override
+            public Component getDisplayName() {
+                return stack.getHoverName();
+            }
+
+            @Override
+            public AbstractContainerMenu createMenu(int i, Inventory playerInventory, Player player) {
+                MinecraftServer server = player.getServer();
+                if (getFrequency(stack) == CommonUtils.INVALID) {
+                    assignNextFreeId(server, stack);
+                    DankSavedData tankSavedData = DankSavedData.getOrCreate(getFrequency(stack), server);
+                    tankSavedData.setStats(stats);
+                }
+
+
+                DankInventory dankInventory = getInventoryFrom(stack, player.getServer());
+                int defaults = stats.slots;
+
+
+                int type = dankInventory.slotCount();
+
+                if (defaults != type) {
+                    if (defaults < type) {//if the default stats are lower than what saveddata reports, abort opening
+                        return new ChangeFrequencyMenu(i, playerInventory, new LimitedContainerData(dankInventory, 3), new TierDataSlot(stats), stack);
+                        //CommonUtils.warn(player, defaults, type);
+                        //return null;
+                    }
+                    dankInventory.upgradeTo(stats);
+                }
+
+                return switch (stats) {
+                    default -> DankMenu.t1s(i, playerInventory, dankInventory, stack);
+                    case two -> DankMenu.t2s(i, playerInventory, dankInventory, stack);
+                    case three -> DankMenu.t3s(i, playerInventory, dankInventory, stack);
+                    case four -> DankMenu.t4s(i, playerInventory, dankInventory, stack);
+                    case five -> DankMenu.t5s(i, playerInventory, dankInventory, stack);
+                    case six -> DankMenu.t6s(i, playerInventory, dankInventory, stack);
+                    case seven -> DankMenu.t7s(i, playerInventory, dankInventory, stack);
+                };
+            }
+        };
     }
 
     public int getGlintColor(ItemStack stack) {

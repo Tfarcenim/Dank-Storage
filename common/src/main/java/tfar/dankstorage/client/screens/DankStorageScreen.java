@@ -74,23 +74,23 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
         return new DankStorageScreen(container, playerinventory, component, background2);
     }
 
-    public static <T extends DankMenu> DankStorageScreen t3(DankMenu container, Inventory playerinventory, Component component) {
+    public static DankStorageScreen t3(DankMenu container, Inventory playerinventory, Component component) {
         return new DankStorageScreen(container, playerinventory, component, background3);
     }
 
-    public static <T extends DankMenu> DankStorageScreen t4(DankMenu container, Inventory playerinventory, Component component) {
+    public static DankStorageScreen t4(DankMenu container, Inventory playerinventory, Component component) {
         return new DankStorageScreen(container, playerinventory, component, background4);
     }
 
-    public static <T extends DankMenu> DankStorageScreen t5(DankMenu container, Inventory playerinventory, Component component) {
+    public static DankStorageScreen t5(DankMenu container, Inventory playerinventory, Component component) {
         return new DankStorageScreen(container, playerinventory, component, background5);
     }
 
-    public static <T extends DankMenu> DankStorageScreen t6(DankMenu container, Inventory playerinventory, Component component) {
+    public static DankStorageScreen t6(DankMenu container, Inventory playerinventory, Component component) {
         return new DankStorageScreen(container, playerinventory, component, background6);
     }
 
-    public static <T extends DankMenu> DankStorageScreen t7(DankMenu container, Inventory playerinventory, Component component) {
+    public static DankStorageScreen t7(DankMenu container, Inventory playerinventory, Component component) {
         return new DankStorageScreen(container, playerinventory, component, background7);
     }
 
@@ -166,6 +166,8 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
                 }
             }
 
+            boolean locked = pSlot.index < menu.dankInventory.slotCount() && menu.dankInventory.hasGhostItem(pSlot.index);
+
             if (!flag1) {
                 if (flag) {
                     pGuiGraphics.fill(i, j, i + 16, j + 16, -2130706433);
@@ -175,8 +177,9 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
                 pGuiGraphics.renderItemDecorations(this.font, itemstack, i, j,"");
 
                 int count = itemstack.getCount();
-                if (count > 1 || !s.isEmpty()) {
-                    StackSizeRenderer.renderSizeLabelCustom(pGuiGraphics, Minecraft.getInstance().font, i, j, s + CommonUtils.formatLargeNumber(itemstack.getCount()), Services.PLATFORM.getConfig().textSize());
+                if (count > 1 || !s.isEmpty() || locked) {
+                    String string =s+ (count <=0 && locked ?"lock": CommonUtils.formatLargeNumber(itemstack.getCount()));
+                    StackSizeRenderer.renderSizeLabelCustom(pGuiGraphics, Minecraft.getInstance().font, i, j, string, Services.PLATFORM.getConfig().textSize());
                 }
             }
 
@@ -184,7 +187,7 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
 
             int i1 = pSlot.x;
             int j1 = pSlot.y;
-            if (!pSlot.hasItem() && pSlot.index < menu.dankInventory.items.size() && menu.dankInventory.hasGhostItem(pSlot.index)) {
+            if (!pSlot.hasItem() && locked) {
                 pGuiGraphics.renderFakeItem(menu.dankInventory.getGhostItem(pSlot.index), i1, j1);
                 RenderSystem.depthFunc(516);
                 pGuiGraphics.fill(i1, j1, i1 + 16, j1 + 16, 0x40ffffff);
