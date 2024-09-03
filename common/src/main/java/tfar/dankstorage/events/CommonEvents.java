@@ -6,7 +6,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.inventory.DankInventory;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.PickupMode;
@@ -36,9 +36,9 @@ public class CommonEvents {
 
     public static boolean onItemPickup(Player player, ItemStack pickup, ItemStack dank) {
 
-        PickupMode pickupMode = CommonUtils.getPickupMode(dank);
+        PickupMode pickupMode = DankItem.getPickupMode(dank);
         if (pickupMode == PickupMode.none) return false;
-        DankInterface inv = CommonUtils.getBagInventory(dank,player.level());
+        DankInventory inv = DankItem.getInventoryFrom(dank,player.getServer());
 
         if (inv == null) {
             DankStorage.LOG.warn("That's odd, the player somehow got an unassigned dank to change pickup mode");
@@ -92,11 +92,11 @@ public class CommonEvents {
         return pickup.isEmpty();
     }
 
-    public static void voidPickup(DankInterface inv, int slot, ItemStack toInsert, boolean oredict, List<ItemStack> filter) {
+    public static void voidPickup(DankInventory inv, int slot, ItemStack toInsert, boolean oredict, List<ItemStack> filter) {
         ItemStack existing = inv.getItemDank(slot);
 
         if (doesItemStackExist(toInsert, filter, oredict) && areItemStacksCompatible(existing, toInsert, oredict)) {
-            int stackLimit = inv.getDankStats().stacklimit;
+            int stackLimit = inv.capacity;
             int total = Math.min(toInsert.getCount() + existing.getCount(), stackLimit);
             //doesn't matter if it overflows because it's all gone lmao
             inv.setItemDank(slot, CommonUtils.copyStackWithSize(existing, total));
@@ -104,11 +104,11 @@ public class CommonEvents {
         }
     }
 
-    public static void allPickup(DankInterface inv, int slot, ItemStack pickup, boolean oredict) {
+    public static void allPickup(DankInventory inv, int slot, ItemStack pickup, boolean oredict) {
         ItemStack existing = inv.getItemDank(slot);
 
         if (existing.isEmpty()) {
-            int stackLimit = inv.getDankStats().stacklimit;
+            int stackLimit = inv.capacity;
             int total = pickup.getCount();
             int remainder = total - stackLimit;
             //no overflow
@@ -123,7 +123,7 @@ public class CommonEvents {
         }
 
         if (ItemStack.isSameItemSameComponents(pickup, existing) || (oredict /*&& Utils.areItemStacksConvertible(pickup, existing)*/)) {
-            int stackLimit = inv.getDankStats().stacklimit;
+            int stackLimit = inv.capacity;
             int total = pickup.getCount() + existing.getCount();
             int remainder = total - stackLimit;
             //no overflow
@@ -137,11 +137,11 @@ public class CommonEvents {
         }
     }
 
-    public static void filteredPickup(DankInterface inv, int slot, ItemStack toInsert, boolean oredict, List<ItemStack> filter) {
+    public static void filteredPickup(DankInventory inv, int slot, ItemStack toInsert, boolean oredict, List<ItemStack> filter) {
         ItemStack existing = inv.getItemDank(slot);
 
         if (existing.isEmpty() && doesItemStackExist(toInsert, filter, oredict)) {
-            int stackLimit = inv.getDankStats().stacklimit;
+            int stackLimit = inv.capacity;
             int total = toInsert.getCount();
             int remainder = total - stackLimit;
             //no overflow
@@ -156,7 +156,7 @@ public class CommonEvents {
         }
 
         if (doesItemStackExist(toInsert, filter, oredict) && areItemStacksCompatible(existing, toInsert, oredict)) {
-            int stackLimit = inv.getDankStats().stacklimit;
+            int stackLimit = inv.capacity;
             int total = toInsert.getCount() + existing.getCount();
             int remainder = total - stackLimit;
             //no overflow

@@ -18,7 +18,7 @@ public class ClientDankTooltip implements ClientTooltipComponent {
     private static final int SLOT_SIZE_X = 18;
     private static final int SLOT_SIZE_Y = 18;
     private final NonNullList<ItemStack> items;
-    private final int selected;
+    private final ItemStack selected;
 
     public ClientDankTooltip(DankTooltip bundleTooltip) {
         this.items = bundleTooltip.getItems();
@@ -57,7 +57,7 @@ public class ClientDankTooltip implements ClientTooltipComponent {
         if (count > 1) {
             StackSizeRenderer.renderSizeLabelCustom(poseStack, font, i + 1, j + 1, CommonUtils.formatLargeNumber(count), Services.PLATFORM.getConfig().textSize());
         }
-        if (slot == selected) {
+        if (ItemStack.isSameItemSameComponents(selected,itemStack)) {
             AbstractContainerScreen.renderSlotHighlight(poseStack, i + 1, j + 1, 0);
         }
     }

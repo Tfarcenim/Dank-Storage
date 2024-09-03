@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
@@ -19,7 +18,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
@@ -28,7 +26,8 @@ import tfar.dankstorage.client.DualTooltip;
 import tfar.dankstorage.client.NumberEditBox;
 import tfar.dankstorage.client.StackSizeRenderer;
 import tfar.dankstorage.client.button.SmallButton;
-import tfar.dankstorage.menu.AbstractDankMenu;
+import tfar.dankstorage.item.DankItem;
+import tfar.dankstorage.menu.DankMenu;
 import tfar.dankstorage.network.server.C2SLockSlotPacket;
 import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
 import tfar.dankstorage.platform.Services;
@@ -38,7 +37,7 @@ import tfar.dankstorage.utils.TxtColor;
 
 import java.util.List;
 
-public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractContainerScreen<T> {
+public class CDankStorageScreen extends AbstractContainerScreen<DankMenu> {
 
     static final ResourceLocation background1 = DankStorage.id(
             "textures/container/gui/dank1.png");
@@ -58,7 +57,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
     EditBox frequency;
     protected final boolean is7;
 
-    public CDankStorageScreen(T $$0, Inventory $$1, Component $$2, ResourceLocation background) {
+    public CDankStorageScreen(DankMenu $$0, Inventory $$1, Component $$2, ResourceLocation background) {
         super($$0, $$1, $$2);
         this.imageHeight = 114 + this.menu.rows * 18;
         this.inventoryLabelY = this.imageHeight - 94;
@@ -67,32 +66,32 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
         this.is7 = this.menu.rows > 6;
     }
 
-    public static <T extends AbstractDankMenu> CDankStorageScreen<T> t1(T container, Inventory playerinventory, Component component) {
-        return new CDankStorageScreen<>(container, playerinventory, component, background1);
+    public static CDankStorageScreen t1(DankMenu container, Inventory playerinventory, Component component) {
+        return new CDankStorageScreen(container, playerinventory, component, background1);
     }
 
-    public static <T extends AbstractDankMenu> CDankStorageScreen<T> t2(T container, Inventory playerinventory, Component component) {
-        return new CDankStorageScreen<>(container, playerinventory, component, background2);
+    public static CDankStorageScreen t2(DankMenu container, Inventory playerinventory, Component component) {
+        return new CDankStorageScreen(container, playerinventory, component, background2);
     }
 
-    public static <T extends AbstractDankMenu> CDankStorageScreen<T> t3(T container, Inventory playerinventory, Component component) {
-        return new CDankStorageScreen<>(container, playerinventory, component, background3);
+    public static <T extends DankMenu> CDankStorageScreen t3(DankMenu container, Inventory playerinventory, Component component) {
+        return new CDankStorageScreen(container, playerinventory, component, background3);
     }
 
-    public static <T extends AbstractDankMenu> CDankStorageScreen<T> t4(T container, Inventory playerinventory, Component component) {
-        return new CDankStorageScreen<>(container, playerinventory, component, background4);
+    public static <T extends DankMenu> CDankStorageScreen t4(DankMenu container, Inventory playerinventory, Component component) {
+        return new CDankStorageScreen(container, playerinventory, component, background4);
     }
 
-    public static <T extends AbstractDankMenu> CDankStorageScreen<T> t5(T container, Inventory playerinventory, Component component) {
-        return new CDankStorageScreen<>(container, playerinventory, component, background5);
+    public static <T extends DankMenu> CDankStorageScreen t5(DankMenu container, Inventory playerinventory, Component component) {
+        return new CDankStorageScreen(container, playerinventory, component, background5);
     }
 
-    public static <T extends AbstractDankMenu> CDankStorageScreen<T> t6(T container, Inventory playerinventory, Component component) {
-        return new CDankStorageScreen<>(container, playerinventory, component, background6);
+    public static <T extends DankMenu> CDankStorageScreen t6(DankMenu container, Inventory playerinventory, Component component) {
+        return new CDankStorageScreen(container, playerinventory, component, background6);
     }
 
-    public static <T extends AbstractDankMenu> CDankStorageScreen<T> t7(T container, Inventory playerinventory, Component component) {
-        return new CDankStorageScreen<>(container, playerinventory, component, background7);
+    public static <T extends DankMenu> CDankStorageScreen t7(DankMenu container, Inventory playerinventory, Component component) {
+        return new CDankStorageScreen(container, playerinventory, component, background7);
     }
 
     protected void initEditbox() {
@@ -185,7 +184,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
 
             int i1 = pSlot.x;
             int j1 = pSlot.y;
-            if (!pSlot.hasItem() && pSlot.index < menu.dankInventory.getDankStats().slots && menu.dankInventory.hasGhostItem(pSlot.index)) {
+            if (!pSlot.hasItem() && pSlot.index < menu.dankInventory.items.size() && menu.dankInventory.hasGhostItem(pSlot.index)) {
                 pGuiGraphics.renderFakeItem(menu.dankInventory.getGhostItem(pSlot.index), i1, j1);
                 RenderSystem.depthFunc(516);
                 pGuiGraphics.fill(i1, j1, i1 + 16, j1 + 16, 0x40ffffff);
@@ -194,7 +193,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
         }
     }
 
-    private void sendButtonToServer(AbstractDankMenu.ButtonAction action) {
+    private void sendButtonToServer(DankMenu.ButtonAction action) {
         this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, action.ordinal());
     }
 
@@ -215,7 +214,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
     protected void renderLabels(GuiGraphics poseStack, int i, int j) {
         RenderSystem.disableBlend();
         super.renderLabels(poseStack, i, j);
-        int id = menu.dankInventory.frequency();//menu.dankInventory.get(menu.rows * 9);
+        int id = DankItem.getFrequency(menu.getBag());//menu.dankInventory.get(menu.rows * 9);
         int color = 0x008000;
         poseStack.drawString( font,"ID: " + id, 62, inventoryLabelY, color,false);
     }
@@ -242,7 +241,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
         super.init();
 
         int j = (this.height - this.imageHeight) / 2;
-        this.addRenderableWidget(new SmallButton(leftPos + 143, topPos + 4, 26, 12, Component.literal("Sort"), b -> sendButtonToServer(AbstractDankMenu.ButtonAction.SORT)));
+        this.addRenderableWidget(new SmallButton(leftPos + 143, topPos + 4, 26, 12, Component.literal("Sort"), b -> sendButtonToServer(DankMenu.ButtonAction.SORT)));
 
         modeCycleButton = CycleButton.<PickupMode>builder(pickupMode -> Component.literal("P")
                         .withStyle(Style.EMPTY.withColor(pickupMode.getColor())))
@@ -250,7 +249,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
                 .withTooltip(mode -> Tooltip.create(mode.translate()))
                 .withInitialValue(PickupMode.none)
                 .displayOnlyValue()
-                .create(leftPos + 101, topPos + 4, 12, 12, Component.empty(), (pickupModeCycleButton, pickupMode) -> sendButtonToServer(AbstractDankMenu.ButtonAction.TOGGLE_PICKUP));
+                .create(leftPos + 101, topPos + 4, 12, 12, Component.empty(), (pickupModeCycleButton, pickupMode) -> sendButtonToServer(DankMenu.ButtonAction.TOGGLE_PICKUP));
 
         addRenderableWidget(modeCycleButton);
 
@@ -259,7 +258,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
                 Component.translatable("text.dankstorage.lock_button"),null,this);
 
         SmallButton l = new SmallButton(leftPos + 115, topPos + 4, 12, 12,
-                Component.literal(""), button -> sendButtonToServer(AbstractDankMenu.ButtonAction.LOCK_FREQUENCY)) {
+                Component.literal(""), button -> sendButtonToServer(DankMenu.ButtonAction.LOCK_FREQUENCY)) {
             @Override
             public Component getMessage() {
                 return menu.dankInventory.frequencyLocked() ? Component.literal("X").withStyle(ChatFormatting.RED) :
@@ -291,7 +290,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
         Tooltip compressTooltip = Tooltip.create(Component.translatable("text.dankstorage.compress_button"));
 
         SmallButton c = new SmallButton(leftPos + 129, topPos + 4, 12, 12,
-                Component.literal("C"), button -> sendButtonToServer(AbstractDankMenu.ButtonAction.COMPRESS));
+                Component.literal("C"), button -> sendButtonToServer(DankMenu.ButtonAction.COMPRESS));
         c.setTooltip(compressTooltip);
 
         this.addRenderableWidget(c);

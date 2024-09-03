@@ -23,7 +23,7 @@ public class ClientEvents {
         if (player!=null) {
             ItemStack main = player.getMainHandItem();
             ItemStack off = player.getOffhandItem();
-            if (player.isCrouching() && (CommonUtils.isConstruction(main) || CommonUtils.isConstruction(off))) {
+            if (player.isCrouching() && (DankItem.isConstruction(main) || DankItem.isConstruction(off))) {
                 boolean right = delta < 0;
                 C2SScrollSlotPacket.send(right);
                 return true;
@@ -53,7 +53,7 @@ public class ClientEvents {
             int c = color != null ? color : 0xFFFFFF;
             renderHotbarItem(guiGraphics, xStart, yStart, player, toPlace);
         }
-        UseType mode = CommonUtils.getUseType(bag);
+        UseType mode = DankItem.getUseType(bag);
         MutableComponent translate = CommonUtils.translatable("dankstorage.usetype." + mode);
 
         final int stringX = xStart + 8 - mc.font.width(translate) / 2;

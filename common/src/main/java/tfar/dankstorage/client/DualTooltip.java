@@ -13,9 +13,9 @@ public class DualTooltip extends Tooltip {
 
     private final Component message2;
     boolean last;
-    private final CDankStorageScreen<?> screen;
+    private final CDankStorageScreen screen;
 
-    public DualTooltip(Component message1, Component message2, @Nullable Component narration, CDankStorageScreen<?> screen) {
+    public DualTooltip(Component message1, Component message2, @Nullable Component narration, CDankStorageScreen screen) {
         super(message1, narration);
         this.message2 = message2;
         this.screen = screen;

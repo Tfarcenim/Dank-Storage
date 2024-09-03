@@ -11,9 +11,9 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
-import tfar.dankstorage.block.CDockBlock;
+import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.init.ModBlocks;
-import tfar.dankstorage.init.ModDataComponents;
+import tfar.dankstorage.init.ModDataComponentTypes;
 import tfar.dankstorage.init.ModItems;
 import tfar.dankstorage.item.DankItem;
 
@@ -42,15 +42,15 @@ public class ModBlockLoot extends BlockLootSubProvider {
         return LootPool.lootPool().add(LootItem.lootTableItem(dank)
                 .when(
                         LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.dock)
-                                .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(CDockBlock.TIER, dank.stats.ordinal()))
+                                .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(DockBlock.TIER, dank.stats.ordinal()))
                 )
                 .apply(
                         CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
                                 .include(DataComponents.CUSTOM_NAME)
-                                .include(ModDataComponents.FREQUENCY)
-                                .include(ModDataComponents.PICKUP_MODE)
-                                .include(ModDataComponents.USE_TYPE)
-                                .include(ModDataComponents.OREDICT)
+                                .include(ModDataComponentTypes.FREQUENCY)
+                                .include(ModDataComponentTypes.PICKUP_MODE)
+                                .include(ModDataComponentTypes.USE_TYPE)
+                                .include(ModDataComponentTypes.OREDICT)
                 )
         );
     }

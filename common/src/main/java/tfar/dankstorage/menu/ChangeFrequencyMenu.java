@@ -9,21 +9,25 @@ import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.init.ModMenuTypes;
-import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.inventory.DankInventory;
+import tfar.dankstorage.item.DankItem;
 
 public class ChangeFrequencyMenu extends AbstractContainerMenu {
 
     private final ContainerData containerData;
     private final DataSlot currentTier;
+    private final ItemStack bag;
+
 
     public ChangeFrequencyMenu(int id, Inventory inventory) {
-        this(id,inventory,new SimpleContainerData(3),DataSlot.standalone());
+        this(id,inventory,new SimpleContainerData(2),DataSlot.standalone(),ItemStack.EMPTY);
     }
 
-    public ChangeFrequencyMenu(int $$1, Inventory inventory, ContainerData containerData, DataSlot currentTier) {
+    public ChangeFrequencyMenu(int $$1, Inventory inventory, ContainerData containerData, DataSlot currentTier,ItemStack bag) {
         super(ModMenuTypes.change_frequency, $$1);
         this.containerData = containerData;
         this.currentTier = currentTier;
+        this.bag = bag;
         //addDataSlots(dankInventory);
         addDataSlots(containerData);
         addDataSlot(currentTier);
@@ -35,20 +39,20 @@ public class ChangeFrequencyMenu extends AbstractContainerMenu {
     }
 
     public int getFrequency() {
-        return containerData.get(DankInterface.FREQ);
+        return DankItem.getFrequency(bag);
     }
 
     public int getTextColor() {
-        return containerData.get(DankInterface.TXT_COLOR);
+        return containerData.get(DankInventory.TXT_COLOR);
     }
 
     public boolean getFreqLock() {
-        return containerData.get(DankInterface.FREQ_LOCK) != 0;
+        return containerData.get(DankInventory.FREQ_LOCK) != 0;
     }
 
     public void toggleFreqLock() {
         boolean b = getFreqLock();
-        containerData.set(DankInterface.FREQ_LOCK,b ? 0 : 1);
+        containerData.set(DankInventory.FREQ_LOCK,b ? 0 : 1);
     }
 
     public int getCurrentTier() {
@@ -65,13 +69,13 @@ public class ChangeFrequencyMenu extends AbstractContainerMenu {
     }
 
     public void setLinkedFrequency(int frequency) {
-        throw new UnsupportedOperationException();
+        DankItem.setFrequency(bag,frequency);
     }
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
-        if (id < 0 || id >= AbstractDankMenu.ButtonAction.VALUES.length) return false;
-        AbstractDankMenu.ButtonAction buttonAction = AbstractDankMenu.ButtonAction.VALUES[id];
+        if (id < 0 || id >= DankMenu.ButtonAction.VALUES.length) return false;
+        DankMenu.ButtonAction buttonAction = DankMenu.ButtonAction.VALUES[id];
         if (player instanceof ServerPlayer serverPlayer) {
             switch (buttonAction) {
                 case LOCK_FREQUENCY -> toggleFreqLock();

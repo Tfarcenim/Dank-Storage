@@ -7,10 +7,11 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.inventory.DankInventory;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.network.client.S2CContentsForDisplayPacket;
 import tfar.dankstorage.platform.Services;
+import tfar.dankstorage.world.DankSavedData;
 
 public class C2SRequestContentsPacket implements C2SModPacket {
 
@@ -41,7 +42,7 @@ public class C2SRequestContentsPacket implements C2SModPacket {
     }
 
     public void handleServer(ServerPlayer player) {
-        DankInterface dankInventoryForge = DankStorage.getData(frequency,player.server).createInventory(player.level().registryAccess(),frequency);
+        DankInventory dankInventoryForge = DankSavedData.get(frequency,player.server).getOrCreateInventory();
             Services.PLATFORM.sendToClient(new S2CContentsForDisplayPacket(dankInventoryForge.getContents()), player);
     }
 

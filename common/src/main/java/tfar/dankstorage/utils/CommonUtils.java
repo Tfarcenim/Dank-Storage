@@ -22,21 +22,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.ModTags;
-import tfar.dankstorage.init.ModDataComponents;
-import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.init.ModDataComponentTypes;
+import tfar.dankstorage.inventory.DankInventory;
 import tfar.dankstorage.inventory.LimitedContainerData;
 import tfar.dankstorage.item.DankItem;
-import tfar.dankstorage.menu.AbstractDankMenu;
+import tfar.dankstorage.menu.DankMenu;
 import tfar.dankstorage.menu.ChangeFrequencyMenu;
-import tfar.dankstorage.mixin.MinecraftServerAccess;
-import tfar.dankstorage.network.client.S2CSyncSelectedDankItemPacket;
-import tfar.dankstorage.platform.Services;
-import tfar.dankstorage.world.ClientData;
+import tfar.dankstorage.world.DankSavedData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -126,53 +121,10 @@ public class CommonUtils {
 
     public static void setPickSlot(Level level, ItemStack bag, ItemStack stack) {
 
-        DankInterface dankInterface = getBagInventory(bag, level);
+        DankInventory dankInterface = DankItem.getInventoryFrom(bag, level.getServer());
 
         if (dankInterface != null) {
-            int slot = findSlotMatchingItem(dankInterface, stack);
-            if (slot != INVALID) setSelectedSlot(bag, slot);
-        }
-    }
 
-    public static int findSlotMatchingItem(DankInterface dankInventory, ItemStack itemStack) {
-        for (int i = 0; i < dankInventory.getContainerSizeDank(); ++i) {
-            ItemStack stack = dankInventory.getItemDank(i);
-            if (stack.isEmpty() || !ItemStack.isSameItemSameComponents(itemStack, stack)) continue;
-            return i;
-        }
-        return INVALID;
-    }
-
-    public static void changeSelectedSlot(ItemStack bag, boolean right, ServerPlayer player) {
-        DankInterface handler = getBagInventory(bag, player.serverLevel());
-        //don't change slot if empty
-        if (handler == null || handler.noValidSlots()) return;
-        int selectedSlot = getSelectedSlot(bag);
-        int size = handler.getContainerSizeDank();
-        //keep iterating until a valid slot is found (not empty and not blacklisted from usage)
-        if (right) {
-            selectedSlot++;
-            if (selectedSlot >= size) selectedSlot = 0;
-        } else {
-            selectedSlot--;
-            if (selectedSlot < 0) selectedSlot = size - 1;
-        }
-        ItemStack selected = handler.getItemDank(selectedSlot);
-
-        while (selected.isEmpty() || selected.is(ModTags.BLACKLISTED_USAGE)) {
-            if (right) {
-                selectedSlot++;
-                if (selectedSlot >= size) selectedSlot = 0;
-            } else {
-                selectedSlot--;
-                if (selectedSlot < 0) selectedSlot = size - 1;
-            }
-            selected = handler.getItemDank(selectedSlot);
-        }
-        if (selectedSlot != INVALID) {
-            setSelectedSlot(bag, selectedSlot);
-            Services.PLATFORM.sendToClient(new S2CSyncSelectedDankItemPacket(selected), player);
-            player.displayClientMessage(selected.getHoverName(), true);
         }
     }
 
@@ -216,9 +168,6 @@ public class CommonUtils {
 
     private static CraftingInput makeCraftInput(ItemStack stack) {
         return CraftingInput.of(1, 1, List.of(stack));
-    }
-    public static int getFrequency(ItemStack stack) {
-        return stack.getOrDefault(ModDataComponents.FREQUENCY, INVALID);
     }
 
     public static class DummyCraftingContainer implements CraftingContainer {
@@ -295,37 +244,6 @@ public class CommonUtils {
         }
     }
 
-    public static DankInterface getBagInventory(ItemStack bag, Level level) {
-        if (!level.isClientSide) {
-            int id = getFrequency(bag);
-            if (id != INVALID) {
-                Path path = ((MinecraftServerAccess) level.getServer()).getStorageSource()
-                        .getDimensionPath(level.getServer().getLevel(Level.OVERWORLD).dimension())
-                        .resolve("data/" + DankStorage.MODID + "/" + id + ".dat");
-
-                if (path.toFile().isFile()) {
-                    return DankStorage.getData(id, level.getServer()).createInventory(level.registryAccess(),id);
-                } else {
-                    return DankStorage.getData(id, level.getServer()).createFreshInventory(getDefaultStats(bag), id);
-                }
-            } else {
-                return null;
-            }
-        }
-        throw new RuntimeException("Attempted to get inventory on client");
-    }
-
-
-    public static ItemStack getItemStackInSelectedSlot(ItemStack bag, ServerLevel level) {
-        DankInterface inv = getBagInventory(bag, level);
-        if (inv == null) return ItemStack.EMPTY;
-        int slot = getSelectedSlot(bag);
-        if (slot == INVALID) return ItemStack.EMPTY;
-        ItemStack stack = inv.getItemDank(slot);
-        return stack.is(ModTags.BLACKLISTED_USAGE) ? ItemStack.EMPTY : stack;
-    }
-
-
     public static void merge(List<ItemStack> stacks, ItemStack toMerge) {
         for (ItemStack stack : stacks) {
             if (ItemStack.isSameItemSameComponents(stack, toMerge)) {
@@ -338,67 +256,6 @@ public class CommonUtils {
         }
         if (!toMerge.isEmpty()) {
             stacks.add(toMerge);
-        }
-    }
-
-    public static PickupMode getPickupMode(ItemStack bag) {
-        return bag.getOrDefault(ModDataComponents.PICKUP_MODE, PickupMode.none);
-    }
-
-    public static void setPickupMode(ItemStack bag, PickupMode mode) {
-        bag.set(ModDataComponents.PICKUP_MODE, mode);
-    }
-
-    public static boolean isConstruction(ItemStack bag) {
-        return getUseType(bag) == UseType.construction;
-    }
-
-    //0,1,2,3
-    public static void cyclePickupMode(ItemStack bag, Player player) {
-        int ordinal = getPickupMode(bag).ordinal();
-        ordinal++;
-        if (ordinal > PickupMode.VALUES.length - 1) ordinal = 0;
-        PickupMode mode = PickupMode.VALUES[ordinal];
-        setPickupMode(bag, mode);
-        player.displayClientMessage(translatable("dankstorage.mode." + mode), true);
-    }
-
-    public static UseType getUseType(ItemStack bag) {
-        return bag.getOrDefault(ModDataComponents.USE_TYPE, UseType.bag);
-    }
-
-    //0,1,2
-    public static void cyclePlacement(ItemStack bag, Player player) {
-        int ordinal = getUseType(bag).ordinal();
-        ordinal++;
-        if (ordinal >= UseType.VALUES.length) ordinal = 0;
-        UseType useType = UseType.VALUES[ordinal];
-        setUseType(bag, useType);
-        player.displayClientMessage(translatable("dankstorage.usetype." + useType), true);
-    }
-
-    public static void setUseType(ItemStack bag, UseType useType) {
-        bag.set(ModDataComponents.USE_TYPE, useType);
-    }
-
-    //this can be 0 - 80
-    public static int getSelectedSlot(ItemStack bag) {
-        return bag.getOrDefault(ModDataComponents.SELECTED, INVALID);
-    }
-
-    public static void setSelectedSlot(ItemStack bag, int slot) {
-        if (slot < 0) {
-            bag.remove(ModDataComponents.SELECTED);
-        } else {
-            bag.set(ModDataComponents.SELECTED, slot);
-        }
-    }
-
-    public static void setFrequency(ItemStack bag, int frequency) {
-        if (frequency < 0) {
-            bag.remove(ModDataComponents.FREQUENCY);
-        } else {
-            bag.set(ModDataComponents.FREQUENCY, frequency);
         }
     }
 
@@ -415,7 +272,7 @@ public class CommonUtils {
     }
 
     public static boolean oredict(ItemStack bag) {
-        return bag.has(ModDataComponents.OREDICT);
+        return bag.has(ModDataComponentTypes.OREDICT);
     }
 
     public static void warn(Player player, DankStats item, DankStats inventory) {
@@ -447,22 +304,6 @@ public class CommonUtils {
         return stack.getItem() instanceof DankItem;
     }
 
-    public static ItemStack getSelectedItem(ItemStack bag, Level level) {
-        int selected = getSelectedSlot(bag);
-        if (selected == INVALID) return ItemStack.EMPTY;
-        if (!level.isClientSide) {
-            DankInterface dankInventory = getBagInventory(bag, level);
-            if (dankInventory != null && selected < dankInventory.getContainerSizeDank()) {
-                return dankInventory.getItemDank(selected);
-            } else {
-                //    System.out.println("Attempted to access a selected item from a null inventory");
-            }
-        } else {
-            return ClientData.selectedItem;
-        }
-        return ItemStack.EMPTY;
-    }
-
     @Nullable
     public static InteractionHand getHandWithDank(Player player) {
         if (player.getMainHandItem().getItem() instanceof DankItem) return InteractionHand.MAIN_HAND;
@@ -485,38 +326,38 @@ public class CommonUtils {
 
     public static void setOredict(ItemStack bag, boolean active) {
         if (active) {
-            bag.set(ModDataComponents.OREDICT, Unit.INSTANCE);
+            bag.set(ModDataComponentTypes.OREDICT, Unit.INSTANCE);
         } else {
-            bag.remove(ModDataComponents.OREDICT);
+            bag.remove(ModDataComponentTypes.OREDICT);
         }
     }
 
     public static void togglePickupMode(ServerPlayer player) {
         ItemStack bag = getDank(player);
         if (!bag.isEmpty()) {
-            cyclePickupMode(bag, player);
+            DankItem.cyclePickupMode(bag, player);
         }
     }
 
     public static void toggleUseType(ServerPlayer player) {
         ItemStack dank = getDank(player);
         if (!dank.isEmpty()) {
-            cyclePlacement(dank, player);
+            DankItem.cyclePlacement(dank, player);
         }
     }
 
     public static void setTxtColor(ServerPlayer player, int frequency, boolean set) {
         AbstractContainerMenu container = player.containerMenu;
-        if (container instanceof AbstractDankMenu abstractDankMenu) {
-            DankInterface inventory = abstractDankMenu.dankInventory;
+        if (container instanceof DankMenu abstractDankMenu) {
+            DankInventory inventory = abstractDankMenu.dankInventory;
 
             TxtColor textColor;
 
             if (frequency > INVALID) {
                 if (frequency < DankStorage.maxId.getMaxId()) {
-                    DankInterface targetInventory = DankStorage.getData(frequency, player.server).createInventory(player.level().registryAccess(),frequency);
+                    DankInventory targetInventory = DankSavedData.get(frequency, player.server).getOrCreateInventory();
 
-                    if (targetInventory.valid() && targetInventory.getDankStats() == inventory.getDankStats()) {
+                    if (targetInventory.slotCount() == inventory.slotCount()) {
 
                         if (targetInventory.frequencyLocked()) {
                             textColor = TxtColor.LOCKED;
@@ -539,15 +380,15 @@ public class CommonUtils {
             }
             inventory.setTextColor(textColor.color);
         } else if (container instanceof ChangeFrequencyMenu changeFrequencyMenu) {
-            DankInterface inventory = (DankInterface) ((LimitedContainerData) changeFrequencyMenu.getContainerData()).getWrapped();
+            DankInventory inventory = (DankInventory) ((LimitedContainerData) changeFrequencyMenu.getContainerData()).getWrapped();
 
             TxtColor textColor;
 
             if (frequency > INVALID) {
                 if (frequency < DankStorage.maxId.getMaxId()) {
-                    DankInterface targetInventory = DankStorage.getData(frequency, player.server).createInventory(player.level().registryAccess(),frequency);
+                    DankInventory targetInventory = DankSavedData.get(frequency, player.server).getOrCreateInventory();
 
-                    if (targetInventory.valid() && targetInventory.getDankStats() == DankStats.values()[changeFrequencyMenu.getCurrentTier()]) {
+                    if (targetInventory.slotCount() == DankStats.values()[changeFrequencyMenu.getCurrentTier()].slots) {
 
                         if (targetInventory.frequencyLocked()) {
                             textColor = TxtColor.LOCKED;

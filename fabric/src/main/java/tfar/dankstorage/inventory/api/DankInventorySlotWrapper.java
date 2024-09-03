@@ -3,7 +3,6 @@ package tfar.dankstorage.inventory.api;
 import net.fabricmc.fabric.api.transfer.v1.item.base.SingleStackStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
-import net.fabricmc.fabric.impl.transfer.item.SpecialLogicInventory;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.world.DankInventoryFabric;
@@ -31,12 +30,12 @@ public class DankInventorySlotWrapper extends SingleStackStorage {
 
 	@Override
 	protected ItemStack getStack() {
-		return storage.getItem(slot);
+		return storage.getItemDank(slot);
 	}
 
 	@Override
 	protected void setStack(ItemStack stack) {
-		storage.setItem(slot, stack);
+		storage.setItemDank(slot, stack);
 	}
 
 	@Override
@@ -52,7 +51,7 @@ public class DankInventorySlotWrapper extends SingleStackStorage {
 	// We override updateSnapshots to also schedule a markDirty call for the backing inventory.
 	@Override
 	public void updateSnapshots(TransactionContext transaction) {
-		storage.setChangedDank();
+		storage.setDirty();
 		super.updateSnapshots(transaction);
 	}
 

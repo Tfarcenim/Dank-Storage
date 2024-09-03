@@ -10,12 +10,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.item.DankItem;
+import tfar.dankstorage.world.DankSavedData;
 
 public class DankCommands {
 
     public static void register(CommandDispatcher<CommandSourceStack> commandDispatcher) {
         if (true) return;
-        commandDispatcher.register(Commands.literal(DankStorage.MODID)
+       /* commandDispatcher.register(Commands.literal(DankStorage.MODID)
                 .then(Commands.literal("clear")
                         .requires(commandSourceStack -> commandSourceStack.hasPermission(3))
                         .then(Commands.literal("all")
@@ -51,7 +52,7 @@ public class DankCommands {
                 .then(Commands.literal("reset_frequency")
                         .executes(DankCommands::resetFrequency)
                 )
-        );
+        );*/
     }
 
     private static int clearAll(CommandContext<CommandSourceStack> context) {
@@ -61,7 +62,7 @@ public class DankCommands {
 
     private static int clearID(CommandContext<CommandSourceStack> context) {
         int id = IntegerArgumentType.getInteger(context, "frequency");
-        boolean success = DankStorage.getData(id,context.getSource().getServer()).clear();
+        boolean success = DankSavedData.get(id,context.getSource().getServer()).clear();
         if (!success) {
           //  throw new CommandRuntimeException(CommonUtils.translatable("dankstorage.command.clear_id.invalid_id"));
         }

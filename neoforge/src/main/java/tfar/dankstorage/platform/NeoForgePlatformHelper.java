@@ -9,7 +9,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,16 +19,14 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.apache.commons.lang3.tuple.Pair;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageNeoForge;
-import tfar.dankstorage.blockentity.CommonDockBlockEntity;
-import tfar.dankstorage.blockentity.DockBlockEntity;
-import tfar.dankstorage.inventory.DankInterface;
-import tfar.dankstorage.inventory.DankSlot;
+import tfar.dankstorage.inventory.DankInventory;
 import tfar.dankstorage.network.DankPacketHandlerNeoForge;
 import tfar.dankstorage.network.client.S2CModPacket;
 import tfar.dankstorage.network.server.C2SModPacket;
 import tfar.dankstorage.platform.services.IPlatformHelper;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.world.DankInventoryForge;
+import tfar.dankstorage.world.DankSavedData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,13 +78,8 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public DankInterface createInventory(DankStats stats, int frequency) {
-        return new DankInventoryForge(stats, frequency);
-    }
-
-    @Override
-    public Slot createSlot(DankInterface dankInventory, int index, int xPosition, int yPosition) {
-        return new DankSlot((DankInventoryForge) dankInventory, index, xPosition, yPosition);
+    public DankInventory createInventory(DankStats stats, DankSavedData data) {
+        return new DankInventoryForge(stats, data);
     }
 
     @Override
@@ -106,11 +98,6 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public ItemStack getCloneStack(Level level, BlockPos pos, BlockState state, HitResult hitResult, Player player) {
         return state.getCloneItemStack(hitResult, level, pos, player);
-    }
-
-    @Override
-    public CommonDockBlockEntity<?> blockEntity(BlockPos pos, BlockState state) {
-        return new DockBlockEntity(pos,state);
     }
 
     @Override

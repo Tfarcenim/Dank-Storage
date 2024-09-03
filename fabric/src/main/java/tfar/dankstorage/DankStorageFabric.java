@@ -3,22 +3,31 @@ package tfar.dankstorage;
 import com.mojang.brigadier.CommandDispatcher;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
-import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands.CommandSelection;
+import net.minecraft.core.Direction;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import tfar.dankstorage.blockentity.DockBlockEntity;
-import tfar.dankstorage.client.ModClientFabric;
 import tfar.dankstorage.command.DankCommands;
 import tfar.dankstorage.init.ModBlockEntityTypes;
+import tfar.dankstorage.inventory.api.DankInventorySlotWrapper;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.platform.ClothConfig;
+import tfar.dankstorage.world.DankInventoryFabric;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DankStorageFabric implements ModInitializer,
         ServerLifecycleEvents.ServerStarted, ServerLifecycleEvents.ServerStopped, CommandRegistrationCallback {
@@ -35,7 +44,7 @@ public class DankStorageFabric implements ModInitializer,
         ServerLifecycleEvents.SERVER_STOPPED.register(this);
         CommandRegistrationCallback.EVENT.register(this);
 
-        ItemStorage.SIDED.registerForBlockEntity(DockBlockEntity::getStorage, (BlockEntityType<DockBlockEntity>) ModBlockEntityTypes.dank_tile);
+        ItemStorage.SIDED.registerForBlockEntity(DankStorageFabric::getStorage,ModBlockEntityTypes.dock);
         DankStorage.init();
         DankPacketHandler.registerPackets();
     }
@@ -56,6 +65,39 @@ public class DankStorageFabric implements ModInitializer,
         DankCommands.register(dispatcher);
     }
 
+    static Map<BlockEntity, CombinedStorage<ItemVariant,DankInventorySlotWrapper>> MAP = new HashMap<>();
+
+    //item api
+
+    public static CombinedStorage<ItemVariant,DankInventorySlotWrapper> getStorage(DockBlockEntity dockBlockEntity, Direction direction) {
+
+        DankInventoryFabric dankInventoryFabric = (DankInventoryFabric) dockBlockEntity.getInventory();
+
+        CombinedStorage<ItemVariant,DankInventorySlotWrapper> storage = MAP.get(dockBlockEntity);
+
+        if (storage != null && storage.parts.size() != dankInventoryFabric.slotCount()) {
+            storage = null;
+        }
+        if (storage == null) {
+            storage = create(dankInventoryFabric);
+            MAP.put(dockBlockEntity,storage);
+        }
+        return storage;
+    }
+
+
+    public static CombinedStorage<ItemVariant,DankInventorySlotWrapper> create(DankInventoryFabric dankInventoryFabric) {
+        int slots = dankInventoryFabric.slotCount();
+
+        List<DankInventorySlotWrapper> storages = new ArrayList<>();
+
+        for (int i = 0 ;i < slots;i++) {
+            DankInventorySlotWrapper storage = new DankInventorySlotWrapper(dankInventoryFabric,i);
+            storages.add(storage);
+        }
+
+        return new CombinedStorage<>(storages);
+    }
 
     /*
 

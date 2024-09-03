@@ -1,15 +1,12 @@
 package tfar.dankstorage.recipe;
 
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraft.world.level.Level;
-import tfar.dankstorage.init.ModDataComponents;
+import tfar.dankstorage.init.ModDataComponentTypes;
 import tfar.dankstorage.init.ModRecipeSerializers;
 
 import javax.annotation.Nonnull;
@@ -24,11 +21,11 @@ public class UpgradeRecipe extends ShapedRecipe {
 
     protected static final List<DataComponentType> types = new ArrayList<>();
     static {
-        types.add(ModDataComponents.FREQUENCY);
-        types.add(ModDataComponents.PICKUP_MODE);
-        types.add(ModDataComponents.USE_TYPE);
-        types.add(ModDataComponents.SELECTED);
-        types.add(ModDataComponents.OREDICT);
+        types.add(ModDataComponentTypes.FREQUENCY);
+        types.add(ModDataComponentTypes.PICKUP_MODE);
+        types.add(ModDataComponentTypes.USE_TYPE);
+        types.add(ModDataComponentTypes.SELECTED);
+        types.add(ModDataComponentTypes.OREDICT);
     }
 
     @Nonnull

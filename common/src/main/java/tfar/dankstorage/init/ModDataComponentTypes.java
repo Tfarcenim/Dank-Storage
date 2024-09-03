@@ -7,11 +7,12 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.util.Unit;
+import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.utils.SerializationHelper;
 import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.UseType;
 
-public class ModDataComponents {
+public class ModDataComponentTypes {
 
     public static final Codec<PickupMode> PICKUP_MODE_CODEC = StringRepresentable.fromEnum(PickupMode::values);
     public static final Codec<UseType> USE_TYPE_CODEC = StringRepresentable.fromEnum(UseType::values);
@@ -25,8 +26,8 @@ public class ModDataComponents {
     public static final DataComponentType<UseType> USE_TYPE = DataComponentType.<UseType>builder()
             .persistent(USE_TYPE_CODEC).networkSynchronized(SerializationHelper.enumCodec(UseType.class)).build();
 
-    public static final DataComponentType<Integer> SELECTED = DataComponentType.<Integer>builder()
-            .persistent(ExtraCodecs.intRange(0,99)).networkSynchronized(ByteBufCodecs.INT).build();
+    public static final DataComponentType<ItemStack> SELECTED = DataComponentType.<ItemStack>builder()
+            .persistent(ItemStack.CODEC).networkSynchronized(ItemStack.STREAM_CODEC).build();
 
     public static final DataComponentType<Unit> OREDICT = DataComponentType.<Unit>builder()
             .persistent(Unit.CODEC).networkSynchronized(StreamCodec.unit(Unit.INSTANCE)).build();

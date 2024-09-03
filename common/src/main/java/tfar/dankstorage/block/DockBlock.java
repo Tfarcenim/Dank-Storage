@@ -23,17 +23,13 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import tfar.dankstorage.ModTags;
-import tfar.dankstorage.blockentity.CommonDockBlockEntity;
+import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.item.DankItem;
 
-import java.util.function.BiFunction;
+public class DockBlock extends Block implements EntityBlock {
 
-public class CDockBlock extends Block implements EntityBlock {
-
-    private final BiFunction<BlockPos,BlockState,BlockEntity> function;
-    public CDockBlock(Properties $$0, BiFunction<BlockPos, BlockState, BlockEntity> function) {
+    public DockBlock(Properties $$0) {
         super($$0);
-        this.function = function;
     }
 
     public static final IntegerProperty TIER = IntegerProperty.create("tier", 0, 7);
@@ -73,7 +69,7 @@ public class CDockBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return function.apply(blockPos, blockState);
+        return new DockBlockEntity(blockPos,blockState);
     }
 
     @Nullable
@@ -82,7 +78,7 @@ public class CDockBlock extends Block implements EntityBlock {
         ItemStack bag = ctx.getItemInHand();
 
         Block block = Block.byItem(bag.getItem());
-        if (block instanceof CDockBlock) return block.defaultBlockState();
+        if (block instanceof DockBlock) return block.defaultBlockState();
         return block.getStateForPlacement(ctx);
     }
 
@@ -96,7 +92,7 @@ public class CDockBlock extends Block implements EntityBlock {
     protected ItemInteractionResult useItemOn(ItemStack pStack, BlockState pState, Level pLevel, BlockPos pos, Player player, InteractionHand hand, BlockHitResult pHitResult) {
         if (!pLevel.isClientSide) {
             final BlockEntity tile = pLevel.getBlockEntity(pos);
-            if (tile instanceof CommonDockBlockEntity<?> dockBlockEntity) {
+            if (tile instanceof DockBlockEntity dockBlockEntity) {
                 ItemStack held = player.getItemInHand(hand);
                 if (player.isCrouching() && held.is(ModTags.WRENCHES)) {
                     pLevel.destroyBlock(pos, true, player);
@@ -127,7 +123,7 @@ public class CDockBlock extends Block implements EntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level pLevel, BlockPos pos, Player player, BlockHitResult pHitResult) {
         if (!pLevel.isClientSide) {
             final BlockEntity tile = pLevel.getBlockEntity(pos);
-            if (tile instanceof CommonDockBlockEntity<?> dockBlockEntity) {
+            if (tile instanceof DockBlockEntity dockBlockEntity) {
                 if (player.isShiftKeyDown() && state.getValue(TIER) > 0) {
                     dockBlockEntity.giveToPlayer(player);
                     return InteractionResult.SUCCESS;

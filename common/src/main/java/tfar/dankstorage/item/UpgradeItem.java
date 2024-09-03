@@ -1,8 +1,8 @@
 package tfar.dankstorage.item;
 
 import net.minecraft.ChatFormatting;
-import tfar.dankstorage.block.CDockBlock;
-import tfar.dankstorage.blockentity.CommonDockBlockEntity;
+import tfar.dankstorage.block.DockBlock;
+import tfar.dankstorage.blockentity.DockBlockEntity;
 
 import javax.annotation.Nonnull;
 
@@ -36,14 +36,14 @@ public class UpgradeItem extends Item {
         ItemStack upgradeStack = context.getItemInHand();
         BlockState state = world.getBlockState(pos);
 
-        if (player == null || !(state.getBlock() instanceof CDockBlock) || !upgradeInfo.canUpgrade(state)) {
+        if (player == null || !(state.getBlock() instanceof DockBlock) || !upgradeInfo.canUpgrade(state)) {
             return InteractionResult.FAIL;
         }
         //else {
         //    player.displayClientMessage(Component.translatable("dankstorage.in_use").withStyle(ChatFormatting.RED), true);
         // }
 
-        CommonDockBlockEntity<?> oldDank = (CommonDockBlockEntity<?>) world.getBlockEntity(pos);
+        DockBlockEntity oldDank = (DockBlockEntity) world.getBlockEntity(pos);
 
         if (!world.isClientSide) {
             if (oldDank != null) {

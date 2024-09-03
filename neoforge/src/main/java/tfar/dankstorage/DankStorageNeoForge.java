@@ -79,7 +79,7 @@ public class DankStorageNeoForge {
     }
 
     private void capabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntityTypes.dank_tile,(object, context) -> (IItemHandler) object.getInventory());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntityTypes.dock,(object, context) -> (IItemHandler) object.getInventory());
         event.registerItem(Capabilities.ItemHandler.ITEM,(stack,context) -> DankItemCapability.lookup(stack), ModItems.DANKS.values().toArray(DankItem[]::new));
     }
 

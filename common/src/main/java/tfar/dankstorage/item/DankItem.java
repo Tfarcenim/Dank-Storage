@@ -1,11 +1,12 @@
 package tfar.dankstorage.item;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
@@ -22,14 +23,12 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
-import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.client.DankKeybinds;
 import tfar.dankstorage.client.DankTooltip;
-import tfar.dankstorage.init.ModDataComponents;
-import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.init.ModDataComponentTypes;
+import tfar.dankstorage.inventory.DankInventory;
 import tfar.dankstorage.menu.PortableDankProvider;
 import tfar.dankstorage.mixin.ItemUsageContextAccessor;
-import tfar.dankstorage.network.client.S2CSyncSelectedDankItemPacket;
 import tfar.dankstorage.network.server.C2SRequestContentsPacket;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
@@ -37,7 +36,7 @@ import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.UseType;
 import tfar.dankstorage.world.ClientData;
-import tfar.dankstorage.world.MaxId;
+import tfar.dankstorage.world.DankSavedData;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -57,7 +56,7 @@ public class DankItem extends Item {
         super.appendHoverText(bag, pContext, tooltip, pTooltipFlag);
 
 
-        int id = CommonUtils.getFrequency(bag);
+        int id = getFrequency(bag);
         tooltip.add(CommonUtils.literal("ID: "+id));
 
         if (!Screen.hasShiftDown()) {
@@ -67,14 +66,14 @@ public class DankItem extends Item {
 
             tooltip.add(CommonUtils.translatable("text.dankstorage.change_pickup_mode", DankKeybinds.PICKUP_MODE.getTranslatedKeyMessage().copy()
                     .withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
-            PickupMode pickupMode = CommonUtils.getPickupMode(bag);
+            PickupMode pickupMode = getPickupMode(bag);
             tooltip.add(
                     CommonUtils.translatable("text.dankstorage.current_pickup_mode", pickupMode.translate().withStyle(ChatFormatting.YELLOW))
                             .withStyle(ChatFormatting.GRAY));
 
 
             tooltip.add(CommonUtils.translatable("text.dankstorage.changeusetype", DankKeybinds.CONSTRUCTION.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
-            UseType useType = CommonUtils.getUseType(bag);
+            UseType useType = getUseType(bag);
             tooltip.add(
                     CommonUtils.translatable("text.dankstorage.currentusetype", CommonUtils.translatable(
                             "dankstorage.usetype." + useType.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
@@ -128,17 +127,17 @@ public class DankItem extends Item {
     //this is called on the client
     @Override
     public InteractionResult interactLivingEntity(ItemStack bag, Player player, LivingEntity entity, InteractionHand hand) {
-        if (!CommonUtils.isConstruction(bag)) return InteractionResult.PASS;
+        if (!isConstruction(bag)) return InteractionResult.PASS;
 
-        ItemStack toUse = CommonUtils.getSelectedItem(bag,player.level());
+        ItemStack toUse = getSelectedItem(bag);
         if (toUse.isEmpty()) return InteractionResult.PASS;
         player.setItemInHand(hand, toUse);
         InteractionResult result = toUse.getItem().interactLivingEntity(toUse, player, entity, hand);
 
         //the client doesn't have access to the full inventory
         if (!player.level().isClientSide) {
-            DankInterface handler = CommonUtils.getBagInventory(bag, player.level());
-            handler.setItemDank(CommonUtils.getSelectedSlot(bag), toUse);
+            DankInventory handler = getInventoryFrom(bag, player.getServer());
+            //handler.setItemDank(getSelectedItem(bag), toUse);todo
         }
 
         player.setItemInHand(hand, bag);
@@ -152,7 +151,7 @@ public class DankItem extends Item {
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return CommonUtils.getPickupMode(stack) != PickupMode.none;
+        return getPickupMode(stack) != PickupMode.none;
     }
 
     public MenuProvider createProvider(ItemStack stack) {
@@ -160,7 +159,7 @@ public class DankItem extends Item {
     }
 
     public int getGlintColor(ItemStack stack) {
-        PickupMode pickupMode = CommonUtils.getPickupMode(stack);
+        PickupMode pickupMode = getPickupMode(stack);
         switch (pickupMode) {
             case none:
             default:
@@ -179,29 +178,29 @@ public class DankItem extends Item {
     public InteractionResult useOn(UseOnContext ctx) {
         ItemStack bag = ctx.getItemInHand();
         Level level = ctx.getLevel();
-        UseType useType = CommonUtils.getUseType(bag);
+        UseType useType = getUseType(bag);
 
         if (useType == UseType.bag) {
             return InteractionResult.PASS;
         }
 
-        int selectedSlot = CommonUtils.getSelectedSlot(bag);
+        ItemStack selected = getSelectedItem(bag);
 
         //invalid slot
-        if (selectedSlot == CommonUtils.INVALID) {
+        if (selected.isEmpty()) {
             return InteractionResult.PASS;
         }
 
-        ItemStack toPlace = CommonUtils.getSelectedItem(bag,level);
+        ItemStack toPlace = getSelectedItem(bag);
         //todo: sync locked slots to client?
-        if (/*toPlace.getCount() == 1 && handler.isLocked(selectedSlot)*/ false)
+        if (/*toPlace.getCount() == 1 && handler.isLocked(selected)*/ false)
             return InteractionResult.PASS;
 
         UseOnContext ctx2 = new UseOnContext2(ctx.getLevel(), ctx.getPlayer(), ctx.getHand(), toPlace, ((ItemUsageContextAccessor) ctx).getHitResult());
         InteractionResult actionResultType = toPlace.getItem().useOn(ctx2);//ctx2.getItem().onItemUse(ctx);
         if (!level.isClientSide) {
-            DankInterface dankInventory = CommonUtils.getBagInventory(bag,level);
-            dankInventory.setItemDank(selectedSlot, ctx2.getItemInHand());
+            DankInventory dankInventory = getInventoryFrom(bag,level.getServer());
+            //dankInventory.setItemDank(selected, ctx2.getItemInHand());
         }
         return actionResultType;
     }
@@ -211,15 +210,14 @@ public class DankItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack bag = player.getItemInHand(hand);
 
-        if (CommonUtils.getUseType(bag) == UseType.bag) {
+        if (getUseType(bag) == UseType.bag) {
             if (!level.isClientSide) {
-                assignNextId(bag);
                 player.openMenu(createProvider(bag));
             }
             return InteractionResultHolder.success(bag);
         } else {
             if (!level.isClientSide) {
-                ItemStack toPlace = CommonUtils.getItemStackInSelectedSlot(bag, (ServerLevel) level);
+                ItemStack toPlace = getSelectedItem(bag);
                 EquipmentSlot hand1 = hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
                 //handle empty
                 if (toPlace.isEmpty()) {
@@ -250,8 +248,8 @@ public class DankItem extends Item {
                     ItemStack bagCopy = bag.copy();
                     player.setItemSlot(hand1, toPlace);
                     InteractionResultHolder<ItemStack> actionResult = toPlace.getItem().use(level, player, hand);
-                    DankInterface handler = CommonUtils.getBagInventory(bagCopy, level);
-                    handler.setItemDank(CommonUtils.getSelectedSlot(bagCopy), actionResult.getObject());
+                    DankInventory handler = getInventoryFrom(bagCopy, level.getServer());
+                 //   handler.setItemDank(getSelectedItem(bagCopy), actionResult.getObject());
                     player.setItemSlot(hand1, bagCopy);
                 }
             }
@@ -266,44 +264,156 @@ public class DankItem extends Item {
         }
     }
 
-    private static final ThreadLocal<Integer> cache = ThreadLocal.withInitial(() -> CommonUtils.INVALID);
+
+    static long lastRequest;
+
 
     @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack itemStack) {
 
-        int id = CommonUtils.getFrequency(itemStack);
+        int id = getFrequency(itemStack);
 
         if (id > CommonUtils.INVALID) {
             //don't spam the server with requests
-            if (cache.get() != id || true) {
-               C2SRequestContentsPacket.send(id);
-                cache.set(id);
+            if (Util.getMillis() - lastRequest > 50) {
+                //don't spam the server with requests
+                C2SRequestContentsPacket.send(id);
+                lastRequest = Util.getMillis();
             }
 
             if (ClientData.cachedItems != null) {
                 NonNullList<ItemStack> nonNullList = NonNullList.create();
                 nonNullList.addAll(ClientData.cachedItems);
-                return Optional.of(new DankTooltip(nonNullList, CommonUtils.getSelectedSlot(itemStack)));
+                return Optional.of(new DankTooltip(nonNullList, getSelectedItem(itemStack)));
             }
         }
         return Optional.empty();
     }
 
-    public static void assignNextId(ItemStack dank) {
-        if (!dank.has(ModDataComponents.FREQUENCY)) {
-            MaxId maxId = DankStorage.maxId;
-            int next = maxId.getMaxId();
-            maxId.increment();
-            CommonUtils.setFrequency(dank,next);
+    public static void assignNextFreeId(MinecraftServer server, ItemStack stack) {
+        int id = 0;
+        while (true) {
+            DankSavedData tankSavedData = DankSavedData.get(id,server);
+            if (tankSavedData == null) {
+                stack.set(ModDataComponentTypes.FREQUENCY,id);
+                return;
+            }
+            id++;
         }
     }
-
     @Override
     public void inventoryTick(ItemStack bag, Level level, Entity entity, int i, boolean equipped) {
         //there has to be a better way
         if (entity instanceof ServerPlayer player && equipped) {
-            ItemStack sel = CommonUtils.getSelectedItem(bag,level);
-            Services.PLATFORM.sendToClient(new S2CSyncSelectedDankItemPacket(sel), player);
+            ItemStack sel = getSelectedItem(bag);
+            if (!sel.isEmpty()) {
+                DankInventory dankInventory = getInventoryFrom(bag, player.server);
+                if (dankInventory != null) {
+                    long amount = dankInventory.countItem(sel);
+                    if (amount != sel.getCount()) {
+                        setSelectedItem(bag,sel.copyWithCount((int) amount));
+                    }
+                }
+            }
         }
+    }
+
+    /////////helpers
+    public static void setSelectedItem(ItemStack bag,ItemStack item) {
+        if (item.isEmpty()) {
+            bag.remove(ModDataComponentTypes.SELECTED);
+        } else {
+            bag.set(ModDataComponentTypes.SELECTED,item);
+        }
+    }
+
+    //this can be 0 - 80
+    public static ItemStack getSelectedItem(ItemStack bag) {
+        return bag.getOrDefault(ModDataComponentTypes.SELECTED, ItemStack.EMPTY);
+    }
+
+
+    public static void setFrequency(ItemStack bag, int frequency) {
+        if (frequency < 0) {
+            bag.remove(ModDataComponentTypes.FREQUENCY);
+        } else {
+            bag.set(ModDataComponentTypes.FREQUENCY, frequency);
+        }
+    }
+
+    public static int getFrequency(ItemStack stack) {
+        return stack.getOrDefault(ModDataComponentTypes.FREQUENCY, CommonUtils.INVALID);
+    }
+
+    public static DankInventory getInventoryFrom(ItemStack bag, MinecraftServer server) {
+        int frequency = getFrequency(bag);
+        if (frequency < 0) return null;
+        return DankSavedData.get(frequency,server).getOrCreateInventory();
+    }
+
+    public static void changeSelectedItem(ItemStack mainHandItem, boolean right, ServerPlayer player) {
+        DankInventory dankInventory = DankItem.getInventoryFrom(mainHandItem, player.server);
+        ItemStack current = getSelectedItem(mainHandItem);
+        if (dankInventory!=null) {
+            List<ItemStack> gathered = dankInventory.getUniqueItems();
+            if (!gathered.isEmpty()) {
+                int index = -1;
+                for (int i = 0; i < gathered.size();i++) {
+                    if (ItemStack.isSameItemSameComponents(current,gathered.get(i))) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index > -1) {
+                    int next = index+1;
+                    if (next >= gathered.size()) {
+                        next = 0;
+                    }
+                    setSelectedItem(mainHandItem,gathered.get(next));
+                } else {
+                    setSelectedItem(mainHandItem,gathered.get(0));
+                }
+            }
+        }
+    }
+
+    public static PickupMode getPickupMode(ItemStack bag) {
+        return bag.getOrDefault(ModDataComponentTypes.PICKUP_MODE, PickupMode.none);
+    }
+
+    public static void setPickupMode(ItemStack bag, PickupMode mode) {
+        bag.set(ModDataComponentTypes.PICKUP_MODE, mode);
+    }
+
+    public static boolean isConstruction(ItemStack bag) {
+        return getUseType(bag) == UseType.construction;
+    }
+
+    //0,1,2,3
+    public static void cyclePickupMode(ItemStack bag, Player player) {
+        int ordinal = getPickupMode(bag).ordinal();
+        ordinal++;
+        if (ordinal > PickupMode.VALUES.length - 1) ordinal = 0;
+        PickupMode mode = PickupMode.VALUES[ordinal];
+        setPickupMode(bag, mode);
+        player.displayClientMessage(CommonUtils.translatable("dankstorage.mode." + mode), true);
+    }
+
+    public static UseType getUseType(ItemStack bag) {
+        return bag.getOrDefault(ModDataComponentTypes.USE_TYPE, UseType.bag);
+    }
+
+    //0,1,2
+    public static void cyclePlacement(ItemStack bag, Player player) {
+        int ordinal = getUseType(bag).ordinal();
+        ordinal++;
+        if (ordinal >= UseType.VALUES.length) ordinal = 0;
+        UseType useType = UseType.VALUES[ordinal];
+        setUseType(bag, useType);
+        player.displayClientMessage(CommonUtils.translatable("dankstorage.usetype." + useType), true);
+    }
+
+    public static void setUseType(ItemStack bag, UseType useType) {
+        bag.set(ModDataComponentTypes.USE_TYPE, useType);
     }
 }

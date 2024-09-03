@@ -7,17 +7,16 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
-import tfar.dankstorage.blockentity.CommonDockBlockEntity;
-import tfar.dankstorage.inventory.DankInterface;
+import tfar.dankstorage.inventory.DankInventory;
 import tfar.dankstorage.network.client.S2CModPacket;
 import tfar.dankstorage.network.server.C2SModPacket;
 import tfar.dankstorage.platform.MLConfig;
 import tfar.dankstorage.utils.DankStats;
+import tfar.dankstorage.world.DankSavedData;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -65,9 +64,7 @@ public interface IPlatformHelper {
     ItemStack getCloneStack(Level level, BlockPos pos, BlockState state, HitResult hitResult, Player player);
 
 
-    DankInterface createInventory(DankStats stats,int frequency);
-
-    Slot createSlot(DankInterface dankInventory, int index, int xPosition, int yPosition);
+    DankInventory createInventory(DankStats stats, DankSavedData data);
 
     default  <F> void registerAll(Class<?> clazz, Registry<F> registry, Class<? extends F> filter) {
         Map<String,F> map = new HashMap<>();
@@ -93,7 +90,6 @@ public interface IPlatformHelper {
 
         //registry helpers
 
-    CommonDockBlockEntity<?> blockEntity(BlockPos pos, BlockState state);
     MLConfig getConfig();
 
 }

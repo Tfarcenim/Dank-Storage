@@ -6,7 +6,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import tfar.dankstorage.menu.AbstractDankMenu;
+import tfar.dankstorage.menu.DankMenu;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.SerializationHelper;
 
@@ -45,7 +45,7 @@ public class S2CInitialSyncContainerPacket implements S2CModPacket {
     @Override
     public void handleClient() {
         Player player = getLocalPlayer();
-        if (player != null && player.containerMenu instanceof AbstractDankMenu && windowId == player.containerMenu.containerId) {
+        if (player != null && player.containerMenu instanceof DankMenu && windowId == player.containerMenu.containerId) {
             player.containerMenu.initializeContents(stateID, stacks, carried);
         }
     }

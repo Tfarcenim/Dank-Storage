@@ -14,7 +14,7 @@ import org.lwjgl.glfw.GLFW;
 import tfar.dankstorage.client.DualTooltip2;
 import tfar.dankstorage.client.NumberEditBox;
 import tfar.dankstorage.client.button.SmallButton;
-import tfar.dankstorage.menu.AbstractDankMenu;
+import tfar.dankstorage.menu.DankMenu;
 import tfar.dankstorage.menu.ChangeFrequencyMenu;
 import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
 import tfar.dankstorage.utils.CommonUtils;
@@ -60,12 +60,12 @@ public class ChangeFrequencyScreen extends AbstractContainerScreen<ChangeFrequen
                 .withTooltip(mode -> Tooltip.create(mode.translate()))
                 .withInitialValue(PickupMode.none)
                 .displayOnlyValue()
-                .create(leftPos + 101, topPos + 4, 12, 12, Component.empty(), (pickupModeCycleButton, pickupMode) -> sendButtonToServer(AbstractDankMenu.ButtonAction.TOGGLE_PICKUP));
+                .create(leftPos + 101, topPos + 4, 12, 12, Component.empty(), (pickupModeCycleButton, pickupMode) -> sendButtonToServer(DankMenu.ButtonAction.TOGGLE_PICKUP));
 
         addRenderableWidget(modeCycleButton);*/
 
         SmallButton l = new SmallButton(leftPos + 170, j + inventoryLabelY, 12, 12,
-                Component.literal(""), button -> sendButtonToServer(AbstractDankMenu.ButtonAction.LOCK_FREQUENCY)) {
+                Component.literal(""), button -> sendButtonToServer(DankMenu.ButtonAction.LOCK_FREQUENCY)) {
             @Override
             public Component getMessage() {
                 return menu.getFreqLock() ? Component.literal("X").withStyle(ChatFormatting.RED) :
@@ -119,7 +119,7 @@ public class ChangeFrequencyScreen extends AbstractContainerScreen<ChangeFrequen
         }
     }
 
-    private void sendButtonToServer(AbstractDankMenu.ButtonAction action) {
+    private void sendButtonToServer(DankMenu.ButtonAction action) {
         this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, action.ordinal());
     }
 

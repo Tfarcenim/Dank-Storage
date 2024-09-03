@@ -6,9 +6,9 @@ import net.minecraft.world.item.ItemStack;
 
 public class DankTooltip implements TooltipComponent {
     private final NonNullList<ItemStack> items;
-    private final int selected;
+    private final ItemStack selected;
 
-    public DankTooltip(NonNullList<ItemStack> nonNullList, int selected) {
+    public DankTooltip(NonNullList<ItemStack> nonNullList, ItemStack selected) {
         this.items = nonNullList;
         this.selected = selected;
     }
@@ -17,7 +17,7 @@ public class DankTooltip implements TooltipComponent {
         return this.items;
     }
 
-    public int getSelected() {
+    public ItemStack getSelected() {
         return selected;
     }
 }

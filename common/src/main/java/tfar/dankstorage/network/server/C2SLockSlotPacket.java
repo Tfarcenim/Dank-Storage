@@ -7,8 +7,8 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import tfar.dankstorage.inventory.DankInterface;
-import tfar.dankstorage.menu.AbstractDankMenu;
+import tfar.dankstorage.inventory.DankInventory;
+import tfar.dankstorage.menu.DankMenu;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.platform.Services;
 
@@ -29,8 +29,8 @@ public record C2SLockSlotPacket(int slot) implements C2SModPacket {
 
     public void handleServer(ServerPlayer player) {
         AbstractContainerMenu container = player.containerMenu;
-        if (container instanceof AbstractDankMenu dankContainer) {
-            DankInterface inventory = dankContainer.dankInventory;
+        if (container instanceof DankMenu dankContainer) {
+            DankInventory inventory = dankContainer.dankInventory;
             inventory.toggleGhostItem(slot);
         }
     }

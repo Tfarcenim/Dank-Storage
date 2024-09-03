@@ -6,94 +6,218 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import tfar.dankstorage.DankStorage;
+import org.jetbrains.annotations.Nullable;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.ItemStackWrapper;
 import tfar.dankstorage.utils.SerializationHelper;
+import tfar.dankstorage.world.DankSavedData;
 
 import java.util.*;
 import java.util.stream.IntStream;
 
-public interface DankInterface extends ContainerData {
+public abstract class DankInventory implements ContainerData {
 
-    String GHOST = "GhostItems";
+    private final DankSavedData data;
+    protected static String GHOST = "GhostItems";
+    public NonNullList<ItemStack> items;
+    protected NonNullList<ItemStack> ghostItems;
+    public int capacity;
+    private boolean frequencyLocked = true;
+    protected int textColor = -1;
 
-    int FREQ = 0;
-    int TXT_COLOR = 1;
-    int FREQ_LOCK = 2;
 
-    static DankInterface createDummy(DankStats stats) {
-        return Services.PLATFORM.createInventory(stats, CommonUtils.INVALID);
+    public static final int TXT_COLOR = 0;
+    public static final int FREQ_LOCK = 1;
+
+    public DankInventory(DankStats stats, DankSavedData data) {
+        this(stats.slots,stats.stacklimit,data);
     }
 
-    default ItemStack getGhostItem(int slot) {
+    public DankInventory(int slots, int capacity, @Nullable DankSavedData data) {
+        items = NonNullList.withSize(slots, ItemStack.EMPTY);
+        ghostItems = NonNullList.withSize(slots,ItemStack.EMPTY);
+        this.capacity = capacity;
+        this.data = data;
+    }
+
+    public static DankInventory createDummy(DankStats dankStats) {
+        return Services.PLATFORM.createInventory(dankStats,null);
+    }
+
+
+    public ItemStack getGhostItem(int slot) {
         return getGhostItems().get(slot);
     }
 
-
-    DankStats getDankStats();
-
-    default boolean frequencyLocked() {
+    public boolean frequencyLocked() {
         return get(FREQ_LOCK) == 1;
     }
 
-    default int textColor() {
+    public int textColor() {
         return get(TXT_COLOR);
     }
 
-    default void setTextColor(int color) {
+    public void setTextColor(int color) {
         set(TXT_COLOR, color);
     }
 
-    default void toggleFrequencyLock() {
+    public void toggleFrequencyLock() {
         boolean loc = frequencyLocked();
         setFrequencyLock(!loc);
     }
 
-    default void setFrequencyLock(boolean lock) {
+    public void setFrequencyLock(boolean lock) {
         set(FREQ_LOCK, lock ? 1 : 0);
     }
 
-    void setItemDank(int slot, ItemStack stack);
+    public void setItemDank(int slot, ItemStack stack) {
+        this.items.set(slot, stack);
+    }
 
-    ItemStack getItemDank(int slot);
+    public ItemStack getItemDank(int slot) {
+        return items.get(slot);
+    }
 
-    default void setGhostItem(int slot, Item item) {
+    public boolean canPlaceItem(int slot, ItemStack stack) {
+        boolean checkGhostItem = !hasGhostItem(slot) || getGhostItem(slot).getItem() == stack.getItem();
+        return !stack.is(ModTags.BLACKLISTED_STORAGE)
+                && checkGhostItem;
+    }
+
+    public void setGhostItem(int slot, Item item) {
         getGhostItems().set(slot, new ItemStack(item));
     }
 
-    NonNullList<ItemStack> getContents();
-    void setItemsDank(NonNullList<ItemStack> stacks);
-
-    NonNullList<ItemStack> getGhostItems();
-    void setGhostItems(NonNullList<ItemStack> stacks);
-
-    default int frequency() {
-        return get(FREQ);
+    public NonNullList<ItemStack> getContents() {
+        return items;
+    }
+    public void setItemsDank(NonNullList<ItemStack> stacks) {
+        this.items = stacks;
     }
 
+    public NonNullList<ItemStack> getGhostItems() {
+        return ghostItems;
+    }
+
+    public void setGhostItems(NonNullList<ItemStack> ghostItems) {
+        this.ghostItems = ghostItems;
+    }
+
+    @Override
+    public int get(int slot) {
+        return switch (slot) {
+            case TXT_COLOR -> textColor;
+            case FREQ_LOCK -> frequencyLocked ? 1 : 0;
+            default -> AbstractContainerMenu.SLOT_CLICKED_OUTSIDE;
+        };
+    }
+
+    @Override
+    public void set(int slot, int value) {
+        switch (slot) {
+            case TXT_COLOR -> textColor = value;
+            case FREQ_LOCK -> frequencyLocked = value == 1;
+        }
+        setDirty();
+    }
 
     //0 is the id, 1 is text color, and 2 is frequency lock
     @Override
-    default int getCount() {
-        return 3;
+    public int getCount() {
+        return 2;
     }
 
-    int getContainerSizeDank();
+    public int getContainerSizeDank() {
+        return items.size();
+    }
 
-    ItemStack addItemDank(int slot, ItemStack stack);
+    ItemStack addItemDank(int slot, ItemStack stack) {
+        return insertStack(slot,stack,false);
+    }
 
-    default void readGhostItems(HolderLookup.Provider provider, ListTag listTag) {
+
+
+    public ItemStack insertStack(int slot, ItemStack stack, boolean simulate) {
+        if (stack.isEmpty()) {
+            return ItemStack.EMPTY;
+        } else if (!this.canPlaceItem(slot, stack)) {
+            return stack;
+        } else {
+           // this.validateSlotIndex(slot);
+            ItemStack existing = this.items.get(slot);
+            int limit = this.getMaxStackSizeSensitive(stack);
+            if (!existing.isEmpty()) {
+                if (!ItemStack.isSameItemSameComponents(stack, existing)) {
+                    return stack;
+                }
+
+                limit -= existing.getCount();
+            }
+
+            if (limit <= 0) {
+                return stack;
+            } else {
+                boolean reachedLimit = stack.getCount() > limit;
+                if (!simulate) {
+                    if (existing.isEmpty()) {
+                        this.items.set(slot, reachedLimit ? stack.copyWithCount(limit) : stack);
+                    } else {
+                        existing.grow(reachedLimit ? limit : stack.getCount());
+                    }
+                    setDirty();
+                    //this.onContentsChanged(slot);
+                }
+
+                return reachedLimit ? stack.copyWithCount(stack.getCount() - limit) : ItemStack.EMPTY;
+            }
+        }
+    }
+
+    public ItemStack extractStack(int slot, int amount, boolean simulate) {
+        if (amount == 0) {
+            return ItemStack.EMPTY;
+        } else {
+           // this.validateSlotIndex(slot);
+            ItemStack existing = this.items.get(slot);
+            if (existing.isEmpty()) {
+                return ItemStack.EMPTY;
+            } else {
+                int toExtract = Math.min(amount, existing.getMaxStackSize());
+                if (existing.getCount() <= toExtract) {
+                    if (!simulate) {
+                        this.items.set(slot, ItemStack.EMPTY);
+                        setDirty();
+                        //this.onContentsChanged(slot);
+                        return existing;
+                    } else {
+                        return existing.copy();
+                    }
+                } else {
+                    if (!simulate) {
+                        this.items.set(slot, existing.copyWithCount(existing.getCount() - toExtract));
+                        setDirty();
+                        //this.onContentsChanged(slot);
+                    }
+
+                    return existing.copyWithCount(toExtract);
+                }
+            }
+        }
+    }
+
+
+
+     void readGhostItems(HolderLookup.Provider provider, ListTag listTag) {
         for (int i = 0; i < listTag.size(); i++) {
             CompoundTag itemTags = listTag.getCompound(i);
             int slot = itemTags.getInt("Slot");
@@ -120,11 +244,11 @@ public interface DankInterface extends ContainerData {
         }
     }
 
-    default int getMaxStackSizeSensitive(ItemStack stack) {
+    public int getMaxStackSizeSensitive(ItemStack stack) {
         return stack.is(ModTags.UNSTACKABLE) ? 1 : getMaxStackSizeDank();
     }
 
-    default void sort() {
+    public void sort() {
         List<ItemStack> stacks = new ArrayList<>();
 
         Set<ItemStack> lockedItems = new HashSet<>();
@@ -211,7 +335,7 @@ public interface DankInterface extends ContainerData {
         return false;
     }
 
-    default void compress(ServerPlayer player) {
+    public void compress(ServerPlayer player) {
         sort();
         ServerLevel level = player.serverLevel();
         List<ItemStack> addLater = new ArrayList<>();
@@ -251,7 +375,7 @@ public interface DankInterface extends ContainerData {
     }
 
 
-    default void readItems(HolderLookup.Provider provider,ListTag listTag) {
+     void readItems(HolderLookup.Provider provider,ListTag listTag) {
         for (int i = 0; i < listTag.size(); i++) {
             CompoundTag itemTags = listTag.getCompound(i);
             int slot = itemTags.getInt("Slot");
@@ -282,14 +406,7 @@ public interface DankInterface extends ContainerData {
         }
     }
 
-    MinecraftServer getServer();
-
-    void setServer(MinecraftServer server);
-
-    void setDankStats(DankStats dankStats);
-
-
-    default CompoundTag save(HolderLookup.Provider provider) {
+    public CompoundTag save(HolderLookup.Provider provider) {
         ListTag nbtTagList = new ListTag();
         for (int i = 0; i < this.getContents().size(); i++) {
             ItemStack stack = getContents().get(i);
@@ -315,23 +432,19 @@ public interface DankInterface extends ContainerData {
         CompoundTag nbt = new CompoundTag();
         nbt.put("Items", nbtTagList);
         nbt.put(GHOST, ghostItemNBT);
-        nbt.putString("DankStats", getDankStats().name());
         nbt.putBoolean("locked", frequencyLocked());
         return nbt;
     }
 
-    default void read(HolderLookup.Provider provider,CompoundTag nbt) {
-        DankStats stats = DankStats.valueOf(nbt.getString("DankStats"));
-        setDankStats(stats);
+    public void load(HolderLookup.Provider provider,CompoundTag nbt) {
         ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
         readItems(provider, tagList);
         ListTag ghostItemList = nbt.getList(GHOST, Tag.TAG_COMPOUND);
         readGhostItems(provider, ghostItemList);
         setFrequencyLock(nbt.getBoolean("locked"));
-        validate();
     }
 
-    default int calcRedstone() {
+    public int calcRedstone() {
         int numStacks = 0;
         float f = 0F;
 
@@ -348,26 +461,18 @@ public interface DankInterface extends ContainerData {
         return Mth.floor(f * 14F) + (numStacks > 0 ? 1 : 0);
     }
 
-    default boolean noValidSlots() {
+    public boolean noValidSlots() {
         return IntStream.range(0, getContainerSizeDank())
                 .mapToObj(this::getItemDank)
                 .allMatch(stack -> stack.isEmpty() || stack.is(ModTags.BLACKLISTED_USAGE));
     }
 
-    default void upgradeTo(DankStats stats) {
-        //can't downgrade inventories
-        if (stats.ordinal() <= getDankStats().ordinal()) {
-            return;
-        }
+    public void upgradeTo(DankStats stats) {
         setTo(stats);
     }
 
     //like upgradeTo, but can go backwards, should only be used by commands
-    default void setTo(DankStats stats) {
-        if (stats != getDankStats()) {
-            DankStorage.LOG.debug("Upgrading dank #{} from tier {} to {}", frequency(), getDankStats().name(), stats.name());
-
-
+    public void setTo(DankStats stats) {
             NonNullList<ItemStack> newStacks = NonNullList.withSize(stats.slots, ItemStack.EMPTY);
             NonNullList<ItemStack> newGhostStacks = NonNullList.withSize(stats.slots, ItemStack.EMPTY);
 
@@ -382,60 +487,63 @@ public interface DankInterface extends ContainerData {
             }
 
             //caution, will void all current items
-            setDankStats(stats);
             setItemsDank(newStacks);
             setGhostItems(newGhostStacks);
-            setChangedDank();
-        }
+            setDirty();
     }
 
 
-    default boolean hasGhostItem(int slot) {
+     public boolean hasGhostItem(int slot) {
         return !getGhostItems().get(slot).isEmpty();
     }
 
-    int getMaxStackSizeDank();
-
-    default void validate() {
-        int containerSizeDank = getContainerSizeDank();
-        if (getDankStats() == DankStats.zero) {
-            DankStorage.LOG.error("dank has no stats?");
-        } else if (containerSizeDank == 0) {
-            DankStorage.LOG.error("dank is empty?");
-        } else {
-            if (getGhostItems().size() != containerSizeDank) {
-                DankStorage.LOG.error("inequal size");
-            }
-        }
+    public int getMaxStackSizeDank() {
+        return capacity;
     }
 
-    default void copyItems() {
-
-
-    }
-
-    default void toggleGhostItem(int slot) {
+    public void toggleGhostItem(int slot) {
         boolean loc = !getGhostItems().get(slot).isEmpty();
         if (!loc) {
             getGhostItems().set(slot, CommonUtils.copyStackWithSize(getItemDank(slot), 1));
         } else {
             getGhostItems().set(slot, ItemStack.EMPTY);
         }
-        setChangedDank();
+        setDirty();
     }
 
-    void setChangedDank();
+    public int slotCount() {
+        return items.size();
+    }
 
-    void setSizeDank(int size);
-
-    default void saveToDisk() {
-        if (getServer() != null) {
-            DankStorage.getData(frequency(), getServer()).write(save(getServer().registryAccess()));
+    public void setDirty() {
+        if (data != null) {
+            data.setDirty();
         }
     }
 
-    default boolean valid() {
-        return getDankStats() != DankStats.zero;
+    public List<ItemStack> getUniqueItems() {
+        List<ItemStack> gathered = new ArrayList<>();
+        for (ItemStack stack : items) {
+            if (!stack.isEmpty()) {
+                boolean matched = false;
+                for (ItemStack itemStack : gathered) {
+                    if (ItemStack.isSameItemSameComponents(itemStack, stack)) {
+                        itemStack.grow(stack.getCount());
+                        matched = true;
+                        break;
+                    }
+                }
+                if (!matched) {
+                    gathered.add(stack.copy());
+                }
+            }
+        }
+        return gathered;
     }
 
+    public long countItem(ItemStack sel) {
+        if (sel.isEmpty()) return 0;
+        long amount = items.stream().filter(stack -> ItemStack.isSameItemSameComponents(sel, stack)).mapToLong(ItemStack::getCount).sum();
+        return amount;
+    }
 }

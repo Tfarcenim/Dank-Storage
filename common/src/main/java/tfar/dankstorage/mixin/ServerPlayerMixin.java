@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import tfar.dankstorage.menu.AbstractDankMenu;
+import tfar.dankstorage.menu.DankMenu;
 import tfar.dankstorage.menu.CustomSync;
 
 @Mixin(ServerPlayer.class)
@@ -14,7 +14,7 @@ public class ServerPlayerMixin {
 
     @Inject(method = "initMenu",at = @At("RETURN"))
     private void customSync(AbstractContainerMenu abstractContainerMenu, CallbackInfo ci) {
-        if (abstractContainerMenu instanceof AbstractDankMenu dankMenu) {
+        if (abstractContainerMenu instanceof DankMenu dankMenu) {
             dankMenu.setSynchronizer(new CustomSync((ServerPlayer)(Object) this));
         }
     }

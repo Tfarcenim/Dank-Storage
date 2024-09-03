@@ -7,7 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import tfar.dankstorage.blockentity.CommonDockBlockEntity;
+import tfar.dankstorage.blockentity.DockBlockEntity;
 
 public class DankDispenserBehavior implements DispenseItemBehavior {
 
@@ -16,10 +16,10 @@ public class DankDispenserBehavior implements DispenseItemBehavior {
         ServerLevel world = pointer.level();
         BlockPos blockPos = pointer.pos().relative(pointer.state().getValue(DispenserBlock.FACING));
         BlockState state = world.getBlockState(blockPos);
-        if (state.getBlock() instanceof CDockBlock && state.getValue(CDockBlock.TIER) == 0) {
+        if (state.getBlock() instanceof DockBlock && state.getValue(DockBlock.TIER) == 0) {
             insertDank(world, blockPos, stack);
             return ItemStack.EMPTY;
-        } else if (state.getBlock() instanceof CDockBlock) {
+        } else if (state.getBlock() instanceof DockBlock) {
             ItemStack old = removeDank(world, blockPos);
             insertDank(world, blockPos, stack);
             return old;
@@ -28,12 +28,12 @@ public class DankDispenserBehavior implements DispenseItemBehavior {
     }
 
     public ItemStack removeDank(ServerLevel world, BlockPos pos) {
-        CommonDockBlockEntity dockBlockEntity = (CommonDockBlockEntity) world.getBlockEntity(pos);
+        DockBlockEntity dockBlockEntity = (DockBlockEntity) world.getBlockEntity(pos);
         return dockBlockEntity.removeDankWithoutItemSpawn();
     }
 
     public void insertDank(ServerLevel world, BlockPos pos, ItemStack stack) {
-        CommonDockBlockEntity dockBlockEntity = (CommonDockBlockEntity) world.getBlockEntity(pos);
+        DockBlockEntity dockBlockEntity = (DockBlockEntity) world.getBlockEntity(pos);
         dockBlockEntity.addDank(stack);
     }
 }

@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
 
 public class ModItems {
     static Item.Properties properties = new Item.Properties();
-    static Item.Properties dank_properties = new Item.Properties().stacksTo(1);
+    static Item.Properties dank_properties = new Item.Properties();
     public static Item RED_PRINT = new RedprintItem(properties);
     public static final Item DOCK = new BlockItem(ModBlocks.dock, properties);
     public static final Map<String, DankItem> DANKS;

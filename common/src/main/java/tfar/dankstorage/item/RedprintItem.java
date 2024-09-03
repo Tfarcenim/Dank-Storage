@@ -14,8 +14,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import tfar.dankstorage.blockentity.CommonDockBlockEntity;
-import tfar.dankstorage.init.ModDataComponents;
+import tfar.dankstorage.blockentity.DockBlockEntity;
+import tfar.dankstorage.init.ModDataComponentTypes;
 import tfar.dankstorage.utils.CommonUtils;
 
 import java.util.List;
@@ -36,16 +36,16 @@ public class RedprintItem extends Item {
         Player player = useOnContext.getPlayer();
         Level level = useOnContext.getLevel();
         BlockPos pos = useOnContext.getClickedPos();
-        ItemStack stack = useOnContext.getItemInHand();
+        ItemStack redPrintStack = useOnContext.getItemInHand();
         if (!level.isClientSide) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof CommonDockBlockEntity dockBlockEntity) {
+            if (blockEntity instanceof DockBlockEntity dockBlockEntity) {
                 if (player.isCrouching()) {
-                    int freq = dockBlockEntity.getInventory().frequency();
-                    CommonUtils.setFrequency(stack, freq);
+                    int freq = DankItem.getFrequency(dockBlockEntity.getDank());
+                    DankItem.setFrequency(redPrintStack, freq);
                 } else {
-                    if (stack.has(ModDataComponents.FREQUENCY)) {
-                        dockBlockEntity.setFrequency(stack.get(ModDataComponents.FREQUENCY));
+                    if (redPrintStack.has(ModDataComponentTypes.FREQUENCY)) {
+                        dockBlockEntity.setFrequency(redPrintStack.get(ModDataComponentTypes.FREQUENCY));
                     }
                 }
             }
@@ -58,9 +58,9 @@ public class RedprintItem extends Item {
         ItemStack otherStack = slot.getItem();
 
         if (otherStack.getItem() instanceof DankItem) {
-            int redF = CommonUtils.getFrequency(stack);
+            int redF = DankItem.getFrequency(stack);
             if (redF > CommonUtils.INVALID) {
-                CommonUtils.setFrequency(otherStack,redF);
+                DankItem.setFrequency(otherStack,redF);
             }
             return true;
         }
@@ -70,9 +70,9 @@ public class RedprintItem extends Item {
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack stack, ItemStack otherStack, Slot slot, ClickAction clickAction, Player player, SlotAccess slotAccess) {
         if (otherStack.getItem() instanceof DankItem) {
-            int freq = CommonUtils.getFrequency(otherStack);
+            int freq = DankItem.getFrequency(otherStack);
             if (freq > CommonUtils.INVALID) {
-                CommonUtils.setFrequency(stack,freq);
+                DankItem.setFrequency(stack,freq);
                 return true;
             }
         }

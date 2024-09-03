@@ -4,7 +4,6 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -17,10 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tfar.dankstorage.init.*;
 import tfar.dankstorage.mixin.MinecraftServerAccess;
-import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
-import tfar.dankstorage.world.DankSavedData;
 import tfar.dankstorage.world.MaxId;
 
 import java.io.File;
@@ -53,7 +50,7 @@ public class DankStorage {
         Services.PLATFORM.registerAll(ModCreativeTabs.class,BuiltInRegistries.CREATIVE_MODE_TAB, CreativeModeTab.class);
         Services.PLATFORM.registerAll(ModMenuTypes.class,BuiltInRegistries.MENU, typeClass1);
         Services.PLATFORM.registerAll(ModRecipeSerializers.class,BuiltInRegistries.RECIPE_SERIALIZER,typeClass2);
-        Services.PLATFORM.registerAll(ModDataComponents.class,BuiltInRegistries.DATA_COMPONENT_TYPE, typeClass3);
+        Services.PLATFORM.registerAll(ModDataComponentTypes.class,BuiltInRegistries.DATA_COMPONENT_TYPE, typeClass3);
     //    Constants.LOG.info("Hello from Common init on {}! we are currently in a {} environment!", Services.PLATFORM.getPlatformName(), Services.PLATFORM.getEnvironmentName());
     //    Constants.LOG.info("The ID for diamonds is {}", BuiltInRegistries.ITEM.getKey(Items.DIAMOND));
 
@@ -85,13 +82,6 @@ public class DankStorage {
         file.mkdirs();
 
         DankStorage.maxId = DankStorage.getMaxId(server);
-    }
-
-    public static DankSavedData getData(int id, MinecraftServer server) {
-        if (id <= CommonUtils.INVALID) throw new RuntimeException("Invalid frequency: "+id);
-        ServerLevel overworld = server.getLevel(Level.OVERWORLD);
-        return overworld.getDataStorage()
-                .computeIfAbsent(DankSavedData.factory(overworld), DankStorage.MODID+"/"+id);
     }
 
     public static ResourceLocation id(String path) {
