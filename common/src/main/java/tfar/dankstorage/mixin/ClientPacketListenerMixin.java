@@ -14,7 +14,7 @@ public class ClientPacketListenerMixin {
     @ModifyVariable(method = "fromItem", at = @At("HEAD"), argsOnly = true)
     private static ItemStack interceptBook(ItemStack stack) {
         if (stack.getItem() instanceof DankItem) {
-            return ClientData.selectedItem;
+            return DankItem.getSelectedItem(stack);
         }
         return stack;
     }

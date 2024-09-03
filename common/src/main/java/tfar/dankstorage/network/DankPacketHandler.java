@@ -22,7 +22,7 @@ public class DankPacketHandler {
 
         Services.PLATFORM.registerClientPacket(S2CSendExtendedSlotChangePacket.TYPE, S2CSendExtendedSlotChangePacket.STREAM_CODEC);
         Services.PLATFORM.registerClientPacket(S2CSendGhostSlotPacket.TYPE, S2CSendGhostSlotPacket.STREAM_CODEC);
-        Services.PLATFORM.registerClientPacket(S2CSyncSelectedDankItemPacket.TYPE, S2CSyncSelectedDankItemPacket.STREAM_CODEC);
+        //Services.PLATFORM.registerClientPacket(S2CSyncSelectedDankItemPacket.TYPE, S2CSyncSelectedDankItemPacket.STREAM_CODEC);
         Services.PLATFORM.registerClientPacket(S2CInitialSyncContainerPacket.TYPE, S2CInitialSyncContainerPacket.STREAM_CODEC);
         Services.PLATFORM.registerClientPacket(S2CContentsForDisplayPacket.TYPE, S2CContentsForDisplayPacket.STREAM_CODEC);
     }

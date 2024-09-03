@@ -4,7 +4,6 @@ import com.mojang.datafixers.util.Pair;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -35,7 +34,6 @@ import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CommonUtils {
 
@@ -284,14 +282,6 @@ public class CommonUtils {
         buffer.writeNbt(nbt);
         buffer.release();
         return buffer.writerIndex();
-    }
-
-    public static List<ItemStackWrapper> wrap(List<ItemStack> stacks) {
-        return stacks.stream().map(ItemStackWrapper::new).collect(Collectors.toList());
-    }
-
-    public static DankItem getItemFromTier(int tier) {
-        return (DankItem) BuiltInRegistries.ITEM.get(DankStorage.id("dank_" + tier));
     }
 
     public static boolean isHoldingDank(@Nullable Player player) {

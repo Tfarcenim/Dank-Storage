@@ -46,7 +46,7 @@ public class ClientEvents {
         int xStart = guiGraphics.guiWidth() / 2 + previewX();
         int yStart = guiGraphics.guiHeight() + previewY();
 
-        ItemStack toPlace = ClientData.selectedItem;
+        ItemStack toPlace = DankItem.getSelectedItem(bag);
 
         if (!toPlace.isEmpty() && shouldPreview()) {
             Integer color = toPlace.getRarity().color().getColor();

@@ -4,7 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -44,7 +43,6 @@ import tfar.dankstorage.world.ClientData;
 import tfar.dankstorage.world.DankSavedData;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -243,11 +241,15 @@ public class DankItem extends Item {
         if (/*toPlace.getCount() == 1 && handler.isLocked(selected)*/ false)
             return InteractionResult.PASS;
 
-        UseOnContext ctx2 = new UseOnContext2(ctx.getLevel(), ctx.getPlayer(), ctx.getHand(), toPlace, ((ItemUsageContextAccessor) ctx).getHitResult());
+        UseOnContext ctx2 = new UseOnContext2(ctx.getLevel(), ctx.getPlayer(), ctx.getHand(), toPlace.copy(), ((ItemUsageContextAccessor) ctx).getHitResult());
         InteractionResult actionResultType = toPlace.getItem().useOn(ctx2);//ctx2.getItem().onItemUse(ctx);
         if (!level.isClientSide) {
             DankInventory dankInventory = getInventoryFrom(bag,level.getServer());
             //dankInventory.setItemDank(selected, ctx2.getItemInHand());
+
+            //a wild assumption, lets see if it backfires
+
+            dankInventory.extractStackTarget(toPlace.getCount() - ctx2.getItemInHand().getCount(),false,toPlace);
         }
         return actionResultType;
     }
@@ -271,32 +273,15 @@ public class DankItem extends Item {
                     return InteractionResultHolder.pass(bag);
                 }
 
-                //handle food
-                if (toPlace.has(DataComponents.FOOD)) {
-                    if (player.canEat(false)) {
-                        player.startUsingItem(hand);
-                        return InteractionResultHolder.consume(bag);
-                    }
-                }
-                //handle potion
-                else if (toPlace.getItem() instanceof PotionItem) {
-                    player.startUsingItem(hand);
-                    return InteractionResultHolder.success(player.getItemInHand(hand));
-                }
-
-                //handle shield
-                else if (toPlace.getItem() instanceof ShieldItem) {
-                    player.startUsingItem(hand);
-                    return InteractionResultHolder.success(player.getItemInHand(hand));
-                }
-
                 //todo support other items?
                 else {
                     ItemStack bagCopy = bag.copy();
                     player.setItemSlot(hand1, toPlace);
                     InteractionResultHolder<ItemStack> actionResult = toPlace.getItem().use(level, player, hand);
                     DankInventory handler = getInventoryFrom(bagCopy, level.getServer());
-                 //   handler.setItemDank(getSelectedItem(bagCopy), actionResult.getObject());
+                    //a wild assumption, lets see if it backfires
+
+                    handler.extractStackTarget(toPlace.getCount() - actionResult.getObject().getCount(),false,toPlace);
                     player.setItemSlot(hand1, bagCopy);
                 }
             }

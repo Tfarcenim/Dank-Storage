@@ -33,7 +33,6 @@ public class S2CSyncSelectedDankItemPacket implements S2CModPacket {
     public void handleClient() {
         Player player = getLocalPlayer();
         if (player != null) {
-            ClientData.setData(stack);
         }
     }
 

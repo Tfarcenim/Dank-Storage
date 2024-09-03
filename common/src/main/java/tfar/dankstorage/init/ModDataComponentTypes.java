@@ -27,7 +27,7 @@ public class ModDataComponentTypes {
             .persistent(USE_TYPE_CODEC).networkSynchronized(SerializationHelper.enumCodec(UseType.class)).build();
 
     public static final DataComponentType<ItemStack> SELECTED = DataComponentType.<ItemStack>builder()
-            .persistent(ItemStack.CODEC).networkSynchronized(ItemStack.STREAM_CODEC).build();
+            .persistent(SerializationHelper.LARGE_CODEC).networkSynchronized(SerializationHelper.LARGE_OPTIONAL_STREAM_CODEC).build();
 
     public static final DataComponentType<Unit> OREDICT = DataComponentType.<Unit>builder()
             .persistent(Unit.CODEC).networkSynchronized(StreamCodec.unit(Unit.INSTANCE)).build();

@@ -18,7 +18,6 @@ import tfar.dankstorage.ModTags;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.utils.ItemStackWrapper;
 import tfar.dankstorage.utils.SerializationHelper;
 import tfar.dankstorage.world.DankSavedData;
 
@@ -38,6 +37,8 @@ public abstract class DankInventory implements ContainerData {
 
     public static final int TXT_COLOR = 0;
     public static final int FREQ_LOCK = 1;
+    private SortingType sortingType = SortingType.descending;
+    private boolean autoSort = true;
 
     public DankInventory(DankStats stats, DankSavedData data) {
         this(stats.slots,stats.stacklimit,data);
@@ -54,6 +55,15 @@ public abstract class DankInventory implements ContainerData {
         return Services.PLATFORM.createInventory(dankStats,null);
     }
 
+
+    public void setSortingType(SortingType sortingType) {
+        this.sortingType = sortingType;
+        setDirty();
+    }
+
+    public SortingType getSortingType() {
+        return sortingType;
+    }
 
     public ItemStack getGhostItem(int slot) {
         return getGhostItems().get(slot);
@@ -207,7 +217,26 @@ public abstract class DankInventory implements ContainerData {
         }
     }
 
-
+    public ItemStack extractStackTarget(int amount, boolean simulate, ItemStack target) {
+        if (amount == 0 || target.isEmpty()) {
+            return ItemStack.EMPTY;
+        } else {
+            int remaining = amount;
+            int extracted = 0;
+            for (int i = 0; i < slotCount();i++) {
+                ItemStack slotStack = getItemDank(i);
+                if (ItemStack.isSameItemSameComponents(target,slotStack)) {
+                    ItemStack stack = extractStack(i, remaining, simulate);
+                    remaining -= stack.getCount();
+                    extracted += stack.getCount();
+                    if (remaining <= 0) {
+                        break;
+                    }
+                }
+            }
+            return target.copyWithCount(extracted);
+        }
+    }
 
      void readGhostItems(HolderLookup.Provider provider, ListTag listTag) {
         for (int i = 0; i < listTag.size(); i++) {
@@ -241,21 +270,19 @@ public abstract class DankInventory implements ContainerData {
     }
 
     public void sort() {
-        List<ItemStack> stacks = new ArrayList<>();
-
+        List<ItemStack> gathered = new ArrayList<>();
         Set<ItemStack> lockedItems = new HashSet<>();
 
-
-        NonNullList<ItemStack> contents = getContents();
-        for (int i = 0; i < contents.size(); i++) {
-            ItemStack stack = contents.get(i);
-            ItemStack ghost = getGhostItem(i);
+        for (int i = 0; i < items.size(); i++) {
+            ItemStack stack = items.get(i);
+            ItemStack ghost = ghostItems.get(i);
             if (!stack.isEmpty()) {
-                CommonUtils.merge(stacks, stack.copy());
+                CommonUtils.merge(gathered, stack.copy());
                 boolean unique = true;
                 for (ItemStack stack1 : lockedItems) {
                     if (ItemStack.isSameItemSameComponents(stack1, stack)) {
                         unique = false;
+                        break;
                     }
                 }
                 if (unique && !ghost.isEmpty()) {
@@ -264,53 +291,47 @@ public abstract class DankInventory implements ContainerData {
             }
         }
 
-
-        List<ItemStackWrapper> wrappers = CommonUtils.wrap(stacks);
-
-        Collections.sort(wrappers);
+        gathered.sort(sortingType.comparator);
 
         for (int i = 0; i < slotCount(); i++) {
-            setItemDank(i, ItemStack.EMPTY);
-            getGhostItems().set(i, ItemStack.EMPTY);
+            items.set(i, ItemStack.EMPTY);
+            ghostItems.set(i, ItemStack.EMPTY);
         }
-
-        //split up the stacks and add them to the slot
-
+        //split up the gathered and add them to the slot
         int slotId = 0;
 
-        for (int i = 0; i < wrappers.size(); i++) {
-            ItemStack stack = wrappers.get(i).stack();
+        for (int i = 0; i < gathered.size(); i++) {
+            ItemStack stack = gathered.get(i);
             int count = stack.getCount();
 
-            int stackSizeSensitive = getMaxStackSizeSensitive(stack);
+            int tankSize = capacity;
 
-            if (count > stackSizeSensitive) {
-                int fullStacks = count / stackSizeSensitive;
-                int partialStack = count - fullStacks * stackSizeSensitive;
+            if (count > tankSize) {
+                int fullStacks = count / tankSize;
+                int partialStack = count - fullStacks * tankSize;
 
                 for (int j = 0; j < fullStacks; j++) {
-                    setItemDank(slotId, CommonUtils.copyStackWithSize(stack, stackSizeSensitive));
+                    items.set(slotId, stack.copyWithCount(tankSize));
 
                     if (anyMatch(stack,lockedItems)) {
-                        setGhostItem(slotId,stack.getItem());
+                        ghostItems.set(slotId,stack);
                     }
 
                     slotId++;
                 }
                 if (partialStack > 0) {
-                    setItemDank(slotId, CommonUtils.copyStackWithSize(stack, partialStack));
+                    items.set(slotId, stack.copyWithCount(partialStack));
 
                     if (anyMatch(stack,lockedItems)) {
-                        setGhostItem(slotId,stack.getItem());
+                        ghostItems.set(slotId,stack);
                     }
 
                     slotId++;
                 }
             } else {
-                setItemDank(slotId, stack);
-
+                items.set(slotId, stack);
                 if (anyMatch(stack,lockedItems)) {
-                    setGhostItem(slotId,stack.getItem());
+                    ghostItems.set(slotId,stack);
                 }
 
                 slotId++;
@@ -425,6 +446,8 @@ public abstract class DankInventory implements ContainerData {
         nbt.put("Items", nbtTagList);
         nbt.put(GHOST, ghostItemNBT);
         nbt.putBoolean("locked", frequencyLocked());
+        nbt.putString("SortingType",sortingType.name());
+        nbt.putBoolean("AutoSort",autoSort);
         return nbt;
     }
 
@@ -435,6 +458,10 @@ public abstract class DankInventory implements ContainerData {
         readGhostItems(provider, ghostItemList);
         if (nbt.contains("locked")) {
             frequencyLocked = nbt.getBoolean("locked");
+        }
+        sortingType = nbt.contains("SortingType") ? SortingType.valueOf(nbt.getString("SortingType")) : SortingType.descending;
+        if (nbt.contains("AutoSort")) {
+            autoSort = nbt.getBoolean("AutoSort");
         }
     }
 
