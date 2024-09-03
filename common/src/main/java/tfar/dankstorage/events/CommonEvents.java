@@ -48,7 +48,7 @@ public class CommonEvents {
         int count = pickup.getCount();
         boolean oredict = CommonUtils.oredict(dank);
         List<ItemStack> existing = new ArrayList<>();
-        for (int i = 0; i < inv.getContainerSizeDank(); i++) {
+        for (int i = 0; i < inv.slotCount(); i++) {
             ItemStack stack = inv.getItemDank(i);
             if (!stack.isEmpty()) {
                 boolean exists = false;
@@ -65,19 +65,19 @@ public class CommonEvents {
 
         switch (pickupMode) {
             case pickup_all -> {
-                for (int i = 0; i < inv.getContainerSizeDank(); i++) {
+                for (int i = 0; i < inv.slotCount(); i++) {
                     allPickup(inv, i, pickup, oredict);
                     if (pickup.isEmpty()) break;
                 }
             }
             case filtered_pickup -> {
-                for (int i = 0; i < inv.getContainerSizeDank(); i++) {
+                for (int i = 0; i < inv.slotCount(); i++) {
                     filteredPickup(inv, i, pickup, oredict, existing);
                     if (pickup.isEmpty()) break;
                 }
             }
             case void_pickup -> {
-                for (int i = 0; i < inv.getContainerSizeDank(); i++) {
+                for (int i = 0; i < inv.slotCount(); i++) {
                     voidPickup(inv, i, pickup, oredict, existing);
                     if (pickup.isEmpty()) break;
                 }

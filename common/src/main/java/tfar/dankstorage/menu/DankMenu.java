@@ -41,7 +41,7 @@ public class DankMenu extends AbstractContainerMenu {
         super(type, windowId);
         this.playerInventory = playerInventory;
         this.dankInventory = dankInventory;
-        this.rows = dankInventory.getContainerSizeDank() /9;
+        this.rows = dankInventory.slotCount() /9;
         this.bag = bag;
         container.setItem(0,bag);
 

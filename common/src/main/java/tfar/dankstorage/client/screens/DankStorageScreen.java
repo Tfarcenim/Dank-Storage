@@ -37,7 +37,7 @@ import tfar.dankstorage.utils.TxtColor;
 
 import java.util.List;
 
-public class CDankStorageScreen extends AbstractContainerScreen<DankMenu> {
+public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
 
     static final ResourceLocation background1 = DankStorage.id(
             "textures/container/gui/dank1.png");
@@ -57,7 +57,7 @@ public class CDankStorageScreen extends AbstractContainerScreen<DankMenu> {
     EditBox frequency;
     protected final boolean is7;
 
-    public CDankStorageScreen(DankMenu $$0, Inventory $$1, Component $$2, ResourceLocation background) {
+    public DankStorageScreen(DankMenu $$0, Inventory $$1, Component $$2, ResourceLocation background) {
         super($$0, $$1, $$2);
         this.imageHeight = 114 + this.menu.rows * 18;
         this.inventoryLabelY = this.imageHeight - 94;
@@ -66,32 +66,32 @@ public class CDankStorageScreen extends AbstractContainerScreen<DankMenu> {
         this.is7 = this.menu.rows > 6;
     }
 
-    public static CDankStorageScreen t1(DankMenu container, Inventory playerinventory, Component component) {
-        return new CDankStorageScreen(container, playerinventory, component, background1);
+    public static DankStorageScreen t1(DankMenu container, Inventory playerinventory, Component component) {
+        return new DankStorageScreen(container, playerinventory, component, background1);
     }
 
-    public static CDankStorageScreen t2(DankMenu container, Inventory playerinventory, Component component) {
-        return new CDankStorageScreen(container, playerinventory, component, background2);
+    public static DankStorageScreen t2(DankMenu container, Inventory playerinventory, Component component) {
+        return new DankStorageScreen(container, playerinventory, component, background2);
     }
 
-    public static <T extends DankMenu> CDankStorageScreen t3(DankMenu container, Inventory playerinventory, Component component) {
-        return new CDankStorageScreen(container, playerinventory, component, background3);
+    public static <T extends DankMenu> DankStorageScreen t3(DankMenu container, Inventory playerinventory, Component component) {
+        return new DankStorageScreen(container, playerinventory, component, background3);
     }
 
-    public static <T extends DankMenu> CDankStorageScreen t4(DankMenu container, Inventory playerinventory, Component component) {
-        return new CDankStorageScreen(container, playerinventory, component, background4);
+    public static <T extends DankMenu> DankStorageScreen t4(DankMenu container, Inventory playerinventory, Component component) {
+        return new DankStorageScreen(container, playerinventory, component, background4);
     }
 
-    public static <T extends DankMenu> CDankStorageScreen t5(DankMenu container, Inventory playerinventory, Component component) {
-        return new CDankStorageScreen(container, playerinventory, component, background5);
+    public static <T extends DankMenu> DankStorageScreen t5(DankMenu container, Inventory playerinventory, Component component) {
+        return new DankStorageScreen(container, playerinventory, component, background5);
     }
 
-    public static <T extends DankMenu> CDankStorageScreen t6(DankMenu container, Inventory playerinventory, Component component) {
-        return new CDankStorageScreen(container, playerinventory, component, background6);
+    public static <T extends DankMenu> DankStorageScreen t6(DankMenu container, Inventory playerinventory, Component component) {
+        return new DankStorageScreen(container, playerinventory, component, background6);
     }
 
-    public static <T extends DankMenu> CDankStorageScreen t7(DankMenu container, Inventory playerinventory, Component component) {
-        return new CDankStorageScreen(container, playerinventory, component, background7);
+    public static <T extends DankMenu> DankStorageScreen t7(DankMenu container, Inventory playerinventory, Component component) {
+        return new DankStorageScreen(container, playerinventory, component, background7);
     }
 
     protected void initEditbox() {
@@ -244,10 +244,10 @@ public class CDankStorageScreen extends AbstractContainerScreen<DankMenu> {
         this.addRenderableWidget(new SmallButton(leftPos + 143, topPos + 4, 26, 12, Component.literal("Sort"), b -> sendButtonToServer(DankMenu.ButtonAction.SORT)));
 
         modeCycleButton = CycleButton.<PickupMode>builder(pickupMode -> Component.literal("P")
-                        .withStyle(Style.EMPTY.withColor(pickupMode.getColor())))
+                        .withStyle(Style.EMPTY.withColor(DankItem.getPickupMode(menu.getBag()).getColor())))
                 .withValues(PickupMode.VALUES)
-                .withTooltip(mode -> Tooltip.create(mode.translate()))
-                .withInitialValue(PickupMode.none)
+                .withTooltip(mode -> Tooltip.create(DankItem.getPickupMode(menu.getBag()).translate()))
+                .withInitialValue(DankItem.getPickupMode(menu.getBag()))
                 .displayOnlyValue()
                 .create(leftPos + 101, topPos + 4, 12, 12, Component.empty(), (pickupModeCycleButton, pickupMode) -> sendButtonToServer(DankMenu.ButtonAction.TOGGLE_PICKUP));
 

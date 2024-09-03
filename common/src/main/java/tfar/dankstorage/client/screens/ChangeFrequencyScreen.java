@@ -82,7 +82,7 @@ public class ChangeFrequencyScreen extends AbstractContainerScreen<ChangeFrequen
         this.addRenderableWidget(l);
 
 
-        Tooltip saveTooltip = Tooltip.create(CDankStorageScreen.SAVE_C);
+        Tooltip saveTooltip = Tooltip.create(DankStorageScreen.SAVE_C);
 
         SmallButton s = new SmallButton(leftPos + 155, j + inventoryLabelY, 12, 12,
                 Component.literal("s"), b -> {

@@ -60,7 +60,7 @@ public abstract class DankInventory implements ContainerData {
     }
 
     public boolean frequencyLocked() {
-        return get(FREQ_LOCK) == 1;
+        return frequencyLocked;
     }
 
     public int textColor() {
@@ -72,12 +72,8 @@ public abstract class DankInventory implements ContainerData {
     }
 
     public void toggleFrequencyLock() {
-        boolean loc = frequencyLocked();
-        setFrequencyLock(!loc);
-    }
-
-    public void setFrequencyLock(boolean lock) {
-        set(FREQ_LOCK, lock ? 1 : 0);
+        frequencyLocked = !frequencyLocked;
+        setDirty();
     }
 
     public void setItemDank(int slot, ItemStack stack) {
@@ -135,10 +131,6 @@ public abstract class DankInventory implements ContainerData {
     @Override
     public int getCount() {
         return 2;
-    }
-
-    public int getContainerSizeDank() {
-        return items.size();
     }
 
     ItemStack addItemDank(int slot, ItemStack stack) {
@@ -221,7 +213,7 @@ public abstract class DankInventory implements ContainerData {
         for (int i = 0; i < listTag.size(); i++) {
             CompoundTag itemTags = listTag.getCompound(i);
             int slot = itemTags.getInt("Slot");
-            if (slot >= 0 && slot < getContainerSizeDank()) {
+            if (slot >= 0 && slot < slotCount()) {
                 if (itemTags.contains("StackList", Tag.TAG_LIST)) {
                     ItemStack stack = ItemStack.EMPTY;
                     ListTag stackTagList = itemTags.getList("StackList", Tag.TAG_COMPOUND);
@@ -277,7 +269,7 @@ public abstract class DankInventory implements ContainerData {
 
         Collections.sort(wrappers);
 
-        for (int i = 0; i < getContainerSizeDank(); i++) {
+        for (int i = 0; i < slotCount(); i++) {
             setItemDank(i, ItemStack.EMPTY);
             getGhostItems().set(i, ItemStack.EMPTY);
         }
@@ -360,7 +352,7 @@ public abstract class DankInventory implements ContainerData {
 
         for (ItemStack itemStack : addLater) {
             ItemStack remainder = itemStack.copy();
-            for (int i = 0; i < getContainerSizeDank(); i++) {
+            for (int i = 0; i < slotCount(); i++) {
                 remainder = addItemDank(i, remainder);
                 if (remainder.isEmpty()) break;
             }
@@ -379,7 +371,7 @@ public abstract class DankInventory implements ContainerData {
         for (int i = 0; i < listTag.size(); i++) {
             CompoundTag itemTags = listTag.getCompound(i);
             int slot = itemTags.getInt("Slot");
-            if (slot >= 0 && slot < getContainerSizeDank()) {
+            if (slot >= 0 && slot < slotCount()) {
                 if (itemTags.contains("StackList", Tag.TAG_LIST)) {
                     ItemStack stack = ItemStack.EMPTY;
                     ListTag stackTagList = itemTags.getList("StackList", Tag.TAG_COMPOUND);
@@ -441,14 +433,16 @@ public abstract class DankInventory implements ContainerData {
         readItems(provider, tagList);
         ListTag ghostItemList = nbt.getList(GHOST, Tag.TAG_COMPOUND);
         readGhostItems(provider, ghostItemList);
-        setFrequencyLock(nbt.getBoolean("locked"));
+        if (nbt.contains("locked")) {
+            frequencyLocked = nbt.getBoolean("locked");
+        }
     }
 
     public int calcRedstone() {
         int numStacks = 0;
         float f = 0F;
 
-        for (int slot = 0; slot < this.getContainerSizeDank(); slot++) {
+        for (int slot = 0; slot < this.slotCount(); slot++) {
             ItemStack stack = this.getItemDank(slot);
 
             if (!stack.isEmpty()) {
@@ -457,18 +451,20 @@ public abstract class DankInventory implements ContainerData {
             }
         }
 
-        f /= this.getContainerSizeDank();
+        f /= this.slotCount();
         return Mth.floor(f * 14F) + (numStacks > 0 ? 1 : 0);
     }
 
     public boolean noValidSlots() {
-        return IntStream.range(0, getContainerSizeDank())
+        return IntStream.range(0, slotCount())
                 .mapToObj(this::getItemDank)
                 .allMatch(stack -> stack.isEmpty() || stack.is(ModTags.BLACKLISTED_USAGE));
     }
 
     public void upgradeTo(DankStats stats) {
-        setTo(stats);
+        if (stats.slots > slotCount()) {
+            setTo(stats);
+        }
     }
 
     //like upgradeTo, but can go backwards, should only be used by commands
@@ -477,7 +473,7 @@ public abstract class DankInventory implements ContainerData {
             NonNullList<ItemStack> newGhostStacks = NonNullList.withSize(stats.slots, ItemStack.EMPTY);
 
             //don't copy nonexistent items
-            int oldSlots = getContainerSizeDank();
+            int oldSlots = slotCount();
             int max = Math.min(oldSlots, stats.slots);
             for (int i = 0; i < max; i++) {
                 ItemStack oldStack = getItemDank(i);
