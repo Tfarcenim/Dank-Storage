@@ -18,7 +18,7 @@ public class ModDataComponentTypes {
     public static final Codec<UseType> USE_TYPE_CODEC = StringRepresentable.fromEnum(UseType::values);
 
     public static final DataComponentType<Integer> FREQUENCY = DataComponentType.<Integer>builder()
-            .persistent(ExtraCodecs.intRange(0,Integer.MAX_VALUE)).networkSynchronized(ByteBufCodecs.INT).build();
+            .persistent(ExtraCodecs.NON_NEGATIVE_INT).networkSynchronized(ByteBufCodecs.INT).build();
 
     public static final DataComponentType<PickupMode> PICKUP_MODE = DataComponentType.<PickupMode>builder()
             .persistent(PICKUP_MODE_CODEC).networkSynchronized(SerializationHelper.enumCodec(PickupMode.class)).build();

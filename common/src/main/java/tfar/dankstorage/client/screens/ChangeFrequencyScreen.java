@@ -3,9 +3,11 @@ package tfar.dankstorage.client.screens;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -19,9 +21,11 @@ import tfar.dankstorage.menu.ChangeFrequencyMenu;
 import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
 import tfar.dankstorage.utils.CommonUtils;
 
+import java.util.function.Supplier;
+
 public class ChangeFrequencyScreen extends AbstractContainerScreen<ChangeFrequencyMenu> {
 
-    private static final ResourceLocation DEMO_BACKGROUND_LOCATION = ResourceLocation.withDefaultNamespace("textures/gui/demo_background.png");
+    public static final ResourceLocation DEMO_BACKGROUND_LOCATION = ResourceLocation.withDefaultNamespace("textures/gui/demo_background.png");
     EditBox frequency;
 
 
@@ -97,6 +101,8 @@ public class ChangeFrequencyScreen extends AbstractContainerScreen<ChangeFrequen
         s.setTooltip(saveTooltip);
 
         this.addRenderableWidget(s);
+
+
 
 
         initEditbox();

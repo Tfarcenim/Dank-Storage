@@ -37,6 +37,9 @@ public abstract class DankInventory implements ContainerData {
 
     public static final int TXT_COLOR = 0;
     public static final int FREQ_LOCK = 1;
+    public static final int SORTING_TYPE = 2;
+    public static final int AUTO_SORT = 3;
+    public static final int DATA_SLOTS = 4;
     private SortingType sortingType = SortingType.descending;
     private boolean autoSort = true;
 
@@ -124,6 +127,8 @@ public abstract class DankInventory implements ContainerData {
         return switch (slot) {
             case TXT_COLOR -> textColor;
             case FREQ_LOCK -> frequencyLocked ? 1 : 0;
+            case SORTING_TYPE -> sortingType.ordinal();
+            case AUTO_SORT -> autoSort ? 1 : 0;
             default -> AbstractContainerMenu.SLOT_CLICKED_OUTSIDE;
         };
     }
@@ -132,7 +137,9 @@ public abstract class DankInventory implements ContainerData {
     public void set(int slot, int value) {
         switch (slot) {
             case TXT_COLOR -> textColor = value;
-            case FREQ_LOCK -> frequencyLocked = value == 1;
+            case FREQ_LOCK -> frequencyLocked = value != 0;
+            case SORTING_TYPE -> sortingType = SortingType.values()[value];
+            case AUTO_SORT -> autoSort = value != 0;
         }
         setDirty();
     }
@@ -140,7 +147,7 @@ public abstract class DankInventory implements ContainerData {
     //0 is the id, 1 is text color, and 2 is frequency lock
     @Override
     public int getCount() {
-        return 2;
+        return DATA_SLOTS;
     }
 
     ItemStack addItemDank(int slot, ItemStack stack) {
@@ -568,5 +575,14 @@ public abstract class DankInventory implements ContainerData {
         if (sel.isEmpty()) return 0;
         long amount = items.stream().filter(stack -> ItemStack.isSameItemSameComponents(sel, stack)).mapToLong(ItemStack::getCount).sum();
         return amount;
+    }
+
+    public boolean autoSort() {
+        return autoSort;
+    }
+
+    public void toggleAutoSort() {
+        autoSort = !autoSort;
+        setDirty();
     }
 }

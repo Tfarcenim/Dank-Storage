@@ -25,6 +25,18 @@
   "dankstorage.mode.pickup_all": "Pickup All",
   "dankstorage.mode.filtered_pickup": "Filtered Pickup",
   "dankstorage.mode.void_pickup": "Void Pickup",
+
+  "dankstorage.sorting_type.descending": "Sort: Descending",
+  "dankstorage.sorting_type.descending.desc": "Descending: Sorts from greatest to least number of items",
+
+  "dankstorage.sorting_type.ascending": "Sort: Ascending",
+  "dankstorage.sorting_type.ascending.desc": "Ascending: Sorts from least to greatest number of items",
+
+  "dankstorage.sorting_type.registry_name": "Sort: Registry Name",
+  "dankstorage.sorting_type.registry_name.desc": "Registry Name: Sorts by registry name in alphabetical order *excluding* mod ids",
+
+  "dankstorage.auto_sort": "Auto Sort:",
+
   "key.dankstorage.pickup": "Toggle Mode",
   "key.dankstorage.construction": "Construction Mode",
   "key.dankstorage.lock_slot": "Lock Slot",
@@ -77,6 +89,6 @@
   "text.dankstorage.sort_button" : "Sorts from greatest to least",
   "itemGroup.dankstorage" : "Dank Storage",
 
-  "text.dankstorage.tier_mismatch": "Current Dank cannot open backing inventory, upgrade or switch to supported frequency"
-
+  "text.dankstorage.tier_mismatch": "Current Dank cannot open backing inventory, upgrade or switch to supported frequency",
+  "text.dankstorage.open_config" : "Open Config"
 }

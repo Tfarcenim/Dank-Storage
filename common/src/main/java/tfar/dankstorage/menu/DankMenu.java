@@ -32,7 +32,7 @@ public class DankMenu extends AbstractContainerMenu {
 
     public enum ButtonAction {
         LOCK_FREQUENCY, SORT,
-        TOGGLE_TAG, TOGGLE_PICKUP,  COMPRESS;
+        TOGGLE_TAG, TOGGLE_PICKUP,  COMPRESS, CYCLE_SORT_TYPE, TOGGLE_AUTO_SORT;
         static final ButtonAction[] VALUES = values();
     }
 
@@ -104,6 +104,18 @@ public class DankMenu extends AbstractContainerMenu {
                 case COMPRESS -> dankInventory.compress(serverPlayer);
                 case TOGGLE_TAG -> CommonUtils.toggleTagMode(serverPlayer);
                 case TOGGLE_PICKUP -> CommonUtils.togglePickupMode(serverPlayer);
+                case CYCLE_SORT_TYPE -> {
+                    DankInventory dankInventory = DankItem.getInventoryFrom(bag, serverPlayer.server);
+                    if (dankInventory != null) {
+                        dankInventory.setSortingType(DankItem.cycle(dankInventory.getSortingType()));
+                    }
+                }
+                case TOGGLE_AUTO_SORT -> {
+                    DankInventory dankInventory = DankItem.getInventoryFrom(bag, serverPlayer.server);
+                    if (dankInventory != null) {
+                        dankInventory.toggleAutoSort();
+                    }
+                }
             }
         }
         return true;

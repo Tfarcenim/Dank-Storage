@@ -5,11 +5,13 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -21,10 +23,8 @@ import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
-import tfar.dankstorage.client.DankKeybinds;
-import tfar.dankstorage.client.DualTooltip;
-import tfar.dankstorage.client.NumberEditBox;
-import tfar.dankstorage.client.StackSizeRenderer;
+import tfar.dankstorage.TextComponents;
+import tfar.dankstorage.client.*;
 import tfar.dankstorage.client.button.SmallButton;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.menu.DankMenu;
@@ -36,6 +36,7 @@ import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.TxtColor;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
 
@@ -56,6 +57,12 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
     final ResourceLocation background;
     EditBox frequency;
     protected final boolean is7;
+
+    Button changeSortingType;
+    Button autoSort;
+
+
+    private final ConfigComponent configComponent = new ConfigComponent();
 
     public DankStorageScreen(DankMenu $$0, Inventory $$1, Component $$2, ResourceLocation background) {
         super($$0, $$1, $$2);
@@ -120,7 +127,6 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
 
 
     public void renderSlot(GuiGraphics pGuiGraphics, Slot pSlot) {
-
         if (!menu.isDankSlot(pSlot)) {
             super.renderSlot(pGuiGraphics, pSlot);
         } else {
@@ -201,16 +207,19 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
     }
 
     @Override
-    public void render(GuiGraphics stack, int mouseX, int mouseY, float partialTicks) {
-        super.render(stack, mouseX, mouseY, partialTicks);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        super.render(graphics, mouseX, mouseY, partialTicks);
         int color = menu.dankInventory.textColor();
         this.frequency.setTextColor(color);
 
         PickupMode pickupMode = menu.getMode();
         modeCycleButton.setValue(pickupMode);
 
-        this.frequency.render(stack, mouseX, mouseY, partialTicks);
-        this.renderTooltip(stack, mouseX, mouseY);
+        this.frequency.render(graphics, mouseX, mouseY, partialTicks);
+
+        this.configComponent.render(graphics, mouseX, mouseY, partialTicks);
+
+        this.renderTooltip(graphics, mouseX, mouseY);
     }
 
     @Override
@@ -242,9 +251,23 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
     @Override
     protected void init() {
         super.init();
+        this.configComponent.init(this.width, this.height, this.minecraft, this.menu);
 
         int j = (this.height - this.imageHeight) / 2;
-        this.addRenderableWidget(new SmallButton(leftPos + 143, topPos + 4, 26, 12, Component.literal("Sort"), b -> sendButtonToServer(DankMenu.ButtonAction.SORT)));
+
+
+        DynamicTooltip dynamicTooltip = DynamicTooltip.dynamic(() -> Component.translatable("dankstorage.sorting_type."+menu.dankInventory.getSortingType()));
+
+        Button sort = new SmallButton(leftPos + 143-16, topPos + 4, 26, 12, Component.literal("Sort"), b -> {
+            sendButtonToServer(DankMenu.ButtonAction.SORT);
+            dynamicTooltip.dirty  = true;
+        });
+
+
+        sort.setTooltip(dynamicTooltip);
+
+
+        this.addRenderableWidget(sort);
 
         modeCycleButton = CycleButton.<PickupMode>builder(pickupMode -> Component.literal("P")
                         .withStyle(Style.EMPTY.withColor(DankItem.getPickupMode(menu.getBag()).getColor())))
@@ -252,7 +275,7 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
                 .withTooltip(mode -> Tooltip.create(DankItem.getPickupMode(menu.getBag()).translate()))
                 .withInitialValue(DankItem.getPickupMode(menu.getBag()))
                 .displayOnlyValue()
-                .create(leftPos + 101, topPos + 4, 12, 12, Component.empty(), (pickupModeCycleButton, pickupMode) -> sendButtonToServer(DankMenu.ButtonAction.TOGGLE_PICKUP));
+                .create(leftPos + 101-16, topPos + 4, 12, 12, Component.empty(), (pickupModeCycleButton, pickupMode) -> sendButtonToServer(DankMenu.ButtonAction.TOGGLE_PICKUP));
 
         addRenderableWidget(modeCycleButton);
 
@@ -260,7 +283,7 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
                 Component.translatable("text.dankstorage.unlock_button"),
                 Component.translatable("text.dankstorage.lock_button"),null,this);
 
-        SmallButton l = new SmallButton(leftPos + 115, topPos + 4, 12, 12,
+        SmallButton lock = new SmallButton(leftPos + 115-16, topPos + 4, 12, 12,
                 Component.literal(""), button -> sendButtonToServer(DankMenu.ButtonAction.LOCK_FREQUENCY)) {
             @Override
             public Component getMessage() {
@@ -269,9 +292,9 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
             }
         };
 
-        l.setTooltip(freqTooltip);
+        lock.setTooltip(freqTooltip);
 
-        this.addRenderableWidget(l);
+        this.addRenderableWidget(lock);
 
         Tooltip saveTooltip = Tooltip.create(SAVE_C);
 
@@ -292,13 +315,60 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
 
         Tooltip compressTooltip = Tooltip.create(Component.translatable("text.dankstorage.compress_button"));
 
-        SmallButton c = new SmallButton(leftPos + 129, topPos + 4, 12, 12,
+        SmallButton c = new SmallButton(leftPos + 129-16, topPos + 4, 12, 12,
                 Component.literal("C"), button -> sendButtonToServer(DankMenu.ButtonAction.COMPRESS));
         c.setTooltip(compressTooltip);
 
         this.addRenderableWidget(c);
+
+        Tooltip tooltip = Tooltip.create(TextComponents.OPEN_CONFIG);
+        this.addRenderableWidget(Button.builder(Component.literal("\uD83D\uDD27"), b -> {
+            toggleConfig();
+                })
+                .pos(leftPos + 157, topPos + 4)
+                .size(12, 12)
+                .tooltip(tooltip).build());
+
+        DynamicTooltip dynamicTooltipSorting = DynamicTooltip.dynamic(() -> Component.translatable("dankstorage.sorting_type."+menu.dankInventory.getSortingType()+".desc"));
+
+        changeSortingType = new Button(leftPos -89, topPos + 24, 90, 16,Component.empty(), b -> {
+            sendButtonToServer(DankMenu.ButtonAction.CYCLE_SORT_TYPE);
+            dynamicTooltipSorting.dirty = true;
+        }, Supplier::get) {
+            @Override
+            public Component getMessage() {
+                return Component.translatable("dankstorage.sorting_type."+menu.dankInventory.getSortingType());
+            }
+        };
+
+        changeSortingType.setTooltip(dynamicTooltipSorting);
+
+        this.addRenderableWidget(changeSortingType);
+
+        autoSort = new Button(leftPos - 89, topPos + 44, 90, 16,Component.empty(), b -> sendButtonToServer(DankMenu.ButtonAction.TOGGLE_AUTO_SORT), Supplier::get) {
+            @Override
+            public Component getMessage() {
+                return Component.translatable("dankstorage.auto_sort").append(" ")
+                        .append(menu.dankInventory.autoSort() ? CommonComponents.OPTION_ON : CommonComponents.OPTION_OFF);
+            }
+        };
+
+
+        this.addRenderableWidget(autoSort);
+        if (!configComponent.isVisible()) {
+            changeSortingType.visible = false;
+            autoSort.visible = false;
+        }
+
         initEditbox();
     }
+
+    void toggleConfig() {
+        configComponent.toggleVisibility();
+        changeSortingType.visible = configComponent.isVisible();
+        autoSort.visible = configComponent.isVisible();
+    }
+
 
     @Override
     public List<Component> getTooltipFromContainerItem(ItemStack itemStack) {
@@ -308,22 +378,23 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
     }
 
     @Override
-    protected void renderBg(GuiGraphics stack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
         if (is7)
-            stack.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 512);
+            guiGraphics.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 512);
         else
-            stack.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-        renderLockedSlots(stack);
+            guiGraphics.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        renderLockedSlots(guiGraphics);
+        configComponent.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
     }
 
-    protected void renderLockedSlots(GuiGraphics stack) {
+    protected void renderLockedSlots(GuiGraphics guiGraphics) {
         for (int i = 0; i < menu.rows * 9; i++) {
             int j = i % 9;
             int k = i / 9;
             int offsetx = 8;
             int offsety = 18;
             if (this.menu.dankInventory.hasGhostItem(i)) {
-                stack.fill(leftPos + j * 18 + offsetx, topPos + k * 18 + offsety,
+                guiGraphics.fill(leftPos + j * 18 + offsetx, topPos + k * 18 + offsety,
                         leftPos + j * 18 + offsetx + 16, topPos + k * 18 + offsety + 16, 0xFFFF0000);
             }
         }
