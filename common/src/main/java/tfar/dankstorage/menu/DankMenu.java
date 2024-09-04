@@ -46,7 +46,7 @@ public class DankMenu extends AbstractContainerMenu {
         container.setItem(0,bag);
 
         addDankSlots();
-        addPlayerSlots(playerInventory,-1);
+        addPlayerSlots(playerInventory);
         Slot slot = new LockedSlot(container,0,-100,-100) {
             @Override
             public boolean isActive() {
@@ -67,7 +67,7 @@ public class DankMenu extends AbstractContainerMenu {
     }
 
 
-    protected void addPlayerSlots(Inventory playerinventory, int locked) {
+    protected void addPlayerSlots(Inventory playerinventory) {
         int yStart = 32 + 18 * rows;
         for (int row = 0; row < 3; ++row) {
             for (int col = 0; col < 9; ++col) {
@@ -80,10 +80,9 @@ public class DankMenu extends AbstractContainerMenu {
         for (int row = 0; row < 9; ++row) {
             int x = 8 + row * 18;
             int y = yStart + 58;
-            if (row != locked)
-                this.addSlot(new Slot(playerinventory, row, x, y));
-            else
+            if (playerinventory.getItem(row).getItem() instanceof DankItem) {
                 this.addSlot(new LockedSlot(playerinventory, row, x, y));
+            } else this.addSlot(new Slot(playerinventory, row, x, y));
         }
     }
 
@@ -167,7 +166,7 @@ public class DankMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(@Nonnull Player playerIn) {
-        return true;
+        return !bag.isEmpty();
     }
 
 

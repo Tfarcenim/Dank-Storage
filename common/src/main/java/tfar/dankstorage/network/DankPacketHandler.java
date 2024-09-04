@@ -17,6 +17,7 @@ public class DankPacketHandler {
         Services.PLATFORM.registerServerPacket(C2SButtonPacket.TYPE, C2SButtonPacket.STREAM_CODEC);
         Services.PLATFORM.registerServerPacket(C2SSetFrequencyPacket.TYPE, C2SSetFrequencyPacket.STREAM_CODEC);
         Services.PLATFORM.registerServerPacket(C2SRequestContentsPacket.TYPE, C2SRequestContentsPacket.STREAM_CODEC);
+        Services.PLATFORM.registerServerPacket(C2SOpenMenuPacket.TYPE,C2SOpenMenuPacket.STREAM_CODEC);
 
         ///////server to client
 

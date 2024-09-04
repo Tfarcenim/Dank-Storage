@@ -35,10 +35,7 @@ import tfar.dankstorage.menu.DankMenu;
 import tfar.dankstorage.mixin.ItemUsageContextAccessor;
 import tfar.dankstorage.network.server.C2SRequestContentsPacket;
 import tfar.dankstorage.platform.Services;
-import tfar.dankstorage.utils.CommonUtils;
-import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.utils.PickupMode;
-import tfar.dankstorage.utils.UseType;
+import tfar.dankstorage.utils.*;
 import tfar.dankstorage.world.ClientData;
 import tfar.dankstorage.world.DankSavedData;
 
@@ -355,13 +352,13 @@ public class DankItem extends Item {
         if (item.isEmpty()) {
             bag.remove(ModDataComponentTypes.SELECTED);
         } else {
-            bag.set(ModDataComponentTypes.SELECTED,item);
+            bag.set(ModDataComponentTypes.SELECTED,new ItemStackComponent(item));
         }
     }
 
     //this can be 0 - 80
     public static ItemStack getSelectedItem(ItemStack bag) {
-        return bag.getOrDefault(ModDataComponentTypes.SELECTED, ItemStack.EMPTY);
+        return bag.getOrDefault(ModDataComponentTypes.SELECTED, ItemStackComponent.EMPTY).itemStack();
     }
 
 

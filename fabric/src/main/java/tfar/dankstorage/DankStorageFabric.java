@@ -6,22 +6,33 @@ import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands.CommandSelection;
 import net.minecraft.core.Direction;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.command.DankCommands;
 import tfar.dankstorage.init.ModBlockEntityTypes;
 import tfar.dankstorage.inventory.DankInventory;
 import tfar.dankstorage.inventory.api.DankInventorySlotWrapper;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.network.DankPacketHandler;
+import tfar.dankstorage.network.server.C2SOpenMenuPacket;
 import tfar.dankstorage.platform.ClothConfig;
+import tfar.dankstorage.utils.UseType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +53,7 @@ public class DankStorageFabric implements ModInitializer,
         ServerLifecycleEvents.SERVER_STARTED.register(this);
         ServerLifecycleEvents.SERVER_STOPPED.register(this);
         CommandRegistrationCallback.EVENT.register(this);
+        UseItemCallback.EVENT.register(this);
 
         ItemStorage.SIDED.registerForBlockEntity(DankStorageFabric::getStorage,ModBlockEntityTypes.dock);
         DankStorage.init();
@@ -97,6 +109,8 @@ public class DankStorageFabric implements ModInitializer,
 
         return new CombinedStorage<>(storages);
     }
+
+
 
     /*
 

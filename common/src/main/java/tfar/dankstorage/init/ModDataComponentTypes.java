@@ -8,6 +8,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.util.Unit;
 import net.minecraft.world.item.ItemStack;
+import tfar.dankstorage.utils.ItemStackComponent;
 import tfar.dankstorage.utils.SerializationHelper;
 import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.UseType;
@@ -26,8 +27,8 @@ public class ModDataComponentTypes {
     public static final DataComponentType<UseType> USE_TYPE = DataComponentType.<UseType>builder()
             .persistent(USE_TYPE_CODEC).networkSynchronized(SerializationHelper.enumCodec(UseType.class)).build();
 
-    public static final DataComponentType<ItemStack> SELECTED = DataComponentType.<ItemStack>builder()
-            .persistent(SerializationHelper.LARGE_CODEC).networkSynchronized(SerializationHelper.LARGE_OPTIONAL_STREAM_CODEC).build();
+    public static final DataComponentType<ItemStackComponent> SELECTED = DataComponentType.<ItemStackComponent>builder()
+            .persistent(ItemStackComponent.CODEC).networkSynchronized(ItemStackComponent.STREAM_CODEC).build();
 
     public static final DataComponentType<Unit> OREDICT = DataComponentType.<Unit>builder()
             .persistent(Unit.CODEC).networkSynchronized(StreamCodec.unit(Unit.INSTANCE)).build();

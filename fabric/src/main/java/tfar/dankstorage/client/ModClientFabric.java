@@ -5,10 +5,21 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import tfar.dankstorage.events.ClientEvents;
+import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.network.server.C2SButtonPacket;
+import tfar.dankstorage.network.server.C2SOpenMenuPacket;
 import tfar.dankstorage.utils.KeybindAction;
+import tfar.dankstorage.utils.UseType;
 
 public class ModClientFabric implements ClientModInitializer {
 
@@ -31,5 +42,15 @@ public class ModClientFabric implements ClientModInitializer {
         ClientTickEvents.START_CLIENT_TICK.register(ModClientFabric::keyPressed);
         TooltipComponentCallback.EVENT.register(CommonClient::tooltipImage);
         HudRenderCallback.EVENT.register(ClientEvents::renderSelectedItem);
+        UseItemCallback.EVENT.register(this::interact);
+    }
+
+    public InteractionResultHolder<ItemStack> interact(Player player, Level world, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (player.level().isClientSide && stack.getItem() instanceof DankItem && Screen.hasAltDown() && DankItem.getUseType(stack)!= UseType.bag) {
+            C2SOpenMenuPacket.send(hand);
+            return InteractionResultHolder.success(stack);
+        }
+        return null;
     }
 }
