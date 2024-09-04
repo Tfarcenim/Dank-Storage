@@ -42,6 +42,7 @@ public abstract class DankInventory implements ContainerData {
     public static final int DATA_SLOTS = 4;
     private SortingType sortingType = SortingType.descending;
     private boolean autoSort = true;
+    protected boolean needsSort;
 
     public DankInventory(DankStats stats, DankSavedData data) {
         this(stats.slots,stats.stacklimit,data);
@@ -61,7 +62,7 @@ public abstract class DankInventory implements ContainerData {
 
     public void setSortingType(SortingType sortingType) {
         this.sortingType = sortingType;
-        setDirty();
+        setDirty(true);
     }
 
     public SortingType getSortingType() {
@@ -86,11 +87,12 @@ public abstract class DankInventory implements ContainerData {
 
     public void toggleFrequencyLock() {
         frequencyLocked = !frequencyLocked;
-        setDirty();
+        setDirty(false);
     }
 
     public void setItemDank(int slot, ItemStack stack) {
         this.items.set(slot, stack);
+        setDirty(true);
     }
 
     public ItemStack getItemDank(int slot) {
@@ -141,7 +143,7 @@ public abstract class DankInventory implements ContainerData {
             case SORTING_TYPE -> sortingType = SortingType.values()[value];
             case AUTO_SORT -> autoSort = value != 0;
         }
-        setDirty();
+        setDirty(false);
     }
 
     //0 is the id, 1 is text color, and 2 is frequency lock
@@ -183,7 +185,7 @@ public abstract class DankInventory implements ContainerData {
                     } else {
                         existing.grow(reachedLimit ? limit : stack.getCount());
                     }
-                    setDirty();
+                    setDirty(true);
                     //this.onContentsChanged(slot);
                 }
 
@@ -205,7 +207,7 @@ public abstract class DankInventory implements ContainerData {
                 if (existing.getCount() <= toExtract) {
                     if (!simulate) {
                         this.items.set(slot, ItemStack.EMPTY);
-                        setDirty();
+                        setDirty(true);
                         //this.onContentsChanged(slot);
                         return existing;
                     } else {
@@ -214,7 +216,7 @@ public abstract class DankInventory implements ContainerData {
                 } else {
                     if (!simulate) {
                         this.items.set(slot, existing.copyWithCount(existing.getCount() - toExtract));
-                        setDirty();
+                        setDirty(true);
                         //this.onContentsChanged(slot);
                     }
 
@@ -344,6 +346,7 @@ public abstract class DankInventory implements ContainerData {
                 slotId++;
             }
         }
+        setDirty(false);
     }
 
     static boolean anyMatch(ItemStack stack, Set<ItemStack> stacks) {
@@ -519,7 +522,7 @@ public abstract class DankInventory implements ContainerData {
             //caution, will void all current items
             setItemsDank(newStacks);
             setGhostItems(newGhostStacks);
-            setDirty();
+            setDirty(false);
     }
 
 
@@ -538,16 +541,21 @@ public abstract class DankInventory implements ContainerData {
         } else {
             getGhostItems().set(slot, ItemStack.EMPTY);
         }
-        setDirty();
+        setDirty(false);
     }
 
     public int slotCount() {
         return items.size();
     }
 
-    public void setDirty() {
+    public void setDirty(boolean needsSort) {
         if (data != null) {
             data.setDirty();
+        }
+        if (needsSort) {
+            if (autoSort) {
+                sort();
+            }
         }
     }
 
@@ -583,6 +591,6 @@ public abstract class DankInventory implements ContainerData {
 
     public void toggleAutoSort() {
         autoSort = !autoSort;
-        setDirty();
+        setDirty(false);
     }
 }

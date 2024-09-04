@@ -32,3 +32,4 @@ extendable class net/minecraft/world/level/block/entity/BlockEntityType$BlockEnt
 accessible field net/minecraft/client/gui/screens/inventory/tooltip/ClientBundleTooltip BACKGROUND_SPRITE Lnet/minecraft/resources/ResourceLocation;
 
 accessible field net/minecraft/world/item/crafting/ShapedRecipe pattern Lnet/minecraft/world/item/crafting/ShapedRecipePattern;
+accessible field net/minecraft/world/inventory/AbstractContainerMenu remoteSlots Lnet/minecraft/core/NonNullList;

@@ -51,7 +51,7 @@ public class DankInventorySlotWrapper extends SingleStackStorage {
 	// We override updateSnapshots to also schedule a markDirty call for the backing inventory.
 	@Override
 	public void updateSnapshots(TransactionContext transaction) {
-		storage.setDirty();
+		storage.setDirty(false);
 		super.updateSnapshots(transaction);
 	}
 

@@ -108,6 +108,10 @@ public class DankMenu extends AbstractContainerMenu {
                     DankInventory dankInventory = DankItem.getInventoryFrom(bag, serverPlayer.server);
                     if (dankInventory != null) {
                         dankInventory.setSortingType(DankItem.cycle(dankInventory.getSortingType()));
+                        //needed to force syncing
+                        for (int i = 0; i < remoteSlots.size(); i++) {
+                            remoteSlots.set(i,ItemStack.EMPTY);
+                        }
                     }
                 }
                 case TOGGLE_AUTO_SORT -> {
