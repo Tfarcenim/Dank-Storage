@@ -8,7 +8,6 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -19,10 +18,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.command.DankCommands;
 import tfar.dankstorage.init.ModBlockEntityTypes;
+import tfar.dankstorage.inventory.DankInventory;
 import tfar.dankstorage.inventory.api.DankInventorySlotWrapper;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.platform.ClothConfig;
-import tfar.dankstorage.world.DankInventoryFabric;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,22 +70,22 @@ public class DankStorageFabric implements ModInitializer,
 
     public static CombinedStorage<ItemVariant,DankInventorySlotWrapper> getStorage(DockBlockEntity dockBlockEntity, Direction direction) {
 
-        DankInventoryFabric dankInventoryFabric = (DankInventoryFabric) dockBlockEntity.getInventory();
+        DankInventory dankInventory = dockBlockEntity.getInventory();
 
         CombinedStorage<ItemVariant,DankInventorySlotWrapper> storage = MAP.get(dockBlockEntity);
 
-        if (storage != null && storage.parts.size() != dankInventoryFabric.slotCount()) {
+        if (storage != null && storage.parts.size() != dankInventory.slotCount()) {
             storage = null;
         }
         if (storage == null) {
-            storage = create(dankInventoryFabric);
+            storage = create(dankInventory);
             MAP.put(dockBlockEntity,storage);
         }
         return storage;
     }
 
 
-    public static CombinedStorage<ItemVariant,DankInventorySlotWrapper> create(DankInventoryFabric dankInventoryFabric) {
+    public static CombinedStorage<ItemVariant,DankInventorySlotWrapper> create(DankInventory dankInventoryFabric) {
         int slots = dankInventoryFabric.slotCount();
 
         List<DankInventorySlotWrapper> storages = new ArrayList<>();

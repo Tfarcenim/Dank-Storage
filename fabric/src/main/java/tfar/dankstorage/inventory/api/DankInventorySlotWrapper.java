@@ -5,7 +5,7 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.ItemStack;
-import tfar.dankstorage.world.DankInventoryFabric;
+import tfar.dankstorage.inventory.DankInventory;
 
 import java.util.Objects;
 
@@ -19,11 +19,11 @@ public class DankInventorySlotWrapper extends SingleStackStorage {
 	/**
 	 * The strong reference to the InventoryStorageImpl ensures that the weak value doesn't get GC'ed when individual slots are still being accessed.
 	 */
-	private final DankInventoryFabric storage;
+	private final DankInventory storage;
 	final int slot;
 	private ItemStack lastReleasedSnapshot = null;
 
-	public DankInventorySlotWrapper(DankInventoryFabric storage, int slot) {
+	public DankInventorySlotWrapper(DankInventory storage, int slot) {
 		this.storage = storage;
 		this.slot = slot;
 	}
@@ -35,8 +35,9 @@ public class DankInventorySlotWrapper extends SingleStackStorage {
 
 	@Override
 	protected void setStack(ItemStack stack) {
-		storage.setItemDank(slot, stack);
+		storage.items.set(slot, stack);
 	}
+
 
 	@Override
 	protected boolean canInsert(ItemVariant itemVariant) {
@@ -84,5 +85,6 @@ public class DankInventorySlotWrapper extends SingleStackStorage {
 			// Otherwise assume everything was taken from original so empty it.
 			original.setCount(0);
 		}
+		storage.setDirty(true);
 	}
 }

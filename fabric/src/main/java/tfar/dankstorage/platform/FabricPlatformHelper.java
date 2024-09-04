@@ -23,7 +23,6 @@ import tfar.dankstorage.network.client.S2CModPacket;
 import tfar.dankstorage.network.server.C2SModPacket;
 import tfar.dankstorage.platform.services.IPlatformHelper;
 import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.world.DankInventoryFabric;
 import tfar.dankstorage.world.DankSavedData;
 
 import java.util.Map;
@@ -69,11 +68,6 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public void sendToServer(C2SModPacket msg) {
         ClientPlayNetworking.send(msg);
-    }
-
-    @Override
-    public DankInventory createInventory(DankStats stats, DankSavedData data) {
-        return new DankInventoryFabric(stats,data);
     }
 
     @Override

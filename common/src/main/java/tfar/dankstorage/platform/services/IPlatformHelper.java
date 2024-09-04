@@ -64,7 +64,9 @@ public interface IPlatformHelper {
     ItemStack getCloneStack(Level level, BlockPos pos, BlockState state, HitResult hitResult, Player player);
 
 
-    DankInventory createInventory(DankStats stats, DankSavedData data);
+    default DankInventory createInventory(DankStats stats, DankSavedData data) {
+        return new DankInventory(stats,data);
+    }
 
     default  <F> void registerAll(Class<?> clazz, Registry<F> registry, Class<? extends F> filter) {
         Map<String,F> map = new HashMap<>();

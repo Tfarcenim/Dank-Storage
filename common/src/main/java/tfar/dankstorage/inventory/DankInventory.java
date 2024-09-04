@@ -24,7 +24,7 @@ import tfar.dankstorage.world.DankSavedData;
 import java.util.*;
 import java.util.stream.IntStream;
 
-public abstract class DankInventory implements ContainerData {
+public class DankInventory implements ContainerData {
 
     private final DankSavedData data;
     protected static String GHOST = "GhostItems";
@@ -402,9 +402,11 @@ public abstract class DankInventory implements ContainerData {
 
         for (ItemStack remainder : leftovers) {
             if (!remainder.isEmpty()) {
-                player.addItem(remainder);
-                if (!remainder.isEmpty()) {
-                    player.drop(remainder, false);
+                if (player != null) {
+                    player.addItem(remainder);
+                    if (!remainder.isEmpty()) {
+                        player.drop(remainder, false);
+                    }
                 }
             }
         }
@@ -434,11 +436,11 @@ public abstract class DankInventory implements ContainerData {
                         count = Math.min(count, getMaxStackSizeDank());
                         stack.setCount(count);
 
-                        this.setItemDank(slot, stack);
+                        this.items.set(slot, stack);
                     }
                 } else {
                     ItemStack stack = SerializationHelper.decodeLargeItemStack(provider,itemTags);
-                    this.setItemDank(slot, stack);
+                    this.items.set(slot, stack);
                 }
             }
         }
