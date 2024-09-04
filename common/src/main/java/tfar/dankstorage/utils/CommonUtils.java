@@ -94,6 +94,17 @@ public class CommonUtils {
         return Pair.of(ItemStack.EMPTY, 0);
     }
 
+    public static Pair<ItemStack,ItemStack> getCompressingResult(ItemStack stack, ServerLevel level) {
+        if (!canCompress(level, stack)) {
+            return Pair.of(stack,ItemStack.EMPTY);
+        } else {
+            Pair<ItemStack,Integer> result = compress(stack,level.registryAccess());
+            ItemStack compressedStack = result.getFirst().copyWithCount(stack.getCount()/result.getSecond());
+            ItemStack remainder = stack.copyWithCount(stack.getCount() % result.getSecond());
+            return Pair.of(remainder,compressedStack);
+        }
+    }
+
     public static boolean canCompress(ServerLevel level, ItemStack stack) {
         if (!cached) {
             REVERSIBLE3x3 = findReversibles(level, 3);

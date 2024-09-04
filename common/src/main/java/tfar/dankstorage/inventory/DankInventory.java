@@ -247,6 +247,20 @@ public abstract class DankInventory implements ContainerData {
         }
     }
 
+    ItemStack insertStackGeneral(ItemStack stack, boolean simulate) {
+        if (stack.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack remainder = stack.copy();
+        for (int i = 0; i < slotCount();i++) {
+            remainder = insertStack(i,stack,simulate);
+            if (remainder.isEmpty()) {
+                break;
+            }
+        }
+        return remainder;
+    }
+
      void readGhostItems(HolderLookup.Provider provider, ListTag listTag) {
         for (int i = 0; i < listTag.size(); i++) {
             CompoundTag itemTags = listTag.getCompound(i);
@@ -358,35 +372,35 @@ public abstract class DankInventory implements ContainerData {
         return false;
     }
 
-    public void compress(ServerPlayer player) {
-        sort();
-        ServerLevel level = player.serverLevel();
-        List<ItemStack> addLater = new ArrayList<>();
-        for (int i = 0; i < getMaxStackSizeDank(); i++) {
-            ItemStack stack = getItemDank(i);
-            if (stack.isEmpty()) {
-                break;
+    public void compress(ServerLevel level,@Nullable ServerPlayer player) {
+        List<ItemStack> allItems = getUniqueItems();
+        List<Pair<ItemStack,ItemStack>> craftingResults = new ArrayList<>();
+
+        for (int i = 0; i < allItems.size(); i++) {
+            ItemStack stack = allItems.get(i);
+                Pair<ItemStack, ItemStack> result = CommonUtils.getCompressingResult(stack,level);
+                craftingResults.add(result);
+        }
+
+        for (int i = 0; i < slotCount();i++) {
+            items.set(i,ItemStack.EMPTY);
+            ghostItems.set(i,ItemStack.EMPTY);
+        }
+
+        List<ItemStack> leftovers = new ArrayList<>();
+
+        for (Pair<ItemStack,ItemStack> pair:craftingResults) {
+            ItemStack stack1 = insertStackGeneral(pair.getFirst(), false);
+            ItemStack stack2 = insertStackGeneral(pair.getSecond(), false);
+            if (!stack1.isEmpty()) {
+                leftovers.add(stack1);
             }
-            if (CommonUtils.canCompress(level, stack)) {
-                Pair<ItemStack, Integer> result = CommonUtils.compress(stack, player.serverLevel().registryAccess());
-                ItemStack resultStack = result.getFirst();
-                if (!resultStack.isEmpty()) {
-                    int division = result.getSecond();
-                    int compressedCount = stack.getCount() / division;
-                    int remainderCount = stack.getCount() % division;
-                    setItemDank(i, CommonUtils.copyStackWithSize(resultStack, compressedCount));
-                    addLater.add(CommonUtils.copyStackWithSize(stack, remainderCount));
-                }
+            if (!stack2.isEmpty()) {
+                leftovers.add(stack2);
             }
         }
-        sort();
 
-        for (ItemStack itemStack : addLater) {
-            ItemStack remainder = itemStack.copy();
-            for (int i = 0; i < slotCount(); i++) {
-                remainder = addItemDank(i, remainder);
-                if (remainder.isEmpty()) break;
-            }
+        for (ItemStack remainder : leftovers) {
             if (!remainder.isEmpty()) {
                 player.addItem(remainder);
                 if (!remainder.isEmpty()) {
@@ -394,6 +408,7 @@ public abstract class DankInventory implements ContainerData {
                 }
             }
         }
+
         sort();
     }
 

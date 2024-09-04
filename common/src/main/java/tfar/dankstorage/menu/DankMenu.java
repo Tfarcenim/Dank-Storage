@@ -101,7 +101,7 @@ public class DankMenu extends AbstractContainerMenu {
             switch (buttonAction) {
                 case LOCK_FREQUENCY -> dankInventory.toggleFrequencyLock();
                 case SORT -> dankInventory.sort();
-                case COMPRESS -> dankInventory.compress(serverPlayer);
+                case COMPRESS -> dankInventory.compress(serverPlayer.serverLevel(), serverPlayer);
                 case TOGGLE_TAG -> CommonUtils.toggleTagMode(serverPlayer);
                 case TOGGLE_PICKUP -> CommonUtils.togglePickupMode(serverPlayer);
                 case CYCLE_SORT_TYPE -> {
