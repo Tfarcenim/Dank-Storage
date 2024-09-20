@@ -51,6 +51,6 @@ public class ModClientFabric implements ClientModInitializer {
             C2SOpenMenuPacket.send(hand);
             return InteractionResultHolder.success(stack);
         }
-        return null;
+        return InteractionResultHolder.pass(ItemStack.EMPTY);
     }
 }
