@@ -14,6 +14,7 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
@@ -45,18 +46,18 @@ public class DankInventory implements ContainerData {
     protected boolean needsSort;
 
     public DankInventory(DankStats stats, DankSavedData data) {
-        this(stats.slots,stats.stacklimit,data);
+        this(stats.slots, stats.stacklimit, data);
     }
 
     public DankInventory(int slots, int capacity, @Nullable DankSavedData data) {
         items = NonNullList.withSize(slots, ItemStack.EMPTY);
-        ghostItems = NonNullList.withSize(slots,ItemStack.EMPTY);
+        ghostItems = NonNullList.withSize(slots, ItemStack.EMPTY);
         this.capacity = capacity;
         this.data = data;
     }
 
     public static DankInventory createDummy(DankStats dankStats) {
-        return Services.PLATFORM.createInventory(dankStats,null);
+        return Services.PLATFORM.createInventory(dankStats, null);
     }
 
 
@@ -91,12 +92,21 @@ public class DankInventory implements ContainerData {
     }
 
     public void setItemDank(int slot, ItemStack stack) {
-        this.items.set(slot, stack);
-        setDirty(true);
+        if (slot < slotCount()) {
+            this.items.set(slot, stack);
+            setDirty(true);
+        } else {
+            DankStorage.LOG.warn("Index out of bounds accessed, {} in size {}",slot,slotCount());
+        }
     }
 
     public ItemStack getItemDank(int slot) {
-        return items.get(slot);
+        if (slot < slotCount()) {
+            return items.get(slot);
+        } else {
+            DankStorage.LOG.warn("Index out of bounds accessed, {} in size {}",slot,slotCount());
+            return ItemStack.EMPTY;
+        }
     }
 
     public boolean canPlaceItem(int slot, ItemStack stack) {
@@ -112,6 +122,7 @@ public class DankInventory implements ContainerData {
     public NonNullList<ItemStack> getContents() {
         return items;
     }
+
     public void setItemsDank(NonNullList<ItemStack> stacks) {
         this.items = stacks;
     }
@@ -153,9 +164,8 @@ public class DankInventory implements ContainerData {
     }
 
     ItemStack addItemDank(int slot, ItemStack stack) {
-        return insertStack(slot,stack,false);
+        return insertStack(slot, stack, false);
     }
-
 
 
     public ItemStack insertStack(int slot, ItemStack stack, boolean simulate) {
@@ -164,7 +174,7 @@ public class DankInventory implements ContainerData {
         } else if (!this.canPlaceItem(slot, stack)) {
             return stack;
         } else {
-           // this.validateSlotIndex(slot);
+            // this.validateSlotIndex(slot);
             ItemStack existing = this.items.get(slot);
             int limit = this.getMaxStackSizeSensitive(stack);
             if (!existing.isEmpty()) {
@@ -198,7 +208,7 @@ public class DankInventory implements ContainerData {
         if (amount == 0) {
             return ItemStack.EMPTY;
         } else {
-           // this.validateSlotIndex(slot);
+            // this.validateSlotIndex(slot);
             ItemStack existing = this.items.get(slot);
             if (existing.isEmpty()) {
                 return ItemStack.EMPTY;
@@ -232,9 +242,9 @@ public class DankInventory implements ContainerData {
         } else {
             int remaining = amount;
             int extracted = 0;
-            for (int i = 0; i < slotCount();i++) {
+            for (int i = 0; i < slotCount(); i++) {
                 ItemStack slotStack = getItemDank(i);
-                if (ItemStack.isSameItemSameComponents(target,slotStack)) {
+                if (ItemStack.isSameItemSameComponents(target, slotStack)) {
                     ItemStack stack = extractStack(i, remaining, simulate);
                     remaining -= stack.getCount();
                     extracted += stack.getCount();
@@ -252,8 +262,8 @@ public class DankInventory implements ContainerData {
             return ItemStack.EMPTY;
         }
         ItemStack remainder = stack.copy();
-        for (int i = 0; i < slotCount();i++) {
-            remainder = insertStack(i,stack,simulate);
+        for (int i = 0; i < slotCount(); i++) {
+            remainder = insertStack(i, stack, simulate);
             if (remainder.isEmpty()) {
                 break;
             }
@@ -261,7 +271,7 @@ public class DankInventory implements ContainerData {
         return remainder;
     }
 
-     void readGhostItems(HolderLookup.Provider provider, ListTag listTag) {
+    void readGhostItems(HolderLookup.Provider provider, ListTag listTag) {
         for (int i = 0; i < listTag.size(); i++) {
             CompoundTag itemTags = listTag.getCompound(i);
             int slot = itemTags.getInt("Slot");
@@ -271,7 +281,7 @@ public class DankInventory implements ContainerData {
                     ListTag stackTagList = itemTags.getList("StackList", Tag.TAG_COMPOUND);
                     for (int j = 0; j < stackTagList.size(); j++) {
                         CompoundTag itemTag = stackTagList.getCompound(j);
-                        ItemStack temp = ItemStack.parseOptional(provider,itemTag);
+                        ItemStack temp = ItemStack.parseOptional(provider, itemTag);
                         if (!temp.isEmpty()) {
                             if (stack.isEmpty()) stack = temp;
                             else stack.grow(temp.getCount());
@@ -281,7 +291,7 @@ public class DankInventory implements ContainerData {
                         this.getGhostItems().set(slot, stack);
                     }
                 } else {
-                    ItemStack stack = ItemStack.parseOptional(provider,itemTags);
+                    ItemStack stack = ItemStack.parseOptional(provider, itemTags);
                     this.getGhostItems().set(slot, stack);
                 }
             }
@@ -336,8 +346,8 @@ public class DankInventory implements ContainerData {
                 for (int j = 0; j < fullStacks; j++) {
                     items.set(slotId, stack.copyWithCount(tankSize));
 
-                    if (anyMatch(stack,lockedItems)) {
-                        ghostItems.set(slotId,stack);
+                    if (anyMatch(stack, lockedItems)) {
+                        ghostItems.set(slotId, stack);
                     }
 
                     slotId++;
@@ -345,16 +355,16 @@ public class DankInventory implements ContainerData {
                 if (partialStack > 0) {
                     items.set(slotId, stack.copyWithCount(partialStack));
 
-                    if (anyMatch(stack,lockedItems)) {
-                        ghostItems.set(slotId,stack);
+                    if (anyMatch(stack, lockedItems)) {
+                        ghostItems.set(slotId, stack);
                     }
 
                     slotId++;
                 }
             } else {
                 items.set(slotId, stack);
-                if (anyMatch(stack,lockedItems)) {
-                    ghostItems.set(slotId,stack);
+                if (anyMatch(stack, lockedItems)) {
+                    ghostItems.set(slotId, stack);
                 }
 
                 slotId++;
@@ -365,31 +375,31 @@ public class DankInventory implements ContainerData {
 
     static boolean anyMatch(ItemStack stack, Set<ItemStack> stacks) {
         for (ItemStack stack1 : stacks) {
-            if (ItemStack.isSameItemSameComponents(stack1,stack)) {
+            if (ItemStack.isSameItemSameComponents(stack1, stack)) {
                 return true;
             }
         }
         return false;
     }
 
-    public void compress(ServerLevel level,@Nullable ServerPlayer player) {
+    public void compress(ServerLevel level, @Nullable ServerPlayer player) {
         List<ItemStack> allItems = getUniqueItems();
-        List<Pair<ItemStack,ItemStack>> craftingResults = new ArrayList<>();
+        List<Pair<ItemStack, ItemStack>> craftingResults = new ArrayList<>();
 
         for (int i = 0; i < allItems.size(); i++) {
             ItemStack stack = allItems.get(i);
-                Pair<ItemStack, ItemStack> result = CommonUtils.getCompressingResult(stack,level);
-                craftingResults.add(result);
+            Pair<ItemStack, ItemStack> result = CommonUtils.getCompressingResult(stack, level);
+            craftingResults.add(result);
         }
 
-        for (int i = 0; i < slotCount();i++) {
-            items.set(i,ItemStack.EMPTY);
-            ghostItems.set(i,ItemStack.EMPTY);
+        for (int i = 0; i < slotCount(); i++) {
+            items.set(i, ItemStack.EMPTY);
+            ghostItems.set(i, ItemStack.EMPTY);
         }
 
         List<ItemStack> leftovers = new ArrayList<>();
 
-        for (Pair<ItemStack,ItemStack> pair:craftingResults) {
+        for (Pair<ItemStack, ItemStack> pair : craftingResults) {
             ItemStack stack1 = insertStackGeneral(pair.getFirst(), false);
             ItemStack stack2 = insertStackGeneral(pair.getSecond(), false);
             if (!stack1.isEmpty()) {
@@ -415,7 +425,7 @@ public class DankInventory implements ContainerData {
     }
 
 
-     void readItems(HolderLookup.Provider provider,ListTag listTag) {
+    void readItems(HolderLookup.Provider provider, ListTag listTag) {
         for (int i = 0; i < listTag.size(); i++) {
             CompoundTag itemTags = listTag.getCompound(i);
             int slot = itemTags.getInt("Slot");
@@ -425,7 +435,7 @@ public class DankInventory implements ContainerData {
                     ListTag stackTagList = itemTags.getList("StackList", Tag.TAG_COMPOUND);
                     for (int j = 0; j < stackTagList.size(); j++) {
                         CompoundTag itemTag = stackTagList.getCompound(j);
-                        ItemStack temp = SerializationHelper.decodeLargeItemStack(provider,itemTag);
+                        ItemStack temp = SerializationHelper.decodeLargeItemStack(provider, itemTag);
                         if (!temp.isEmpty()) {
                             if (stack.isEmpty()) stack = temp;
                             else stack.grow(temp.getCount());
@@ -439,7 +449,7 @@ public class DankInventory implements ContainerData {
                         this.items.set(slot, stack);
                     }
                 } else {
-                    ItemStack stack = SerializationHelper.decodeLargeItemStack(provider,itemTags);
+                    ItemStack stack = SerializationHelper.decodeLargeItemStack(provider, itemTags);
                     this.items.set(slot, stack);
                 }
             }
@@ -464,7 +474,7 @@ public class DankInventory implements ContainerData {
             if (!getGhostItems().get(i).isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
-                ghostItemNBT.add(getGhostItems().get(i).save(provider,itemTag));
+                ghostItemNBT.add(getGhostItems().get(i).save(provider, itemTag));
             }
         }
 
@@ -473,12 +483,12 @@ public class DankInventory implements ContainerData {
         nbt.put("Items", nbtTagList);
         nbt.put(GHOST, ghostItemNBT);
         nbt.putBoolean("locked", frequencyLocked());
-        nbt.putString("SortingType",sortingType.name());
-        nbt.putBoolean("AutoSort",autoSort);
+        nbt.putString("SortingType", sortingType.name());
+        nbt.putBoolean("AutoSort", autoSort);
         return nbt;
     }
 
-    public void load(HolderLookup.Provider provider,CompoundTag nbt) {
+    public void load(HolderLookup.Provider provider, CompoundTag nbt) {
         ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
         readItems(provider, tagList);
         ListTag ghostItemList = nbt.getList(GHOST, Tag.TAG_COMPOUND);
@@ -523,27 +533,27 @@ public class DankInventory implements ContainerData {
 
     //like upgradeTo, but can go backwards, should only be used by commands
     public void setTo(DankStats stats) {
-            NonNullList<ItemStack> newStacks = NonNullList.withSize(stats.slots, ItemStack.EMPTY);
-            NonNullList<ItemStack> newGhostStacks = NonNullList.withSize(stats.slots, ItemStack.EMPTY);
+        NonNullList<ItemStack> newStacks = NonNullList.withSize(stats.slots, ItemStack.EMPTY);
+        NonNullList<ItemStack> newGhostStacks = NonNullList.withSize(stats.slots, ItemStack.EMPTY);
 
-            //don't copy nonexistent items
-            int oldSlots = slotCount();
-            int max = Math.min(oldSlots, stats.slots);
-            for (int i = 0; i < max; i++) {
-                ItemStack oldStack = getItemDank(i);
-                ItemStack oldGhost = getGhostItem(i);
-                newStacks.set(i, oldStack);
-                newGhostStacks.set(i, oldGhost);
-            }
+        //don't copy nonexistent items
+        int oldSlots = slotCount();
+        int max = Math.min(oldSlots, stats.slots);
+        for (int i = 0; i < max; i++) {
+            ItemStack oldStack = getItemDank(i);
+            ItemStack oldGhost = getGhostItem(i);
+            newStacks.set(i, oldStack);
+            newGhostStacks.set(i, oldGhost);
+        }
 
-            //caution, will void all current items
-            setItemsDank(newStacks);
-            setGhostItems(newGhostStacks);
-            setDirty(false);
+        //caution, will void all current items
+        setItemsDank(newStacks);
+        setGhostItems(newGhostStacks);
+        data.setStats(stats);
     }
 
 
-     public boolean hasGhostItem(int slot) {
+    public boolean hasGhostItem(int slot) {
         return !getGhostItems().get(slot).isEmpty();
     }
 

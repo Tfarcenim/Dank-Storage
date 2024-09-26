@@ -57,7 +57,7 @@ public class ClientDankTooltip implements ClientTooltipComponent {
         if (count > 1) {
             StackSizeRenderer.renderSizeLabelCustom(poseStack, font, i + 1, j + 1, CommonUtils.formatLargeNumber(count), Services.PLATFORM.getConfig().textSize());
         }
-        if (ItemStack.isSameItemSameComponents(selected,itemStack)) {
+        if (!selected.isEmpty() && ItemStack.isSameItemSameComponents(selected,itemStack)) {
             AbstractContainerScreen.renderSlotHighlight(poseStack, i + 1, j + 1, 0);
         }
     }
