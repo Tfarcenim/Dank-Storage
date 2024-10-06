@@ -110,6 +110,7 @@ public class DankInventory implements ContainerData {
     }
 
     public boolean canPlaceItem(int slot, ItemStack stack) {
+        if (slot < 0 || slot >= slotCount()) return false;
         boolean checkGhostItem = !hasGhostItem(slot) || getGhostItem(slot).getItem() == stack.getItem();
         return !stack.is(ModTags.BLACKLISTED_STORAGE)
                 && checkGhostItem;
@@ -550,6 +551,7 @@ public class DankInventory implements ContainerData {
         setItemsDank(newStacks);
         setGhostItems(newGhostStacks);
         data.setStats(stats);
+        capacity = stats.stacklimit;
     }
 
 
