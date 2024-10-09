@@ -55,7 +55,7 @@ public class CMessageToggle implements IMessage {
         bag = player.getHeldItemOffhand();
         if (!(bag.getItem() instanceof DankItemBlock))return;
       }
-      Utils.toggle(bag,mess.key);
+      Utils.toggle(bag, mess.key, player);
     }
   }
 
@@ -64,4 +64,3 @@ public class CMessageToggle implements IMessage {
     KeybindToggleType(){}
   }
 }
-

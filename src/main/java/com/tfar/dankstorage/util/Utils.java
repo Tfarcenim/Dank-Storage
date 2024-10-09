@@ -5,11 +5,11 @@ import com.tfar.dankstorage.block.DankItemBlock;
 import com.tfar.dankstorage.inventory.DankHandler;
 import com.tfar.dankstorage.inventory.PortableDankHandler;
 import com.tfar.dankstorage.network.CMessageToggle;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.entity.player.EntityPlayer;
 
 public class Utils {
 
@@ -25,7 +25,7 @@ public class Utils {
     return bag.getItem() instanceof DankItemBlock && bag.hasTagCompound() && bag.getTagCompound().getBoolean("void");
   }
 
-  public static void toggle(ItemStack bag, CMessageToggle.KeybindToggleType t){
+  public static void toggle(ItemStack bag, CMessageToggle.KeybindToggleType t, EntityPlayer player){
     String s;
     switch (t){case VOID:s = "void";break;
       case PICKUP:s = "pickup"; break;
@@ -36,7 +36,7 @@ public class Utils {
       }
     }
     boolean toggle = getTagSafely(bag).getBoolean(s);
-    Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentTranslation("dankstorage."+s+"." + (toggle ? "disabled" : "enabled")), true);
+    player.sendStatusMessage(new TextComponentTranslation("dankstorage."+s+"." + (toggle ? "disabled" : "enabled")), true);
     getTagSafely(bag).setBoolean(s, !toggle);
   }
 
