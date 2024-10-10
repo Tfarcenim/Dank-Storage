@@ -2,6 +2,8 @@ package tfar.dankstorage.blockentity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -157,5 +159,16 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
         level.setBlockAndUpdate(worldPosition, getBlockState().setValue(DockBlock.TIER, stats.ordinal()));
         DankInventory dankInventory = getInventory();
         dankInventory.upgradeTo(stats);
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder pComponents) {
+        super.collectImplicitComponents(pComponents);
+        if (!dank.isEmpty()) {
+            DataComponentMap components = dank.getComponents();
+            for(DataComponentType<?> type : components.keySet()) {
+                pComponents.set((DataComponentType) type,dank.get(type));
+            }
+        }
     }
 }
