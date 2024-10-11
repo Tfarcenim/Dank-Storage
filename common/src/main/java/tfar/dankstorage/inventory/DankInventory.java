@@ -92,32 +92,48 @@ public class DankInventory implements ContainerData {
     }
 
     public void setItemDank(int slot, ItemStack stack) {
-        if (slot < slotCount()) {
+        if (inBounds(slot)) {
             this.items.set(slot, stack);
             setDirty(true);
         } else {
-            DankStorage.LOG.warn("Index out of bounds accessed, {} in size {}",slot,slotCount());
+            warnOutOfBounds(slot);
         }
     }
 
+    boolean inBounds(int index) {
+        return index >= 0 && index < slotCount();
+    }
+
+    void warnOutOfBounds(int slot) {
+        DankStorage.LOG.warn("Index out of bounds accessed, {} in size {}",slot,slotCount());
+    }
+
     public ItemStack getItemDank(int slot) {
-        if (slot < slotCount()) {
+        if (inBounds(slot)) {
             return items.get(slot);
         } else {
-            DankStorage.LOG.warn("Index out of bounds accessed, {} in size {}",slot,slotCount());
+            warnOutOfBounds(slot);
             return ItemStack.EMPTY;
         }
     }
 
     public boolean canPlaceItem(int slot, ItemStack stack) {
-        if (slot < 0 || slot >= slotCount()) return false;
+        if (!inBounds(slot)) return false;
         boolean checkGhostItem = !hasGhostItem(slot) || getGhostItem(slot).getItem() == stack.getItem();
         return !stack.is(ModTags.BLACKLISTED_STORAGE)
                 && checkGhostItem;
     }
 
     public void setGhostItem(int slot, Item item) {
-        getGhostItems().set(slot, new ItemStack(item));
+        setGhostItem(slot,new ItemStack(item));
+    }
+
+    private void setGhostItem(int slot, ItemStack stack) {
+        if (inBounds(slot)) {
+            getGhostItems().set(slot, stack);
+        } else {
+            warnOutOfBounds(slot);
+        }
     }
 
     public NonNullList<ItemStack> getContents() {
@@ -128,7 +144,7 @@ public class DankInventory implements ContainerData {
         this.items = stacks;
     }
 
-    public NonNullList<ItemStack> getGhostItems() {
+    protected NonNullList<ItemStack> getGhostItems() {
         return ghostItems;
     }
 
@@ -272,33 +288,6 @@ public class DankInventory implements ContainerData {
         return remainder;
     }
 
-    void readGhostItems(HolderLookup.Provider provider, ListTag listTag) {
-        for (int i = 0; i < listTag.size(); i++) {
-            CompoundTag itemTags = listTag.getCompound(i);
-            int slot = itemTags.getInt("Slot");
-            if (slot >= 0 && slot < slotCount()) {
-                if (itemTags.contains("StackList", Tag.TAG_LIST)) {
-                    ItemStack stack = ItemStack.EMPTY;
-                    ListTag stackTagList = itemTags.getList("StackList", Tag.TAG_COMPOUND);
-                    for (int j = 0; j < stackTagList.size(); j++) {
-                        CompoundTag itemTag = stackTagList.getCompound(j);
-                        ItemStack temp = ItemStack.parseOptional(provider, itemTag);
-                        if (!temp.isEmpty()) {
-                            if (stack.isEmpty()) stack = temp;
-                            else stack.grow(temp.getCount());
-                        }
-                    }
-                    if (!stack.isEmpty()) {
-                        this.getGhostItems().set(slot, stack);
-                    }
-                } else {
-                    ItemStack stack = ItemStack.parseOptional(provider, itemTags);
-                    this.getGhostItems().set(slot, stack);
-                }
-            }
-        }
-    }
-
     public int getMaxStackSizeSensitive(ItemStack stack) {
         return stack.is(ModTags.UNSTACKABLE) ? 1 : getMaxStackSizeDank();
     }
@@ -421,16 +410,15 @@ public class DankInventory implements ContainerData {
                 }
             }
         }
-
         sort();
     }
 
 
-    void readItems(HolderLookup.Provider provider, ListTag listTag) {
+    void readItems(HolderLookup.Provider provider, ListTag listTag,List<ItemStack> list) {
         for (int i = 0; i < listTag.size(); i++) {
             CompoundTag itemTags = listTag.getCompound(i);
             int slot = itemTags.getInt("Slot");
-            if (slot >= 0 && slot < slotCount()) {
+            if (inBounds(slot)) {
                 if (itemTags.contains("StackList", Tag.TAG_LIST)) {
                     ItemStack stack = ItemStack.EMPTY;
                     ListTag stackTagList = itemTags.getList("StackList", Tag.TAG_COMPOUND);
@@ -447,11 +435,11 @@ public class DankInventory implements ContainerData {
                         count = Math.min(count, getMaxStackSizeDank());
                         stack.setCount(count);
 
-                        this.items.set(slot, stack);
+                        list.set(slot, stack);
                     }
                 } else {
                     ItemStack stack = SerializationHelper.decodeLargeItemStack(provider, itemTags);
-                    this.items.set(slot, stack);
+                    list.set(slot, stack);
                 }
             }
         }
@@ -472,10 +460,12 @@ public class DankInventory implements ContainerData {
 
         ListTag ghostItemNBT = new ListTag();
         for (int i = 0; i < this.getContents().size(); i++) {
-            if (!getGhostItems().get(i).isEmpty()) {
+            ItemStack ghost = getGhostItem(i);
+            if (!ghost.isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
-                ghostItemNBT.add(getGhostItems().get(i).save(provider, itemTag));
+
+                ghostItemNBT.add(ghost.save(provider, itemTag));
             }
         }
 
@@ -491,9 +481,9 @@ public class DankInventory implements ContainerData {
 
     public void load(HolderLookup.Provider provider, CompoundTag nbt) {
         ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
-        readItems(provider, tagList);
+        readItems(provider, tagList,items);
         ListTag ghostItemList = nbt.getList(GHOST, Tag.TAG_COMPOUND);
-        readGhostItems(provider, ghostItemList);
+        readItems(provider, ghostItemList,ghostItems);
         if (nbt.contains("locked")) {
             frequencyLocked = nbt.getBoolean("locked");
         }
