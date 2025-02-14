@@ -89,13 +89,13 @@ public class CommonUtils {
 
         for (CraftingRecipe recipe : REVERSIBLE3x3) {
             if (recipe.getIngredients().getFirst().test(stack)) {
-                return stack.getCount() == 9;
+                return stack.getCount() >= 9;
             }
         }
 
         for (CraftingRecipe recipe : REVERSIBLE2x2) {
             if (recipe.getIngredients().getFirst().test(stack)) {
-                return stack.getCount() == 4;
+                return stack.getCount() >= 4;
             }
         }
 

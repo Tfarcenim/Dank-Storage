@@ -90,6 +90,7 @@ public class DankSavedData extends SavedData {
     }
 
     public boolean clear() {
+        DankInventory dankInventory = getOrCreateInventory();
         return true;
     }
 }

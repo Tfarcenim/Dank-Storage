@@ -10,23 +10,23 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.item.DankItem;
+import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.world.DankSavedData;
 
 public class DankCommands {
 
     public static void register(CommandDispatcher<CommandSourceStack> commandDispatcher) {
-        if (true) return;
-       /* commandDispatcher.register(Commands.literal(DankStorage.MODID)
+        commandDispatcher.register(Commands.literal(DankStorage.MODID)
                 .then(Commands.literal("clear")
-                        .requires(commandSourceStack -> commandSourceStack.hasPermission(3))
-                        .then(Commands.literal("all")
-                                .executes(DankCommands::clearAll))
+                        .requires(commandSourceStack -> commandSourceStack.hasPermission(Commands.LEVEL_ADMINS))
+                //        .then(Commands.literal("all")
+                   //             .executes(DankCommands::clearAll))
 
                         .then(Commands.argument("frequency", IntegerArgumentType.integer(0))
                                 .executes(DankCommands::clearID))
-                )
+                ));
 
-                .then(Commands.literal("set_tier")
+               /* .then(Commands.literal("set_tier")
                         .requires(commandSourceStack -> commandSourceStack.hasPermission(3))
                         .then(Commands.argument("frequency", IntegerArgumentType.integer(0))
                                 .then(Commands.argument("tier", IntegerArgumentType.integer(1,7))
@@ -56,15 +56,22 @@ public class DankCommands {
     }
 
     private static int clearAll(CommandContext<CommandSourceStack> context) {
-        //DankStorageForge.instance.data.clearAll();
+
         return 1;
     }
 
     private static int clearID(CommandContext<CommandSourceStack> context) {
         int id = IntegerArgumentType.getInteger(context, "frequency");
-        boolean success = DankSavedData.get(id,context.getSource().getServer()).clear();
+        boolean success = false;
+        DankSavedData data = DankSavedData.get(id,context.getSource().getServer());
+
+        if (data!= null) {
+            data.getOrCreateInventory().clear();
+            success = true;
+        }
+
         if (!success) {
-          //  throw new CommandRuntimeException(CommonUtils.translatable("dankstorage.command.clear_id.invalid_id"));
+            context.getSource().sendFailure(CommonUtils.translatable("dankstorage.command.clear_id.invalid_id"));
         }
         return 1;
     }

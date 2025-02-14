@@ -161,8 +161,7 @@ public class DankInventory implements ContainerData {
     @Override
     public void set(int slot, int value) {
         switch (slot) {
-            case TXT_COLOR -> // only set top 16 bits
-                    textColor = value;
+            case TXT_COLOR -> textColor = value;
 
             case FREQ_LOCK -> frequencyLocked = value != 0;
             case SORTING_TYPE -> sortingType = SortingType.values()[value];
@@ -277,7 +276,7 @@ public class DankInventory implements ContainerData {
         }
         ItemStack remainder = stack.copy();
         for (int i = 0; i < slotCount(); i++) {
-            remainder = insertStack(i, stack, simulate);
+            remainder = insertStack(i, remainder, simulate);
             if (remainder.isEmpty()) {
                 break;
             }
@@ -608,5 +607,12 @@ public class DankInventory implements ContainerData {
     public void toggleAutoSort() {
         autoSort = !autoSort;
         setDirty(false);
+    }
+
+    public void clear() {
+        for (int i = 0; i < slotCount();i++) {
+            items.set(i,ItemStack.EMPTY);
+            ghostItems.set(i,ItemStack.EMPTY);
+        }
     }
 }
