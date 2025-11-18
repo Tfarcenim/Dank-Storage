@@ -99,11 +99,11 @@ public class DankInventory implements ContainerData {
         }
     }
 
-    boolean inBounds(int index) {
+    protected boolean inBounds(int index) {
         return index >= 0 && index < slotCount();
     }
 
-    void warnOutOfBounds(int slot) {
+    protected void warnOutOfBounds(int slot) {
         DankStorage.LOG.warn("Index out of bounds accessed, {} in size {}",slot,slotCount());
     }
 

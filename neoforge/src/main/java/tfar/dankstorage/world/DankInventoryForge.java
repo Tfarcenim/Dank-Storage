@@ -20,21 +20,33 @@ public class DankInventoryForge extends DankInventory implements IItemHandlerMod
 
     @Override
     public ItemStack getStackInSlot(int i) {
-        return items.get(i);
+        return getItemDank(i);
     }
 
     @Override
     public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+        if (!inBounds(slot)) {
+            warnOutOfBounds(slot);
+            return stack;
+        }
         return insertStack(slot,stack,simulate);
     }
 
     @Override
     public ItemStack extractItem(int i, int i1, boolean b) {
+        if (!inBounds(i)) {
+            warnOutOfBounds(i);
+            return ItemStack.EMPTY;
+        }
         return extractStack(i,i1,b);
     }
 
     @Override
     public int getSlotLimit(int slot) {
+        if (!inBounds(slot)) {
+            warnOutOfBounds(slot);
+            return 0;
+        }
         return capacity;
     }
 
