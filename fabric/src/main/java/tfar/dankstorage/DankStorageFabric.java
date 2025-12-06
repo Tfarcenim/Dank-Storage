@@ -1,6 +1,7 @@
 package tfar.dankstorage;
 
 import com.mojang.brigadier.CommandDispatcher;
+import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -11,6 +12,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands.CommandSelection;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraftforge.fml.config.ModConfig;
 import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.client.ModClientFabric;
 import tfar.dankstorage.command.DankCommands;
@@ -21,6 +23,8 @@ public class DankStorageFabric implements ModInitializer, ClientModInitializer,
 
     @Override
     public void onInitialize() {
+        ForgeConfigRegistry.INSTANCE.register(DankStorage.MODID, ModConfig.Type.SERVER, DankStorageConfig.SERVER_SPEC);
+        ForgeConfigRegistry.INSTANCE.register(DankStorage.MODID, ModConfig.Type.CLIENT, DankStorageConfig.CLIENT_SPEC);
         ServerLifecycleEvents.SERVER_STARTED.register(this);
         ServerLifecycleEvents.SERVER_STOPPED.register(this);
         CommandRegistrationCallback.EVENT.register(this);

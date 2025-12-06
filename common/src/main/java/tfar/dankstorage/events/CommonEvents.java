@@ -96,7 +96,7 @@ public class CommonEvents {
         ItemStack existing = inv.getItemDank(slot);
 
         if (doesItemStackExist(toInsert, filter, oredict) && areItemStacksCompatible(existing, toInsert, oredict)) {
-            int stackLimit = inv.getDankStats().stacklimit;
+            int stackLimit = inv.getDankStats().stacklimit();
             int total = Math.min(toInsert.getCount() + existing.getCount(), stackLimit);
             //doesn't matter if it overflows because it's all gone lmao
             inv.setItemDank(slot, CommonUtils.copyStackWithSize(existing, total));
@@ -108,7 +108,7 @@ public class CommonEvents {
         ItemStack existing = inv.getItemDank(slot);
 
         if (existing.isEmpty()) {
-            int stackLimit = inv.getDankStats().stacklimit;
+            int stackLimit = inv.getDankStats().stacklimit();
             int total = pickup.getCount();
             int remainder = total - stackLimit;
             //no overflow
@@ -123,7 +123,7 @@ public class CommonEvents {
         }
 
         if (ItemStack.isSameItemSameTags(pickup, existing) || (oredict /*&& Utils.areItemStacksConvertible(pickup, existing)*/)) {
-            int stackLimit = inv.getDankStats().stacklimit;
+            int stackLimit = inv.getDankStats().stacklimit();
             int total = pickup.getCount() + existing.getCount();
             int remainder = total - stackLimit;
             //no overflow
@@ -141,7 +141,7 @@ public class CommonEvents {
         ItemStack existing = inv.getItemDank(slot);
 
         if (existing.isEmpty() && doesItemStackExist(toInsert, filter, oredict)) {
-            int stackLimit = inv.getDankStats().stacklimit;
+            int stackLimit = inv.getDankStats().stacklimit();
             int total = toInsert.getCount();
             int remainder = total - stackLimit;
             //no overflow
@@ -156,7 +156,7 @@ public class CommonEvents {
         }
 
         if (doesItemStackExist(toInsert, filter, oredict) && areItemStacksCompatible(existing, toInsert, oredict)) {
-            int stackLimit = inv.getDankStats().stacklimit;
+            int stackLimit = inv.getDankStats().stacklimit();
             int total = toInsert.getCount() + existing.getCount();
             int remainder = total - stackLimit;
             //no overflow

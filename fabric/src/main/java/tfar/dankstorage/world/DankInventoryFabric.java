@@ -22,9 +22,9 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
     public MinecraftServer server;
 
     public DankInventoryFabric(DankStats stats, int frequency) {
-        super(stats.slots);
+        super(stats.slots());
         this.dankStats = stats;
-        this.ghostItems = NonNullList.withSize(stats.slots, ItemStack.EMPTY);
+        this.ghostItems = NonNullList.withSize(stats.slots(), ItemStack.EMPTY);
         this.frequency = frequency;
     }
 
@@ -91,7 +91,7 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
 
     public void setDankStats(DankStats dankStats) {
         this.dankStats = dankStats;
-        $setSize(dankStats.slots);
+        $setSize(dankStats.slots());
     }
 
     @Override
@@ -106,7 +106,7 @@ public class DankInventoryFabric extends SimpleContainer implements DankInterfac
 
     @Override
     public int getMaxStackSize() {
-        return dankStats.stacklimit;
+        return dankStats.stacklimit();
     }
 
     public NonNullList<ItemStack> getContents() {

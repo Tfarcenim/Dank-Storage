@@ -21,15 +21,15 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
     public MinecraftServer server;
 
     public DankInventoryForge(DankStats stats, int frequency) {
-        super(stats.slots);
+        super(stats.slots());
         this.dankStats = stats;
-        this.ghostItems = NonNullList.withSize(stats.slots,ItemStack.EMPTY);
+        this.ghostItems = NonNullList.withSize(stats.slots(),ItemStack.EMPTY);
         this.frequency = frequency;
     }
 
     public void setDankStats(DankStats dankStats) {
         this.dankStats = dankStats;
-        setSize(dankStats.slots);
+        setSize(dankStats.slots());
     }
 
     @Override
@@ -74,7 +74,7 @@ public class DankInventoryForge extends ItemStackHandler implements DankInterfac
 
     @Override
     public int getSlotLimit(int slot) {
-        return dankStats.stacklimit;
+        return dankStats.stacklimit();
     }
 
     @Override

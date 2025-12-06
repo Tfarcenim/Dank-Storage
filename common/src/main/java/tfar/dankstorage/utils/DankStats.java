@@ -1,24 +1,31 @@
 package tfar.dankstorage.utils;
 
+import tfar.dankstorage.DankStorageConfig;
+
+import java.util.function.Supplier;
+
 public enum DankStats {
-    zero(0, 0),
-    one(9, 256),
-    two(18, 1024),
-    three(27, 4096),
-    four(36, 16384),
-    five(45, 65536),
-    six(54, 262144),
-    seven(81, Integer.MAX_VALUE);
+    zero(0, () -> 0),
+    one(9, DankStorageConfig.SERVER.stacklimit1),
+    two(18, DankStorageConfig.SERVER.stacklimit2),
+    three(27, DankStorageConfig.SERVER.stacklimit3),
+    four(36, DankStorageConfig.SERVER.stacklimit4),
+    five(45, DankStorageConfig.SERVER.stacklimit5),
+    six(54, DankStorageConfig.SERVER.stacklimit6),
+    seven(81, DankStorageConfig.SERVER.stacklimit7);
 
-    public int slots;
-    public int stacklimit;
+    private int slots;
+    private final Supplier<Integer> stacklimit;
 
-    DankStats(int slots, int stacklimit) {
-        this.slots = slots;
-        this.stacklimit = stacklimit;
+    public int slots(){
+        return slots;
     }
 
-    public void set(int slots, int stacklimit) {
+    public int stacklimit(){
+        return stacklimit.get();
+    }
+
+    DankStats(int slots, Supplier<Integer> stacklimit) {
         this.slots = slots;
         this.stacklimit = stacklimit;
     }

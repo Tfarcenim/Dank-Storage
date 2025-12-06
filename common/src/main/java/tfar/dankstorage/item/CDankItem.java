@@ -108,7 +108,7 @@ public class CDankItem extends Item {
                     CommonUtils.translatable("text.dankstorage.currentusetype", CommonUtils.translatable(
                             "dankstorage.usetype." + useType.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
             tooltip.add(
-                    CommonUtils.translatable("text.dankstorage.stacklimit", CommonUtils.literal(stats.stacklimit + "").withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.GRAY));
+                    CommonUtils.translatable("text.dankstorage.stacklimit", CommonUtils.literal(stats.stacklimit() + "").withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.GRAY));
         }
     }
 

@@ -112,21 +112,6 @@ public class ForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public boolean showPreview() {
-        return DankStorageForge.ClientConfig.preview.get();
-    }
-
-    @Override
-    public int previewX() {
-        return DankStorageForge.ClientConfig.preview_x.get();
-    }
-
-    @Override
-    public int previewY() {
-        return DankStorageForge.ClientConfig.preview_y.get();
-    }
-
-    @Override
     public CDankItem create(Item.Properties properties, DankStats stats) {
         return new DankItemForge(properties, stats);
     }

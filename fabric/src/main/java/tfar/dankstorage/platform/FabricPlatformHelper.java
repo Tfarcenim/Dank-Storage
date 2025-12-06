@@ -102,22 +102,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
         return state.getBlock().getCloneItemStack(level,pos,state);
     }
 
-    @Override
-    public boolean showPreview() {
-        return true;
-    }
-
     //hardcoded for now
-
-    @Override
-    public int previewX() {
-        return -140;
-    }
-
-    @Override
-    public int previewY() {
-        return -25;
-    }
 
 
     @Override

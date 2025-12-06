@@ -284,7 +284,7 @@ public abstract class AbstractDankMenu extends AbstractContainerMenu {
     public void broadcastChanges() {
         super.broadcastChanges();
         //the remote inventory needs to know about locked slots
-        for (int i = 0; i < dankInventory.getDankStats().slots; i++) {
+        for (int i = 0; i < dankInventory.getDankStats().slots(); i++) {
             Services.PLATFORM.sendToClient(new S2CSendGhostSlotPacket(containerId,i, dankInventory.getGhostItem(i)), (ServerPlayer)
                     playerInventory.player);
         }

@@ -298,7 +298,7 @@ public interface DankInterface extends ContainerData {
         ListTag nbtTagList = new ListTag();
         for (int i = 0; i < this.getContents().size(); i++) {
             if (!getContents().get(i).isEmpty()) {
-                int realCount = Math.min(getDankStats().stacklimit, getContents().get(i).getCount());
+                int realCount = Math.min(getDankStats().stacklimit(), getContents().get(i).getCount());
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
                 getContents().get(i).save(itemTag);
@@ -375,12 +375,12 @@ public interface DankInterface extends ContainerData {
             DankStorage.LOG.debug("Upgrading dank #{} from tier {} to {}", frequency(), getDankStats().name(), stats.name());
 
 
-            NonNullList<ItemStack> newStacks = NonNullList.withSize(stats.slots, ItemStack.EMPTY);
-            NonNullList<ItemStack> newGhostStacks = NonNullList.withSize(stats.slots, ItemStack.EMPTY);
+            NonNullList<ItemStack> newStacks = NonNullList.withSize(stats.slots(), ItemStack.EMPTY);
+            NonNullList<ItemStack> newGhostStacks = NonNullList.withSize(stats.slots(), ItemStack.EMPTY);
 
             //don't copy nonexistent items
             int oldSlots = getContainerSizeDank();
-            int max = Math.min(oldSlots, stats.slots);
+            int max = Math.min(oldSlots, stats.slots());
             for (int i = 0; i < max; i++) {
                 ItemStack oldStack = getItemDank(i);
                 ItemStack oldGhost = getGhostItem(i);

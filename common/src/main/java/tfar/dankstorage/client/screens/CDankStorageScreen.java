@@ -184,7 +184,7 @@ public class CDankStorageScreen<T extends AbstractDankMenu> extends AbstractCont
 
             int i1 = pSlot.x;
             int j1 = pSlot.y;
-            if (!pSlot.hasItem() && pSlot.index < menu.dankInventory.getDankStats().slots && menu.dankInventory.hasGhostItem(pSlot.index)) {
+            if (!pSlot.hasItem() && pSlot.index < menu.dankInventory.getDankStats().slots() && menu.dankInventory.hasGhostItem(pSlot.index)) {
                 pGuiGraphics.renderFakeItem(menu.dankInventory.getGhostItem(pSlot.index), i1, j1);
                 RenderSystem.depthFunc(516);
                 pGuiGraphics.fill(i1, j1, i1 + 16, j1 + 16, 0x40ffffff);

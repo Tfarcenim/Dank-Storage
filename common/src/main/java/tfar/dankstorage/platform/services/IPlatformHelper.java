@@ -1,7 +1,6 @@
 package tfar.dankstorage.platform.services;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -71,9 +70,6 @@ public interface IPlatformHelper {
 
 
     DankInterface createInventory(DankStats stats,int frequency);
-    boolean showPreview();
-    int previewX();
-    int previewY();
 
     Slot createSlot(DankInterface dankInventory, int index, int xPosition, int yPosition);
 
@@ -108,5 +104,4 @@ public interface IPlatformHelper {
     CommonDockBlockEntity<?> blockEntity(BlockPos pos, BlockState state);
 
    boolean onItemStackedOn(ItemStack carriedItem, ItemStack stackedOnItem, Slot slot, ClickAction action, Player player, SlotAccess carriedSlotAccess);
-
 }
