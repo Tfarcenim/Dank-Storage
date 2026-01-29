@@ -50,6 +50,7 @@ dependencies {
         implementation "dev.architectury:architectury-neoforge:$architectury_version"
     }
     implementation "curse.maven:pipez-443900:5609056"
+    implementation "curse.maven:toms-storage-378609:7397755"
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
