@@ -92,19 +92,8 @@ public class SerializationHelper {
         return LARGE_OPTIONAL_LIST_STREAM_CODEC.decode(buf);
     }
 
-
-    public static <B extends FriendlyByteBuf, V extends Enum<V>> StreamCodec<B, V> enumCodec(final Class<V> enumClass) {
-        return new StreamCodec<>() {
-            @Override
-            public V decode(B buf) {
-                return buf.readEnum(enumClass);
-            }
-
-            @Override
-            public void encode(B buf, V value) {
-                buf.writeEnum(value);
-            }
-        };
+    public static <E extends Enum<E>> StreamCodec<FriendlyByteBuf,E> enumCodec(Class<E> eClass) {
+        return StreamCodec.of(FriendlyByteBuf::writeEnum, buffer -> buffer.readEnum(eClass));
     }
 }
 
