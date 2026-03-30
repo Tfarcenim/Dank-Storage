@@ -18,12 +18,9 @@ import net.minecraft.world.phys.HitResult;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.DankStorageFabric;
-import tfar.dankstorage.inventory.DankInventory;
 import tfar.dankstorage.network.client.S2CModPacket;
 import tfar.dankstorage.network.server.C2SModPacket;
 import tfar.dankstorage.platform.services.IPlatformHelper;
-import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.world.DankSavedData;
 
 import java.util.Map;
 

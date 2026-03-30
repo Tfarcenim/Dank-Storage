@@ -1,12 +1,9 @@
 package tfar.dankstorage.platform;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.MappedRegistry;
-import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -16,9 +13,6 @@ import net.minecraft.world.phys.HitResult;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
-import org.apache.commons.lang3.tuple.Pair;
-import tfar.dankstorage.DankStorage;
-import tfar.dankstorage.DankStorageNeoForge;
 import tfar.dankstorage.inventory.DankInventory;
 import tfar.dankstorage.network.DankPacketHandlerNeoForge;
 import tfar.dankstorage.network.client.S2CModPacket;
@@ -27,11 +21,7 @@ import tfar.dankstorage.platform.services.IPlatformHelper;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.world.DankInventoryForge;
 import tfar.dankstorage.world.DankSavedData;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
+import tfar.dankstorage.world.DankSavedDatas;
 
 public class NeoForgePlatformHelper implements IPlatformHelper {
 
@@ -52,7 +42,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public boolean isDevelopmentEnvironment() {
 
-        return !FMLLoader.isProduction();
+        return !FMLLoader.getCurrent().isProduction();
     }
 
     public static PayloadRegistrar registrar;
@@ -83,21 +73,8 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public <F> void registerAll(Map<String, ? extends F> map, Registry<F> registry, Class<? extends F> filter) {
-        List<Pair<ResourceLocation, Supplier<?>>> list = DankStorageNeoForge.registerLater.computeIfAbsent(registry, k -> new ArrayList<>());
-        for (Map.Entry<String, ? extends F> entry : map.entrySet()) {
-            list.add(Pair.of(DankStorage.id(entry.getKey()), entry::getValue));
-        }
-    }
-
-    @Override
-    public <F> void unfreeze(Registry<F> registry) {
-        ((MappedRegistry<F>)registry).unfreeze();
-    }
-
-    @Override
     public ItemStack getCloneStack(Level level, BlockPos pos, BlockState state, HitResult hitResult, Player player) {
-        return state.getCloneItemStack(hitResult, level, pos, player);
+        return state.getCloneItemStack(pos, level, false, player);
     }
 
     @Override

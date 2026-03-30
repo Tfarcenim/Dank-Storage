@@ -16,67 +16,85 @@ import tfar.dankstorage.init.ModItems;
 import java.util.concurrent.CompletableFuture;
 
 public class ModRecipeProvider extends RecipeProvider {
-    public ModRecipeProvider(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pRegistries) {
-        super(pOutput,pRegistries);
+
+
+    protected ModRecipeProvider(HolderLookup.Provider registries, RecipeOutput output) {
+        super(registries, output);
+    }
+
+    public static class Runner extends RecipeProvider.Runner {
+        public Runner(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> registries) {
+            super(packOutput, registries);
+        }
+
+        @Override
+        protected RecipeProvider createRecipeProvider(HolderLookup.Provider registries, RecipeOutput output) {
+            return new ModRecipeProvider(registries, output);
+        }
+
+        @Override
+        public String getName() {
+            return "Vanilla Recipes";
+        }
     }
 
     @Override
-    protected void buildRecipes(RecipeOutput pWriter) {
-        ShapedRecipeBuilderCustom.shaped(RecipeCategory.TOOLS, ModItems.DANKS.get("dank_1"))
+    protected void buildRecipes() {
+        ShapedRecipeBuilderCustom.shapedC(items,RecipeCategory.TOOLS, ModItems.DANKS.get("dank_1"))
                 .define('c', ItemTags.COALS)
                 .define('b', Tags.Items.BARRELS_WOODEN)
                 .pattern("ccc")
                 .pattern("cbc")
                 .pattern("ccc")
-                .unlockedBy(RecipeProvider.getHasName(Blocks.BARREL), RecipeProvider.has(Tags.Items.BARRELS_WOODEN))
-                .save(pWriter);
+                .unlockedBy(getHasName(Blocks.BARREL), has(Tags.Items.BARRELS_WOODEN))
+                .save(this.output);
 
-        ShapedRecipeBuilderCustom.shaped(RecipeCategory.TOOLS, ModItems.DOCK)
+        ShapedRecipeBuilderCustom.shapedC(items,RecipeCategory.TOOLS, ModItems.DOCK)
                 .define('c', Blocks.BLACK_CONCRETE)
                 .pattern("ccc")
                 .pattern("c c")
                 .pattern("ccc")
-                .unlockedBy(RecipeProvider.getHasName(Blocks.BLACK_CONCRETE), RecipeProvider.has(Blocks.BLACK_CONCRETE))
-                .save(pWriter);
+                .unlockedBy(getHasName(Blocks.BLACK_CONCRETE), has(Blocks.BLACK_CONCRETE))
+                .save(this.output);
 
         createDankAndUpgrade(ModItems.DANKS.get("dank_2"),ModItems.UPGRADES.get("1_to_2"),ModItems.DANKS.get("dank_1"),
-                Ingredient.of(Blocks.REDSTONE_BLOCK),Ingredient.of(Blocks.REDSTONE_BLOCK),pWriter);
+                Ingredient.of(Blocks.REDSTONE_BLOCK),Ingredient.of(Blocks.REDSTONE_BLOCK));
 
         createDankAndUpgrade(ModItems.DANKS.get("dank_3"),ModItems.UPGRADES.get("2_to_3"),ModItems.DANKS.get("dank_2"),
-                Ingredient.of(Blocks.GOLD_BLOCK),Ingredient.of(Blocks.GOLD_BLOCK),pWriter);
+                Ingredient.of(Blocks.GOLD_BLOCK),Ingredient.of(Blocks.GOLD_BLOCK));
 
         createDankAndUpgrade(ModItems.DANKS.get("dank_4"),ModItems.UPGRADES.get("3_to_4"),ModItems.DANKS.get("dank_3"),
-                Ingredient.of(Blocks.EMERALD_BLOCK),Ingredient.of(Blocks.EMERALD_BLOCK),pWriter);
+                Ingredient.of(Blocks.EMERALD_BLOCK),Ingredient.of(Blocks.EMERALD_BLOCK));
 
         createDankAndUpgrade(ModItems.DANKS.get("dank_5"),ModItems.UPGRADES.get("4_to_5"),ModItems.DANKS.get("dank_4"),
-                Ingredient.of(Blocks.DIAMOND_BLOCK),Ingredient.of(Blocks.DIAMOND_BLOCK),pWriter);
+                Ingredient.of(Blocks.DIAMOND_BLOCK),Ingredient.of(Blocks.DIAMOND_BLOCK));
 
         createDankAndUpgrade(ModItems.DANKS.get("dank_6"),ModItems.UPGRADES.get("5_to_6"),ModItems.DANKS.get("dank_5"),
-                Ingredient.of(Blocks.CRYING_OBSIDIAN),Ingredient.of(Blocks.AMETHYST_BLOCK),pWriter);
+                Ingredient.of(Blocks.CRYING_OBSIDIAN),Ingredient.of(Blocks.AMETHYST_BLOCK));
 
         createDankAndUpgrade(ModItems.DANKS.get("dank_7"),ModItems.UPGRADES.get("6_to_7"),ModItems.DANKS.get("dank_6"),
-                Ingredient.of(Items.NETHER_STAR),Ingredient.of(Items.NETHER_STAR),pWriter);
+                Ingredient.of(Items.NETHER_STAR),Ingredient.of(Items.NETHER_STAR));
     }
 
-    protected void createDankAndUpgrade(Item dank, Item upgrade, Item previousDank, Ingredient around,Ingredient around2,RecipeOutput pWriter) {
-        ShapedRecipeBuilderCustom.shaped(RecipeCategory.TOOLS, dank)
+    protected void createDankAndUpgrade(Item dank, Item upgrade, Item previousDank, Ingredient around,Ingredient around2) {
+        ShapedRecipeBuilderCustom.shapedC(items,RecipeCategory.TOOLS, dank)
                 .define('c', around)
                 .define('d', around2)
                 .define('b', previousDank)
                 .pattern("dcd")
                 .pattern("cbc")
                 .pattern("dcd")
-                .unlockedBy(RecipeProvider.getHasName( previousDank), RecipeProvider.has(previousDank))
-                .save(pWriter);
+                .unlockedBy(getHasName( previousDank), has(previousDank))
+                .save(this.output);
 
-        ShapedRecipeBuilderCustom.shaped(RecipeCategory.TOOLS, upgrade)
+        ShapedRecipeBuilderCustom.shapedC(items,RecipeCategory.TOOLS, upgrade)
                 .define('c', around)
                 .define('d', around2)
                 .pattern("dcd")
                 .pattern("c c")
                 .pattern("dcd")
-                .unlockedBy(RecipeProvider.getHasName( previousDank), RecipeProvider.has(previousDank))
-                .save(pWriter);
+                .unlockedBy(getHasName( previousDank), has(previousDank))
+                .save(this.output);
     }
 
 }

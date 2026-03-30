@@ -27,7 +27,7 @@ public class S2CInitialSyncContainerPacket implements S2CModPacket {
     private final List<ItemStack> stacks;
     private final ItemStack carried;
 
-    public S2CInitialSyncContainerPacket(int windowId,int stateID,NonNullList<ItemStack> stacks,ItemStack carried){
+    public S2CInitialSyncContainerPacket(int windowId,int stateID,List<ItemStack> stacks,ItemStack carried){
         this.windowId = windowId;
         this.stateID = stateID;
         this.stacks = stacks;

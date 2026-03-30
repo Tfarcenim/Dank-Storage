@@ -1,16 +1,11 @@
 package tfar.dankstorage;
 
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -20,12 +15,12 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
-import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.registries.RegisterEvent;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import tfar.dankstorage.client.ModClientForge;
 import tfar.dankstorage.command.DankCommands;
 import tfar.dankstorage.init.ModBlockEntityTypes;
 import tfar.dankstorage.init.ModItems;
@@ -35,16 +30,10 @@ import tfar.dankstorage.datagen.ModDatagen;
 import tfar.dankstorage.network.DankPacketHandlerNeoForge;
 import tfar.dankstorage.platform.TomlConfigs;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-
 @Mod(DankStorage.MODID)
 public class DankStorageNeoForge {
 
     public static final Logger LOGGER = LogManager.getLogger(DankStorage.MODID);
-    public static Map<Registry<?>, List<Pair<ResourceLocation, Supplier<?>>>> registerLater = new HashMap<>();
 
     public DankStorageNeoForge(IEventBus bus, ModContainer modContainer) {
         modContainer.registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
@@ -58,39 +47,23 @@ public class DankStorageNeoForge {
         bus.addListener(this::onInitialize);
         bus.addListener(DankPacketHandlerNeoForge::register);
         bus.addListener(this::capabilities);
-        if (FMLEnvironment.dist.isClient()) {
-            bus.addListener(this::onInitializeClient);
-            bus.addListener(ModClientForge::keybinds);
-            bus.addListener(ModClientForge::clientTool);
-            bus.addListener(ModClientForge::renderStack);
-        }
+
         DankStorage.init();
     }
 
 
-    //1543200 nanos
     public void registerObjs(RegisterEvent event) {
-        Registry<?> registry = event.getRegistry();
-        List<Pair<ResourceLocation,Supplier<?>>> list = registerLater.get(registry);
-        if (list != null) {
-            for (Pair<ResourceLocation,Supplier<?>> pair : list) {
-                event.register((ResourceKey<? extends Registry<Object>>)registry.key(),pair.getLeft(),(Supplier<Object>)pair.getValue());
-            }
-        }
+        DankStorage.register();
     }
 
     private void capabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntityTypes.dock,(object, context) -> (IItemHandler) object.getInventory());
-        event.registerItem(Capabilities.ItemHandler.ITEM,(stack,context) -> DankItemCapability.lookup(stack), ModItems.DANKS.values().toArray(DankItem[]::new));
+        event.registerBlockEntity(Capabilities.Item.BLOCK, ModBlockEntityTypes.DOCK,(object, context) -> (ResourceHandler<ItemResource>) object.getInventory());
+        event.registerItem(Capabilities.Item.ITEM,(stack,context) -> DankItemCapability.lookup(stack), ModItems.DANKS.values().toArray(DankItem[]::new));
     }
 
     public void onInitialize(FMLCommonSetupEvent e) {
-        registerLater.clear();
     }
 
-    public void onInitializeClient(FMLClientSetupEvent e) {
-        ModClientForge.client();
-    }
 
     public void onServerStarted(ServerStartedEvent e) {
         DankStorage.onServerStart(e.getServer());

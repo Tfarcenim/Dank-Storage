@@ -2,6 +2,7 @@ package tfar.dankstorage.client;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +16,7 @@ public class NumberEditBox extends EditBox {
     }
 
     @Override
-    public boolean charTyped(char c, int i) {
-        return Character.isDigit(c) && super.charTyped(c, i);
+    public boolean charTyped(CharacterEvent event) {
+        return  Character.isDigit(event.codepoint()) && super.charTyped(event);
     }
 }

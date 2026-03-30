@@ -1,68 +1,58 @@
 package tfar.dankstorage.world;
 
+import com.mojang.logging.LogUtils;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.datafix.DataFixTypes;
-import net.minecraft.world.level.saveddata.SavedData;
-import org.jetbrains.annotations.Nullable;
-import tfar.dankstorage.DankStorage;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import org.slf4j.Logger;
 import tfar.dankstorage.inventory.DankInventory;
 import tfar.dankstorage.platform.Services;
-import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 
-public class DankSavedData extends SavedData {
+public class DankSavedData {
 
-    protected final ServerLevel level;
-    private final int frequency;
     DankInventory cache;
-    DankStats stats = DankStats.zero;
-    CompoundTag tag = new CompoundTag();
+    DankStats stats;
+    CompoundTag tag;
+    int frequency;
+    private static final Logger LOGGER = LogUtils.getLogger();
 
-    public DankSavedData(ServerLevel level, int frequency) {
-        this.level = level;
+    private boolean dirty;
+
+    public static final MapCodec<DankSavedData> MAP_CODEC = RecordCodecBuilder.mapCodec(dankSavedDataInstance -> dankSavedDataInstance.group(
+            DankStats.CODEC.fieldOf("Stats").forGetter(d -> d.stats),
+            CompoundTag.CODEC.fieldOf("contents").forGetter(d -> d.tag)
+    ).apply(dankSavedDataInstance, DankSavedData::fromCodec));
+
+
+
+    public DankSavedData(DankStats stats, CompoundTag tag) {
+        this.stats = stats;
+        this.tag = tag;
+    }
+
+    public void setFrequency(int frequency) {
         this.frequency = frequency;
     }
 
-
-    public static SavedData.Factory<DankSavedData> factory(ServerLevel pLevel,int frequency) {
-        return new SavedData.Factory<>(() -> new DankSavedData(pLevel, frequency), (tag, p_324123_) -> loadStatic(tag, pLevel,frequency), DataFixTypes.SAVED_DATA_RAIDS);
+    public static DankSavedData fromCodec(DankStats stats, CompoundTag tag) {
+        return new DankSavedData(stats,tag);
     }
 
-    @Override
-    public CompoundTag save(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        compoundTag.putString("Stats",stats.name());
-        if (cache != null) {
-            compoundTag.put("contents", cache.save(provider));
-        }
-        return compoundTag;
-    }
-
-    public static DankSavedData getOrCreate(int id, MinecraftServer server) {
-        DankSavedData tankSavedData = get(id,server);
-        if (tankSavedData != null) {
-            return tankSavedData;
-        }
-
-        ServerLevel overworld = server.overworld();
-        return overworld.getDataStorage()
-                .computeIfAbsent(DankSavedData.factory(overworld,id), DankStorage.MODID+"/"+id);
-    }
-
-    @Nullable
-    public static DankSavedData get(int id, MinecraftServer server) {
-        if (id <= CommonUtils.INVALID) throw new RuntimeException("Invalid frequency: "+id);
-        ServerLevel overworld = server.overworld();
-        return overworld.getDataStorage()
-                .get(DankSavedData.factory(overworld,id), DankStorage.MODID+"/"+id);
-    }
-
-    public DankInventory getOrCreateInventory() {
+    public DankInventory getOrCreateInventory(HolderLookup.Provider provider) {
         if (cache == null) {
             cache = Services.PLATFORM.createInventory(stats,this);
-            cache.load(level.registryAccess(), tag);
+
+            try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(problemPath(), LOGGER)) {
+                ValueInput input = TagValueInput.create(reporter, provider, tag);
+                cache.load(input, tag);
+            }
+
         }
         if (cache.items.size() != stats.slots) {
             cache.setTo(stats);
@@ -72,25 +62,46 @@ public class DankSavedData extends SavedData {
 
     public void setStats(DankStats stats) {
         this.stats = stats;
-        setDirty();
     }
 
     public DankStats getStats() {
         return stats;
     }
-    protected void load(CompoundTag compoundTag) {
-        stats = compoundTag.contains("Stats") ? DankStats.valueOf(compoundTag.getString("Stats")) : DankStats.zero;
-        tag = compoundTag.getCompound("contents");
-    }
 
-    public static DankSavedData loadStatic(CompoundTag compoundTag, ServerLevel level,int frequency) {
-        DankSavedData tankSavedData = new DankSavedData(level,frequency);
-        tankSavedData.load(compoundTag);
-        return tankSavedData;
-    }
-
-    public boolean clear() {
-        DankInventory dankInventory = getOrCreateInventory();
+    public boolean clear(HolderLookup.Provider provider) {
+        DankInventory dankInventory = getOrCreateInventory(provider);
         return true;
+    }
+
+    public void setDirty() {
+        this.dirty = true;
+    }
+
+    public void setDirty(boolean dirty) {
+        this.dirty = dirty;
+    }
+
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void save(HolderLookup.Provider provider) {
+        if (cache != null) {
+            try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this.problemPath(), LOGGER)) {
+                TagValueOutput output = TagValueOutput.createWithContext(reporter, provider);
+                tag = cache.save(output);
+            }
+        }
+    }
+
+    public ProblemReporter.PathElement problemPath() {
+        return new DankPathElement(this);
+    }
+
+    private record DankPathElement(DankSavedData savedData) implements ProblemReporter.PathElement {
+        @Override
+        public String get() {
+            return "Dank @"+savedData.frequency;
+        }
     }
 }

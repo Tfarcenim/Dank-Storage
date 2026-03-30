@@ -4,25 +4,21 @@ package tfar.dankstorage.datagen.tags;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.ItemTagsProvider;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
 
-import javax.annotation.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 public class ModItemTagsProvider extends ItemTagsProvider {
 
 
-    public ModItemTagsProvider(PackOutput dataGenerator, CompletableFuture<HolderLookup.Provider> pLookupProvider, CompletableFuture<TagLookup<Block>> blockTagProvider, @Nullable ExistingFileHelper existingFileHelper) {
-        super(dataGenerator, pLookupProvider,blockTagProvider, DankStorage.MODID, existingFileHelper);
+    public ModItemTagsProvider(PackOutput dataGenerator, CompletableFuture<HolderLookup.Provider> pLookupProvider) {
+        super(dataGenerator, pLookupProvider,DankStorage.MODID);
     }
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
-
         tag(ModTags.UNSTACKABLE).add(Items.BUNDLE);
 
      //   List<Item> mek_cables = new ArrayList<>();

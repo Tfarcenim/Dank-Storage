@@ -1,7 +1,6 @@
 package tfar.dankstorage.inventory;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -12,10 +11,13 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.jetbrains.annotations.Nullable;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.platform.Services;
+import tfar.dankstorage.transferapi.IItemResource;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.SerializationHelper;
@@ -123,6 +125,12 @@ public class DankInventory implements ContainerData {
                 && checkGhostItem;
     }
 
+    public boolean canPlaceResource(int slot, IItemResource resource) {
+        if (!inBounds(slot)) return false;
+        boolean checkGhostItem = !hasGhostItem(slot) || getGhostItem(slot).getItem() == resource.getItem();
+        return !resource.toStack().is(ModTags.BLACKLISTED_STORAGE) && checkGhostItem;
+    }
+
     public void setGhostItem(int slot, ItemStack stack) {
         if (inBounds(slot)) {
             getGhostItems().set(slot, stack);
@@ -217,6 +225,43 @@ public class DankInventory implements ContainerData {
         }
     }
 
+    public int insertStackNew(int slot, IItemResource resource,int amount) {
+        boolean simulate = false;
+        if (resource.isEmpty()) {
+            return 0;
+        } else if (!this.canPlaceResource(slot, resource)) {
+            return 0;
+        } else {
+            // this.validateSlotIndex(slot);
+            ItemStack existing = this.items.get(slot);
+            int limit = this.getMaxStackSizeSensitive(resource);
+            if (!existing.isEmpty()) {
+                if (!resource.matches(existing)) {
+                    return 0;
+                }
+
+                limit -= existing.getCount();
+            }
+
+            if (limit <= 0) {
+                return 0;
+            } else {
+                boolean reachedLimit = amount > limit;
+                if (!simulate) {
+                    if (existing.isEmpty()) {
+                        this.items.set(slot, reachedLimit ? resource.toStack(limit) : resource.toStack(amount));
+                    } else {
+                        existing.grow(reachedLimit ? limit : amount);
+                    }
+                    setDirty(true);
+                    //this.onContentsChanged(slot);
+                }
+
+                return reachedLimit ? amount - limit : amount;
+            }
+        }
+    }
+
     public ItemStack extractStack(int slot, int amount, boolean simulate) {
         if (amount == 0) {
             return ItemStack.EMPTY;
@@ -244,6 +289,36 @@ public class DankInventory implements ContainerData {
                     }
 
                     return existing.copyWithCount(toExtract);
+                }
+            }
+        }
+    }
+
+    public int extractStackNew(int slot,IItemResource resource, int amount) {
+        boolean simulate = false;
+        if (amount == 0) {
+            return 0;
+        } else {
+            ItemStack existing = this.items.get(slot);
+            if (existing.isEmpty()) {
+                return 0;
+            } else {
+                int toExtract = Math.min(amount, existing.getMaxStackSize());
+                if (existing.getCount() <= toExtract) {
+                    if (!simulate) {
+                        this.items.set(slot, ItemStack.EMPTY);
+                        setDirty(true);
+                        //this.onContentsChanged(slot);
+                    }
+                    return existing.getCount();
+                } else {
+                    if (!simulate) {
+                        this.items.set(slot, existing.copyWithCount(existing.getCount() - toExtract));
+                        setDirty(true);
+                        //this.onContentsChanged(slot);
+                    }
+
+                    return toExtract;
                 }
             }
         }
@@ -286,6 +361,10 @@ public class DankInventory implements ContainerData {
 
     public int getMaxStackSizeSensitive(ItemStack stack) {
         return stack.is(ModTags.UNSTACKABLE) ? 1 : getMaxStackSizeDank();
+    }
+
+    public int getMaxStackSizeSensitive(IItemResource resource) {
+        return getMaxStackSizeSensitive(resource.toStack());
     }
 
     public void sort() {
@@ -407,86 +486,32 @@ public class DankInventory implements ContainerData {
     }
 
 
-    void readItems(HolderLookup.Provider provider, ListTag listTag,List<ItemStack> list) {
-        for (int i = 0; i < listTag.size(); i++) {
-            CompoundTag itemTags = listTag.getCompound(i);
-            int slot = itemTags.getInt("Slot");
-            if (inBounds(slot)) {
-                if (itemTags.contains("StackList", Tag.TAG_LIST)) {
-                    ItemStack stack = ItemStack.EMPTY;
-                    ListTag stackTagList = itemTags.getList("StackList", Tag.TAG_COMPOUND);
-                    for (int j = 0; j < stackTagList.size(); j++) {
-                        CompoundTag itemTag = stackTagList.getCompound(j);
-                        ItemStack temp = SerializationHelper.decodeLargeItemStack(provider, itemTag);
-                        if (!temp.isEmpty()) {
-                            if (stack.isEmpty()) stack = temp;
-                            else stack.grow(temp.getCount());
-                        }
-                    }
-                    if (!stack.isEmpty()) {
-                        int count = stack.getCount();
-                        count = Math.min(count, getMaxStackSizeDank());
-                        stack.setCount(count);
-
-                        list.set(slot, stack);
-                    }
-                } else {
-                    ItemStack stack = SerializationHelper.decodeLargeItemStack(provider, itemTags);
-                    list.set(slot, stack);
-                }
-            }
-        }
+    void readItems(ValueInput input, NonNullList<ItemStack> list, String items) {
+        SerializationHelper.loadAllItems(input,list,items);
     }
 
-    public CompoundTag save(HolderLookup.Provider provider) {
-        ListTag nbtTagList = new ListTag();
-        for (int i = 0; i < this.getContents().size(); i++) {
-            ItemStack stack = getContents().get(i);
-            if (!stack.isEmpty()) {
-                CompoundTag itemTag = new CompoundTag();
-                //getContents().get(i).save(provider,itemTag);
-                itemTag.putInt("Slot", i);
-                nbtTagList.add(SerializationHelper.encodeLargeStack(stack, provider, itemTag));
-            }
-        }
+    public CompoundTag save(TagValueOutput output) {
 
+        SerializationHelper.saveAllItems(output,getContents(),"Items");
+        SerializationHelper.saveAllItems(output,getGhostItems(),GHOST);
 
-        ListTag ghostItemNBT = new ListTag();
-        for (int i = 0; i < this.getContents().size(); i++) {
-            ItemStack ghost = getGhostItem(i);
-            if (!ghost.isEmpty()) {
-                CompoundTag itemTag = new CompoundTag();
-                itemTag.putInt("Slot", i);
-
-                ghostItemNBT.add(ghost.save(provider, itemTag));
-            }
-        }
-
-
-        CompoundTag nbt = new CompoundTag();
-        nbt.put("Items", nbtTagList);
-        nbt.put(GHOST, ghostItemNBT);
+        CompoundTag nbt = output.buildResult();
         nbt.putBoolean("locked", frequencyLocked());
         nbt.putString("SortingType", sortingType.name());
         nbt.putBoolean("AutoSort", autoSort);
         return nbt;
     }
 
-    public void load(HolderLookup.Provider provider, CompoundTag nbt) {
-        ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
-        readItems(provider, tagList,items);
-        ListTag ghostItemList = nbt.getList(GHOST, Tag.TAG_COMPOUND);
-        readItems(provider, ghostItemList,ghostItems);
-        if (nbt.contains("locked")) {
-            frequencyLocked = nbt.getBoolean("locked");
-        }
+    public void load(ValueInput input, CompoundTag nbt) {
+        readItems(input, items,"Items");
+        readItems(input, ghostItems, GHOST);
+        frequencyLocked = nbt.getBoolean("locked").orElse(true);
 
         try {
-            if (nbt.contains("SortingType")) sortingType = SortingType.valueOf(nbt.getString("SortingType"));
+            if (nbt.contains("SortingType")) sortingType = SortingType.valueOf(nbt.getString("SortingType")
+                    .orElse(SortingType.descending.name()));
         } catch (Exception e) {}
-        if (nbt.contains("AutoSort")) {
-            autoSort = nbt.getBoolean("AutoSort");
-        }
+        autoSort = nbt.getBoolean("AutoSort").orElse(false);
     }
 
     public int calcRedstone() {

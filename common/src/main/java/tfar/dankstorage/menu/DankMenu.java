@@ -88,13 +88,13 @@ public class DankMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public void doClick(int pSlotId, int pButton, ClickType pClickType, Player pPlayer) {
-        if (pClickType == ClickType.SWAP && pSlotId > 0 && slots.get(pSlotId) instanceof DankSlot) {
+    public void clicked(int pSlotId, int pButton, ContainerInput pClickType, Player pPlayer) {
+        if (pClickType == ContainerInput.SWAP && pSlotId > 0 && slots.get(pSlotId) instanceof DankSlot) {
             return;
         }
 
-        if (pClickType != ClickType.PICKUP) {
-            super.doClick(pSlotId, pButton, pClickType, pPlayer);
+        if (pClickType != ContainerInput.PICKUP) {
+            super.clicked(pSlotId, pButton, pClickType, pPlayer);
         } else {
 
             if (this.quickcraftStatus != 0) {
@@ -167,21 +167,21 @@ public class DankMenu extends AbstractContainerMenu {
             switch (buttonAction) {
                 case LOCK_FREQUENCY -> dankInventory.toggleFrequencyLock();
                 case SORT -> dankInventory.sort();
-                case COMPRESS -> dankInventory.compress(serverPlayer.serverLevel(), serverPlayer);
+                case COMPRESS -> dankInventory.compress(serverPlayer.level(), serverPlayer);
                 case TOGGLE_TAG -> CommonUtils.toggleTagMode(serverPlayer);
                 case TOGGLE_PICKUP -> CommonUtils.togglePickupMode(serverPlayer);
                 case CYCLE_SORT_TYPE -> {
-                    DankInventory dankInventory = DankItem.getInventoryFrom(bag, serverPlayer.server);
+                    DankInventory dankInventory = DankItem.getInventoryFrom(bag, serverPlayer.level().getServer());
                     if (dankInventory != null) {
                         dankInventory.setSortingType(DankItem.cycle(dankInventory.getSortingType()));
                         //needed to force syncing
                         for (int i = 0; i < remoteSlots.size(); i++) {
-                            remoteSlots.set(i,ItemStack.EMPTY);
+                            remoteSlots.get(i).force(ItemStack.EMPTY);
                         }
                     }
                 }
                 case TOGGLE_AUTO_SORT -> {
-                    DankInventory dankInventory = DankItem.getInventoryFrom(bag, serverPlayer.server);
+                    DankInventory dankInventory = DankItem.getInventoryFrom(bag, serverPlayer.level().getServer());
                     if (dankInventory != null) {
                         dankInventory.toggleAutoSort();
                     }

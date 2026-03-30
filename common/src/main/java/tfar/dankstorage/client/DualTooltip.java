@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import tfar.dankstorage.client.screens.DankStorageScreen;
 
 import java.util.List;
+import java.util.Optional;
 
 public class DualTooltip extends Tooltip {
 
@@ -16,7 +17,7 @@ public class DualTooltip extends Tooltip {
     private final DankStorageScreen screen;
 
     public DualTooltip(Component message1, Component message2, @Nullable Component narration, DankStorageScreen screen) {
-        super(message1, narration);
+        super(message1, narration, Optional.empty(),null);
         this.message2 = message2;
         this.screen = screen;
     }

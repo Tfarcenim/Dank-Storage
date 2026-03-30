@@ -16,4 +16,7 @@ public class ModMenuTypes {
     public static MenuType<DankMenu> dank_7 = new MenuType<>(DankMenu::t7, FeatureFlags.VANILLA_SET);
 
     public static MenuType<ChangeFrequencyMenu> change_frequency = new MenuType<>(ChangeFrequencyMenu::new,FeatureFlags.VANILLA_SET);
+
+    public static void init() {
+    }
 }

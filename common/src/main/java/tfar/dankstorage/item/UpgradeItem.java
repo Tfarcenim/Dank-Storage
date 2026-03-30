@@ -45,13 +45,13 @@ public class UpgradeItem extends Item {
 
         DockBlockEntity oldDank = (DockBlockEntity) world.getBlockEntity(pos);
 
-        if (!world.isClientSide) {
+        if (!world.isClientSide()) {
             if (oldDank != null) {
                 oldDank.upgradeTo(DankStats.values()[upgradeInfo.end()]);
                 if (!player.getAbilities().instabuild)
                     upgradeStack.shrink(1);
             }
-            player.displayClientMessage(Component.translatable("text.dankstorage.upgrade_successful").withStyle(ChatFormatting.GREEN), true);
+            player.sendOverlayMessage(Component.translatable("text.dankstorage.upgrade_successful").withStyle(ChatFormatting.GREEN));
         }
         return InteractionResult.SUCCESS;
     }

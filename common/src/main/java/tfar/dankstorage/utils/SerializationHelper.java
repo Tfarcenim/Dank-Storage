@@ -1,6 +1,7 @@
 package tfar.dankstorage.utils;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -16,8 +17,11 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.ItemStackWithSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import tfar.dankstorage.DankStorage;
 
 import java.util.List;
@@ -45,7 +49,7 @@ public class SerializationHelper {
                 buf.writeInt(0);
             } else {
                 buf.writeInt(stack.getCount());
-                ITEM_STREAM_CODEC.encode(buf, stack.getItemHolder());
+                ITEM_STREAM_CODEC.encode(buf, stack.typeHolder());
                 DataComponentPatch.STREAM_CODEC.encode(buf, ((PatchedDataComponentMap) stack.getComponents()).asPatch());
             }
         }
@@ -56,15 +60,21 @@ public class SerializationHelper {
     );
 
 
-    public static final Codec<ItemStack> LARGE_CODEC = RecordCodecBuilder.create(
-                    p_347288_ -> p_347288_.group(
-                                    ItemStack.ITEM_NON_AIR_CODEC.fieldOf("id").forGetter(ItemStack::getItemHolder),
+    public static final MapCodec<ItemStack> LARGE_MAP_CODEC = MapCodec.recursive(
+            "Large ItemStack",
+            subCodec -> RecordCodecBuilder.mapCodec(
+                    i -> i.group(
+                                    Item.CODEC_WITH_BOUND_COMPONENTS.fieldOf("id").forGetter(ItemStack::typeHolder),
                                     ExtraCodecs.intRange(1, Integer.MAX_VALUE).fieldOf("count").orElse(1).forGetter(ItemStack::getCount),
-                                    DataComponentPatch.CODEC
-                                            .optionalFieldOf("components", DataComponentPatch.EMPTY)
-                                            .forGetter(stack -> ((PatchedDataComponentMap) stack.getComponents()).asPatch())
+                                    DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY)
+                                            .forGetter(s -> ((PatchedDataComponentMap) s.getComponents()).asPatch())
                             )
-                            .apply(p_347288_, ItemStack::new));
+                            .apply(i, ItemStack::new)
+            )
+    );
+
+    public static final Codec<ItemStack> LARGE_CODEC = Codec.lazyInitialized(LARGE_MAP_CODEC::codec);
+
 
     public static Tag encodeLargeStack(ItemStack stack, HolderLookup.Provider provider, CompoundTag tag) {
         return LARGE_CODEC.encode(stack, provider.createSerializationContext(NbtOps.INSTANCE), tag).getOrThrow();
@@ -92,8 +102,39 @@ public class SerializationHelper {
         return LARGE_OPTIONAL_LIST_STREAM_CODEC.decode(buf);
     }
 
-    public static <E extends Enum<E>> StreamCodec<FriendlyByteBuf,E> enumCodec(Class<E> eClass) {
+    public static <E extends Enum<E>> StreamCodec<FriendlyByteBuf,E> enumStreamCodec(Class<E> eClass) {
         return StreamCodec.of(FriendlyByteBuf::writeEnum, buffer -> buffer.readEnum(eClass));
+    }
+
+    public static <E extends Enum<E>> Codec<E> enumCodec(Class<E> eClass) {
+        return Codec.STRING.xmap(string -> Enum.valueOf(eClass,string), Enum::name);
+    }
+
+    public static void loadAllItems(ValueInput input, NonNullList<ItemStack> itemStacks,String key) {
+        for (LargeItemStackWithSlot item : input.listOrEmpty(key, LargeItemStackWithSlot.CODEC)) {
+            if (item.isValidInContainer(itemStacks.size())) {
+                itemStacks.set(item.slot(), item.stack());
+            }
+        }
+    }
+
+    public static void saveAllItems(ValueOutput output, NonNullList<ItemStack> itemStacks,String key) {
+        saveAllItems(output, itemStacks, true,key);
+    }
+
+    public static void saveAllItems(ValueOutput output, NonNullList<ItemStack> itemStacks, boolean alsoWhenEmpty,String key) {
+        ValueOutput.TypedOutputList<LargeItemStackWithSlot> itemsOutput = output.list(key, LargeItemStackWithSlot.CODEC);
+
+        for (int i = 0; i < itemStacks.size(); i++) {
+            ItemStack itemStack = itemStacks.get(i);
+            if (!itemStack.isEmpty()) {
+                itemsOutput.add(new LargeItemStackWithSlot(i, itemStack));
+            }
+        }
+
+        if (itemsOutput.isEmpty() && !alsoWhenEmpty) {
+            output.discard(key);
+        }
     }
 }
 

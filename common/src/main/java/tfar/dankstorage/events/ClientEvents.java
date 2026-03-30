@@ -2,7 +2,7 @@ package tfar.dankstorage.events;
 
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -10,7 +10,6 @@ import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.network.server.C2SScrollSlotPacket;
 import tfar.dankstorage.platform.Services;
-import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.UseType;
 
 public class ClientEvents {
@@ -31,7 +30,7 @@ public class ClientEvents {
         return false;
     }
 
-    public static void renderSelectedItem(GuiGraphics guiGraphics, DeltaTracker partialTick) {
+    public static void extractSelectedItem(GuiGraphicsExtractor guiGraphics, DeltaTracker partialTick) {
         Player player = mc.player;
         if (player == null)
             return;
@@ -57,12 +56,12 @@ public class ClientEvents {
 
         final int stringX = xStart + 8 - mc.font.width(translate) / 2;
         final int stringY = yStart + 16;
-        guiGraphics.drawString(mc.font,translate, stringX, stringY, 0xffffff);
+        guiGraphics.text(mc.font,translate, stringX, stringY, 0xffffff);
     }
 
-    private static void renderHotbarItem(GuiGraphics poses, int x, int y, ItemStack stack) {
-        poses.renderFakeItem(stack, x, y);
-        poses.renderItemDecorations(mc.font, stack, x, y);
+    private static void renderHotbarItem(GuiGraphicsExtractor extractor, int x, int y, ItemStack stack) {
+        extractor.fakeItem(stack, x, y);
+        extractor.itemDecorations(mc.font, stack, x, y);
     }
 
     private static boolean shouldPreview() {

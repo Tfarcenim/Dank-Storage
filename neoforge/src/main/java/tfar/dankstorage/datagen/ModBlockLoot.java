@@ -1,6 +1,6 @@
 package tfar.dankstorage.datagen;
 
-import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.data.loot.BlockLootSubProvider;
@@ -10,6 +10,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.init.ModBlocks;
@@ -45,7 +46,7 @@ public class ModBlockLoot extends BlockLootSubProvider {
                                 .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(DockBlock.TIER, dank.stats.ordinal()))
                 )
                 .apply(
-                        CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+                        CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
                                 .include(DataComponents.CUSTOM_NAME)
                                 .include(ModDataComponentTypes.FREQUENCY)
                                 .include(ModDataComponentTypes.PICKUP_MODE)

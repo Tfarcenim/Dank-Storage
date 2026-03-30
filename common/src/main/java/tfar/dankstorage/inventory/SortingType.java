@@ -1,7 +1,7 @@
 package tfar.dankstorage.inventory;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Comparator;
@@ -18,8 +18,8 @@ public enum SortingType {
     }),
     modid((stack1,stack2) -> {
 
-        ResourceLocation rl1 = BuiltInRegistries.ITEM.getKey(stack1.getItem());
-        ResourceLocation rl2 = BuiltInRegistries.ITEM.getKey(stack2.getItem());
+        Identifier rl1 = BuiltInRegistries.ITEM.getKey(stack1.getItem());
+        Identifier rl2 = BuiltInRegistries.ITEM.getKey(stack2.getItem());
 
         if (Objects.equals(rl1.getNamespace(),rl2.getNamespace())) {
             return rl1.getPath().compareTo(rl2.getPath());

@@ -1,12 +1,12 @@
 package tfar.dankstorage.client;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientBundleTooltip;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
@@ -26,7 +26,7 @@ public class ClientDankTooltip implements ClientTooltipComponent {
     }
 
     @Override
-    public int getHeight() {
+    public int getHeight(Font f) {
         return this.gridSizeY() * 18 + 4;
     }
 
@@ -36,34 +36,39 @@ public class ClientDankTooltip implements ClientTooltipComponent {
     }
 
     @Override
-    public void renderImage(Font font, int i, int j, GuiGraphics poseStack) {
+    public void extractImage(Font font, int x, int y,int w,int h, GuiGraphicsExtractor extractor) {
         int gridSizeX = this.gridSizeX();
         int gridSizeY = this.gridSizeY();
         int slot = 0;
         for (int y1 = 0; y1 < gridSizeY; ++y1) {
             for (int x1 = 0; x1 < gridSizeX; ++x1) {
-                int q = i + x1 * 18;
-                int r = j + y1 * 18;
-                this.renderSlot(q, r, slot++, font, poseStack);
+                int q = x + x1 * 18;
+                int r = y + y1 * 18;
+                this.extractSlot(q, r, slot++, font, extractor);
             }
         }
     }
 
-    private void renderSlot(int i, int j, int slot, Font font, GuiGraphics poseStack) {
+    private void extractSlot(int drawX, int drawY, int slot, Font font, GuiGraphicsExtractor extractor) {
         ItemStack itemStack = this.items.get(slot);
-        this.blit(poseStack, i, j,  Texture.SLOT);
-        poseStack.renderItem(itemStack, i + 1, j + 1, slot);
+        this.blit(extractor, drawX, drawY,  Texture.SLOT);
+        extractor.item(itemStack, drawX + 1, drawY + 1, slot);
+        extractor.itemDecorations(font,itemStack, drawX + 1, drawY + 1);
         int count = itemStack.getCount();
         if (count > 1) {
-            StackSizeRenderer.renderSizeLabelCustom(poseStack, font, i + 1, j + 1, CommonUtils.formatLargeNumber(count), Services.PLATFORM.getConfig().textSize());
+            StackSizeRenderer.renderSizeLabel(extractor, font, drawX + 1, drawY + 1, CommonUtils.formatLargeNumber(count));
         }
         if (!selected.isEmpty() && ItemStack.isSameItemSameComponents(selected,itemStack)) {
-            AbstractContainerScreen.renderSlotHighlight(poseStack, i + 1, j + 1, 0);
+            extractor.blitSprite(RenderPipelines.GUI_TEXTURED, SLOT_HIGHLIGHT_FRONT_SPRITE, drawX, drawY, 24, 24);
+           // AbstractContainerScreen.renderSlotHighlight(extractor, drawX + 1, drawY + 1, 0);
         }
     }
 
-    private void blit(GuiGraphics guiGraphics, int x, int y, Texture texture) {
-        guiGraphics.blitSprite(texture.sprite, x, y, 0, texture.w, texture.h);
+    private static final Identifier SLOT_HIGHLIGHT_FRONT_SPRITE = Identifier.withDefaultNamespace("container/bundle/slot_highlight_front");
+
+
+    private void blit(GuiGraphicsExtractor guiGraphics, int x, int y, Texture texture) {
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED,texture.sprite, x, y, texture.w, texture.h);
     }
 
 
@@ -76,14 +81,14 @@ public class ClientDankTooltip implements ClientTooltipComponent {
     }
 
     private enum Texture {
-        BLOCKED_SLOT(ResourceLocation.withDefaultNamespace("container/bundle/blocked_slot"), 18, 20),
-        SLOT(ResourceLocation.withDefaultNamespace("container/bundle/slot"), 18, 20);
+        BLOCKED_SLOT(Identifier.withDefaultNamespace("container/bundle/blocked_slot"), 18, 20),
+        SLOT(Identifier.withDefaultNamespace("container/bundle/slot"), 18, 20);
 
-        public final ResourceLocation sprite;
+        public final Identifier sprite;
         public final int w;
         public final int h;
 
-        Texture(final ResourceLocation sprite, final int w, final int h) {
+        Texture(final Identifier sprite, final int w, final int h) {
             this.sprite = sprite;
             this.w = w;
             this.h = h;

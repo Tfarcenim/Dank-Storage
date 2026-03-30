@@ -1,9 +1,12 @@
 package tfar.dankstorage.init;
 
 import com.google.gson.internal.LinkedTreeMap;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.DispenserBlock;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.block.DankDispenserBehavior;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.item.RedprintItem;
@@ -42,6 +45,10 @@ public class ModItems {
         }
     }
 
+    static {
+        getAll().forEach((string, item) -> Registry.register(BuiltInRegistries.ITEM, DankStorage.id(string),item));
+    }
+
     public static Map<String,Item> getAll() {
         if (ALL.isEmpty()) {
             ALL.putAll(DANKS);
@@ -50,5 +57,9 @@ public class ModItems {
             ALL.put("red_print",RED_PRINT);
         }
         return ALL;
+    }
+
+    public static void init() {
+
     }
 }

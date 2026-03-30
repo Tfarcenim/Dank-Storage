@@ -9,7 +9,6 @@ import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -41,7 +40,7 @@ public class ModClientFabric implements ClientModInitializer {
         KeyBindingHelper.registerKeyBinding(DankKeybinds.PICKUP_MODE);
         ClientTickEvents.START_CLIENT_TICK.register(ModClientFabric::keyPressed);
         TooltipComponentCallback.EVENT.register(CommonClient::tooltipImage);
-        HudRenderCallback.EVENT.register(ClientEvents::renderSelectedItem);
+        HudRenderCallback.EVENT.register(ClientEvents::extractSelectedItem);
         UseItemCallback.EVENT.register(this::interact);
     }
 

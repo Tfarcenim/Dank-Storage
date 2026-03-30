@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Unit;
@@ -23,11 +24,12 @@ import tfar.dankstorage.inventory.LimitedContainerData;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.menu.DankMenu;
 import tfar.dankstorage.menu.ChangeFrequencyMenu;
-import tfar.dankstorage.world.DankSavedData;
+import tfar.dankstorage.world.DankSavedDatas;
 
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class CommonUtils {
@@ -56,14 +58,14 @@ public class CommonUtils {
     public static Pair<ItemStack, Integer> compress(ItemStack stack, RegistryAccess registryAccess) {
 
         for (CraftingRecipe recipe : REVERSIBLE3x3) {
-            if (recipe.getIngredients().getFirst().test(stack)) {
-                return Pair.of(recipe.getResultItem(registryAccess), 9);
+            if (recipe.placementInfo().ingredients().getFirst().test(stack)) {
+                return Pair.of(recipe.assemble(makeCraftInput(ItemStack.EMPTY)), 9);
             }
         }
 
         for (CraftingRecipe recipe : REVERSIBLE2x2) {
-            if (recipe.getIngredients().getFirst().test(stack)) {
-                return Pair.of(recipe.getResultItem(registryAccess), 4);
+            if (recipe.placementInfo().ingredients().getFirst().test(stack)) {
+                return Pair.of(recipe.assemble(makeCraftInput(ItemStack.EMPTY)), 4);
             }
         }
         return Pair.of(ItemStack.EMPTY, 0);
@@ -88,13 +90,13 @@ public class CommonUtils {
         }
 
         for (CraftingRecipe recipe : REVERSIBLE3x3) {
-            if (recipe.getIngredients().getFirst().test(stack)) {
+            if (recipe.placementInfo().ingredients().getFirst().test(stack)) {
                 return stack.getCount() >= 9;
             }
         }
 
         for (CraftingRecipe recipe : REVERSIBLE2x2) {
-            if (recipe.getIngredients().getFirst().test(stack)) {
+            if (recipe.placementInfo().ingredients().getFirst().test(stack)) {
                 return stack.getCount() >= 4;
             }
         }
@@ -120,7 +122,7 @@ public class CommonUtils {
 
     public static List<CraftingRecipe> findReversibles(ServerLevel level, int size) {
         List<CraftingRecipe> compactingRecipes = new ArrayList<>();
-        List<RecipeHolder<CraftingRecipe>> recipes = level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
+        Collection<RecipeHolder<CraftingRecipe>> recipes = level.recipeAccess().recipes.byType(RecipeType.CRAFTING);
 
         for (RecipeHolder<CraftingRecipe> recipe : recipes) {
             if (recipe.value() instanceof ShapedRecipe shapedRecipe) {
@@ -128,27 +130,28 @@ public class CommonUtils {
                 int y = shapedRecipe.getHeight();
                 if (x == size && x == y) {
 
-                    List<Ingredient> inputs = shapedRecipe.getIngredients();
+                    List<Ingredient> inputs = shapedRecipe.placementInfo().ingredients();
 
                     Ingredient first = inputs.getFirst();
-                    if (first != Ingredient.EMPTY) {
-                        boolean same = true;
-                        for (int i = 1; i < x * y; i++) {
-                            Ingredient next = inputs.get(i);
-                            if (next != first) {
-                                same = false;
-                                break;
-                            }
+                    boolean same = true;
+                    for (int i = 1; i < x * y; i++) {
+                        Ingredient next = inputs.get(i);
+                        if (next != first) {
+                            same = false;
+                            break;
                         }
-                        if (same && shapedRecipe.getResultItem(level.registryAccess()).getCount() == 1) {
-                            ItemStack stack = shapedRecipe.getResultItem(level.registryAccess());
+                    }
+                    if (same && shapedRecipe.result.count() == 1) {
+                        ItemStack stack = shapedRecipe.assemble(makeCraftInput(ItemStack.EMPTY));
 
-                            level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, makeCraftInput(stack), level).ifPresent(reverseRecipe -> {
-                                if (reverseRecipe.value().getResultItem(level.registryAccess()).getCount() == size * size) {
+                        level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, makeCraftInput(stack), level).ifPresent(reverseRecipe -> {
+                            CraftingRecipe r = reverseRecipe.value();
+                            if (r instanceof ShapelessRecipe sR) {
+                                if (sR.result.count() == size * size) {
                                     compactingRecipes.add(shapedRecipe);
                                 }
-                            });
-                        }
+                            }
+                        });
                     }
                 }
             }
@@ -256,14 +259,18 @@ public class CommonUtils {
 
     public static void setTxtColor(ServerPlayer player, int frequency, boolean set) {
         AbstractContainerMenu container = player.containerMenu;
+        MinecraftServer server = player.level().getServer();
+        DankSavedDatas dankSavedDatas = DankSavedDatas.get(server);
         if (container instanceof DankMenu abstractDankMenu) {
             DankInventory inventory = abstractDankMenu.dankInventory;
+
 
             TxtColor textColor;
 
             if (frequency > INVALID) {
-                if (frequency < DankStorage.firstFreeId(player.server)) {
-                    DankInventory targetInventory = DankSavedData.get(frequency, player.server).getOrCreateInventory();
+                if (frequency < dankSavedDatas.getNextId()) {
+                    DankInventory targetInventory = DankSavedDatas.get(player.level().getServer()).get(frequency)
+                            .getOrCreateInventory(player.registryAccess());
 
                     if (targetInventory.slotCount() == inventory.slotCount()) {
 
@@ -296,8 +303,8 @@ public class CommonUtils {
             TxtColor textColor;
 
             if (frequency > INVALID) {
-                if (frequency < DankStorage.firstFreeId(player.server)) {
-                    DankInventory targetInventory = DankSavedData.get(frequency, player.server).getOrCreateInventory();
+                if (frequency < dankSavedDatas.getNextId()) {
+                    DankInventory targetInventory = DankSavedDatas.get(server).get(frequency).getOrCreateInventory(server.registryAccess());
 
                     if (targetInventory.slotCount() == DankStats.values()[changeFrequencyMenu.getCurrentTier()].slots) {
 

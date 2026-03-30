@@ -6,19 +6,23 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.server.permissions.Permission;
+import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.world.DankSavedData;
+import tfar.dankstorage.world.DankSavedDatas;
 
 public class DankCommands {
 
     public static void register(CommandDispatcher<CommandSourceStack> commandDispatcher) {
         commandDispatcher.register(Commands.literal(DankStorage.MODID)
                 .then(Commands.literal("clear")
-                        .requires(commandSourceStack -> commandSourceStack.hasPermission(Commands.LEVEL_ADMINS))
+                        .requires(commandSourceStack -> commandSourceStack.permissions()
+                                .hasPermission(new Permission.HasCommandLevel(PermissionLevel.ADMINS)))
                 //        .then(Commands.literal("all")
                    //             .executes(DankCommands::clearAll))
 
@@ -63,10 +67,10 @@ public class DankCommands {
     private static int clearID(CommandContext<CommandSourceStack> context) {
         int id = IntegerArgumentType.getInteger(context, "frequency");
         boolean success = false;
-        DankSavedData data = DankSavedData.get(id,context.getSource().getServer());
+        DankSavedData data = DankSavedDatas.get(context.getSource().getServer()).get(id);
 
         if (data!= null) {
-            data.getOrCreateInventory().clear();
+            data.getOrCreateInventory(context.getSource().registryAccess()).clear();
             success = true;
         }
 

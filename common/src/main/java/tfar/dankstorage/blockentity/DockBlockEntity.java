@@ -7,6 +7,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.ItemStackWithSlot;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -16,19 +17,21 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.init.ModBlockEntityTypes;
 import tfar.dankstorage.inventory.DankInventory;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.*;
-import tfar.dankstorage.world.DankSavedData;
+import tfar.dankstorage.world.DankSavedDatas;
 
 import javax.annotation.Nullable;
 
 public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvider {
     public DockBlockEntity(BlockPos $$1, BlockState $$2) {
-        super(ModBlockEntityTypes.dock, $$1, $$2);
+        super(ModBlockEntityTypes.DOCK, $$1, $$2);
     }
 
     ItemStack dank = ItemStack.EMPTY;
@@ -68,15 +71,15 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
     public static final DankInventory EMPTY = Services.PLATFORM.createInventory(DankStats.zero,null);
 
     public DankInventory getInventory() {
-        if (level == null || !(dank.getItem() instanceof DankItem) || level.isClientSide) return EMPTY;
+        if (level == null || !(dank.getItem() instanceof DankItem) || level.isClientSide()) return EMPTY;
         int frequency = DankItem.getFrequency(dank);
         if (frequency < 0) {
             return EMPTY;
             //DankItem.assignNextFreeId(level.getServer(),dank);
-            //return DankSavedData.getOrCreate(DankItem.getFrequency(dank),level.getServer()).getOrCreateInventory();
+            //return DankSavedDatas.getOrCreate(DankItem.getFrequency(dank),level.getServer()).getOrCreateInventory();
         }
 
-        return DankSavedData.get(DankItem.getFrequency(dank),level.getServer()).getOrCreateInventory();
+        return DankSavedDatas.get(level.getServer()).get(DankItem.getFrequency(dank)).getOrCreateInventory(level.registryAccess());
     }
 
     public Component getDefaultName() {
@@ -111,15 +114,15 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider pRegistries) {
-        super.loadAdditional(tag, pRegistries);
-        dank = ItemStack.parseOptional(pRegistries,tag.getCompound("dank"));
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        dank = input.read("dank",ItemStack.CODEC).orElse(ItemStack.EMPTY);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider pRegistries) {
-        super.saveAdditional(tag, pRegistries);
-        tag.put("dank",dank.saveOptional(pRegistries));
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.store("dank",ItemStack.CODEC,dank);
     }
 
     @Override

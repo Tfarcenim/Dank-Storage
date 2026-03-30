@@ -12,7 +12,7 @@ public record ItemStackComponent(ItemStack itemStack) {
     public static final ItemStackComponent EMPTY = new ItemStackComponent(ItemStack.EMPTY);
 
     public static final Codec<ItemStackComponent> CODEC = RecordCodecBuilder
-            .create(itemStackComponentInstance -> itemStackComponentInstance.group(SerializationHelper.LARGE_CODEC.fieldOf("selected")
+            .create(itemStackComponentInstance -> itemStackComponentInstance.group(SerializationHelper.LARGE_MAP_CODEC.fieldOf("selected")
                     .forGetter(ItemStackComponent::itemStack)).apply(itemStackComponentInstance,ItemStackComponent::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ItemStackComponent> STREAM_CODEC = StreamCodec.composite(

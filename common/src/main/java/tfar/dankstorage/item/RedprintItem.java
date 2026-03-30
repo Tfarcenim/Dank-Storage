@@ -11,6 +11,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -18,7 +19,7 @@ import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.init.ModDataComponentTypes;
 import tfar.dankstorage.utils.CommonUtils;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 public class RedprintItem extends Item {
     public RedprintItem(Properties properties) {
@@ -26,10 +27,9 @@ public class RedprintItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
-        pTooltipComponents.add(CommonUtils.translatable("text.dankstorage.red_print.tooltip0"));
-        pTooltipComponents.add(CommonUtils.translatable("text.dankstorage.red_print.tooltip1"));
-    }
+    public void appendHoverText(ItemStack itemStack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
+        builder.accept(CommonUtils.translatable("text.dankstorage.red_print.tooltip0"));
+        builder.accept(CommonUtils.translatable("text.dankstorage.red_print.tooltip1"));    }
 
     @Override
     public InteractionResult useOn(UseOnContext useOnContext) {
@@ -37,7 +37,7 @@ public class RedprintItem extends Item {
         Level level = useOnContext.getLevel();
         BlockPos pos = useOnContext.getClickedPos();
         ItemStack redPrintStack = useOnContext.getItemInHand();
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof DockBlockEntity dockBlockEntity) {
                 if (player.isCrouching()) {

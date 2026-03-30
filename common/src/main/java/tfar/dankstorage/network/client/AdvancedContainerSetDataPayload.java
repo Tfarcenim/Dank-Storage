@@ -38,7 +38,7 @@ public record AdvancedContainerSetDataPayload(byte containerId, short dataId, in
     @Override
     public void handleClient() {
         Player player = CommonClient.getLocalPlayer();
-        if (player.containerMenu != null && player.containerMenu.containerId == containerId) {
+        if (player.containerMenu.containerId == containerId) {
             player.containerMenu.setData(dataId, value);
         }
     }

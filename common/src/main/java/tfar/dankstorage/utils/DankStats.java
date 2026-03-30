@@ -1,5 +1,7 @@
 package tfar.dankstorage.utils;
 
+import com.mojang.serialization.Codec;
+
 public enum DankStats {
     zero(0, 0),
     one(9, 256),
@@ -22,4 +24,6 @@ public enum DankStats {
         this.slots = slots;
         this.stacklimit = stacklimit;
     }
+
+    public static final Codec<DankStats> CODEC = SerializationHelper.enumCodec(DankStats.class);
 }

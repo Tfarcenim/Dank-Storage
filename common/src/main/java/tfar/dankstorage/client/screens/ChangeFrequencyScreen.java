@@ -2,36 +2,32 @@ package tfar.dankstorage.client.screens;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
-import org.lwjgl.glfw.GLFW;
 import tfar.dankstorage.client.DualTooltip2;
 import tfar.dankstorage.client.NumberEditBox;
-import tfar.dankstorage.client.button.SmallButton;
 import tfar.dankstorage.menu.DankMenu;
 import tfar.dankstorage.menu.ChangeFrequencyMenu;
 import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
 import tfar.dankstorage.utils.CommonUtils;
 
-import java.util.function.Supplier;
-
 public class ChangeFrequencyScreen extends AbstractContainerScreen<ChangeFrequencyMenu> {
 
-    public static final ResourceLocation DEMO_BACKGROUND_LOCATION = ResourceLocation.withDefaultNamespace("textures/gui/demo_background.png");
+    public static final Identifier DEMO_BACKGROUND_LOCATION = Identifier.withDefaultNamespace("textures/gui/demo_background.png");
     EditBox frequency;
 
 
     public ChangeFrequencyScreen(ChangeFrequencyMenu $$0, Inventory $$1, Component $$2) {
-        super($$0, $$1, $$2);
-        imageWidth = 236;
+        super($$0, $$1, $$2,236,166);
     }
 
     protected void initEditbox() {
@@ -68,8 +64,8 @@ public class ChangeFrequencyScreen extends AbstractContainerScreen<ChangeFrequen
 
         addRenderableWidget(modeCycleButton);*/
 
-        SmallButton l = new SmallButton(leftPos + 170, j + inventoryLabelY, 12, 12,
-                Component.literal(""), button -> sendButtonToServer(DankMenu.ButtonAction.LOCK_FREQUENCY)) {
+        Button l = new Button.Plain(leftPos + 170, j + inventoryLabelY, 12, 12,
+                Component.literal(""), button -> sendButtonToServer(DankMenu.ButtonAction.LOCK_FREQUENCY),DankStorageScreen.DEFAULT_NARRATION) {
             @Override
             public Component getMessage() {
                 return menu.getFreqLock() ? Component.literal("X").withStyle(ChatFormatting.RED) :
@@ -88,7 +84,7 @@ public class ChangeFrequencyScreen extends AbstractContainerScreen<ChangeFrequen
 
         Tooltip saveTooltip = Tooltip.create(DankStorageScreen.SAVE_C);
 
-        SmallButton s = new SmallButton(leftPos + 155, j + inventoryLabelY, 12, 12,
+        Button s = new Button.Plain(leftPos + 155, j + inventoryLabelY, 12, 12,
                 Component.literal("s"), b -> {
             try {
                 int id1 = Integer.parseInt(frequency.getValue());
@@ -96,7 +92,7 @@ public class ChangeFrequencyScreen extends AbstractContainerScreen<ChangeFrequen
             } catch (NumberFormatException e) {
 
             }
-        });
+        },DankStorageScreen.DEFAULT_NARRATION){};
 
         s.setTooltip(saveTooltip);
 
@@ -109,11 +105,10 @@ public class ChangeFrequencyScreen extends AbstractContainerScreen<ChangeFrequen
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
+    public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractContents(graphics, mouseX, mouseY, partialTicks);
         int color = menu.getTextColor();
         this.frequency.setTextColor(color);
-        this.frequency.render(graphics, mouseX, mouseY, partialTicks);
     }
 
     private void onNameChanged(String string) {
@@ -130,34 +125,35 @@ public class ChangeFrequencyScreen extends AbstractContainerScreen<ChangeFrequen
     }
 
     @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-        graphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0x404040, false);
+    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+        graphics.text(this.font, this.title, this.titleLabelX, this.titleLabelY, 0x404040, false);
         int id = menu.getFrequency();
         int color = 0x008000;
         int txtWidth = font.width("ID: " + id);
-        graphics.drawString( font,"ID: " + id, 62 - txtWidth, inventoryLabelY +1, color,false);
+        graphics.text( font,"ID: " + id, 62 - txtWidth, inventoryLabelY +1, color,false);
         MutableComponent warning = Component.translatable("text.dankstorage.tier_mismatch");
-        graphics.drawWordWrap(font,warning,5,inventoryLabelY+18,260,0x404040);
+        graphics.textWithWordWrap(font,warning,5,inventoryLabelY+18,260,0x404040);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE || Minecraft.getInstance().options.keyInventory.matches(keyCode, scanCode)) {
+    public boolean keyPressed(KeyEvent event) {
+        if (event.isEscape() || Minecraft.getInstance().options.keyInventory.matches(event)) {
             this.minecraft.player.closeContainer();
-        }
-
-        if (this.frequency.keyPressed(keyCode, scanCode, modifiers) || this.frequency.canConsumeInput()) {
             return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+
+        if (this.frequency.keyPressed(event) || this.frequency.canConsumeInput()) {
+            return true;
+        }
+        return super.keyPressed(event);
     }
 
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float a) {
+        super.extractBackground(guiGraphics, mouseX, mouseY, a);
         int $$1 = (this.width - 248) / 2;
         int $$2 = (this.height - 166) / 2;
-        guiGraphics.blit(DEMO_BACKGROUND_LOCATION, $$1, $$2, 0, 0, 248, 166);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED,DEMO_BACKGROUND_LOCATION, $$1, $$2, 0, 0, 248, 166,256,256);
     }
 }

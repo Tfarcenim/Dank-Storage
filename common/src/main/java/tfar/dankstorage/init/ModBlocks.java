@@ -6,4 +6,12 @@ import tfar.dankstorage.block.DockBlock;
 
 public class ModBlocks {
     public static final Block dock = new DockBlock(BlockBehaviour.Properties.of().strength(1, 30));
+
+    static {
+
+    }
+
+    public static void init() {
+
+    }
 }

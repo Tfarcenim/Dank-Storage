@@ -1,6 +1,6 @@
 package tfar.dankstorage.network;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.network.client.*;
 import tfar.dankstorage.network.server.*;
@@ -29,7 +29,7 @@ public class DankPacketHandler {
         Services.PLATFORM.registerClientPacket(AdvancedContainerSetDataPayload.TYPE, AdvancedContainerSetDataPayload.STREAM_CODEC);
     }
 
-    public static ResourceLocation packet(Class<?> clazz) {
+    public static Identifier packet(Class<?> clazz) {
         return DankStorage.id(clazz.getName().toLowerCase(Locale.ROOT));
     }
 

@@ -18,7 +18,7 @@ import tfar.dankstorage.utils.SerializationHelper;
 public record C2SButtonPacket(KeybindAction keybindAction) implements C2SModPacket {
 
     public static final StreamCodec<RegistryFriendlyByteBuf, C2SButtonPacket> STREAM_CODEC =
-            StreamCodec.composite(SerializationHelper.enumCodec(KeybindAction.class), C2SButtonPacket::keybindAction, C2SButtonPacket::new);
+            StreamCodec.composite(SerializationHelper.enumStreamCodec(KeybindAction.class), C2SButtonPacket::keybindAction, C2SButtonPacket::new);
 
 
     public static final CustomPacketPayload.Type<C2SButtonPacket> TYPE = new CustomPacketPayload.Type<>(

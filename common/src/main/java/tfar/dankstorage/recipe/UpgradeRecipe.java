@@ -16,7 +16,7 @@ import java.util.List;
 public class UpgradeRecipe extends ShapedRecipe {
 
     public UpgradeRecipe(ShapedRecipe recipe) {
-        super("dank",recipe.category(), recipe.pattern, recipe.getResultItem(null));
+        super(recipe.commonInfo,recipe.bookInfo, recipe.pattern, recipe.result);
     }
 
     protected static final List<DataComponentType> types = new ArrayList<>();
@@ -30,8 +30,8 @@ public class UpgradeRecipe extends ShapedRecipe {
 
     @Nonnull
     @Override
-    public ItemStack assemble(CraftingInput inv, HolderLookup.Provider access) {
-        ItemStack newBag = super.assemble(inv,access).copy();
+    public ItemStack assemble(CraftingInput inv) {
+        ItemStack newBag = super.assemble(inv).copy();
         ItemStack oldBag = inv.getItem(4);
         //can't upgrade the backing inventory because there isn't one yet
         if (oldBag.getComponents().isEmpty()) return newBag;
@@ -46,7 +46,7 @@ public class UpgradeRecipe extends ShapedRecipe {
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
-        return ModRecipeSerializers.upgrade;
+    public RecipeSerializer<ShapedRecipe> getSerializer() {
+        return (RecipeSerializer<ShapedRecipe>)(Object) ModRecipeSerializers.upgrade;
     }
 }

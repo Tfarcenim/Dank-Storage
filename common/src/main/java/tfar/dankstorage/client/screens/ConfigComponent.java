@@ -1,9 +1,10 @@
 package tfar.dankstorage.client.screens;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.renderer.RenderPipelines;
 import tfar.dankstorage.menu.DankMenu;
 
 public class ConfigComponent implements Renderable, GuiEventListener{
@@ -54,9 +55,9 @@ public class ConfigComponent implements Renderable, GuiEventListener{
 
 
     @Override
-    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+    public void extractRenderState(GuiGraphicsExtractor pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         if (this.isVisible()) {
-            pGuiGraphics.pose().pushPose();
+         //   pGuiGraphics.pose().pushPose();
           //  pGuiGraphics.pose().translate(0.0F, 0.0F, 100.0F);
 
         //    this.searchBox.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
@@ -67,15 +68,15 @@ public class ConfigComponent implements Renderable, GuiEventListener{
 //
 //this.filterButton.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
          //   this.recipeBookPage.render(pGuiGraphics, i, j, pMouseX, pMouseY, pPartialTick);
-            pGuiGraphics.pose().popPose();
+          //  pGuiGraphics.pose().popPose();
         }
     }
 
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+    protected void extractBackground(GuiGraphicsExtractor guiGraphics, float partialTicks, int mouseX, int mouseY) {
         if (this.isVisible()) {
             int i = (this.width - 147) / 2 - 111;
             int j = (this.height - 166) / 2;
-            guiGraphics.blit(ChangeFrequencyScreen.DEMO_BACKGROUND_LOCATION, i, j, 0, 0, 100, 166);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED,ChangeFrequencyScreen.DEMO_BACKGROUND_LOCATION, i, j, 0, 0, 100, 166,256,256);
         }
     }
 

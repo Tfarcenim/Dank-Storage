@@ -8,11 +8,7 @@ neoForge {
     // Automatically enable neoforge AccessTransformers if the file exists
     def at = project(':common').file('src/main/resources/META-INF/accesstransformer.cfg')
     if (at.exists()) {
-        accessTransformers.add(at.absolutePath)
-    }
-    parchment {
-        minecraftVersion = parchment_minecraft
-        mappingsVersion = parchment_version
+        accessTransformers.from(at.absolutePath)
     }
     runs {
         configureEach {
@@ -21,19 +17,19 @@ neoForge {
         }
         client {
             client()
+            gameDirectory = this.mkdir(this.file("runs/client"))
         }
         data {
-            data()
-            // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
-            // workingDirectory project.file('run-data')
-
+            clientData()
+            gameDirectory = this.mkdir(this.file("runs/data"))
+            // DataGen can be run by - "./gradlew :neoforge:runData" in Terminal.
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            programArguments.addAll '--mod', project.mod_id, '--all',
-                    '--output', rootProject.project(":common").file('src/generated/resources/').getAbsolutePath(),
-                    '--existing', rootProject.project(":common").file('src/main/resources/').getAbsolutePath()
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
         server {
             server()
+            this.file("runs/server").createParentDirectories()
+            gameDirectory = this.mkdir(this.file("runs/server"))
         }
     }
     mods {
@@ -43,14 +39,23 @@ neoForge {
     }
 }
 
-dependencies {
-    if (project.use_rei) {
-        implementation "me.shedaniel:RoughlyEnoughItems-neoforge:$rei_version"
-        implementation "me.shedaniel.cloth:cloth-config-neoforge:$cloth_config_version"
-        implementation "dev.architectury:architectury-neoforge:$architectury_version"
-    }
-    implementation "curse.maven:pipez-443900:5609056"
-    implementation "curse.maven:toms-storage-378609:7397755"
-}
-
 sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+// Implement mcgradleconventions loader attribute
+def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements'].each { variant ->
+    configurations.named("$variant") {
+        attributes {
+            attribute(loaderAttribute, 'neoforge')
+        }
+    }
+}
+sourceSets.configureEach {
+    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName, it.getTaskName(null, 'jarJar')].each { variant ->
+        configurations.named("$variant") {
+            attributes {
+                attribute(loaderAttribute, 'neoforge')
+            }
+        }
+    }
+}

@@ -1,36 +1,33 @@
 package tfar.dankstorage.client.screens;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
+import org.jetbrains.annotations.NotNull;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.TextComponents;
 import tfar.dankstorage.client.*;
-import tfar.dankstorage.client.button.SmallButton;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.menu.DankMenu;
 import tfar.dankstorage.network.server.C2SLockSlotPacket;
 import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
-import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.PickupMode;
 import tfar.dankstorage.utils.TxtColor;
@@ -40,21 +37,21 @@ import java.util.function.Supplier;
 
 public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
 
-    static final ResourceLocation background1 = DankStorage.id(
+    static final Identifier background1 = DankStorage.id(
             "textures/container/gui/dank1.png");
-    static final ResourceLocation background2 = DankStorage.id(
+    static final Identifier background2 = DankStorage.id(
             "textures/container/gui/dank2.png");
-    static final ResourceLocation background3 = DankStorage.id(
+    static final Identifier background3 = DankStorage.id(
             "textures/container/gui/dank3.png");
-    static final ResourceLocation background4 = DankStorage.id(
+    static final Identifier background4 = DankStorage.id(
             "textures/container/gui/dank4.png");
-    static final ResourceLocation background5 = DankStorage.id(
+    static final Identifier background5 = DankStorage.id(
             "textures/container/gui/dank5.png");
-    static final ResourceLocation background6 = ResourceLocation.withDefaultNamespace("textures/gui/container/generic_54.png");
-    static final ResourceLocation background7 = DankStorage.id(
+    static final Identifier background6 = Identifier.withDefaultNamespace("textures/gui/container/generic_54.png");
+    static final Identifier background7 = DankStorage.id(
             "textures/container/gui/dank7.png");
 
-    final ResourceLocation background;
+    final Identifier background;
     EditBox frequency;
     protected final boolean is7;
 
@@ -62,11 +59,10 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
     Button autoSort;
 
 
-    private final ConfigComponent configComponent = new ConfigComponent();
+    private ConfigComponent configComponent;
 
-    public DankStorageScreen(DankMenu $$0, Inventory $$1, Component $$2, ResourceLocation background) {
-        super($$0, $$1, $$2);
-        this.imageHeight = 114 + this.menu.rows * 18;
+    public DankStorageScreen(DankMenu $$0, Inventory $$1, Component $$2, Identifier background) {
+        super($$0, $$1, $$2,176,114 + $$0.rows * 18);
         this.inventoryLabelY = this.imageHeight - 94;
 
         this.background = background;
@@ -126,15 +122,16 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
     }
 
 
-    public void renderSlot(GuiGraphics pGuiGraphics, Slot pSlot) {
+    @Override
+    public void extractSlot(GuiGraphicsExtractor pGuiGraphics, Slot pSlot, int mouseX, int mouseY) {
         if (!menu.isDankSlot(pSlot)) {
-            super.renderSlot(pGuiGraphics, pSlot);
+            super.extractSlot(pGuiGraphics, pSlot,mouseX,mouseY);
         } else {
-            int i = pSlot.x;
-            int j = pSlot.y;
+            int x = pSlot.x;
+            int y = pSlot.y;
             ItemStack itemstack = pSlot.getItem();
-            boolean flag = false;
-            boolean flag1 = pSlot == this.clickedSlot && !this.draggingItem.isEmpty() && !this.isSplittingStack;
+            boolean quickcraftStack = false;
+            boolean done = pSlot == this.clickedSlot && !this.draggingItem.isEmpty() && !this.isSplittingStack;
             ItemStack itemstack1 = this.menu.getCarried();
             String s = "";
             if (pSlot == this.clickedSlot && !this.draggingItem.isEmpty() && this.isSplittingStack && !itemstack.isEmpty()) {
@@ -145,10 +142,10 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
                 }
 
                 if (AbstractContainerMenu.canItemQuickReplace(pSlot, itemstack1, true) && this.menu.canDragTo(pSlot)) {
-                    flag = true;
+                    quickcraftStack = true;
                     int k = Math.min(itemstack1.getMaxStackSize(), pSlot.getMaxStackSize(itemstack1));
                     int l = pSlot.getItem().isEmpty() ? 0 : pSlot.getItem().getCount();
-                    int i1 = AbstractContainerMenu.getQuickCraftPlaceCount(this.quickCraftSlots, this.quickCraftingType, itemstack1) + l;
+                    int i1 = AbstractContainerMenu.getQuickCraftPlaceCount(this.quickCraftSlots.size(), this.quickCraftingType, itemstack1) + l;
                     if (i1 > k) {
                         i1 = k;
                         s = ChatFormatting.YELLOW.toString() + k;
@@ -161,43 +158,42 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
                 }
             }
 
-            pGuiGraphics.pose().pushPose();
-            pGuiGraphics.pose().translate(0.0F, 0.0F, 100.0F);
+           // pGuiGraphics.pose().pushPose();
+           // pGuiGraphics.pose().translate(0.0F, 0.0F, 100.0F);
             if (itemstack.isEmpty() && pSlot.isActive()) {
-                Pair<ResourceLocation, ResourceLocation> pair = pSlot.getNoItemIcon();
-                if (pair != null) {
-                    TextureAtlasSprite textureatlassprite = this.minecraft.getTextureAtlas(pair.getFirst()).apply(pair.getSecond());
-                    pGuiGraphics.blit(i, j, 0, 16, 16, textureatlassprite);
-                    flag1 = true;
+                Identifier icon = pSlot.getNoItemIcon();
+                if (icon != null) {
+                    pGuiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, icon, x, y, 16, 16);
+                    done = true;
                 }
             }
 
             boolean locked = pSlot.index < menu.dankInventory.slotCount() && menu.dankInventory.hasGhostItem(pSlot.index);
 
-            if (!flag1) {
-                if (flag) {
-                    pGuiGraphics.fill(i, j, i + 16, j + 16, -2130706433);
+            if (!done) {
+                if (quickcraftStack) {
+                    pGuiGraphics.fill(x, y, x + 16, y + 16, -2130706433);
                 }
 
-                pGuiGraphics.renderItem(itemstack, i, j, pSlot.x + pSlot.y * this.imageWidth);
-                pGuiGraphics.renderItemDecorations(this.font, itemstack, i, j,"");
+                pGuiGraphics.item(itemstack, x, y, pSlot.x + pSlot.y * this.imageWidth);
+                pGuiGraphics.itemDecorations(this.font, itemstack, x, y,"");
 
                 int count = itemstack.getCount();
                 if (count > 1 || !s.isEmpty() || locked) {
                     String string =s+ (count <=0 && locked ?"lock": CommonUtils.formatLargeNumber(itemstack.getCount()));
-                    StackSizeRenderer.renderSizeLabelCustom(pGuiGraphics, Minecraft.getInstance().font, i, j, string, Services.PLATFORM.getConfig().textSize());
+                    StackSizeRenderer.renderSizeLabel(pGuiGraphics, Minecraft.getInstance().font, x, y, string);
                 }
             }
 
-            pGuiGraphics.pose().popPose();
+          //  pGuiGraphics.pose().popPose();
 
             int i1 = pSlot.x;
             int j1 = pSlot.y;
             if (!pSlot.hasItem() && locked) {
-                pGuiGraphics.renderFakeItem(menu.dankInventory.getGhostItem(pSlot.index), i1, j1);
-                RenderSystem.depthFunc(516);
+                pGuiGraphics.fakeItem(menu.dankInventory.getGhostItem(pSlot.index), i1, j1);
+                //RenderSystem.depthFunc(516);
                 pGuiGraphics.fill(i1, j1, i1 + 16, j1 + 16, 0x40ffffff);
-                RenderSystem.depthFunc(515);
+                //RenderSystem.depthFunc(515);
             }
         }
     }
@@ -207,28 +203,25 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
+    public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractContents(graphics, mouseX, mouseY, partialTicks);
         int color = menu.dankInventory.getTextColor();
         this.frequency.setTextColor(color);
 
         PickupMode pickupMode = menu.getMode();
         modeCycleButton.setValue(pickupMode);
 
-        this.frequency.render(graphics, mouseX, mouseY, partialTicks);
+        this.configComponent.extractRenderState(graphics, mouseX, mouseY, partialTicks);
 
-        this.configComponent.render(graphics, mouseX, mouseY, partialTicks);
-
-        this.renderTooltip(graphics, mouseX, mouseY);
+        this.extractTooltip(graphics, mouseX, mouseY);
     }
 
     @Override
-    protected void renderLabels(GuiGraphics poseStack, int i, int j) {
-        RenderSystem.disableBlend();
-        super.renderLabels(poseStack, i, j);
+    protected void extractLabels(GuiGraphicsExtractor poseStack, int i, int j) {
+        super.extractLabels(poseStack, i, j);
         int id = DankItem.getFrequency(menu.getBag());//menu.dankInventory.get(menu.rows * 9);
         int color = 0x008000;
-        poseStack.drawString( font,"ID: " + id, 62, inventoryLabelY, color,false);
+        poseStack.text( font,"ID: " + id, 62, inventoryLabelY, color,false);
     }
 
     public void appendDankInfo(List<Component> tooltip, ItemStack stack) {
@@ -248,6 +241,9 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
 
     protected CycleButton<PickupMode> modeCycleButton;
 
+    public static final Button.CreateNarration DEFAULT_NARRATION = Supplier::get;
+
+
     @Override
     protected void init() {
         super.init();
@@ -258,10 +254,10 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
 
         DynamicTooltip dynamicTooltip = DynamicTooltip.dynamic(() -> Component.translatable("dankstorage.sorting_type."+menu.dankInventory.getSortingType()));
 
-        Button sort = new SmallButton(leftPos + 143-16, topPos + 4, 26, 12, Component.literal("Sort"), b -> {
+        Button sort = new Button.Plain(leftPos + 143-16, topPos + 4, 26, 12, Component.literal("Sort"), b -> {
             sendButtonToServer(DankMenu.ButtonAction.SORT);
             dynamicTooltip.dirty  = true;
-        });
+        },DEFAULT_NARRATION){};
 
 
         sort.setTooltip(dynamicTooltip);
@@ -270,10 +266,9 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
         this.addRenderableWidget(sort);
 
         modeCycleButton = CycleButton.<PickupMode>builder(pickupMode -> Component.literal("P")
-                        .withStyle(Style.EMPTY.withColor(DankItem.getPickupMode(menu.getBag()).getColor())))
+                        .withStyle(Style.EMPTY.withColor(DankItem.getPickupMode(menu.getBag()).getColor())),() -> DankItem.getPickupMode(menu.getBag()))
                 .withValues(PickupMode.VALUES)
                 .withTooltip(mode -> Tooltip.create(DankItem.getPickupMode(menu.getBag()).translate()))
-                .withInitialValue(DankItem.getPickupMode(menu.getBag()))
                 .displayOnlyValue()
                 .create(leftPos + 101-16, topPos + 4, 12, 12, Component.empty(), (pickupModeCycleButton, pickupMode) -> sendButtonToServer(DankMenu.ButtonAction.TOGGLE_PICKUP));
 
@@ -283,8 +278,8 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
                 Component.translatable("text.dankstorage.unlock_button"),
                 Component.translatable("text.dankstorage.lock_button"),null,this);
 
-        SmallButton lock = new SmallButton(leftPos + 115-16, topPos + 4, 12, 12,
-                Component.literal(""), button -> sendButtonToServer(DankMenu.ButtonAction.LOCK_FREQUENCY)) {
+        Button lock = new Button.Plain(leftPos + 115-16, topPos + 4, 12, 12,
+                Component.literal(""), button -> sendButtonToServer(DankMenu.ButtonAction.LOCK_FREQUENCY),DEFAULT_NARRATION) {
             @Override
             public Component getMessage() {
                 return menu.dankInventory.frequencyLocked() ? Component.literal("X").withStyle(ChatFormatting.RED) :
@@ -296,27 +291,14 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
 
         this.addRenderableWidget(lock);
 
-        Tooltip saveTooltip = Tooltip.create(SAVE_C);
-
-        SmallButton s = new SmallButton(leftPos + 155, j + inventoryLabelY - 2, 12, 12,
-                Component.literal("s"), b -> {
-            try {
-                if (menu.dankInventory.frequencyLocked()) return;
-                int id1 = Integer.parseInt(frequency.getValue());
-                C2SSetFrequencyPacket.send(id1, true);
-            } catch (NumberFormatException e) {
-
-            }
-        });
-
-        s.setTooltip(saveTooltip);
+        Button s = getButton(j);
 
         this.addRenderableWidget(s);
 
         Tooltip compressTooltip = Tooltip.create(Component.translatable("text.dankstorage.compress_button"));
 
-        SmallButton c = new SmallButton(leftPos + 129-16, topPos + 4, 12, 12,
-                Component.literal("C"), button -> sendButtonToServer(DankMenu.ButtonAction.COMPRESS));
+        Button c = new Button.Plain(leftPos + 129-16, topPos + 4, 12, 12,
+                Component.literal("C"), button -> sendButtonToServer(DankMenu.ButtonAction.COMPRESS),DEFAULT_NARRATION){};
         c.setTooltip(compressTooltip);
 
         this.addRenderableWidget(c);
@@ -331,7 +313,7 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
 
         DynamicTooltip dynamicTooltipSorting = DynamicTooltip.dynamic(() -> Component.translatable("dankstorage.sorting_type."+menu.dankInventory.getSortingType()+".desc"));
 
-        changeSortingType = new Button(leftPos -89, topPos + 24, 90, 16,Component.empty(), b -> {
+        changeSortingType = new Button.Plain(leftPos -89, topPos + 24, 90, 16,Component.empty(), b -> {
             sendButtonToServer(DankMenu.ButtonAction.CYCLE_SORT_TYPE);
             dynamicTooltipSorting.dirty = true;
         }, Supplier::get) {
@@ -345,7 +327,7 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
 
         this.addRenderableWidget(changeSortingType);
 
-        autoSort = new Button(leftPos - 89, topPos + 44, 90, 16,Component.empty(), b -> sendButtonToServer(DankMenu.ButtonAction.TOGGLE_AUTO_SORT), Supplier::get) {
+        autoSort = new Button.Plain(leftPos - 89, topPos + 44, 90, 16,Component.empty(), b -> sendButtonToServer(DankMenu.ButtonAction.TOGGLE_AUTO_SORT), Supplier::get) {
             @Override
             public Component getMessage() {
                 return Component.translatable("dankstorage.auto_sort").append(" ")
@@ -360,7 +342,29 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
             autoSort.visible = false;
         }
 
+        configComponent = new ConfigComponent();
+
+        addRenderableOnly(configComponent);
+
         initEditbox();
+    }
+
+    private @NotNull Button getButton(int j) {
+        Tooltip saveTooltip = Tooltip.create(SAVE_C);
+
+        Button s = new Button.Plain(leftPos + 155, j + inventoryLabelY - 2, 12, 12,
+                Component.literal("s"), b -> {
+            try {
+                if (menu.dankInventory.frequencyLocked()) return;
+                int id1 = Integer.parseInt(frequency.getValue());
+                C2SSetFrequencyPacket.send(id1, true);
+            } catch (NumberFormatException e) {
+
+            }
+        },DEFAULT_NARRATION){};
+
+        s.setTooltip(saveTooltip);
+        return s;
     }
 
     void toggleConfig() {
@@ -378,16 +382,16 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float a) {
         if (is7)
             guiGraphics.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 512);
         else
-            guiGraphics.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+            guiGraphics.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight,256, 256);
         renderLockedSlots(guiGraphics);
-        configComponent.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
+        //configComponent.extractBackground(guiGraphics , mouseX, mouseY,a);
     }
 
-    protected void renderLockedSlots(GuiGraphics guiGraphics) {
+    protected void renderLockedSlots(GuiGraphicsExtractor guiGraphics) {
         for (int i = 0; i < menu.rows * 9; i++) {
             int j = i % 9;
             int k = i / 9;
@@ -401,13 +405,14 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE || Minecraft.getInstance().options.keyInventory.matches(keyCode, scanCode)) {
-            this.minecraft.player.closeContainer();
+    public boolean keyPressed(KeyEvent event) {
+        if (event.isEscape()|| this.minecraft.options.keyInventory.matches(event)){
+            onClose();
+            return true;
         }
-
         //slot locking takes priority over frequency changing
-        boolean match = DankKeybinds.LOCK_SLOT.matches(keyCode, scanCode);
+
+        boolean match = DankKeybinds.LOCK_SLOT.matches(event);
         if (match) {
             if (hoveredSlot != null && menu.isDankSlot(hoveredSlot)) {
                 C2SLockSlotPacket.send(hoveredSlot.index);
@@ -415,12 +420,12 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
             }
         }
 
-        if (!match && (this.frequency.keyPressed(keyCode, scanCode, modifiers) || this.frequency.canConsumeInput())) {
+        if (!match && (this.frequency.keyPressed(event) || this.frequency.canConsumeInput())) {
             return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
 
+        return super.keyPressed(event);
+    }
 
     static final MutableComponent SAVE_C = buildSaveComponent();
     static final MutableComponent PICKUP_C = buildPickupComponent();

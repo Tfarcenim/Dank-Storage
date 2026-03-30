@@ -3,7 +3,6 @@ package tfar.dankstorage.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -89,14 +88,14 @@ public class DockBlock extends Block implements EntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack pStack, BlockState pState, Level pLevel, BlockPos pos, Player player, InteractionHand hand, BlockHitResult pHitResult) {
-        if (!pLevel.isClientSide) {
+    protected InteractionResult useItemOn(ItemStack pStack, BlockState pState, Level pLevel, BlockPos pos, Player player, InteractionHand hand, BlockHitResult pHitResult) {
+        if (!pLevel.isClientSide()) {
             final BlockEntity tile = pLevel.getBlockEntity(pos);
             if (tile instanceof DockBlockEntity dockBlockEntity) {
                 ItemStack held = player.getItemInHand(hand);
                 if (player.isCrouching() && held.is(ModTags.WRENCHES)) {
                     pLevel.destroyBlock(pos, true, player);
-                    return ItemInteractionResult.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 }
 
                 if (held.getItem() instanceof DankItem) {
@@ -105,23 +104,23 @@ public class DockBlock extends Block implements EntityBlock {
                         dockBlockEntity.giveToPlayer(player);
                     }
                     dockBlockEntity.addDank(held);
-                    return ItemInteractionResult.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 }
 
                 if (player.isShiftKeyDown() && pState.getValue(TIER) > 0) {
                     dockBlockEntity.giveToPlayer(player);
-                    return ItemInteractionResult.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 }
 
                 player.openMenu((MenuProvider) tile);
             }
         }
-        return ItemInteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level pLevel, BlockPos pos, Player player, BlockHitResult pHitResult) {
-        if (!pLevel.isClientSide) {
+        if (!pLevel.isClientSide()) {
             final BlockEntity tile = pLevel.getBlockEntity(pos);
             if (tile instanceof DockBlockEntity dockBlockEntity) {
                 if (player.isShiftKeyDown() && state.getValue(TIER) > 0) {

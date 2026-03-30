@@ -8,11 +8,7 @@ neoForge {
     // Automatically enable AccessTransformers if the file exists
     def at = file('src/main/resources/META-INF/accesstransformer.cfg')
     if (at.exists()) {
-        accessTransformers.add(at.absolutePath)
-    }
-    parchment {
-        minecraftVersion = parchment_minecraft
-        mappingsVersion = parchment_version
+        accessTransformers.from(at.absolutePath)
     }
 }
 
@@ -34,10 +30,29 @@ configurations {
     }
 }
 
-sourceSets.main.resources.srcDir 'src/generated/resources'
 artifacts {
     commonJava sourceSets.main.java.sourceDirectories.singleFile
     sourceSets.main.resources.sourceDirectories.forEach {
         commonResources it
     }
 }
+
+// Implement mcgradleconventions loader attribute
+def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements'].each { variant ->
+    configurations.named("$variant") {
+        attributes {
+            attribute(loaderAttribute, 'common')
+        }
+    }
+}
+sourceSets.configureEach {
+    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName].each { variant->
+        configurations.named("$variant") {
+            attributes {
+                attribute(loaderAttribute, 'common')
+            }
+        }
+    }
+}
+sourceSets.main.resources.srcDir 'src/generated/resources'

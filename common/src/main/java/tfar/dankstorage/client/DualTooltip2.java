@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import tfar.dankstorage.client.screens.ChangeFrequencyScreen;
 
 import java.util.List;
+import java.util.Optional;
 
 public class DualTooltip2 extends Tooltip {
 
@@ -16,7 +17,7 @@ public class DualTooltip2 extends Tooltip {
     private final ChangeFrequencyScreen screen;
 
     public DualTooltip2(Component message1, Component message2, @Nullable Component narration, ChangeFrequencyScreen screen) {
-        super(message1, narration);
+        super(message1, narration, Optional.empty(),null);
         this.message2 = message2;
         this.screen = screen;
     }

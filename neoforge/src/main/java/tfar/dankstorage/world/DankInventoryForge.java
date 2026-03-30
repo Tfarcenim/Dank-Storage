@@ -1,12 +1,15 @@
 package tfar.dankstorage.world;
 
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import org.jetbrains.annotations.NotNull;
 import tfar.dankstorage.inventory.DankInventory;
+import tfar.dankstorage.transferapi.IItemResource;
 import tfar.dankstorage.utils.DankStats;
 
-public class DankInventoryForge extends DankInventory implements IItemHandlerModifiable {
+public class DankInventoryForge extends DankInventory implements ResourceHandler<ItemResource> {
 
 
     public DankInventoryForge(DankStats stats, DankSavedData data) {
@@ -14,35 +17,44 @@ public class DankInventoryForge extends DankInventory implements IItemHandlerMod
     }
 
     @Override
-    public int getSlots() {
+    public int size() {
         return items.size();
     }
 
     @Override
-    public ItemStack getStackInSlot(int i) {
-        return getItemDank(i);
+    public ItemResource getResource(int i) {
+        return ItemResource.of(getItemDank(i));
     }
 
     @Override
-    public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+    public long getAmountAsLong(int index) {
+        return getItemDank(index).getCount();
+    }
+
+    @Override
+    public int insert(int slot, @NotNull ItemResource resource, int amount, TransactionContext context) {
         if (!inBounds(slot)) {
             warnOutOfBounds(slot);
-            return stack;
+            return 0;
         }
-        return insertStack(slot,stack,simulate);
+        return insertStackNew(slot,convertTo(resource),amount);
+    }
+
+    public static IItemResource convertTo(ItemResource resource) {
+        return new IItemResource(resource.toStack());
     }
 
     @Override
-    public ItemStack extractItem(int i, int i1, boolean b) {
-        if (!inBounds(i)) {
-            warnOutOfBounds(i);
-            return ItemStack.EMPTY;
+    public int extract(int index, ItemResource resource, int amount, TransactionContext context) {
+        if (!inBounds(index)) {
+            warnOutOfBounds(index);
+            return 0;
         }
-        return extractStack(i,i1,b);
+        return extractStackNew(index,convertTo(resource),amount);
     }
 
     @Override
-    public int getSlotLimit(int slot) {
+    public long getCapacityAsLong(int slot,ItemResource itemResource) {
         if (!inBounds(slot)) {
             warnOutOfBounds(slot);
             return 0;
@@ -51,12 +63,7 @@ public class DankInventoryForge extends DankInventory implements IItemHandlerMod
     }
 
     @Override
-    public boolean isItemValid(int i, ItemStack itemStack) {
-        return canPlaceItem(i,itemStack);
-    }
-
-    @Override
-    public void setStackInSlot(int i, ItemStack itemStack) {
-        setItemDank(i,itemStack);
+    public boolean isValid(int i, ItemResource itemResource) {
+        return canPlaceItem(i,itemResource.toStack());
     }
 }

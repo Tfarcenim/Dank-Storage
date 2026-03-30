@@ -9,6 +9,7 @@ import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class DynamicTooltip extends Tooltip {
@@ -21,7 +22,7 @@ public class DynamicTooltip extends Tooltip {
     public Component lastNarration;
 
     public DynamicTooltip(Supplier<Component> messageSupplier, Supplier<Component> narrationSupplier) {
-        super(null, null);
+        super(null, null, Optional.empty(),null);
         this.messageSupplier = messageSupplier;
         this.narrationSupplier = narrationSupplier;
     }

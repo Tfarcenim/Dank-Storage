@@ -2,13 +2,16 @@ package tfar.dankstorage.client;
 
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
@@ -23,22 +26,29 @@ import tfar.dankstorage.utils.KeybindAction;
 import tfar.dankstorage.network.server.C2SButtonPacket;
 import tfar.dankstorage.utils.UseType;
 
+@Mod(value = DankStorage.MODID,dist = Dist.CLIENT)
 public class ModClientForge {
 
-    public static void client() {
+    public ModClientForge(IEventBus bus) {
+        bus.addListener(ModClientForge::keybinds);
+        bus.addListener(ModClientForge::clientTool);
+        bus.addListener(ModClientForge::renderStack);
+        bus.addListener(this::client);
+    }
 
+    public void client(FMLClientSetupEvent event) {
         NeoForge.EVENT_BUS.addListener(ModClientForge::onPickBlock);
         NeoForge.EVENT_BUS.addListener(ModClientForge::onScroll);
         NeoForge.EVENT_BUS.addListener(ModClientForge::keyPressed);
         NeoForge.EVENT_BUS.addListener(ModClientForge::rightClick);
-        CommonClient.setup();
+        event.enqueueWork(CommonClient::setup);
     }
 
     public static void rightClick(PlayerInteractEvent.RightClickItem event) {
         InteractionHand hand = event.getHand();
         Player player = event.getEntity();
         ItemStack stack = player.getItemInHand(hand);
-        if (player.level().isClientSide && stack.getItem() instanceof DankItem && Screen.hasAltDown() && DankItem.getUseType(stack)!= UseType.bag) {
+        if (player.level().isClientSide() && stack.getItem() instanceof DankItem && Minecraft.getInstance().hasAltDown() && DankItem.getUseType(stack)!= UseType.bag) {
             C2SOpenMenuPacket.send(hand);
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.SUCCESS);
@@ -70,7 +80,7 @@ public class ModClientForge {
     }
 
     public static void renderStack(RegisterGuiLayersEvent e) {
-        e.registerBelow(VanillaGuiLayers.CHAT, DankStorage.id("hud"), ClientEvents::renderSelectedItem);
+        e.registerBelow(VanillaGuiLayers.CHAT, DankStorage.id("hud"), ClientEvents::extractSelectedItem);
     }
 
     public static void onPickBlock(InputEvent.InteractionKeyMappingTriggered e) {

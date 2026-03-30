@@ -22,7 +22,7 @@ public class CommonEvents {
      */
     public static boolean interceptItem(Inventory inv, ItemStack incoming) {
         Player player = inv.player;
-        if (player.level().isClientSide || incoming.isEmpty()) {//thanks Hookshot
+        if (player.level().isClientSide() || incoming.isEmpty()) {//thanks Hookshot
             return false;
         }
         for (int i = 0; i < inv.getContainerSize(); i++) {
@@ -38,7 +38,7 @@ public class CommonEvents {
 
         PickupMode pickupMode = DankItem.getPickupMode(dank);
         if (pickupMode == PickupMode.none) return false;
-        DankInventory inv = DankItem.getInventoryFrom(dank,player.getServer());
+        DankInventory inv = DankItem.getInventoryFrom(dank,player.level().getServer());
 
         if (inv == null) {
             DankStorage.LOG.warn("That's odd, the player somehow got an unassigned dank to change pickup mode");
