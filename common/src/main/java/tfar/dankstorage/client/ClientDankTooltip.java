@@ -2,13 +2,11 @@ package tfar.dankstorage.client;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
-import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 
 public class ClientDankTooltip implements ClientTooltipComponent {
@@ -51,26 +49,24 @@ public class ClientDankTooltip implements ClientTooltipComponent {
 
     private void extractSlot(int drawX, int drawY, int slot, Font font, GuiGraphicsExtractor extractor) {
         ItemStack itemStack = this.items.get(slot);
-        this.blit(extractor, drawX, drawY,  Texture.SLOT);
+        boolean highlight = !selected.isEmpty() && ItemStack.isSameItemSameComponents(selected,itemStack);
+        if (highlight) {
+            extractor.blitSprite(RenderPipelines.GUI_TEXTURED, SLOT_HIGHLIGHT_BACK_SPRITE, drawX, drawY, 18, 18);
+           // AbstractContainerScreen.renderSlotHighlight(extractor, drawX + 1, drawY + 1, 0);
+        } else {
+            extractor.blitSprite(RenderPipelines.GUI_TEXTURED, SLOT_BACKGROUND_SPRITE, drawX, drawY, 18, 18);
+        }
         extractor.item(itemStack, drawX + 1, drawY + 1, slot);
-        extractor.itemDecorations(font,itemStack, drawX + 1, drawY + 1);
         int count = itemStack.getCount();
         if (count > 1) {
             StackSizeRenderer.renderSizeLabel(extractor, font, drawX + 1, drawY + 1, CommonUtils.formatLargeNumber(count));
         }
-        if (!selected.isEmpty() && ItemStack.isSameItemSameComponents(selected,itemStack)) {
-            extractor.blitSprite(RenderPipelines.GUI_TEXTURED, SLOT_HIGHLIGHT_FRONT_SPRITE, drawX, drawY, 24, 24);
-           // AbstractContainerScreen.renderSlotHighlight(extractor, drawX + 1, drawY + 1, 0);
-        }
     }
 
-    private static final Identifier SLOT_HIGHLIGHT_FRONT_SPRITE = Identifier.withDefaultNamespace("container/bundle/slot_highlight_front");
+    private static final Identifier SLOT_HIGHLIGHT_BACK_SPRITE = Identifier.withDefaultNamespace("container/bundle/slot_highlight_back");
 
 
-    private void blit(GuiGraphicsExtractor guiGraphics, int x, int y, Texture texture) {
-        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED,texture.sprite, x, y, texture.w, texture.h);
-    }
-
+    private static final Identifier SLOT_BACKGROUND_SPRITE = Identifier.withDefaultNamespace("container/bundle/slot_background");
 
     private int gridSizeX() {
         return 9;
@@ -80,18 +76,4 @@ public class ClientDankTooltip implements ClientTooltipComponent {
         return items.size() / this.gridSizeX();
     }
 
-    private enum Texture {
-        BLOCKED_SLOT(Identifier.withDefaultNamespace("container/bundle/blocked_slot"), 18, 20),
-        SLOT(Identifier.withDefaultNamespace("container/bundle/slot"), 18, 20);
-
-        public final Identifier sprite;
-        public final int w;
-        public final int h;
-
-        Texture(final Identifier sprite, final int w, final int h) {
-            this.sprite = sprite;
-            this.w = w;
-            this.h = h;
-        }
-    }
 }

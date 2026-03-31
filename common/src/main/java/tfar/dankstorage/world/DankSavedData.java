@@ -36,6 +36,8 @@ public class DankSavedData {
         this.tag = tag;
     }
 
+    transient HolderLookup.Provider provider;
+
     public void setFrequency(int frequency) {
         this.frequency = frequency;
     }
@@ -45,6 +47,7 @@ public class DankSavedData {
     }
 
     public DankInventory getOrCreateInventory(HolderLookup.Provider provider) {
+        this.provider = provider;
         if (cache == null) {
             cache = Services.PLATFORM.createInventory(stats,this);
 
@@ -74,11 +77,14 @@ public class DankSavedData {
     }
 
     public void setDirty() {
-        this.dirty = true;
+        setDirty(true);
     }
 
     public void setDirty(boolean dirty) {
         this.dirty = dirty;
+        if (dirty) {
+            save(provider);
+        }
     }
 
     public boolean isDirty() {

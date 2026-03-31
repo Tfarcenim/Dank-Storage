@@ -126,8 +126,6 @@ public class CommonUtils {
 
         for (RecipeHolder<CraftingRecipe> recipe : recipes) {
             if (recipe.value() instanceof ShapedRecipe shapedRecipe) {
-                int x = shapedRecipe.getWidth();
-                int y = shapedRecipe.getHeight();
                 int inputCount = shapedRecipe.placementInfo().ingredients().size();
                 if (inputCount == size * size) {
 
@@ -135,7 +133,7 @@ public class CommonUtils {
 
                     Ingredient first = inputs.getFirst();
                     boolean same = true;
-                    for (int i = 1; i < x * y; i++) {
+                    for (int i = 1; i < inputCount; i++) {
                         Ingredient next = inputs.get(i);
                         if (next != first) {
                             same = false;
@@ -269,7 +267,7 @@ public class CommonUtils {
             TxtColor textColor;
 
             if (frequency > INVALID) {
-                if (frequency < dankSavedDatas.getNextId()) {
+                if (dankSavedDatas.isPresent(frequency)) {
                     DankInventory targetInventory = DankSavedDatas.get(player.level().getServer()).get(frequency)
                             .getOrCreateInventory(player.registryAccess());
 

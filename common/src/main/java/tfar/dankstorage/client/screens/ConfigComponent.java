@@ -72,7 +72,7 @@ public class ConfigComponent implements Renderable, GuiEventListener{
         }
     }
 
-    protected void extractBackground(GuiGraphicsExtractor guiGraphics, float partialTicks, int mouseX, int mouseY) {
+    protected void extractBackground(GuiGraphicsExtractor guiGraphics) {
         if (this.isVisible()) {
             int i = (this.width - 147) / 2 - 111;
             int j = (this.height - 166) / 2;

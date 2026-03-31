@@ -109,7 +109,7 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
         this.frequency.setResponder(this::onNameChanged);
         this.frequency.setValue("");
         this.frequency.setTextColor(0xff00ff00);
-        this.addWidget(this.frequency);
+        this.addRenderableWidget(this.frequency);
     }
 
     private void onNameChanged(String string) {
@@ -231,7 +231,7 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
     protected void extractLabels(GuiGraphicsExtractor poseStack, int i, int j) {
         super.extractLabels(poseStack, i, j);
         int id = DankItem.getFrequency(menu.getBag());//menu.dankInventory.get(menu.rows * 9);
-        int color = 0x008000;
+        int color = 0xff008000;
         poseStack.text( font,"ID: " + id, 62, inventoryLabelY, color,false);
     }
 
@@ -398,13 +398,12 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
     @Override
     public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float a) {
         if (is7)
-            guiGraphics.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 512);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED,background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 512);
         else
-            //        graphics.blit(RenderPipelines.GUI_TEXTURED, CONTAINER_LOCATION, xo, yo, 0.0F, 0.0F, this.imageWidth, this.imageHeight, 256, 256);
             guiGraphics.blit(RenderPipelines.GUI_TEXTURED,background,
                     leftPos, topPos, 0, 0, imageWidth, imageHeight,256, 256);
         renderLockedSlots(guiGraphics);
-        //configComponent.extractBackground(guiGraphics , mouseX, mouseY,a);
+        //configComponent.extractBackground(guiGraphics);
     }
 
     protected void renderLockedSlots(GuiGraphicsExtractor guiGraphics) {

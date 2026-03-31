@@ -9,7 +9,7 @@ public enum TxtColor {
     public final int color;
 
     TxtColor(int color) {
-        this.color = color;
+        this.color = color | 0xff000000;
     }
 
     TxtColor(ChatFormatting color) {

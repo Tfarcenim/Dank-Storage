@@ -17,6 +17,6 @@ public class NumberEditBox extends EditBox {
 
     @Override
     public boolean charTyped(CharacterEvent event) {
-        return  Character.isDigit(event.codepoint()) && super.charTyped(event);
+        return  super.charTyped(event);
     }
 }

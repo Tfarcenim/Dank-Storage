@@ -78,6 +78,23 @@ public class DankSavedDatas extends SavedData {
         return nextId;
     }
 
+    public boolean isPresent(int frequency) {
+        return datas.keySet().contains(frequency);
+    }
+
+    @Override
+    public boolean isDirty() {
+        return super.isDirty() || datas.values().stream().anyMatch(DankSavedData::isDirty);
+    }
+
+    @Override
+    public void setDirty(boolean dirty) {
+        super.setDirty(dirty);
+        if (!dirty) {
+            datas.values().forEach(data -> data.setDirty(false));
+        }
+    }
+
     public record WithId(int id, DankSavedData data) {
         public static final Codec<WithId> CODEC = RecordCodecBuilder.create(
                 i -> i.group(Codec.INT.fieldOf("id").forGetter(WithId::id), DankSavedData.MAP_CODEC.forGetter(WithId::data))

@@ -7,7 +7,6 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.ItemStackWithSlot;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -19,6 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import org.jetbrains.annotations.Nullable;
 import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.init.ModBlockEntityTypes;
 import tfar.dankstorage.inventory.DankInventory;
@@ -27,7 +27,6 @@ import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.*;
 import tfar.dankstorage.world.DankSavedDatas;
 
-import javax.annotation.Nullable;
 
 public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvider {
     public DockBlockEntity(BlockPos $$1, BlockState $$2) {
