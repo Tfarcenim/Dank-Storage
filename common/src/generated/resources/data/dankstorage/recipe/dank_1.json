@@ -1,14 +1,9 @@
 {
   "type": "dankstorage:upgrade",
   "category": "equipment",
-  "group": "dank",
   "key": {
-    "b": {
-      "tag": "c:barrels/wooden"
-    },
-    "c": {
-      "tag": "minecraft:coals"
-    }
+    "b": "#c:barrels/wooden",
+    "c": "#minecraft:coals"
   },
   "pattern": [
     "ccc",
@@ -16,7 +11,6 @@
     "ccc"
   ],
   "result": {
-    "count": 1,
     "id": "dankstorage:dank_1"
   }
 }

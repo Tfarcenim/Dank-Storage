@@ -29,13 +29,9 @@ configurations {
         canBeConsumed = true
     }
 }
+sourceSets.main.resources.srcDir 'src/generated/resources'
+sourceSets.main.resources.srcDir 'src/main/resources'
 
-artifacts {
-    commonJava sourceSets.main.java.sourceDirectories.singleFile
-    sourceSets.main.resources.sourceDirectories.forEach {
-        commonResources it
-    }
-}
 
 // Implement mcgradleconventions loader attribute
 def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
@@ -55,4 +51,10 @@ sourceSets.configureEach {
         }
     }
 }
-sourceSets.main.resources.srcDir 'src/generated/resources'
+
+artifacts {
+    commonJava sourceSets.main.java.sourceDirectories.singleFile
+    sourceSets.main.resources.sourceDirectories.forEach {
+        commonResources it
+    }
+}

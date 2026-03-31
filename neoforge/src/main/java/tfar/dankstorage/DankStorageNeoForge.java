@@ -42,7 +42,7 @@ public class DankStorageNeoForge {
         NeoForge.EVENT_BUS.addListener(this::onServerStopped);
         NeoForge.EVENT_BUS.addListener(this::registerCommands);
         NeoForge.EVENT_BUS.addListener(this::entityInvulnerabilityCheck);
-        bus.addListener(ModDatagen::setupDataGenerator);
+        ModDatagen.setup(bus);
         bus.addListener(this::registerObjs);
         bus.addListener(this::onInitialize);
         bus.addListener(DankPacketHandlerNeoForge::register);

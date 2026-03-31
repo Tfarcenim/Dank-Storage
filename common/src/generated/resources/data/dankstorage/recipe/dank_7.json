@@ -1,17 +1,10 @@
 {
   "type": "dankstorage:upgrade",
   "category": "equipment",
-  "group": "dank",
   "key": {
-    "b": {
-      "item": "dankstorage:dank_6"
-    },
-    "c": {
-      "item": "minecraft:nether_star"
-    },
-    "d": {
-      "item": "minecraft:nether_star"
-    }
+    "b": "dankstorage:dank_6",
+    "c": "minecraft:nether_star",
+    "d": "minecraft:nether_star"
   },
   "pattern": [
     "dcd",
@@ -19,7 +12,6 @@
     "dcd"
   ],
   "result": {
-    "count": 1,
     "id": "dankstorage:dank_7"
   }
 }

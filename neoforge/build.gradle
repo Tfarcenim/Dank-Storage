@@ -24,7 +24,8 @@ neoForge {
             gameDirectory = this.mkdir(this.file("runs/data"))
             // DataGen can be run by - "./gradlew :neoforge:runData" in Terminal.
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', rootProject.project(':common').file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', rootProject.project(':common').file('src/main/resources/').getAbsolutePath()
         }
         server {
             server()
@@ -40,6 +41,9 @@ neoForge {
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+//sourceSets.main.resources { srcDir project(':common').file('src/main/resources') }
+
 
 // Implement mcgradleconventions loader attribute
 def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)

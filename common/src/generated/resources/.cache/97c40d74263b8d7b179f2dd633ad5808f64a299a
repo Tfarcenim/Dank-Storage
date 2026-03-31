@@ -1,4 +1,4 @@
-// 1.21	2024-07-29T11:59:51.2066385	Recipes
+// 26.1	2026-03-30T17:49:13.8663241	Vanilla Recipes
 6cb2e5244e328841ec0ff542ca935590c979c86c data/dankstorage/advancement/recipes/tools/1_to_2.json
 27390347742317c1e80cdbd8d0683a028bf59ebb data/dankstorage/advancement/recipes/tools/2_to_3.json
 57a036e57eafaaca6246256102663443070cf36c data/dankstorage/advancement/recipes/tools/3_to_4.json
@@ -13,17 +13,17 @@ d5e6c865e67e937ae02c1eedcc945c7d1c53fd32 data/dankstorage/advancement/recipes/to
 53e544dc6a6c76fe7b646db83a8894b878303893 data/dankstorage/advancement/recipes/tools/dank_6.json
 898ebb46c4d3f9e21f9e7453cdc243e6d8ad20a6 data/dankstorage/advancement/recipes/tools/dank_7.json
 c700fd1cae0032113faaef5749d3a2343aa83e79 data/dankstorage/advancement/recipes/tools/dock.json
-26b84092a9ec7e22ae2f16f72959ac0c3e46a465 data/dankstorage/recipe/1_to_2.json
-f44711c26851f6b703df6cf1f9c2f3ab5778b423 data/dankstorage/recipe/2_to_3.json
-7e9dbf6b2fc8dde17bae920159acd1a6a0149990 data/dankstorage/recipe/3_to_4.json
-4f4e47734463ea95b52cefaab4f691ede38f548c data/dankstorage/recipe/4_to_5.json
-87c56cadee638a383e896f2baec167317ce58b2a data/dankstorage/recipe/5_to_6.json
-ad8e69143931170cac1654441b37d5a556356bf1 data/dankstorage/recipe/6_to_7.json
-834641ad612a0176de43f4b6947821b18d1855a7 data/dankstorage/recipe/dank_1.json
-c10a38a25801e9dc1e960ff2084165539e83ce0e data/dankstorage/recipe/dank_2.json
-3248142bfc35286e70a471f310bc376b175b87df data/dankstorage/recipe/dank_3.json
-e68e90eea0686a7ef3ed3a674fb33429d1384396 data/dankstorage/recipe/dank_4.json
-959e1f04eab41ffd4aa4933f2ff104053d91c29a data/dankstorage/recipe/dank_5.json
-3336f0bd62d87c060f98e9357d26ec490a1555f4 data/dankstorage/recipe/dank_6.json
-28659b3aa1c1744cc81e42b2daea3c0a4f98b4ba data/dankstorage/recipe/dank_7.json
-d67eaa39adbd3f2bda44ed2c85506d842749c822 data/dankstorage/recipe/dock.json
+cf273bf4a344685681d4be73283673af051cb1c9 data/dankstorage/recipe/1_to_2.json
+6df01e70637d0c0ff49225111c88bdd826823090 data/dankstorage/recipe/2_to_3.json
+5c8a811bcc8e3186eeeb37aad4f664964e492dee data/dankstorage/recipe/3_to_4.json
+d5e0303baac410c4d7d970aaec53e512aec96019 data/dankstorage/recipe/4_to_5.json
+12b47164f8c8e57b4841270b7fd24d1258c0a01c data/dankstorage/recipe/5_to_6.json
+7349217c97fb6f472e963da9e9144e8f7955662b data/dankstorage/recipe/6_to_7.json
+702cbd4b82e339b8e6fcec39486f39d802105aed data/dankstorage/recipe/dank_1.json
+980f681b1b4c1afe2d3d6c31585ac04555563052 data/dankstorage/recipe/dank_2.json
+c649671a9d3e5446ab5ab0937dbb9afa9cac0b04 data/dankstorage/recipe/dank_3.json
+a1ce886730c20fa1129825f0c1ea21671d37aa2c data/dankstorage/recipe/dank_4.json
+75ef33afd5e52fbe4ee509fbef7c9bac64b1e6cc data/dankstorage/recipe/dank_5.json
+f60c1f17f250cc4714dc23142063e2e8e451132d data/dankstorage/recipe/dank_6.json
+66bfe6d5dc086d2b5ee9527287074a138d408478 data/dankstorage/recipe/dank_7.json
+0329754ec11a91183982b434102a799fed657df8 data/dankstorage/recipe/dock.json

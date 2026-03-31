@@ -1,17 +1,10 @@
 {
   "type": "dankstorage:upgrade",
   "category": "equipment",
-  "group": "dank",
   "key": {
-    "b": {
-      "item": "dankstorage:dank_3"
-    },
-    "c": {
-      "item": "minecraft:emerald_block"
-    },
-    "d": {
-      "item": "minecraft:emerald_block"
-    }
+    "b": "dankstorage:dank_3",
+    "c": "minecraft:emerald_block",
+    "d": "minecraft:emerald_block"
   },
   "pattern": [
     "dcd",
@@ -19,7 +12,6 @@
     "dcd"
   ],
   "result": {
-    "count": 1,
     "id": "dankstorage:dank_4"
   }
 }

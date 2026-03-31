@@ -1,17 +1,10 @@
 {
   "type": "dankstorage:upgrade",
   "category": "equipment",
-  "group": "dank",
   "key": {
-    "b": {
-      "item": "dankstorage:dank_2"
-    },
-    "c": {
-      "item": "minecraft:gold_block"
-    },
-    "d": {
-      "item": "minecraft:gold_block"
-    }
+    "b": "dankstorage:dank_2",
+    "c": "minecraft:gold_block",
+    "d": "minecraft:gold_block"
   },
   "pattern": [
     "dcd",
@@ -19,7 +12,6 @@
     "dcd"
   ],
   "result": {
-    "count": 1,
     "id": "dankstorage:dank_3"
   }
 }

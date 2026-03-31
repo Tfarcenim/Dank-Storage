@@ -1,11 +1,8 @@
 {
   "type": "dankstorage:upgrade",
   "category": "equipment",
-  "group": "dank",
   "key": {
-    "c": {
-      "item": "minecraft:black_concrete"
-    }
+    "c": "minecraft:black_concrete"
   },
   "pattern": [
     "ccc",
@@ -13,7 +10,6 @@
     "ccc"
   ],
   "result": {
-    "count": 1,
     "id": "dankstorage:dock"
   }
 }
