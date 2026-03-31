@@ -28,7 +28,7 @@ public class ModBlockLoot extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
-        add(ModBlocks.dock, LootTable.lootTable().withPool(LootPool.lootPool().add(this.applyExplosionCondition(ModBlocks.dock, LootItem.lootTableItem(ModBlocks.dock))))
+        add(ModBlocks.DOCK, LootTable.lootTable().withPool(LootPool.lootPool().add(this.applyExplosionCondition(ModBlocks.DOCK, LootItem.lootTableItem(ModBlocks.DOCK))))
                 .withPool(makeDank(ModItems.DANKS.get("dank_1")))
                 .withPool(makeDank(ModItems.DANKS.get("dank_2")))
                 .withPool(makeDank(ModItems.DANKS.get("dank_3")))
@@ -42,7 +42,7 @@ public class ModBlockLoot extends BlockLootSubProvider {
     protected LootPool.Builder makeDank(DankItem dank) {
         return LootPool.lootPool().add(LootItem.lootTableItem(dank)
                 .when(
-                        LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.dock)
+                        LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.DOCK)
                                 .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(DockBlock.TIER, dank.stats.ordinal()))
                 )
                 .apply(
@@ -58,6 +58,6 @@ public class ModBlockLoot extends BlockLootSubProvider {
 
     @Override
     protected Iterable<Block> getKnownBlocks() {
-        return List.of(ModBlocks.dock);
+        return List.of(ModBlocks.DOCK);
     }
 }

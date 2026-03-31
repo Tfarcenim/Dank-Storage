@@ -29,9 +29,8 @@ configurations {
         canBeConsumed = true
     }
 }
-sourceSets.main.resources.srcDir 'src/generated/resources'
-sourceSets.main.resources.srcDir 'src/main/resources'
 
+sourceSets.main.resources.srcDir 'src/generated/resources'
 
 // Implement mcgradleconventions loader attribute
 def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)

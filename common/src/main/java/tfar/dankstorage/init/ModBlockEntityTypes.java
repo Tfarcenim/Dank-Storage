@@ -9,7 +9,7 @@ import tfar.dankstorage.blockentity.DockBlockEntity;
 import java.util.Set;
 
 public class ModBlockEntityTypes {
-    public static final BlockEntityType<DockBlockEntity> DOCK = new BlockEntityType<>(DockBlockEntity::new, Set.of(ModBlocks.dock));
+    public static final BlockEntityType<DockBlockEntity> DOCK = new BlockEntityType<>(DockBlockEntity::new, Set.of(ModBlocks.DOCK));
 
     static {
         Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, DankStorage.id("dock"),DOCK);

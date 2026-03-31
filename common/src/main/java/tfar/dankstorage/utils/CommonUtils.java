@@ -128,7 +128,8 @@ public class CommonUtils {
             if (recipe.value() instanceof ShapedRecipe shapedRecipe) {
                 int x = shapedRecipe.getWidth();
                 int y = shapedRecipe.getHeight();
-                if (x == size && x == y) {
+                int inputCount = shapedRecipe.placementInfo().ingredients().size();
+                if (inputCount == size * size) {
 
                     List<Ingredient> inputs = shapedRecipe.placementInfo().ingredients();
 

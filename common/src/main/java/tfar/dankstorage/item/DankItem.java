@@ -172,9 +172,10 @@ public class DankItem extends Item {
                 MinecraftServer server = player.level().getServer();
                 if (getFrequency(stack) == CommonUtils.INVALID) {
                     DankSavedDatas dankSavedDatas = DankSavedDatas.getOrCreate(server);
-                    DankSavedData data = dankSavedDatas.assignNextFreeId(server,stats);
+                    DankSavedDatas.WithId data = dankSavedDatas.assignNextFreeId(server,stats);
                     //DankSavedData data = DankSavedDatas.getOrCreate(server).get(getFrequency(stack));
-                    data.setStats(stats);
+                    data.data().setStats(stats);
+                    setFrequency(stack,data.id());
                 }
 
 

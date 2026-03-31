@@ -205,15 +205,26 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
     @Override
     public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.extractContents(graphics, mouseX, mouseY, partialTicks);
-        int color = menu.dankInventory.getTextColor();
-        this.frequency.setTextColor(color);
 
-        PickupMode pickupMode = menu.getMode();
-        modeCycleButton.setValue(pickupMode);
 
-        this.configComponent.extractRenderState(graphics, mouseX, mouseY, partialTicks);
+     //   this.configComponent.extractRenderState(graphics, mouseX, mouseY, partialTicks);
 
         this.extractTooltip(graphics, mouseX, mouseY);
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        int color = menu.dankInventory.getTextColor();
+        if (frequency != null) {
+            this.frequency.setTextColor(color);
+        }
+
+        PickupMode pickupMode = menu.getMode();
+
+        if (modeCycleButton != null) {
+            modeCycleButton.setValue(pickupMode);
+        }
     }
 
     @Override
@@ -247,6 +258,11 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
     @Override
     protected void init() {
         super.init();
+
+        configComponent = new ConfigComponent();
+
+        addRenderableOnly(configComponent);
+
         this.configComponent.init(this.width, this.height, this.minecraft, this.menu);
 
         int j = (this.height - this.imageHeight) / 2;
@@ -342,9 +358,7 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
             autoSort.visible = false;
         }
 
-        configComponent = new ConfigComponent();
 
-        addRenderableOnly(configComponent);
 
         initEditbox();
     }
@@ -386,7 +400,9 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
         if (is7)
             guiGraphics.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 512);
         else
-            guiGraphics.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight,256, 256);
+            //        graphics.blit(RenderPipelines.GUI_TEXTURED, CONTAINER_LOCATION, xo, yo, 0.0F, 0.0F, this.imageWidth, this.imageHeight, 256, 256);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED,background,
+                    leftPos, topPos, 0, 0, imageWidth, imageHeight,256, 256);
         renderLockedSlots(guiGraphics);
         //configComponent.extractBackground(guiGraphics , mouseX, mouseY,a);
     }

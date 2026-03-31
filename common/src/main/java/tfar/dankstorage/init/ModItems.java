@@ -7,7 +7,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DispenserBlock;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.block.DankDispenserBehavior;
@@ -22,7 +21,7 @@ import java.util.stream.IntStream;
 
 public class ModItems {
     public static Item RED_PRINT = new RedprintItem(new Item.Properties().setId(key("red_print")));
-    public static final Item DOCK = new BlockItem(ModBlocks.dock, new Item.Properties().setId(key("dock")));
+    public static final Item DOCK = new BlockItem(ModBlocks.DOCK, new Item.Properties().setId(key("dock")));
     public static final Map<String, DankItem> DANKS;
     public static final Map<String, UpgradeItem> UPGRADES;
     public static final Map<String,Item> ALL = new LinkedTreeMap<>();

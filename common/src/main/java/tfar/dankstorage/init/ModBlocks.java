@@ -10,14 +10,14 @@ import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.block.DockBlock;
 
 public class ModBlocks {
-    public static final Block dock = new DockBlock(BlockBehaviour.Properties.of().strength(1, 30).setId(key("dock")));
+    public static final Block DOCK = new DockBlock(BlockBehaviour.Properties.of().strength(1, 30).setId(key("dock")));
 
     static ResourceKey<Block> key(String s) {
         return ResourceKey.create(Registries.BLOCK,DankStorage.id(s));
     }
 
     static {
-        Registry.register(BuiltInRegistries.BLOCK, DankStorage.id("dock"),dock);
+        Registry.register(BuiltInRegistries.BLOCK, DankStorage.id("dock"), DOCK);
     }
 
     public static void init() {

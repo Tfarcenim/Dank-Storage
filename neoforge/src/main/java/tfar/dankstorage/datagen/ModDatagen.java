@@ -32,6 +32,7 @@ public class ModDatagen {
         generator.addProvider(true,bindRegistries(ModRecipeProvider.Runner::new, lookupProvider));
         generator.addProvider(true,ModLootTableProvider.create(packOutput,lookupProvider));
         generator.addProvider(true,new ModModelProvider(packOutput));
+        generator.addProvider(true,new ModLangProvider(packOutput));
     }
 
     public static void setupDataGenerator(GatherDataEvent.Server e) {

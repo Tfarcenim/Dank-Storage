@@ -2,14 +2,12 @@ package tfar.dankstorage.client;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.ClientTooltipComponentCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -35,21 +33,21 @@ public class ModClientFabric implements ClientModInitializer {
     public void onInitializeClient() {
         CommonClient.setup();
 
-        KeyBindingHelper.registerKeyBinding(DankKeybinds.CONSTRUCTION);
-        KeyBindingHelper.registerKeyBinding(DankKeybinds.LOCK_SLOT);
-        KeyBindingHelper.registerKeyBinding(DankKeybinds.PICKUP_MODE);
+        KeyMappingHelper.registerKeyMapping(DankKeybinds.CONSTRUCTION);
+        KeyMappingHelper.registerKeyMapping(DankKeybinds.LOCK_SLOT);
+        KeyMappingHelper.registerKeyMapping(DankKeybinds.PICKUP_MODE);
         ClientTickEvents.START_CLIENT_TICK.register(ModClientFabric::keyPressed);
-        TooltipComponentCallback.EVENT.register(CommonClient::tooltipImage);
+        ClientTooltipComponentCallback.EVENT.register(CommonClient::tooltipImage);
         HudRenderCallback.EVENT.register(ClientEvents::extractSelectedItem);
         UseItemCallback.EVENT.register(this::interact);
     }
 
-    public InteractionResultHolder<ItemStack> interact(Player player, Level world, InteractionHand hand) {
+    public InteractionResult interact(Player player, Level world, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (player.level().isClientSide && stack.getItem() instanceof DankItem && Screen.hasAltDown() && DankItem.getUseType(stack)!= UseType.bag) {
+        if (player.level().isClientSide() && stack.getItem() instanceof DankItem && Minecraft.getInstance().hasAltDown() && DankItem.getUseType(stack)!= UseType.bag) {
             C2SOpenMenuPacket.send(hand);
-            return InteractionResultHolder.success(stack);
+            return InteractionResult.SUCCESS;
         }
-        return InteractionResultHolder.pass(ItemStack.EMPTY);
+        return InteractionResult.PASS;
     }
 }

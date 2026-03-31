@@ -53,12 +53,12 @@ public class DankSavedDatas extends SavedData {
         return datas.get(id);
     }
 
-    public DankSavedData assignNextFreeId(MinecraftServer server, DankStats startingStats) {
+    public WithId assignNextFreeId(MinecraftServer server, DankStats startingStats) {
         int frequency = getUniqueId();
         DankSavedData data = new DankSavedData(startingStats,new CompoundTag());
         data.setFrequency(frequency);
         this.datas.put(frequency,data);
-        return data;
+        return new WithId(frequency,data);
     }
 
     public static DankSavedDatas getOrCreate(MinecraftServer server) {
