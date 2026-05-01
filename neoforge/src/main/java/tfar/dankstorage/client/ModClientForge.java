@@ -22,7 +22,6 @@ import tfar.dankstorage.events.ClientEvents;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.network.server.C2SOpenMenuPacket;
 import tfar.dankstorage.utils.CommonUtils;
-import tfar.dankstorage.utils.KeybindAction;
 import tfar.dankstorage.network.server.C2SButtonPacket;
 import tfar.dankstorage.utils.UseType;
 
@@ -72,10 +71,10 @@ public class ModClientForge {
 
     public static void keyPressed(ClientTickEvent.Pre client) {
         if (DankKeybinds.CONSTRUCTION.consumeClick()) {
-            C2SButtonPacket.send(KeybindAction.TOGGLE_USE_TYPE);
+            C2SButtonPacket.TOGGLE_USE_TYPE.send();
         }
         if (DankKeybinds.PICKUP_MODE.consumeClick()) {
-            C2SButtonPacket.send(KeybindAction.TOGGLE_PICKUP);
+            C2SButtonPacket.TOGGLE_PICKUP.send();
         }
     }
 
@@ -90,7 +89,7 @@ public class ModClientForge {
             if (CommonUtils.isHoldingDank(player) && mc.hitResult != null && mc.hitResult.getType() != HitResult.Type.MISS) {
                 HitResult result = player.pick(player.blockInteractionRange(),0,false);
                 if (result instanceof BlockHitResult) {
-                    C2SButtonPacket.send(KeybindAction.PICK_BLOCK);
+                    C2SButtonPacket.PICK_BLOCK.send();
                     e.setCanceled(true);
                 }
             }

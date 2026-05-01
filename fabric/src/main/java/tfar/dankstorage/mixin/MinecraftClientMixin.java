@@ -34,7 +34,7 @@ public class MinecraftClientMixin {
             locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
     private void dankPickBlock(CallbackInfo ci, boolean creative, BlockEntity blockEntity, ItemStack picked, HitResult.Type type, Inventory inventory) {
         if (CommonUtils.isHoldingDank(player) && hitResult != null && hitResult.getType() != HitResult.Type.MISS) {
-            C2SButtonPacket.send(KeybindAction.PICK_BLOCK);
+            C2SButtonPacket.PICK_BLOCK.send();
             ci.cancel();
         }
     }

@@ -15,17 +15,16 @@ import tfar.dankstorage.events.ClientEvents;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.network.server.C2SButtonPacket;
 import tfar.dankstorage.network.server.C2SOpenMenuPacket;
-import tfar.dankstorage.utils.KeybindAction;
 import tfar.dankstorage.utils.UseType;
 
 public class ModClientFabric implements ClientModInitializer {
 
     public static void keyPressed(Minecraft client) {
         if (DankKeybinds.CONSTRUCTION.consumeClick()) {
-            C2SButtonPacket.send(KeybindAction.TOGGLE_USE_TYPE);
+            C2SButtonPacket.TOGGLE_USE_TYPE.send();
         }
         if (DankKeybinds.PICKUP_MODE.consumeClick()) {
-            C2SButtonPacket.send(KeybindAction.TOGGLE_PICKUP);
+            C2SButtonPacket.TOGGLE_PICKUP.send();
         }
     }
 

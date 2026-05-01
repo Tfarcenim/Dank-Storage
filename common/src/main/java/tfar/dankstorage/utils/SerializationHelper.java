@@ -102,6 +102,10 @@ public class SerializationHelper {
         return LARGE_OPTIONAL_LIST_STREAM_CODEC.decode(buf);
     }
 
+    public static <E extends Enum<E>> StreamCodec<RegistryFriendlyByteBuf,E> altEnumStreamCodec(Class<E> eClass) {
+        return StreamCodec.of(FriendlyByteBuf::writeEnum, buffer -> buffer.readEnum(eClass));
+    }
+
     public static <E extends Enum<E>> StreamCodec<FriendlyByteBuf,E> enumStreamCodec(Class<E> eClass) {
         return StreamCodec.of(FriendlyByteBuf::writeEnum, buffer -> buffer.readEnum(eClass));
     }

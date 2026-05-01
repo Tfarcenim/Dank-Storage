@@ -52,7 +52,6 @@ public class ClientDankTooltip implements ClientTooltipComponent {
         boolean highlight = !selected.isEmpty() && ItemStack.isSameItemSameComponents(selected,itemStack);
         if (highlight) {
             extractor.blitSprite(RenderPipelines.GUI_TEXTURED, SLOT_HIGHLIGHT_BACK_SPRITE, drawX, drawY, 18, 18);
-           // AbstractContainerScreen.renderSlotHighlight(extractor, drawX + 1, drawY + 1, 0);
         } else {
             extractor.blitSprite(RenderPipelines.GUI_TEXTURED, SLOT_BACKGROUND_SPRITE, drawX, drawY, 18, 18);
         }

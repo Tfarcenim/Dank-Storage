@@ -11,26 +11,29 @@ import net.minecraft.world.phys.HitResult;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.platform.Services;
-import tfar.dankstorage.utils.KeybindAction;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.SerializationHelper;
 
-public record C2SButtonPacket(KeybindAction keybindAction) implements C2SModPacket {
-
+public enum C2SButtonPacket implements C2SModPacket {
+    PICK_BLOCK,
+    TOGGLE_PICKUP, TOGGLE_USE_TYPE;
     public static final StreamCodec<RegistryFriendlyByteBuf, C2SButtonPacket> STREAM_CODEC =
-            StreamCodec.composite(SerializationHelper.enumStreamCodec(KeybindAction.class), C2SButtonPacket::keybindAction, C2SButtonPacket::new);
+            SerializationHelper.altEnumStreamCodec(C2SButtonPacket.class);
 
 
     public static final CustomPacketPayload.Type<C2SButtonPacket> TYPE = new CustomPacketPayload.Type<>(
             DankPacketHandler.packet(C2SButtonPacket.class));
 
+    public static C2SButtonPacket fromNet(RegistryFriendlyByteBuf buf) {
+        return buf.readEnum(C2SButtonPacket.class);
+    }
 
-    public static void send(KeybindAction keybindAction) {
-        Services.PLATFORM.sendToServer(new C2SButtonPacket(keybindAction));
+    public void send() {
+        Services.PLATFORM.sendToServer(this);
     }
 
     public void handleServer(ServerPlayer player) {
-        switch (keybindAction) {
+        switch (this) {
             case TOGGLE_PICKUP -> CommonUtils.togglePickupMode(player);
             case TOGGLE_USE_TYPE -> CommonUtils.toggleUseType(player);
             case PICK_BLOCK -> {
@@ -50,7 +53,7 @@ public record C2SButtonPacket(KeybindAction keybindAction) implements C2SModPack
     }
 
     public void write(FriendlyByteBuf buf) {
-        buf.writeInt(keybindAction.ordinal());
+        buf.writeEnum(this);
     }
 
     @Override
