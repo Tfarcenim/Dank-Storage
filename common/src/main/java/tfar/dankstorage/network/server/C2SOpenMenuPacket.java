@@ -1,6 +1,5 @@
 package tfar.dankstorage.network.server;
 
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -15,11 +14,7 @@ public record C2SOpenMenuPacket(InteractionHand hand) implements C2SModPacket {
 
     public static final Type<C2SOpenMenuPacket> TYPE =new CustomPacketPayload.Type<>(DankPacketHandler.packet(C2SOpenMenuPacket.class));
     public static final StreamCodec<RegistryFriendlyByteBuf, C2SOpenMenuPacket> STREAM_CODEC =
-            StreamCodec.ofMember(C2SOpenMenuPacket::write, C2SOpenMenuPacket::new);
-
-    public C2SOpenMenuPacket(RegistryFriendlyByteBuf buf) {
-        this(buf.readEnum(InteractionHand.class));
-    }
+            StreamCodec.composite(InteractionHand.STREAM_CODEC,C2SOpenMenuPacket::hand, C2SOpenMenuPacket::new);
 
     public static void send(InteractionHand hand) {
         Services.PLATFORM.sendToServer(new C2SOpenMenuPacket(hand));
@@ -30,10 +25,6 @@ public record C2SOpenMenuPacket(InteractionHand hand) implements C2SModPacket {
         if (stack.getItem() instanceof DankItem dankItem) {
             player.openMenu(dankItem.createProvider(stack));
         }
-    }
-
-    public void write(FriendlyByteBuf buf) {
-        buf.writeEnum(hand);
     }
 
     @Override

@@ -17,7 +17,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.init.ModDataComponentTypes;
 import tfar.dankstorage.inventory.DankInventory;
 import tfar.dankstorage.inventory.LimitedContainerData;
@@ -297,7 +296,7 @@ public class CommonUtils {
             }
             inventory.setTextColor(textColor.color);
         } else if (container instanceof ChangeFrequencyMenu changeFrequencyMenu) {
-            DankInventory inventory = (DankInventory) ((LimitedContainerData) changeFrequencyMenu.getContainerData()).getWrapped();
+            DankInventory inventory = (DankInventory) ((LimitedContainerData) changeFrequencyMenu.getContainerData()).wrapped();
 
             TxtColor textColor;
 

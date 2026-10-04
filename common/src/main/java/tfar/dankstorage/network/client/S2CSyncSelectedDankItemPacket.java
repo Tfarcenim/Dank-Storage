@@ -7,26 +7,19 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import tfar.dankstorage.network.DankPacketHandler;
 import tfar.dankstorage.utils.SerializationHelper;
-import tfar.dankstorage.world.ClientData;
 
 import static tfar.dankstorage.client.CommonClient.getLocalPlayer;
 
-public class S2CSyncSelectedDankItemPacket implements S2CModPacket {
+public record S2CSyncSelectedDankItemPacket(ItemStack stack) implements S2CModPacket {
     public static final StreamCodec<RegistryFriendlyByteBuf, S2CSyncSelectedDankItemPacket> STREAM_CODEC =
             StreamCodec.ofMember(S2CSyncSelectedDankItemPacket::write, S2CSyncSelectedDankItemPacket::new);
 
 
-    public static final CustomPacketPayload.Type<S2CSyncSelectedDankItemPacket> TYPE = new CustomPacketPayload.Type<>(
+    public static final Type<S2CSyncSelectedDankItemPacket> TYPE = new Type<>(
             DankPacketHandler.packet(S2CSyncSelectedDankItemPacket.class));
 
-    private final ItemStack stack;
-
-    public S2CSyncSelectedDankItemPacket(ItemStack stack) {
-        this.stack = stack;
-    }
-
     public S2CSyncSelectedDankItemPacket(RegistryFriendlyByteBuf buf) {
-        stack = SerializationHelper.readExtendedItemStack(buf);
+        this(SerializationHelper.readExtendedItemStack(buf));
     }
 
     @Override
@@ -37,7 +30,7 @@ public class S2CSyncSelectedDankItemPacket implements S2CModPacket {
     }
 
     public void write(RegistryFriendlyByteBuf buf) {
-        SerializationHelper.writeExtendedItemStack(buf,stack);
+        SerializationHelper.writeExtendedItemStack(buf, stack);
     }
 
     @Override

@@ -17,9 +17,9 @@ public class S2CSendGhostSlotPacket implements S2CModPacket {
     public static final CustomPacketPayload.Type<S2CSendGhostSlotPacket> TYPE = new CustomPacketPayload.Type<>(
             DankPacketHandler.packet(S2CSendGhostSlotPacket.class));
 
-    int windowId;
-    int slot;
-    ItemStack stack;
+    final int windowId;
+    final int slot;
+    final ItemStack stack;
 
     public S2CSendGhostSlotPacket(int windowId, int slot, ItemStack stack) {
         this.windowId = windowId;

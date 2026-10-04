@@ -1,6 +1,5 @@
 package tfar.dankstorage.network.server;
 
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -24,10 +23,6 @@ public enum C2SButtonPacket implements C2SModPacket {
     public static final CustomPacketPayload.Type<C2SButtonPacket> TYPE = new CustomPacketPayload.Type<>(
             DankPacketHandler.packet(C2SButtonPacket.class));
 
-    public static C2SButtonPacket fromNet(RegistryFriendlyByteBuf buf) {
-        return buf.readEnum(C2SButtonPacket.class);
-    }
-
     public void send() {
         Services.PLATFORM.sendToServer(this);
     }
@@ -50,10 +45,6 @@ public enum C2SButtonPacket implements C2SModPacket {
                 }
             }
         }
-    }
-
-    public void write(FriendlyByteBuf buf) {
-        buf.writeEnum(this);
     }
 
     @Override

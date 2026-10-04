@@ -17,35 +17,37 @@ public class DankSlot extends Slot {
         this.itemHandler = itemHandler;
     }
 
+    @Override
     public boolean mayPlace(ItemStack stack) {
         return !stack.isEmpty() && this.itemHandler.canPlaceItem(this.index, stack);
     }
 
+    @Override
     public ItemStack getItem() {
         return itemHandler.getItemDank(this.index);
     }
 
+    @Override
     public void set(ItemStack stack) {
         itemHandler.setItemDank(this.index, stack);
         this.setChanged();
     }
 
-    public void initialize(ItemStack stack) {
-        itemHandler.setItemDank(this.index, stack);
-        this.setChanged();
-    }
-
+    @Override
     public void onQuickCraft(ItemStack oldStackIn, ItemStack newStackIn) {
     }
 
+    @Override
     public int getMaxStackSize() {
         return this.itemHandler.getMaxStackSizeDank();
     }
 
+    @Override
     public boolean mayPickup(Player playerIn) {
         return true;
     }
 
+    @Override
     public ItemStack remove(int amount) {
         return this.itemHandler.extractStack(this.index, amount, false);
     }
