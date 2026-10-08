@@ -100,7 +100,7 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
     protected void initEditbox() {
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
-        this.frequency = new NumberEditBox(this.font, i + 92, j + inventoryLabelY, 56, 12, CommonUtils.translatable("dank"));
+        this.frequency = new NumberEditBox(this.font, i + 92, j + inventoryLabelY, 56, 12, Component.translatable("dank"));
         this.frequency.setCanLoseFocus(true);
         this.frequency.setTextColor(-1);
         this.frequency.setTextColorUneditable(-1);
@@ -213,21 +213,6 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
     }
 
     @Override
-    protected void containerTick() {
-        super.containerTick();
-        int color = menu.dankInventory.getTextColor();
-        if (frequency != null) {
-            this.frequency.setTextColor(color);
-        }
-
-        PickupMode pickupMode = menu.getMode();
-
-        if (modeCycleButton != null) {
-            modeCycleButton.setValue(pickupMode);
-        }
-    }
-
-    @Override
     protected void extractLabels(GuiGraphicsExtractor poseStack, int i, int j) {
         super.extractLabels(poseStack, i, j);
         int id = DankItem.getFrequency(menu.getBag());//menu.dankInventory.get(menu.rows * 9);
@@ -239,21 +224,21 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
         if (stack.is(ModTags.BLACKLISTED_STORAGE)) tooltip.add(STORAGE_TXT);
         if (stack.is(ModTags.BLACKLISTED_USAGE)) tooltip.add(USAGE_TXT);
         if (menu.isDankSlot(hoveredSlot)) {
-            Component component1 = CommonUtils.translatable("text.dankstorage.lock",
+            Component component1 = Component.translatable("text.dankstorage.lock",
                     DankKeybinds.LOCK_SLOT.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY);
             tooltip.add(component1);
             if (stack.getCount() >= 1000) {
-                Component component2 = CommonUtils.translatable(
-                        "text.dankstorage.exact", CommonUtils.literal(Integer.toString(stack.getCount())).withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.GRAY);
+                Component component2 = Component.translatable(
+                        "text.dankstorage.exact", Component.literal(Integer.toString(stack.getCount())).withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.GRAY);
                 tooltip.add(component2);
             }
         }
     }
 
     protected CycleButton<PickupMode> modeCycleButton;
+    protected Button sort;
 
     public static final Button.CreateNarration DEFAULT_NARRATION = Supplier::get;
-
 
     @Override
     protected void init() {
@@ -268,16 +253,9 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
         int j = (this.height - this.imageHeight) / 2;
 
 
-        DynamicTooltip dynamicTooltip = DynamicTooltip.dynamic(() -> Component.translatable("dankstorage.sorting_type."+menu.dankInventory.getSortingType()));
-
-        Button sort = new Button.Plain(leftPos + 143-16, topPos + 4, 26, 12, Component.literal("Sort"), b -> {
+        sort = new Button.Plain(leftPos + 143-16, topPos + 4, 26, 12, Component.literal("Sort"), b -> {
             sendButtonToServer(DankMenu.ButtonAction.SORT);
-            dynamicTooltip.dirty  = true;
         },DEFAULT_NARRATION){};
-
-
-        sort.setTooltip(dynamicTooltip);
-
 
         this.addRenderableWidget(sort);
 
@@ -327,19 +305,15 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
                 .size(12, 12)
                 .tooltip(tooltip).build());
 
-        DynamicTooltip dynamicTooltipSorting = DynamicTooltip.dynamic(() -> Component.translatable("dankstorage.sorting_type."+menu.dankInventory.getSortingType()+".desc"));
 
         changeSortingType = new Button.Plain(leftPos -89, topPos + 24, 90, 16,Component.empty(), b -> {
             sendButtonToServer(DankMenu.ButtonAction.CYCLE_SORT_TYPE);
-            dynamicTooltipSorting.dirty = true;
         }, Supplier::get) {
             @Override
             public Component getMessage() {
                 return Component.translatable("dankstorage.sorting_type."+menu.dankInventory.getSortingType());
             }
         };
-
-        changeSortingType.setTooltip(dynamicTooltipSorting);
 
         this.addRenderableWidget(changeSortingType);
 
@@ -357,10 +331,19 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
             changeSortingType.visible = false;
             autoSort.visible = false;
         }
-
-
-
         initEditbox();
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+
+        int color = menu.dankInventory.getTextColor();
+        this.frequency.setTextColor(color);
+        PickupMode pickupMode = menu.getMode();
+        modeCycleButton.setValue(pickupMode);
+        sort.setTooltip(Tooltip.create(Component.translatable("dankstorage.sorting_type." + menu.dankInventory.getSortingType())));
+        changeSortingType.setTooltip(Tooltip.create(Component.translatable("dankstorage.sorting_type."+menu.dankInventory.getSortingType()+".desc")));
     }
 
     private @NotNull Button getButton(int j) {
@@ -446,52 +429,52 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
     static final MutableComponent PICKUP_C = buildPickupComponent();
 
     private static MutableComponent buildSaveComponent() {
-        return CommonUtils.translatable("text.dankstorage.save_frequency_button",
-                CommonUtils.translatable("text.dankstorage.save_frequency_button.invalid",
-                                CommonUtils.translatable("text.dankstorage.save_frequency_button.invalidtxt")
+        return Component.translatable("text.dankstorage.save_frequency_button",
+                Component.translatable("text.dankstorage.save_frequency_button.invalid",
+                                Component.translatable("text.dankstorage.save_frequency_button.invalidtxt")
                                         .withStyle(ChatFormatting.GRAY))
                         .withStyle(Style.EMPTY.withColor(TxtColor.INVALID.color)),
-                CommonUtils.translatable("text.dankstorage.save_frequency_button.too_high",
-                                CommonUtils.translatable("text.dankstorage.save_frequency_button.too_hightxt")
+                Component.translatable("text.dankstorage.save_frequency_button.too_high",
+                                Component.translatable("text.dankstorage.save_frequency_button.too_hightxt")
                                         .withStyle(ChatFormatting.GRAY))
                         .withStyle(Style.EMPTY.withColor(TxtColor.TOO_HIGH.color)),
-                CommonUtils.translatable("text.dankstorage.save_frequency_button.different_tier",
-                                CommonUtils.translatable("text.dankstorage.save_frequency_button.different_tiertxt")
+                Component.translatable("text.dankstorage.save_frequency_button.different_tier",
+                                Component.translatable("text.dankstorage.save_frequency_button.different_tiertxt")
                                         .withStyle(ChatFormatting.GRAY))
                         .withStyle(Style.EMPTY.withColor(TxtColor.DIFFERENT_TIER.color)),
-                CommonUtils.translatable("text.dankstorage.save_frequency_button.good",
-                                CommonUtils.translatable("text.dankstorage.save_frequency_button.goodtxt")
+                Component.translatable("text.dankstorage.save_frequency_button.good",
+                                Component.translatable("text.dankstorage.save_frequency_button.goodtxt")
                                         .withStyle(ChatFormatting.GRAY))
                         .withStyle(Style.EMPTY.withColor(TxtColor.GOOD.color))
-                , CommonUtils.translatable("text.dankstorage.save_frequency_button.locked_frequency",
-                                CommonUtils.translatable("text.dankstorage.save_frequency_button.locked_frequencytxt")
+                , Component.translatable("text.dankstorage.save_frequency_button.locked_frequency",
+                                Component.translatable("text.dankstorage.save_frequency_button.locked_frequencytxt")
                                         .withStyle(ChatFormatting.GRAY))
                         .withStyle(Style.EMPTY.withColor(TxtColor.LOCKED.color))
         );
     }
 
     private static MutableComponent buildPickupComponent() {
-        return CommonUtils.translatable("text.dankstorage.pickup_button",
-                CommonUtils.translatable("text.dankstorage.pickup_button.none",
-                                CommonUtils.translatable("text.dankstorage.pickup_button.nonetxt")
+        return Component.translatable("text.dankstorage.pickup_button",
+                Component.translatable("text.dankstorage.pickup_button.none",
+                                Component.translatable("text.dankstorage.pickup_button.nonetxt")
                                         .withStyle(ChatFormatting.GRAY))
                         .withStyle(Style.EMPTY.withColor(PickupMode.none.getColor())),
-                CommonUtils.translatable("text.dankstorage.pickup_button.all",
-                                CommonUtils.translatable("text.dankstorage.pickup_button.alltxt")
+                Component.translatable("text.dankstorage.pickup_button.all",
+                                Component.translatable("text.dankstorage.pickup_button.alltxt")
                                         .withStyle(ChatFormatting.GRAY))
                         .withStyle(Style.EMPTY.withColor(PickupMode.pickup_all.getColor())),
-                CommonUtils.translatable("text.dankstorage.pickup_button.filtered",
-                                CommonUtils.translatable("text.dankstorage.pickup_button.filteredtxt")
+                Component.translatable("text.dankstorage.pickup_button.filtered",
+                                Component.translatable("text.dankstorage.pickup_button.filteredtxt")
                                         .withStyle(ChatFormatting.GRAY))
                         .withStyle(Style.EMPTY.withColor(PickupMode.filtered_pickup.getColor())),
-                CommonUtils.translatable("text.dankstorage.pickup_button.void",
-                                CommonUtils.translatable("text.dankstorage.pickup_button.voidtxt")
+                Component.translatable("text.dankstorage.pickup_button.void",
+                                Component.translatable("text.dankstorage.pickup_button.voidtxt")
                                         .withStyle(ChatFormatting.GRAY))
                         .withStyle(Style.EMPTY.withColor(PickupMode.void_pickup.getColor()))
         );
     }
 
-    static final MutableComponent STORAGE_TXT = CommonUtils.translatable("text.dankstorage.blacklisted_storage").withStyle(ChatFormatting.DARK_RED);
-    static final MutableComponent USAGE_TXT = CommonUtils.translatable("text.dankstorage.blacklisted_usage").withStyle(ChatFormatting.DARK_RED);
+    static final MutableComponent STORAGE_TXT = Component.translatable("text.dankstorage.blacklisted_storage").withStyle(ChatFormatting.DARK_RED);
+    static final MutableComponent USAGE_TXT = Component.translatable("text.dankstorage.blacklisted_usage").withStyle(ChatFormatting.DARK_RED);
 
 }

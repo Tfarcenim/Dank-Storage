@@ -6,7 +6,6 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,6 +16,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 import tfar.dankstorage.init.ModDataComponentTypes;
 import tfar.dankstorage.inventory.DankInventory;
 import tfar.dankstorage.inventory.LimitedContainerData;
@@ -25,7 +25,6 @@ import tfar.dankstorage.menu.DankMenu;
 import tfar.dankstorage.menu.ChangeFrequencyMenu;
 import tfar.dankstorage.world.DankSavedDatas;
 
-import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -176,24 +175,12 @@ public class CommonUtils {
         }
     }
 
-    public static MutableComponent translatable(String s) {
-        return Component.translatable(s);
-    }
-
-    public static MutableComponent translatable(String string, Object... objects) {
-        return Component.translatable(string, objects);
-    }
-
-    public static MutableComponent literal(String s) {
-        return Component.literal(s);
-    }
-
     public static boolean oredict(ItemStack bag) {
         return bag.has(ModDataComponentTypes.OREDICT);
     }
 
     public static void warn(Player player, DankStats item, DankStats inventory) {
-        player.sendSystemMessage(literal("Dank Item Level " + item.ordinal() + " cannot open Dank Inventory Level " + inventory.ordinal()));
+        player.sendSystemMessage(Component.literal("Dank Item Level " + item.ordinal() + " cannot open Dank Inventory Level " + inventory.ordinal()));
     }
 
     public static int getNbtSize(@Nullable CompoundTag nbt) {

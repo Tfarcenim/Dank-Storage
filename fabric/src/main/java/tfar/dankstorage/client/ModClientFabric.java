@@ -4,6 +4,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.ClientTooltipComponentCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
@@ -11,6 +12,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.events.ClientEvents;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.network.server.C2SButtonPacket;
@@ -37,7 +39,7 @@ public class ModClientFabric implements ClientModInitializer {
         KeyMappingHelper.registerKeyMapping(DankKeybinds.PICKUP_MODE);
         ClientTickEvents.START_CLIENT_TICK.register(ModClientFabric::keyPressed);
         ClientTooltipComponentCallback.EVENT.register(CommonClient::tooltipImage);
-        HudRenderCallback.EVENT.register(ClientEvents::extractSelectedItem);
+        HudElementRegistry.addFirst(DankStorage.id("hud"),ClientEvents::extractSelectedItem);
         UseItemCallback.EVENT.register(this::interact);
     }
 

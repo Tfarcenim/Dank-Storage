@@ -1,38 +1,34 @@
-package tfar.dankstorage.platform;
+package tfar.dankstorage;
 
 import com.google.common.collect.Lists;
 import net.neoforged.neoforge.common.ModConfigSpec;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
-public class TomlConfigs implements MLConfig {
-    @Override
-    public int posX() {
-        return ClientConfig.preview_x.get();
+public class DankConfig {
+
+    public static final Client CLIENT;
+    public static final ModConfigSpec CLIENT_SPEC;
+    public static final ServerConfig SERVER;
+    public static final ModConfigSpec SERVER_SPEC;
+
+    static {
+        final Pair<Client, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Client::new);
+        CLIENT_SPEC = specPair.getRight();
+        CLIENT = specPair.getLeft();
+        final Pair<ServerConfig, ModConfigSpec> specPair2 = new ModConfigSpec.Builder().configure(ServerConfig::new);
+        SERVER_SPEC = specPair2.getRight();
+        SERVER = specPair2.getLeft();
     }
 
-    @Override
-    public int posY() {
-        return ClientConfig.preview_y.get();
-    }
-
-    @Override
-    public boolean showPreview() {
-        return ClientConfig.preview.get();
-    }
-
-    @Override
-    public double textSize() {
-        return ClientConfig.textSize.get();
-    }
-
-    public static class ClientConfig {
+    public static class Client {
         public static ModConfigSpec.BooleanValue preview;
         public static ModConfigSpec.IntValue preview_x;
         public static ModConfigSpec.IntValue preview_y;
         public static ModConfigSpec.DoubleValue textSize;
 
-        public ClientConfig(ModConfigSpec.Builder builder) {
+        public Client(ModConfigSpec.Builder builder) {
             builder.push("client");
             preview = builder
                     .comment("Whether to display the preview of the item in the dank, disable if you have optifine")

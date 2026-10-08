@@ -115,13 +115,13 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-        dank = input.read("dank",ItemStack.CODEC).orElse(ItemStack.EMPTY);
+        dank = input.read("dank",ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY);
     }
 
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
-        output.store("dank",ItemStack.CODEC,dank);
+        output.store("dank",ItemStack.OPTIONAL_CODEC,dank);
     }
 
     @Override

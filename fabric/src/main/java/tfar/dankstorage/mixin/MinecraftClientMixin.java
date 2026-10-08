@@ -5,7 +5,9 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,7 +18,6 @@ import tfar.dankstorage.network.server.C2SButtonPacket;
 import tfar.dankstorage.utils.KeybindAction;
 import tfar.dankstorage.utils.CommonUtils;
 
-import javax.annotation.Nullable;
 
 @Mixin(Minecraft.class)
 public class MinecraftClientMixin {
@@ -29,10 +30,10 @@ public class MinecraftClientMixin {
     @Nullable
     public HitResult hitResult;
 
-    @Inject(method = "pickBlock",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Inventory;findSlotMatchingItem(Lnet/minecraft/world/item/ItemStack;)I"),
+    @Inject(method = "pickBlockOrEntity",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handlePickItemFromBlock(Lnet/minecraft/core/BlockPos;Z)V"),
             locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-    private void dankPickBlock(CallbackInfo ci, boolean creative, BlockEntity blockEntity, ItemStack picked, HitResult.Type type, Inventory inventory) {
+    private void dankPickBlock(CallbackInfo ci, boolean includeData) {
         if (CommonUtils.isHoldingDank(player) && hitResult != null && hitResult.getType() != HitResult.Type.MISS) {
             C2SButtonPacket.PICK_BLOCK.send();
             ci.cancel();

@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.permissions.Permission;
 import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.world.entity.player.Player;
@@ -75,7 +76,7 @@ public class DankCommands {
         }
 
         if (!success) {
-            context.getSource().sendFailure(CommonUtils.translatable("dankstorage.command.clear_id.invalid_id"));
+            context.getSource().sendFailure(Component.translatable("dankstorage.command.clear_id.invalid_id"));
         }
         return 1;
     }
@@ -85,7 +86,7 @@ public class DankCommands {
         int tier = IntegerArgumentType.getInteger(context, "tier");
         boolean success = false;//DankStorageForge.instance.data.setTier(id, tier);
         if (!success) {
-           // throw new CommandRuntimeException(CommonUtils.translatable("dankstorage.command.set_tier.invalid_id"));
+           // throw new CommandRuntimeException(Component.translatable("dankstorage.command.set_tier.invalid_id"));
         }
         return 1;
     }

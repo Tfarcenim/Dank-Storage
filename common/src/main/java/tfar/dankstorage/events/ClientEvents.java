@@ -7,6 +7,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
+import tfar.dankstorage.DankConfig;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.network.server.C2SScrollSlotPacket;
 import tfar.dankstorage.platform.Services;
@@ -65,14 +66,14 @@ public class ClientEvents {
     }
 
     private static boolean shouldPreview() {
-        return Services.PLATFORM.getConfig().showPreview();
+        return DankConfig.Client.preview.get();
     }
 
     private static int previewX() {
-        return Services.PLATFORM.getConfig().posX();
+        return DankConfig.Client.preview_x.get();
     }
 
     private static int previewY() {
-        return Services.PLATFORM.getConfig().posY();
+        return DankConfig.Client.preview_y.get();
     }
 }

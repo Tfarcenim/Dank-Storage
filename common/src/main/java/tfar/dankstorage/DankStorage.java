@@ -52,7 +52,6 @@ public class DankStorage {
         ModMenuTypes.init();
         ModRecipeSerializers.init();
         ModDataComponentTypes.init();
-
     }
 
     public static void onServerShutDown(MinecraftServer server) {

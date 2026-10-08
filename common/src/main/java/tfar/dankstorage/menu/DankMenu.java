@@ -18,7 +18,6 @@ import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.utils.PickupMode;
 
-import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public class DankMenu extends AbstractContainerMenu {
@@ -191,7 +190,6 @@ public class DankMenu extends AbstractContainerMenu {
         return true;
     }
 
-    @Nonnull
     @Override
     public ItemStack quickMoveStack(Player playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
@@ -232,7 +230,7 @@ public class DankMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public boolean stillValid(@Nonnull Player playerIn) {
+    public boolean stillValid(Player playerIn) {
         return !bag.isEmpty();
     }
 

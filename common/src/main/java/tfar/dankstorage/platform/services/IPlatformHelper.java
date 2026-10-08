@@ -13,7 +13,6 @@ import net.minecraft.world.phys.HitResult;
 import tfar.dankstorage.inventory.DankInventory;
 import tfar.dankstorage.network.client.S2CModPacket;
 import tfar.dankstorage.network.server.C2SModPacket;
-import tfar.dankstorage.platform.MLConfig;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.world.DankSavedData;
 
@@ -57,7 +56,7 @@ public interface IPlatformHelper {
     void sendToClient(S2CModPacket msg, ServerPlayer player);
     void sendToServer(C2SModPacket msg);
 
-    ItemStack getCloneStack(Level level, BlockPos pos, BlockState state, HitResult hitResult, Player player);
+    ItemStack getCloneStack(Level level, BlockPos pos, BlockState state, HitResult hitResult, Player player, boolean includeData);
 
 
     default DankInventory createInventory(DankStats stats, DankSavedData data) {
@@ -65,7 +64,5 @@ public interface IPlatformHelper {
     }
 
     //registry helpers
-
-    MLConfig getConfig();
 
 }

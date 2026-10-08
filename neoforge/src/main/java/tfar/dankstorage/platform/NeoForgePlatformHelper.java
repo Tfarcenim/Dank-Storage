@@ -21,11 +21,8 @@ import tfar.dankstorage.platform.services.IPlatformHelper;
 import tfar.dankstorage.utils.DankStats;
 import tfar.dankstorage.world.DankInventoryForge;
 import tfar.dankstorage.world.DankSavedData;
-import tfar.dankstorage.world.DankSavedDatas;
 
 public class NeoForgePlatformHelper implements IPlatformHelper {
-
-    final MLConfig config = new TomlConfigs();
 
     @Override
     public String getPlatformName() {
@@ -73,12 +70,8 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public ItemStack getCloneStack(Level level, BlockPos pos, BlockState state, HitResult hitResult, Player player) {
-        return state.getCloneItemStack(pos, level, false, player);
+    public ItemStack getCloneStack(Level level, BlockPos pos, BlockState state, HitResult hitResult, Player player, boolean includeData) {
+        return state.getCloneItemStack(pos, level, includeData, player);
     }
 
-    @Override
-    public MLConfig getConfig() {
-        return config;
-    }
 }

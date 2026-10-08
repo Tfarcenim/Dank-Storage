@@ -28,8 +28,8 @@ public class RedprintItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack itemStack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
-        builder.accept(CommonUtils.translatable("text.dankstorage.red_print.tooltip0"));
-        builder.accept(CommonUtils.translatable("text.dankstorage.red_print.tooltip1"));    }
+        builder.accept(Component.translatable("text.dankstorage.red_print.tooltip0"));
+        builder.accept(Component.translatable("text.dankstorage.red_print.tooltip1"));    }
 
     @Override
     public InteractionResult useOn(UseOnContext useOnContext) {
@@ -81,7 +81,7 @@ public class RedprintItem extends Item {
 
     @Override
     public Component getName(ItemStack itemStack) {
-        MutableComponent component = CommonUtils.literal(super.getName(itemStack).getString());
+        MutableComponent component = Component.literal(super.getName(itemStack).getString());
     //    if (itemStack.hasTag() && itemStack.getTag().contains(CommonUtils.FREQ)) {
     //        component.append(" ("+itemStack.getTag().getInt(CommonUtils.FREQ)+")");
     //    }

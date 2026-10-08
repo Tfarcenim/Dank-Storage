@@ -33,7 +33,7 @@ public class ChangeFrequencyScreen extends AbstractContainerScreen<ChangeFrequen
     protected void initEditbox() {
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
-        this.frequency = new NumberEditBox(this.font, i + 84, j + inventoryLabelY, 64, 12, CommonUtils.translatable("dank"));
+        this.frequency = new NumberEditBox(this.font, i + 84, j + inventoryLabelY, 64, 12, Component.translatable("dank"));
         this.frequency.setCanLoseFocus(true);
         this.frequency.setTextColor(-1);
         this.frequency.setTextColorUneditable(-1);

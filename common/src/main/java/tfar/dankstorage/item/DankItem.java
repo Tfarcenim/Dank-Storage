@@ -39,10 +39,8 @@ import tfar.dankstorage.network.server.C2SRequestContentsPacket;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.*;
 import tfar.dankstorage.world.ClientData;
-import tfar.dankstorage.world.DankSavedData;
 import tfar.dankstorage.world.DankSavedDatas;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -63,28 +61,28 @@ public class DankItem extends Item {
 
 
         int id = getFrequency(bag);
-        tooltip.accept(CommonUtils.literal("ID: " + id));
+        tooltip.accept(Component.literal("ID: " + id));
 
         if (!Minecraft.getInstance().hasShiftDown()) {
-            tooltip.accept(CommonUtils.translatable("text.dankstorage.shift",
-                    CommonUtils.literal("Shift").withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
+            tooltip.accept(Component.translatable("text.dankstorage.shift",
+                    Component.literal("Shift").withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
         } else {
 
-            tooltip.accept(CommonUtils.translatable("text.dankstorage.change_pickup_mode", DankKeybinds.PICKUP_MODE.getTranslatedKeyMessage().copy()
+            tooltip.accept(Component.translatable("text.dankstorage.change_pickup_mode", DankKeybinds.PICKUP_MODE.getTranslatedKeyMessage().copy()
                     .withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
             PickupMode pickupMode = getPickupMode(bag);
             tooltip.accept(
-                    CommonUtils.translatable("text.dankstorage.current_pickup_mode", pickupMode.translate().withStyle(ChatFormatting.YELLOW))
+                    Component.translatable("text.dankstorage.current_pickup_mode", pickupMode.translate().withStyle(ChatFormatting.YELLOW))
                             .withStyle(ChatFormatting.GRAY));
 
 
-            tooltip.accept(CommonUtils.translatable("text.dankstorage.changeusetype", DankKeybinds.CONSTRUCTION.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
+            tooltip.accept(Component.translatable("text.dankstorage.changeusetype", DankKeybinds.CONSTRUCTION.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
             UseType useType = getUseType(bag);
             tooltip.accept(
-                    CommonUtils.translatable("text.dankstorage.currentusetype", CommonUtils.translatable(
+                    Component.translatable("text.dankstorage.currentusetype", Component.translatable(
                             "dankstorage.usetype." + useType.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY));
             tooltip.accept(
-                    CommonUtils.translatable("text.dankstorage.stacklimit", CommonUtils.literal(stats.stacklimit + "").withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.GRAY));
+                    Component.translatable("text.dankstorage.stacklimit", Component.literal(stats.stacklimit + "").withStyle(ChatFormatting.GREEN)).withStyle(ChatFormatting.GRAY));
         }
 
         if (Services.PLATFORM.isDevelopmentEnvironment()) {
@@ -123,7 +121,7 @@ public class DankItem extends Item {
                     bits.add(s1);
                 }
 
-                bits.forEach(s1 -> tooltip.add(CommonUtils.literal(s1)));
+                bits.forEach(s1 -> tooltip.add(Component.literal(s1)));
 
             }
         }
@@ -222,7 +220,6 @@ public class DankItem extends Item {
         }
     }
 
-    @Nonnull
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         ItemStack bag = ctx.getItemInHand();
@@ -259,7 +256,6 @@ public class DankItem extends Item {
         return actionResultType;
     }
 
-    @Nonnull
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack bag = player.getItemInHand(hand);
@@ -433,7 +429,7 @@ public class DankItem extends Item {
         PickupMode mode = getPickupMode(bag);
         PickupMode cycle = cycle(mode);
         setPickupMode(bag, cycle);
-        player.sendOverlayMessage(CommonUtils.translatable("dankstorage.mode." + mode));
+        player.sendOverlayMessage(Component.translatable("dankstorage.mode." + mode));
     }
 
     public static UseType getUseType(ItemStack bag) {
@@ -445,7 +441,7 @@ public class DankItem extends Item {
         UseType useType = getUseType(bag);
         UseType cycle = cycle(useType);
         setUseType(bag, cycle);
-        player.sendOverlayMessage(CommonUtils.translatable("dankstorage.usetype." + cycle));
+        player.sendOverlayMessage(Component.translatable("dankstorage.usetype." + cycle));
     }
 
     public static void setUseType(ItemStack bag, UseType useType) {

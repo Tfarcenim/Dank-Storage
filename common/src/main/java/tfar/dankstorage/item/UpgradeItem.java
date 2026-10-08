@@ -4,8 +4,6 @@ import net.minecraft.ChatFormatting;
 import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.blockentity.DockBlockEntity;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
@@ -27,7 +25,6 @@ public class UpgradeItem extends Item {
         this.upgradeInfo = info;
     }
 
-    @Nonnull
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Player player = context.getPlayer();

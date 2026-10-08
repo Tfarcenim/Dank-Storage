@@ -35,7 +35,7 @@ public enum C2SButtonPacket implements C2SModPacket {
                 HitResult hit = player.pick(5, 0, false);
                 if (hit instanceof BlockHitResult blockHit && hit.getType() != HitResult.Type.MISS) {
                     ItemStack pick = Services.PLATFORM.getCloneStack(player.level(), blockHit.getBlockPos(),
-                            player.level().getBlockState(blockHit.getBlockPos()), hit, player);
+                            player.level().getBlockState(blockHit.getBlockPos()), hit, player,false);
                     if (!pick.isEmpty()) {
                         if (player.getMainHandItem().getItem() instanceof DankItem)
                             CommonUtils.setPickSlot(player.level(), player.getMainHandItem(), pick);

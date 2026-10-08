@@ -28,7 +28,6 @@ import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.item.DankItemCapability;
 import tfar.dankstorage.datagen.ModDatagen;
 import tfar.dankstorage.network.DankPacketHandlerNeoForge;
-import tfar.dankstorage.platform.TomlConfigs;
 
 @Mod(DankStorage.MODID)
 public class DankStorageNeoForge {
@@ -36,8 +35,8 @@ public class DankStorageNeoForge {
     public static final Logger LOGGER = LogManager.getLogger(DankStorage.MODID);
 
     public DankStorageNeoForge(IEventBus bus, ModContainer modContainer) {
-        modContainer.registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
-        modContainer.registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
+        modContainer.registerConfig(ModConfig.Type.CLIENT, DankConfig.CLIENT_SPEC);
+        modContainer.registerConfig(ModConfig.Type.SERVER, DankConfig.SERVER_SPEC);
         NeoForge.EVENT_BUS.addListener(this::onServerStarted);
         NeoForge.EVENT_BUS.addListener(this::onServerStopped);
         NeoForge.EVENT_BUS.addListener(this::registerCommands);
@@ -84,21 +83,4 @@ public class DankStorageNeoForge {
             }
         }
     }
-
-
-  public static final TomlConfigs.ClientConfig CLIENT;
-  public static final ModConfigSpec CLIENT_SPEC;
-
-  public static final TomlConfigs.ServerConfig SERVER;
-  public static final ModConfigSpec SERVER_SPEC;
-
-  static {
-    final Pair<TomlConfigs.ClientConfig, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(TomlConfigs.ClientConfig::new);
-    CLIENT_SPEC = specPair.getRight();
-    CLIENT = specPair.getLeft();
-    final Pair<TomlConfigs.ServerConfig, ModConfigSpec> specPair2 = new ModConfigSpec.Builder().configure(TomlConfigs.ServerConfig::new);
-    SERVER_SPEC = specPair2.getRight();
-    SERVER = specPair2.getLeft();
-  }
-
 }
