@@ -1,8 +1,6 @@
 package tfar.dankstorage.menu;
 
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -16,56 +14,24 @@ import tfar.dankstorage.network.client.S2CSendGhostSlotPacket;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.DankStats;
-import tfar.dankstorage.utils.PickupMode;
 
 import java.util.Optional;
 
-public class DankMenu extends AbstractContainerMenu {
+public class DankMenu extends DankHolderMenu {
 
     public final Inventory playerInventory;
     public final int rows;
     public final DankInventory dankInventory;
-    public final ItemStack bag;
-
-    final Container container = new SimpleContainer(1);
-
-
-    public enum ButtonAction {
-        LOCK_FREQUENCY, SORT,
-        TOGGLE_TAG, TOGGLE_PICKUP,  COMPRESS, CYCLE_SORT_TYPE, TOGGLE_AUTO_SORT;
-        static final ButtonAction[] VALUES = values();
-    }
-
 
     public DankMenu(MenuType<?> type, int windowId, Inventory playerInventory, DankInventory dankInventory,ItemStack bag) {
-        super(type, windowId);
+        super(type, windowId, bag, dankInventory);
         this.playerInventory = playerInventory;
         this.dankInventory = dankInventory;
         this.rows = dankInventory.slotCount() /9;
-        this.bag = bag;
-        container.setItem(0,bag);
-
         addDankSlots();
         addPlayerSlots(playerInventory);
-        Slot slot = new LockedSlot(container,0,-100,-100) {
-            @Override
-            public boolean isActive() {
-                return false;
-            }
-        };
-        addSlot(slot);
-
-        addDataSlots(dankInventory);
+        addDummySlot();
     }
-
-    public ItemStack getBag() {
-        return container.getItem(0);
-    }
-
-    public PickupMode getMode() {
-        return DankItem.getPickupMode(bag);
-    }
-
 
     protected void addPlayerSlots(Inventory playerinventory) {
         int yStart = 32 + 18 * rows;
@@ -170,7 +136,7 @@ public class DankMenu extends AbstractContainerMenu {
                 case TOGGLE_TAG -> CommonUtils.toggleTagMode(serverPlayer);
                 case TOGGLE_PICKUP -> CommonUtils.togglePickupMode(serverPlayer);
                 case CYCLE_SORT_TYPE -> {
-                    DankInventory dankInventory = DankItem.getInventoryFrom(bag, serverPlayer.level().getServer());
+                    DankInventory dankInventory = DankItem.getInventoryFrom(getBag(), serverPlayer.level().getServer());
                     if (dankInventory != null) {
                         dankInventory.setSortingType(DankItem.cycle(dankInventory.getSortingType()));
                         //needed to force syncing
@@ -180,7 +146,6 @@ public class DankMenu extends AbstractContainerMenu {
                     }
                 }
                 case TOGGLE_AUTO_SORT -> {
-                    DankInventory dankInventory = DankItem.getInventoryFrom(bag, serverPlayer.level().getServer());
                     if (dankInventory != null) {
                         dankInventory.toggleAutoSort();
                     }
@@ -227,11 +192,6 @@ public class DankMenu extends AbstractContainerMenu {
                 slotIndex++;
             }
         }
-    }
-
-    @Override
-    public boolean stillValid(Player playerIn) {
-        return !bag.isEmpty();
     }
 
 
@@ -321,11 +281,6 @@ public class DankMenu extends AbstractContainerMenu {
                     playerInventory.player);
         }
     }
-
-    public void setFrequency(int freq) {
-        DankItem.setFrequency(bag,freq);
-    }
-
 
     public static DankMenu t1(int id, Inventory inv) {
         return t1s(id, inv,  DankInventory.createDummy(DankStats.one), ItemStack.EMPTY);

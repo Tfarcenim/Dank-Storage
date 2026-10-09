@@ -5,7 +5,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.packs.VanillaRecipeProvider;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
@@ -25,26 +24,26 @@ public class ModDatagen {
         DataGenerator generator = e.getGenerator();
         CompletableFuture<HolderLookup.Provider> lookupProvider = e.getLookupProvider();
         PackOutput packOutput = generator.getPackOutput();
-            BlockTagsProvider blockTagsProvider = new ModBlockTagsProvider(packOutput,lookupProvider);
-            generator.addProvider(true,blockTagsProvider);
-            generator.addProvider(true,new ModItemTagsProvider(packOutput,lookupProvider));
+        BlockTagsProvider blockTagsProvider = new ModBlockTagsProvider(packOutput, lookupProvider);
+        generator.addProvider(true, blockTagsProvider);
+        generator.addProvider(true, new ModItemTagsProvider(packOutput, lookupProvider));
 
-        generator.addProvider(true,bindRegistries(ModRecipeProvider.Runner::new, lookupProvider));
-        generator.addProvider(true,ModLootTableProvider.create(packOutput,lookupProvider));
-        generator.addProvider(true,new ModModelProvider(packOutput));
-        generator.addProvider(true,new ModLangProvider(packOutput));
+        generator.addProvider(true, bindRegistries(ModRecipeProvider.Runner::new, lookupProvider));
+        generator.addProvider(true, ModLootTableProvider.create(packOutput, lookupProvider));
+        generator.addProvider(true, new DankModelProvider(packOutput));
+        generator.addProvider(true, new ModLangProvider(packOutput));
     }
 
     public static void setupDataGenerator(GatherDataEvent.Server e) {
         DataGenerator generator = e.getGenerator();
         CompletableFuture<HolderLookup.Provider> lookupProvider = e.getLookupProvider();
         PackOutput packOutput = generator.getPackOutput();
-        BlockTagsProvider blockTagsProvider = new ModBlockTagsProvider(packOutput,lookupProvider);
-        generator.addProvider(true,blockTagsProvider);
-        generator.addProvider(true,new ModItemTagsProvider(packOutput,lookupProvider));
+        BlockTagsProvider blockTagsProvider = new ModBlockTagsProvider(packOutput, lookupProvider);
+        generator.addProvider(true, blockTagsProvider);
+        generator.addProvider(true, new ModItemTagsProvider(packOutput, lookupProvider));
 
-        generator.addProvider(true,bindRegistries(ModRecipeProvider.Runner::new, lookupProvider));
-        generator.addProvider(true,ModLootTableProvider.create(packOutput,lookupProvider));
+        generator.addProvider(true, bindRegistries(ModRecipeProvider.Runner::new, lookupProvider));
+        generator.addProvider(true, ModLootTableProvider.create(packOutput, lookupProvider));
     }
 
     private static <T extends DataProvider> DataProvider.Factory<T> bindRegistries(

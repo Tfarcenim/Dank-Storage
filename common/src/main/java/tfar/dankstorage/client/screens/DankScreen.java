@@ -5,9 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
@@ -19,7 +17,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
 import tfar.dankstorage.TextComponents;
@@ -27,15 +24,13 @@ import tfar.dankstorage.client.*;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.menu.DankMenu;
 import tfar.dankstorage.network.server.C2SLockSlotPacket;
-import tfar.dankstorage.network.server.C2SSetFrequencyPacket;
 import tfar.dankstorage.utils.CommonUtils;
 import tfar.dankstorage.utils.PickupMode;
-import tfar.dankstorage.utils.TxtColor;
 
 import java.util.List;
 import java.util.function.Supplier;
 
-public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
+public class DankScreen extends DankHolderScreen<DankMenu> {
 
     static final Identifier background1 = DankStorage.id(
             "textures/container/gui/dank1.png");
@@ -52,16 +47,13 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
             "textures/container/gui/dank7.png");
 
     final Identifier background;
-    EditBox frequency;
     protected final boolean is7;
 
     Button changeSortingType;
     Button autoSort;
-
-
     private ConfigComponent configComponent;
 
-    public DankStorageScreen(DankMenu $$0, Inventory $$1, Component $$2, Identifier background) {
+    public DankScreen(DankMenu $$0, Inventory $$1, Component $$2, Identifier background) {
         super($$0, $$1, $$2,176,114 + $$0.rows * 18);
         this.inventoryLabelY = this.imageHeight - 94;
 
@@ -69,58 +61,33 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
         this.is7 = this.menu.rows > 6;
     }
 
-    public static DankStorageScreen t1(DankMenu container, Inventory playerinventory, Component component) {
-        return new DankStorageScreen(container, playerinventory, component, background1);
+    public static DankScreen t1(DankMenu container, Inventory playerinventory, Component component) {
+        return new DankScreen(container, playerinventory, component, background1);
     }
 
-    public static DankStorageScreen t2(DankMenu container, Inventory playerinventory, Component component) {
-        return new DankStorageScreen(container, playerinventory, component, background2);
+    public static DankScreen t2(DankMenu container, Inventory playerinventory, Component component) {
+        return new DankScreen(container, playerinventory, component, background2);
     }
 
-    public static DankStorageScreen t3(DankMenu container, Inventory playerinventory, Component component) {
-        return new DankStorageScreen(container, playerinventory, component, background3);
+    public static DankScreen t3(DankMenu container, Inventory playerinventory, Component component) {
+        return new DankScreen(container, playerinventory, component, background3);
     }
 
-    public static DankStorageScreen t4(DankMenu container, Inventory playerinventory, Component component) {
-        return new DankStorageScreen(container, playerinventory, component, background4);
+    public static DankScreen t4(DankMenu container, Inventory playerinventory, Component component) {
+        return new DankScreen(container, playerinventory, component, background4);
     }
 
-    public static DankStorageScreen t5(DankMenu container, Inventory playerinventory, Component component) {
-        return new DankStorageScreen(container, playerinventory, component, background5);
+    public static DankScreen t5(DankMenu container, Inventory playerinventory, Component component) {
+        return new DankScreen(container, playerinventory, component, background5);
     }
 
-    public static DankStorageScreen t6(DankMenu container, Inventory playerinventory, Component component) {
-        return new DankStorageScreen(container, playerinventory, component, background6);
+    public static DankScreen t6(DankMenu container, Inventory playerinventory, Component component) {
+        return new DankScreen(container, playerinventory, component, background6);
     }
 
-    public static DankStorageScreen t7(DankMenu container, Inventory playerinventory, Component component) {
-        return new DankStorageScreen(container, playerinventory, component, background7);
+    public static DankScreen t7(DankMenu container, Inventory playerinventory, Component component) {
+        return new DankScreen(container, playerinventory, component, background7);
     }
-
-    protected void initEditbox() {
-        int i = (this.width - this.imageWidth) / 2;
-        int j = (this.height - this.imageHeight) / 2;
-        this.frequency = new NumberEditBox(this.font, i + 92, j + inventoryLabelY, 56, 12, Component.translatable("dank"));
-        this.frequency.setCanLoseFocus(true);
-        this.frequency.setTextColor(-1);
-        this.frequency.setTextColorUneditable(-1);
-        this.frequency.setBordered(false);
-        this.frequency.setMaxLength(10);
-        this.frequency.setResponder(this::onNameChanged);
-        this.frequency.setValue("");
-        this.frequency.setTextColor(0xff00ff00);
-        this.addRenderableWidget(this.frequency);
-    }
-
-    private void onNameChanged(String string) {
-        try {
-            int i = Integer.parseInt(string);
-            C2SSetFrequencyPacket.send(i, false);
-        } catch (NumberFormatException e) {
-            C2SSetFrequencyPacket.send(-1, false);
-        }
-    }
-
 
     @Override
     public void extractSlot(GuiGraphicsExtractor pGuiGraphics, Slot pSlot, int mouseX, int mouseY) {
@@ -198,26 +165,16 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
         }
     }
 
-    private void sendButtonToServer(DankMenu.ButtonAction action) {
-        this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, action.ordinal());
-    }
-
     @Override
     public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.extractContents(graphics, mouseX, mouseY, partialTicks);
-
-
-     //   this.configComponent.extractRenderState(graphics, mouseX, mouseY, partialTicks);
-
         this.extractTooltip(graphics, mouseX, mouseY);
     }
 
     @Override
     protected void extractLabels(GuiGraphicsExtractor poseStack, int i, int j) {
         super.extractLabels(poseStack, i, j);
-        int id = DankItem.getFrequency(menu.getBag());//menu.dankInventory.get(menu.rows * 9);
-        int color = 0xff008000;
-        poseStack.text( font,"ID: " + id, 62, inventoryLabelY, color,false);
+        poseStack.text(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, -12566464, false);
     }
 
     public void appendDankInfo(List<Component> tooltip, ItemStack stack) {
@@ -250,9 +207,6 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
 
         this.configComponent.init(this.width, this.height, this.minecraft, this.menu);
 
-        int j = (this.height - this.imageHeight) / 2;
-
-
         sort = new Button.Plain(leftPos + 143-16, topPos + 4, 26, 12, Component.literal("Sort"), b -> {
             sendButtonToServer(DankMenu.ButtonAction.SORT);
         },DEFAULT_NARRATION){};
@@ -267,27 +221,6 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
                 .create(leftPos + 101-16, topPos + 4, 12, 12, Component.empty(), (pickupModeCycleButton, pickupMode) -> sendButtonToServer(DankMenu.ButtonAction.TOGGLE_PICKUP));
 
         addRenderableWidget(modeCycleButton);
-
-        Tooltip freqTooltip = new DualTooltip(
-                Component.translatable("text.dankstorage.unlock_button"),
-                Component.translatable("text.dankstorage.lock_button"),null,this);
-
-        Button lock = new Button.Plain(leftPos + 115-16, topPos + 4, 12, 12,
-                Component.literal(""), button -> sendButtonToServer(DankMenu.ButtonAction.LOCK_FREQUENCY),DEFAULT_NARRATION) {
-            @Override
-            public Component getMessage() {
-                return menu.dankInventory.frequencyLocked() ? Component.literal("X").withStyle(ChatFormatting.RED) :
-                        Component.literal("O");
-            }
-        };
-
-        lock.setTooltip(freqTooltip);
-
-        this.addRenderableWidget(lock);
-
-        Button s = getButton(j);
-
-        this.addRenderableWidget(s);
 
         Tooltip compressTooltip = Tooltip.create(Component.translatable("text.dankstorage.compress_button"));
 
@@ -331,37 +264,15 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
             changeSortingType.visible = false;
             autoSort.visible = false;
         }
-        initEditbox();
     }
 
     @Override
     protected void containerTick() {
         super.containerTick();
-
-        int color = menu.dankInventory.getTextColor();
-        this.frequency.setTextColor(color);
         PickupMode pickupMode = menu.getMode();
         modeCycleButton.setValue(pickupMode);
         sort.setTooltip(Tooltip.create(Component.translatable("dankstorage.sorting_type." + menu.dankInventory.getSortingType())));
         changeSortingType.setTooltip(Tooltip.create(Component.translatable("dankstorage.sorting_type."+menu.dankInventory.getSortingType()+".desc")));
-    }
-
-    private @NotNull Button getButton(int j) {
-        Tooltip saveTooltip = Tooltip.create(SAVE_C);
-
-        Button s = new Button.Plain(leftPos + 155, j + inventoryLabelY - 2, 12, 12,
-                Component.literal("s"), b -> {
-            try {
-                if (menu.dankInventory.frequencyLocked()) return;
-                int id1 = Integer.parseInt(frequency.getValue());
-                C2SSetFrequencyPacket.send(id1, true);
-            } catch (NumberFormatException e) {
-
-            }
-        },DEFAULT_NARRATION){};
-
-        s.setTooltip(saveTooltip);
-        return s;
     }
 
     void toggleConfig() {
@@ -369,7 +280,6 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
         changeSortingType.visible = configComponent.isVisible();
         autoSort.visible = configComponent.isVisible();
     }
-
 
     @Override
     public List<Component> getTooltipFromContainerItem(ItemStack itemStack) {
@@ -404,12 +314,7 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
 
     @Override
     public boolean keyPressed(KeyEvent event) {
-        if (event.isEscape()|| this.minecraft.options.keyInventory.matches(event)){
-            onClose();
-            return true;
-        }
         //slot locking takes priority over frequency changing
-
         boolean match = DankKeybinds.LOCK_SLOT.matches(event);
         if (match) {
             if (hoveredSlot != null && menu.isDankSlot(hoveredSlot)) {
@@ -417,41 +322,10 @@ public class DankStorageScreen extends AbstractContainerScreen<DankMenu> {
                 return true;
             }
         }
-
-        if (!match && (this.frequency.keyPressed(event) || this.frequency.canConsumeInput())) {
-            return true;
-        }
-
         return super.keyPressed(event);
     }
 
-    static final MutableComponent SAVE_C = buildSaveComponent();
     static final MutableComponent PICKUP_C = buildPickupComponent();
-
-    private static MutableComponent buildSaveComponent() {
-        return Component.translatable("text.dankstorage.save_frequency_button",
-                Component.translatable("text.dankstorage.save_frequency_button.invalid",
-                                Component.translatable("text.dankstorage.save_frequency_button.invalidtxt")
-                                        .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(TxtColor.INVALID.color)),
-                Component.translatable("text.dankstorage.save_frequency_button.too_high",
-                                Component.translatable("text.dankstorage.save_frequency_button.too_hightxt")
-                                        .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(TxtColor.TOO_HIGH.color)),
-                Component.translatable("text.dankstorage.save_frequency_button.different_tier",
-                                Component.translatable("text.dankstorage.save_frequency_button.different_tiertxt")
-                                        .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(TxtColor.DIFFERENT_TIER.color)),
-                Component.translatable("text.dankstorage.save_frequency_button.good",
-                                Component.translatable("text.dankstorage.save_frequency_button.goodtxt")
-                                        .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(TxtColor.GOOD.color))
-                , Component.translatable("text.dankstorage.save_frequency_button.locked_frequency",
-                                Component.translatable("text.dankstorage.save_frequency_button.locked_frequencytxt")
-                                        .withStyle(ChatFormatting.GRAY))
-                        .withStyle(Style.EMPTY.withColor(TxtColor.LOCKED.color))
-        );
-    }
 
     private static MutableComponent buildPickupComponent() {
         return Component.translatable("text.dankstorage.pickup_button",

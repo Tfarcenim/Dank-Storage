@@ -16,6 +16,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import org.jetbrains.annotations.Nullable;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.ModTags;
+import tfar.dankstorage.blockentity.DockBlockEntity;
 import tfar.dankstorage.platform.Services;
 import tfar.dankstorage.transferapi.IItemResource;
 import tfar.dankstorage.utils.CommonUtils;
@@ -538,6 +539,7 @@ public class DankInventory implements ContainerData {
     }
 
     public void upgradeTo(DankStats stats) {
+        if (isEmpty()) return;
         if (stats.slots > slotCount()) {
             setTo(stats);
         }
@@ -561,6 +563,7 @@ public class DankInventory implements ContainerData {
         //caution, will void all current items
         setItemsDank(newStacks);
         setGhostItems(newGhostStacks);
+
         data.setStats(stats);
         capacity = stats.stacklimit;
     }
@@ -639,5 +642,9 @@ public class DankInventory implements ContainerData {
             items.set(i,ItemStack.EMPTY);
             ghostItems.set(i,ItemStack.EMPTY);
         }
+    }
+
+    public boolean isEmpty() {
+        return capacity == 0;
     }
 }

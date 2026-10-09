@@ -18,8 +18,8 @@ import tfar.dankstorage.init.ModItems;
 import static net.minecraft.client.data.models.BlockModelGenerators.condition;
 import static net.minecraft.client.data.models.BlockModelGenerators.plainVariant;
 
-public class ModModelProvider extends ModelProvider {
-    public ModModelProvider(PackOutput output) {
+public class DankModelProvider extends ModelProvider {
+    public DankModelProvider(PackOutput output) {
         super(output, DankStorage.MODID);
     }
 
@@ -33,15 +33,18 @@ public class ModModelProvider extends ModelProvider {
             itemModels.generateFlatItem(item, ModelTemplates.FLAT_ITEM);
         }
         for (Item item : ModItems.DANKS.values()) {
-            createDank(item,itemModels);
+            createDank(item,blockModels,itemModels);
         }
         createDock(blockModels);
     }
 
-    public void createDank(Item item,ItemModelGenerators itemModels) {
+    public void createDank(Item item,BlockModelGenerators blockModels,ItemModelGenerators itemModels) {
         Identifier id = BuiltInRegistries.ITEM.getKey(item);
-        TextureMapping textureMapping = new TextureMapping().put(TextureSlot.ALL,new Material(id.withPrefix("block/")));
-        itemModels.itemModelOutput.accept(item,ItemModelUtils.plainModel(CORE.create(item,textureMapping,itemModels.modelOutput)));
+        Identifier blockModel = id.withPrefix("block/");
+        TextureMapping textureMapping = new TextureMapping().put(TextureSlot.ALL,new Material(blockModel));
+        //Identifier core = CORE.create(item,textureMapping,itemModels.modelOutput);
+        Identifier identifier = CORE.create(blockModel, textureMapping, blockModels.modelOutput);
+        itemModels.itemModelOutput.accept(item,ItemModelUtils.plainModel(identifier));
     }
     //    public Identifier createFlatItemModel(Item item, ModelTemplate template) {
     //        return template.create(ModelLocationUtils.getModelLocation(item), TextureMapping.layer0(item), this.modelOutput);

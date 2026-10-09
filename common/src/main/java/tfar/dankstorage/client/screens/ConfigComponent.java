@@ -76,7 +76,7 @@ public class ConfigComponent implements Renderable, GuiEventListener{
         if (this.isVisible()) {
             int i = (this.width - 147) / 2 - 111;
             int j = (this.height - 166) / 2;
-            guiGraphics.blit(RenderPipelines.GUI_TEXTURED,ChangeFrequencyScreen.DEMO_BACKGROUND_LOCATION, i, j, 0, 0, 100, 166,256,256);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED,ChangeFrequencyScreen.BACKGROUND_LOCATION, i, j, 0, 0, 100, 166,256,256);
         }
     }
 

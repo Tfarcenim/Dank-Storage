@@ -1,4 +1,4 @@
-// 26.1	2026-10-08T21:25:23.8292918	Model Definitions - dankstorage
+// 26.1.2	2026-10-08T22:26:33.8978646	Model Definitions - dankstorage
 4fb7912276a03deb224f0405973c3755bb235a23 assets/dankstorage/blockstates/dock.json
 1ca29b9b431a6ea0ce1533b64c02bc7d37e092b6 assets/dankstorage/items/1_to_2.json
 f70aa16f9abbecab0c3586bccb41651ac26e5f4d assets/dankstorage/items/2_to_3.json
@@ -6,26 +6,26 @@ f70aa16f9abbecab0c3586bccb41651ac26e5f4d assets/dankstorage/items/2_to_3.json
 49035069cdccff7a5c9dd2ef817ca2b407e239f7 assets/dankstorage/items/4_to_5.json
 a92a9daa99b08e21c72f1a65a6920fae852c38ef assets/dankstorage/items/5_to_6.json
 163472b807aad5dc4ef22157cbcaa3905f9272c7 assets/dankstorage/items/6_to_7.json
-d6e3503450e5c285dc2613d354b78a71bd0a86f1 assets/dankstorage/items/dank_1.json
-9ae27fc8bccca9e6da0b786250e538135f63e298 assets/dankstorage/items/dank_2.json
-99f45aee65974cc7b6a00a033a58fdbc5dab1c8f assets/dankstorage/items/dank_3.json
-a11772b8fcde397e8fd533e7a5a8272a4558af79 assets/dankstorage/items/dank_4.json
-14eedca2f6988d8ece26f6dca1a1ce3895cad530 assets/dankstorage/items/dank_5.json
-bcb1a058f05a62b29943a6a37d8cf0be51cde29e assets/dankstorage/items/dank_6.json
-d9ef3c9256067289b910e9723e50cf6d4ee6bd51 assets/dankstorage/items/dank_7.json
+2c7f6a1949eb9e605829bda1a835af9ccde3c1c9 assets/dankstorage/items/dank_1.json
+50224074b01ec8f3999cf3d1b9fd45dc0b270e6a assets/dankstorage/items/dank_2.json
+8ae2cc96bceeb6a6fc07585a27bd8dc775806445 assets/dankstorage/items/dank_3.json
+8c96f6d28546cfcb95a1078aff96279b40aef52f assets/dankstorage/items/dank_4.json
+cb620d176d1daea056ecdd587316d36a8acf4a47 assets/dankstorage/items/dank_5.json
+3b2fb655276dfe265dc0c400a1e48423e815178e assets/dankstorage/items/dank_6.json
+54a2294f80fe650f826cea8c042ddf1003e2cba4 assets/dankstorage/items/dank_7.json
 836446ef3fab1e54c747fd2b904762eb849d2278 assets/dankstorage/items/dock.json
 c60fd93c4ba7c952cbef904b2cca3ee84a444ba3 assets/dankstorage/items/red_print.json
+3ae9e9135dadca9b7bf0533ea9f8ca622cc8cc51 assets/dankstorage/models/block/dank_1.json
+494b06a662bd94d5d52611b88f556faef5ec3b75 assets/dankstorage/models/block/dank_2.json
+89c07d06a59bae2d88d6e8f10570f28afe6bef0e assets/dankstorage/models/block/dank_3.json
+5bd98a8b8c74a6f6a98cf340a974531cba6ca8ca assets/dankstorage/models/block/dank_4.json
+d54482bab50ee004463d92bfcc70aa1ac299bb67 assets/dankstorage/models/block/dank_5.json
+58f52463d175fdd34eb67b1975b7fd9cf9c8ec67 assets/dankstorage/models/block/dank_6.json
+f0abfd1e5bb21dad63313a1e4d89a82230dda11e assets/dankstorage/models/block/dank_7.json
 45431aef1e5bfe4f43c1dc8cd04d4bbbdf60da35 assets/dankstorage/models/item/1_to_2.json
 c540e0e28808a4dd9df6fa47959bd71eaad48f21 assets/dankstorage/models/item/2_to_3.json
 c120d79dbb8e7e1bbf9bad4cad06e187909c04af assets/dankstorage/models/item/3_to_4.json
 fb218085a80ce51c82d6928e6e1fd3e0d108bd27 assets/dankstorage/models/item/4_to_5.json
 b9abc23b1e09737f4b8e46715fbd9778b34bb2f1 assets/dankstorage/models/item/5_to_6.json
 eb743f7e1417100a254c472127ed23a049c90a70 assets/dankstorage/models/item/6_to_7.json
-3ae9e9135dadca9b7bf0533ea9f8ca622cc8cc51 assets/dankstorage/models/item/dank_1.json
-494b06a662bd94d5d52611b88f556faef5ec3b75 assets/dankstorage/models/item/dank_2.json
-89c07d06a59bae2d88d6e8f10570f28afe6bef0e assets/dankstorage/models/item/dank_3.json
-5bd98a8b8c74a6f6a98cf340a974531cba6ca8ca assets/dankstorage/models/item/dank_4.json
-d54482bab50ee004463d92bfcc70aa1ac299bb67 assets/dankstorage/models/item/dank_5.json
-58f52463d175fdd34eb67b1975b7fd9cf9c8ec67 assets/dankstorage/models/item/dank_6.json
-f0abfd1e5bb21dad63313a1e4d89a82230dda11e assets/dankstorage/models/item/dank_7.json
 f937103c14598af05fd30bdff2c5f8c15bef593e assets/dankstorage/models/item/red_print.json

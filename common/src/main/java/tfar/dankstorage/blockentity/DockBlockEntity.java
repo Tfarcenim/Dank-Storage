@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -21,6 +22,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 import tfar.dankstorage.block.DockBlock;
 import tfar.dankstorage.init.ModBlockEntityTypes;
+import tfar.dankstorage.init.ModItems;
 import tfar.dankstorage.inventory.DankInventory;
 import tfar.dankstorage.item.DankItem;
 import tfar.dankstorage.platform.Services;
@@ -167,16 +169,17 @@ public class DockBlockEntity extends BlockEntity implements Nameable, MenuProvid
         level.setBlockAndUpdate(worldPosition, getBlockState().setValue(DockBlock.TIER, stats.ordinal()));
         DankInventory dankInventory = getInventory();
         dankInventory.upgradeTo(stats);
+        upgradeItem();
     }
 
-    @Override
-    protected void collectImplicitComponents(DataComponentMap.Builder pComponents) {
-        super.collectImplicitComponents(pComponents);
-        if (!dank.isEmpty()) {
-            DataComponentMap components = dank.getComponents();
-            for(DataComponentType<?> type : components.keySet()) {
-                pComponents.set((DataComponentType) type,dank.get(type));
-            }
+    void upgradeItem() {
+        int tier = getBlockState().getValue(DockBlock.TIER);
+        if (tier >0) {
+            DankItem dankItem = ModItems.DANKS.values().toArray(new DankItem[0])[tier-1];
+            ItemStack stack = dankItem.getDefaultInstance();
+            stack.applyComponents(dank.getComponentsPatch());
+            dank = stack;
+            setChanged();
         }
     }
 }

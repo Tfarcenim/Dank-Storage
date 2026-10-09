@@ -21,6 +21,7 @@ import tfar.dankstorage.init.ModDataComponentTypes;
 import tfar.dankstorage.inventory.DankInventory;
 import tfar.dankstorage.inventory.LimitedContainerData;
 import tfar.dankstorage.item.DankItem;
+import tfar.dankstorage.menu.DankHolderMenu;
 import tfar.dankstorage.menu.DankMenu;
 import tfar.dankstorage.menu.ChangeFrequencyMenu;
 import tfar.dankstorage.world.DankSavedDatas;
@@ -246,9 +247,10 @@ public class CommonUtils {
         AbstractContainerMenu container = player.containerMenu;
         MinecraftServer server = player.level().getServer();
         DankSavedDatas dankSavedDatas = DankSavedDatas.get(server);
-        if (container instanceof DankMenu abstractDankMenu) {
-            DankInventory inventory = abstractDankMenu.dankInventory;
-
+        if (container instanceof DankHolderMenu abstractDankMenu) {
+            ItemStack bag = abstractDankMenu.getBag();
+            if (!(bag.getItem() instanceof DankItem dankItem)) return;
+            DankStats stats = dankItem.stats;
 
             TxtColor textColor;
 
@@ -257,18 +259,15 @@ public class CommonUtils {
                     DankInventory targetInventory = DankSavedDatas.get(player.level().getServer()).get(frequency)
                             .getOrCreateInventory(player.registryAccess());
 
-                    if (targetInventory.slotCount() == inventory.slotCount()) {
+                    if (targetInventory.slotCount() == stats.slots) {
 
                         if (targetInventory.frequencyLocked()) {
                             textColor = TxtColor.LOCKED;
                         } else {
                             textColor = TxtColor.GOOD;
                             if (set) {
-                                abstractDankMenu.setFrequency(frequency);
-                                ItemStack bag = abstractDankMenu.bag;
-                                if (bag.getItem() instanceof DankItem dankItem) {
-                                    player.openMenu(dankItem.createProvider(bag));
-                                }
+                                abstractDankMenu.setLinkedFrequency(frequency);
+                                player.openMenu(dankItem.createProvider(bag));
                             }
                         }
                     } else {
@@ -281,41 +280,9 @@ public class CommonUtils {
             } else {
                 textColor = TxtColor.INVALID;
             }
-            inventory.setTextColor(textColor.color);
-        } else if (container instanceof ChangeFrequencyMenu changeFrequencyMenu) {
-            DankInventory inventory = (DankInventory) ((LimitedContainerData) changeFrequencyMenu.getContainerData()).wrapped();
-
-            TxtColor textColor;
-
-            if (frequency > INVALID) {
-                if (frequency < dankSavedDatas.getNextId()) {
-                    DankInventory targetInventory = DankSavedDatas.get(server).get(frequency).getOrCreateInventory(server.registryAccess());
-
-                    if (targetInventory.slotCount() == DankStats.values()[changeFrequencyMenu.getCurrentTier()].slots) {
-
-                        if (targetInventory.frequencyLocked()) {
-                            textColor = TxtColor.LOCKED;
-                        } else {
-                            textColor = TxtColor.GOOD;
-                            if (set) {
-                                changeFrequencyMenu.setLinkedFrequency(frequency);
-                                player.closeContainer();
-                            }
-                        }
-                    } else {
-                        textColor = TxtColor.DIFFERENT_TIER;
-                    }
-                } else {
-                    //orange if it doesn't exist, yellow if it does but wrong tier
-                    textColor = TxtColor.TOO_HIGH;
-                }
-            } else {
-                textColor = TxtColor.INVALID;
-            }
-            inventory.setTextColor(textColor.color);
+            abstractDankMenu.setTextColor(0xff000000 | textColor.color);
         }
     }
-
 
         /*public static boolean areItemStacksConvertible(final ItemStack stack1, final ItemStack stack2) {
         if (stack1.hasTag() || stack2.hasTag()) return false;

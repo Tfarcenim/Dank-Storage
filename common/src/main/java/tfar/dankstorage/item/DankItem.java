@@ -185,7 +185,8 @@ public class DankItem extends Item {
 
                 if (defaults != type) {
                     if (defaults < type) {//if the default stats are lower than what saveddata reports, abort opening
-                        return new ChangeFrequencyMenu(i, playerInventory, new LimitedContainerData(dankInventory, 3), new TierDataSlot(stats), stack);
+                        return new ChangeFrequencyMenu(i, playerInventory, new LimitedContainerData(dankInventory,
+                                ChangeFrequencyMenu.DATA_SLOTS), stack);
                         //CommonUtils.warn(player, defaults, type);
                         //return null;
                     }

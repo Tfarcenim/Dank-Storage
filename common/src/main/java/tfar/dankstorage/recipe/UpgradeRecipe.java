@@ -18,7 +18,7 @@ public class UpgradeRecipe extends ShapedRecipe {
         super(recipe.commonInfo,recipe.bookInfo, recipe.pattern, recipe.result);
     }
 
-    protected static final List<DataComponentType<?>> types = new ArrayList<>();
+    public static final List<DataComponentType<?>> types = new ArrayList<>();
     static {
         types.add(ModDataComponentTypes.FREQUENCY);
         types.add(ModDataComponentTypes.PICKUP_MODE);
