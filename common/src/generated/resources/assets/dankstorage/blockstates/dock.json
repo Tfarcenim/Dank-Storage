@@ -7,7 +7,7 @@
     },
     {
       "apply": {
-        "model": "dankstorage:item/dank_1"
+        "model": "dankstorage:block/dank_1"
       },
       "when": {
         "tier": "1"
@@ -15,7 +15,7 @@
     },
     {
       "apply": {
-        "model": "dankstorage:item/dank_2"
+        "model": "dankstorage:block/dank_2"
       },
       "when": {
         "tier": "2"
@@ -23,7 +23,7 @@
     },
     {
       "apply": {
-        "model": "dankstorage:item/dank_3"
+        "model": "dankstorage:block/dank_3"
       },
       "when": {
         "tier": "3"
@@ -31,7 +31,7 @@
     },
     {
       "apply": {
-        "model": "dankstorage:item/dank_4"
+        "model": "dankstorage:block/dank_4"
       },
       "when": {
         "tier": "4"
@@ -39,7 +39,7 @@
     },
     {
       "apply": {
-        "model": "dankstorage:item/dank_5"
+        "model": "dankstorage:block/dank_5"
       },
       "when": {
         "tier": "5"
@@ -47,7 +47,7 @@
     },
     {
       "apply": {
-        "model": "dankstorage:item/dank_6"
+        "model": "dankstorage:block/dank_6"
       },
       "when": {
         "tier": "6"
@@ -55,7 +55,7 @@
     },
     {
       "apply": {
-        "model": "dankstorage:item/dank_7"
+        "model": "dankstorage:block/dank_7"
       },
       "when": {
         "tier": "7"

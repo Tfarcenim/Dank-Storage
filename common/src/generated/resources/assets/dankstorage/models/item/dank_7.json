@@ -1,7 +1,7 @@
 {
   "parent": "dankstorage:block/core",
   "textures": {
-    "all": "dankstorage:item/dank_7",
-    "particle": "dankstorage:item/dank_7"
+    "all": "dankstorage:block/dank_7",
+    "particle": "dankstorage:block/dank_7"
   }
 }

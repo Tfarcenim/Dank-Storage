@@ -1,5 +1,5 @@
-// 26.1	2026-03-31T14:05:00.5859562	Model Definitions - dankstorage
-752d4eb4d5e55db14102113ad0f31323103a5327 assets/dankstorage/blockstates/dock.json
+// 26.1	2026-10-08T21:25:23.8292918	Model Definitions - dankstorage
+4fb7912276a03deb224f0405973c3755bb235a23 assets/dankstorage/blockstates/dock.json
 1ca29b9b431a6ea0ce1533b64c02bc7d37e092b6 assets/dankstorage/items/1_to_2.json
 f70aa16f9abbecab0c3586bccb41651ac26e5f4d assets/dankstorage/items/2_to_3.json
 428eef0db753e251df80a1ebadaad3e9cc2ccd0f assets/dankstorage/items/3_to_4.json
@@ -21,11 +21,11 @@ c120d79dbb8e7e1bbf9bad4cad06e187909c04af assets/dankstorage/models/item/3_to_4.j
 fb218085a80ce51c82d6928e6e1fd3e0d108bd27 assets/dankstorage/models/item/4_to_5.json
 b9abc23b1e09737f4b8e46715fbd9778b34bb2f1 assets/dankstorage/models/item/5_to_6.json
 eb743f7e1417100a254c472127ed23a049c90a70 assets/dankstorage/models/item/6_to_7.json
-ba4886cd02ba37479e5a013d068322fb026b2b1d assets/dankstorage/models/item/dank_1.json
-84596ff1a4f405b1826dec01eec4fae03804fbc9 assets/dankstorage/models/item/dank_2.json
-7d1228c4415fbf2b078ca185019a87096363f13d assets/dankstorage/models/item/dank_3.json
-e2759aa35914209fb188b049ade2796d7b81d131 assets/dankstorage/models/item/dank_4.json
-7e40e0f704cc5be85129af6c05fe7548f57ab3be assets/dankstorage/models/item/dank_5.json
-ed6bfa22b7d8b6cc14503e68801c6c2600881dbb assets/dankstorage/models/item/dank_6.json
-4d9996c84a41db2ec1f3f56c7c39d53c15e2e11f assets/dankstorage/models/item/dank_7.json
+3ae9e9135dadca9b7bf0533ea9f8ca622cc8cc51 assets/dankstorage/models/item/dank_1.json
+494b06a662bd94d5d52611b88f556faef5ec3b75 assets/dankstorage/models/item/dank_2.json
+89c07d06a59bae2d88d6e8f10570f28afe6bef0e assets/dankstorage/models/item/dank_3.json
+5bd98a8b8c74a6f6a98cf340a974531cba6ca8ca assets/dankstorage/models/item/dank_4.json
+d54482bab50ee004463d92bfcc70aa1ac299bb67 assets/dankstorage/models/item/dank_5.json
+58f52463d175fdd34eb67b1975b7fd9cf9c8ec67 assets/dankstorage/models/item/dank_6.json
+f0abfd1e5bb21dad63313a1e4d89a82230dda11e assets/dankstorage/models/item/dank_7.json
 f937103c14598af05fd30bdff2c5f8c15bef593e assets/dankstorage/models/item/red_print.json

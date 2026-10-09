@@ -6,7 +6,9 @@ import net.minecraft.client.data.models.ModelProvider;
 import net.minecraft.client.data.models.blockstates.MultiPartGenerator;
 import net.minecraft.client.data.models.model.*;
 import net.minecraft.client.resources.model.sprite.Material;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import tfar.dankstorage.DankStorage;
 import tfar.dankstorage.block.DockBlock;
@@ -37,7 +39,8 @@ public class ModModelProvider extends ModelProvider {
     }
 
     public void createDank(Item item,ItemModelGenerators itemModels) {
-        TextureMapping textureMapping = new TextureMapping().put(TextureSlot.ALL,TextureMapping.getItemTexture(item));
+        Identifier id = BuiltInRegistries.ITEM.getKey(item);
+        TextureMapping textureMapping = new TextureMapping().put(TextureSlot.ALL,new Material(id.withPrefix("block/")));
         itemModels.itemModelOutput.accept(item,ItemModelUtils.plainModel(CORE.create(item,textureMapping,itemModels.modelOutput)));
     }
     //    public Identifier createFlatItemModel(Item item, ModelTemplate template) {
@@ -51,31 +54,31 @@ public class ModModelProvider extends ModelProvider {
                                     .with(plainVariant(ModelLocationUtils.getModelLocation(ModBlocks.DOCK)))
                                     .with(
                                             condition().term(DockBlock.TIER, 1),
-                                            plainVariant(modLocation("item/dank_1"))
+                                            plainVariant(modLocation("block/dank_1"))
                                     )
                                     .with(
                                             condition().term(DockBlock.TIER, 2),
-                                            plainVariant(modLocation("item/dank_2"))
+                                            plainVariant(modLocation("block/dank_2"))
                                     )
                                     .with(
                                             condition().term(DockBlock.TIER, 3),
-                                            plainVariant(modLocation("item/dank_3"))
+                                            plainVariant(modLocation("block/dank_3"))
                                     )
                                     .with(
                                             condition().term(DockBlock.TIER, 4),
-                                            plainVariant(modLocation("item/dank_4"))
+                                            plainVariant(modLocation("block/dank_4"))
                                     )
                                     .with(
                                             condition().term(DockBlock.TIER, 5),
-                                            plainVariant(modLocation("item/dank_5"))
+                                            plainVariant(modLocation("block/dank_5"))
                                     )
                                     .with(
                                             condition().term(DockBlock.TIER, 6),
-                                            plainVariant(modLocation("item/dank_6"))
+                                            plainVariant(modLocation("block/dank_6"))
                                     )
                                     .with(
                                             condition().term(DockBlock.TIER, 7),
-                                            plainVariant(modLocation("item/dank_7"))
+                                            plainVariant(modLocation("block/dank_7"))
                                     )
                     );
     }
